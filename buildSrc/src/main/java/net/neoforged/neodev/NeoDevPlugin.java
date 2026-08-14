@@ -431,6 +431,39 @@ public class NeoDevPlugin implements Plugin<Project> {
             }
         });
 
+        var slimeJar0 = tasks.register("slimeJar0", Jar.class, task -> {
+            task.from(createUnixServerArgsFile.flatMap(CreateArgsFile::getArgsFile), spec -> {
+                spec.into("data");
+                spec.rename(s -> "unix_args.txt");
+            });
+            task.from(createWindowsServerArgsFile.flatMap(CreateArgsFile::getArgsFile), spec -> {
+                spec.into("data");
+                spec.rename(s -> "win_args.txt");
+            });
+            task.from(binaryPatchOutputs, spec -> {
+                spec.into("data");
+                spec.rename(s -> "client.lzma");
+            });
+            var mavenPath = neoForgeVersion.map(v -> "net/neoforged/neoforge/" + v);
+            task.getInputs().property("mavenPath", mavenPath);
+            task.from(project.getRootProject().files("server_files"), spec -> {
+                spec.into("data");
+                spec.exclude("args.txt");
+                spec.filter(s -> {
+                    return s.replaceAll("@MAVEN_PATH@", mavenPath.get());
+                });
+            });
+
+            // This is true by default (see gradle.properties), and needs to be disabled explicitly when building (see release.yml).
+            String installerDebugProperty = "include_artifacts_in_installer";
+            if (project.getProviders().gradleProperty(installerDebugProperty).map(Boolean::parseBoolean).getOrElse(false)) {
+                task.from(universalJar.flatMap(AbstractArchiveTask::getArchiveFile), spec -> {
+                    spec.into("data");
+                    spec.rename(name -> String.format("neoforge-%s-universal.jar", neoForgeVersion.get()));
+                });
+            }
+        });
+
         var userdevJar = tasks.register("userdevJar", Jar.class, task -> {
             task.setGroup(INTERNAL_GROUP);
             task.getArchiveClassifier().set("userdev");
@@ -689,6 +722,16 @@ public class NeoDevPlugin implements Plugin<Project> {
             var mainSourceSet = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME);
             task.from(mainSourceSet.getJava().getClassesDirectory(), spec -> {
                 spec.exclude("net/neoforged/**");
+                spec.exclude("net/neoforged/**");
+                spec.exclude("org/**");
+                spec.exclude("io/papermc/**");
+                spec.exclude("com/destroystokyo/**");
+                spec.exclude("ca/spottedleaf/**");
+                spec.exclude("alternate/current/wire/**");
+                spec.exclude("co/aikar/util/**");
+                spec.exclude("com/mojang/brigadier/**");
+                spec.exclude("gg/pufferfish/**");
+                spec.exclude("gr1mly4memes/**");
             });
             if (type == BinaryPatchBaseType.CLIENT || type == BinaryPatchBaseType.JOINED) {
                 var clientSourceSet = sourceSets.getByName("client");

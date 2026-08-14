@@ -10,7 +10,7 @@ The project consists of a project tree with the following structure:
 | Folder Path                                                            | Gradle Project Path  | Applied Plugins                                             | Description                                                                                                                                                                   |
 |------------------------------------------------------------------------|----------------------|:------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [`/build.gradle`](../build.gradle)                                     | `:`                  | &mdash;                                                     | The root project. Since this project is reused for Kits, the root project name is based on the checkout folder, which actually can lead to issues if it is called `NeoForge`. |
-| [`/projects/neoforge/build.gradle`](../projects/neoforge/build.gradle) | `:neoforge`          | [NeoDevPlugin](#neodevplugin)                               | The core NeoForge project, which produces the artifacts that will be published.                                                                                               |
+| [`/projects/neoforge/build.gradle`](../projects/slime/build.gradle) | `:neoforge`          | [NeoDevPlugin](#neodevplugin)                               | The core NeoForge project, which produces the artifacts that will be published.                                                                                               |
 | [`/projects/base/build.gradle`](../projects/base/build.gradle)         | `:base`              | [NeoDevBasePlugin](#neodevbaseplugin)                       | A utility project that contains the Minecraft sources without any NeoForge additions. Can be used to quickly compare what NeoForge has changed.                               |
 | [`/tests/build.gradle`](../tests/build.gradle)                         | `:tests`             | [NeoDevExtraPlugin](#neodevextraplugin)                     | Contains the game and unit tests for NeoForge.                                                                                                                                |
 | [`/testframework/build.gradle`](../testframework/build.gradle)         | `:testframework`     | [MinecraftDependenciesPlugin](#minecraftdependenciesplugin) | A library providing support classes around writing game tests.                                                                                                                |
@@ -43,7 +43,7 @@ It creates a `setup` task that performs the following actions via various subtas
 - Decompile Minecraft using the [NeoForm Runtime](https://github.com/neoforged/neoformruntime) and Minecraft version specific [NeoForm data](https://github.com/neoforged/NeoForm).
 - Applies [Access Transformers](../src/main/resources/META-INF/accesstransformer.cfg) to Minecraft sources.
 - Applies [NeoForge patches](../patches) to Minecraft sources. Any rejects are saved to the `/rejects` folder in the repository for manual inspection. During updates to new versions, the task can be run with `-Pupdating=true` to apply patches more leniently.
-- Unpacks the patched sources to `projects/neoforge/src/main/java`.
+- Unpacks the patched sources to `../projects/slime/src/main/java`.
 
 #### Config Generation
 

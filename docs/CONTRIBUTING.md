@@ -16,7 +16,7 @@ Contributing to NeoForge
 5. Make a branch
 6. Run `gradlew setup` from the project root to decompile sources and apply current patches
 7. Import project into your IDE (IntelliJ/Eclipse) or Reload Gradle Project
-8. Modify the patched Minecraft sources in `projects/neoforge/src/main/java` as needed. The unmodified sources are available in `projects/base/src/main/java` for your reference. Do not modify these.
+8. Modify the patched Minecraft sources in `../projects/slime/src/main/java` as needed. The unmodified sources are available in `projects/base/src/main/java` for your reference. Do not modify these.
 9. Test your changes
    - Run the game (Runs are available in the IDE)
      - Runs starting with `base -` run Vanilla without NeoForge or its patches.

@@ -1,8 +1,8 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        maven { url = 'https://maven.neoforged.net/releases' }
         mavenLocal()
+        maven { url = 'https://maven.neoforged.net/releases' }
     }
 }
 
@@ -22,23 +22,37 @@ dependencyResolutionManagement {
     rulesMode = RulesMode.FAIL_ON_PROJECT_RULES
     repositories {
         mavenCentral()
+        mavenLocal()
+        maven { url = 'https://hub.spigotmc.org/nexus/content/groups/public/' }
+        maven { url = "https://repo.papermc.io/repository/maven-public/" }
+        maven { url = "https://jitpack.io" }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Modrinth"
+                    url = "https://api.modrinth.com/maven"
+                }
+            }
+            // forRepositories(fg.repository) // Uncomment when using ForgeGradle
+            filter {
+                includeGroup "maven.modrinth"
+            }
+        }
     }
 }
 
-if (rootProject.name.toLowerCase(Locale.ROOT) == "neoforge") {
+if (rootProject.name.toLowerCase(Locale.ROOT) == "slime") {
     // Solve name clashes between projects/neoforge and the rootProject for Eclipse.
-    rootProject.name = "NeoForge-Root"
+    rootProject.name = "Slime-Root"
 }
 
 include ':base'
 project(':base').projectDir = file('projects/base')
 include ':neoforge'
-project(':neoforge').projectDir = file('projects/neoforge')
+project(':neoforge').projectDir = file('projects/slime')
 
-include ':tests'
-project(":tests").projectDir = file("tests")
+include 'slimelauncher'
 
-include ':testframework'
 include ':coremods'
 // Ensure a unique artifact id within JIJ that does not conflict with net.neoforged:coremods, which is
 // another external dependency.
