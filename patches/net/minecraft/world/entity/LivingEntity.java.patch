@@ -34,7 +34,7 @@
  
      protected LivingEntity(EntityType<? extends LivingEntity> type, Level level) {
          super(type, level);
-@@ -358,12 +_,15 @@
+@@ -358,14 +_,13 @@
              .add(Attributes.AIR_DRAG_MODIFIER)
              .add(Attributes.FRICTION_MODIFIER)
              .add(Attributes.NAME_TAG_DISTANCE)
@@ -45,11 +45,12 @@
  
      @Override
      protected void checkFallDamage(double ya, boolean onGround, BlockState onState, BlockPos pos) {
-         if (!this.isInWater()) {
-+            // TODO: prior to 26.1-snapshot-8 we called our patched in method 'this.updateInWaterStateAndDoWaterCurrentPushing(false)'
-             this.updateFluidInteraction();
-         }
+-        if (!this.isInWater()) {
+-            this.updateFluidInteraction();
+-        }
  
+         if (this.level() instanceof ServerLevel level && onGround && this.fallDistance > 0.0) {
+             this.onChangedBlock(level, pos);
 @@ -385,7 +_,8 @@
  
                  double scale = Math.min(0.2F + power / 15.0, 2.5);
