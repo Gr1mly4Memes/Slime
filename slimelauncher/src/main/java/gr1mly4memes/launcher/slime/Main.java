@@ -26,10 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    public static final boolean DEBUG = Boolean.getBoolean("youer.debug");
+    public static final boolean DEBUG = Boolean.getBoolean("slime.debug");
     public static final List<String> mainArgs = new ArrayList<>();
     public static String MCVERSION;
-    //public static i18n i18n;
 
     public static String getVersion() {
         return (Main.class.getPackage().getImplementationVersion() != null) ? Main.class.getPackage().getImplementationVersion() : MCVERSION;
@@ -37,14 +36,13 @@ public class Main {
 
     @SneakyThrows
     static void main(String[] args) {
-        System.setProperty("org.jline.terminal.disableDeprecatedProviderWarning", "true");
         mainArgs.addAll(List.of(args));
         DataParser.parseVersions();
         DataParser.parseLaunchArgs();
 
         long startTime = System.currentTimeMillis();
         if (System.getProperty("log4j2.configurationFile") == null) {
-            System.setProperty("log4j2.configurationFile", "log4j2_youer.xml");
+            System.setProperty("log4j2.configurationFile", "log4j2_slime.xml");
         }
         System.out.println(" ");
         System.out.println(("Deployment environment..."));
