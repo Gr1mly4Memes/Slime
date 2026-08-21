@@ -1,0 +1,41 @@
+--- a/net/minecraft/world/level/BaseCommandBlock.java
++++ b/net/minecraft/world/level/BaseCommandBlock.java
+@@ -30,6 +_,9 @@
+     private @Nullable Component lastOutput;
+     private String command = "";
+     private @Nullable Component customName;
++    // CraftBukkit start
++    public abstract org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper);
++    // CraftBukkit end
+ 
+     public int getSuccessCount() {
+         return this.successCount;
+@@ -129,8 +_,12 @@
+         return true;
+     }
+ 
+-    private BaseCommandBlock.@Nullable CloseableCommandBlockSource createSource(ServerLevel level) {
+-        return this.trackOutput ? new BaseCommandBlock.CloseableCommandBlockSource(level) : null;
++    public BaseCommandBlock.@Nullable CloseableCommandBlockSource createSource(ServerLevel level) {
++        // CraftBukkit start - don't use a null source with no output as we still need the Bukkit sender, just close it immediately to give the same effect
++        BaseCommandBlock.CloseableCommandBlockSource source = new BaseCommandBlock.CloseableCommandBlockSource(level);
++        source.closed = !this.trackOutput;
++        return source;
++        // CraftBukkit end
+     }
+ 
+     public Component getName() {
+@@ -171,6 +_,13 @@
+         protected CloseableCommandBlockSource(ServerLevel level) {
+             this.level = level;
+         }
++
++        // CraftBukkit start
++        @Override
++        public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
++            return BaseCommandBlock.this.getBukkitSender(wrapper);
++        }
++        // CraftBukkit end
+ 
+         @Override
+         public boolean acceptsSuccess() {

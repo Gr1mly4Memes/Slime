@@ -9,16 +9,7 @@
                  this.makeSound(SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED);
                  this.finishConversion();
              }
-@@ -182,7 +_,7 @@
-         }
-     }
- 
--    public static boolean checkHoglinSpawnRules(EntityType<Hoglin> type, LevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
-+    public static boolean checkHoglinSpawnRules(EntityType<? extends Hoglin> type, LevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
-         return !level.getBlockState(pos.below()).is(Blocks.NETHER_WART_BLOCK);
-     }
- 
-@@ -248,7 +_,10 @@
+@@ -248,7 +_,12 @@
  
      private void finishConversion() {
          this.convertTo(
@@ -26,7 +17,9 @@
 +            EntityTypes.ZOGLIN, ConversionParams.single(this, true, false), zoglin -> {
 +                zoglin.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 200, 0));
 +                net.neoforged.neoforge.event.EventHooks.onLivingConvert(this, zoglin);
-+            }
++            },
++            org.bukkit.event.entity.EntityTransformEvent.TransformReason.PIGLIN_ZOMBIFIED,
++            org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.PIGLIN_ZOMBIFIED // CraftBukkit - add spawn and transform reasons
          );
      }
  

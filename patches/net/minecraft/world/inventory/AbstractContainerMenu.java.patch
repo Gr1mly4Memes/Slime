@@ -1,5 +1,263 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
+@@ -5,11 +_,15 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Sets;
+ import com.google.common.collect.Table;
++import gr1mly4memes.slime.bukkit.inventory.SlimeModsInventory;
+ import com.mojang.logging.LogUtils;
+ import it.unimi.dsi.fastutil.ints.IntArrayList;
+ import it.unimi.dsi.fastutil.ints.IntList;
+ import java.util.ArrayList;
++import java.util.HashMap;
+ import java.util.List;
++import java.util.Map;
++import java.util.Objects;
+ import java.util.Optional;
+ import java.util.OptionalInt;
+ import java.util.Set;
+@@ -20,6 +_,8 @@
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.network.HashedStack;
++import net.minecraft.network.chat.Component;
++import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.Container;
+@@ -32,6 +_,16 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.entity.BlockEntity;
++import net.neoforged.neoforge.common.CommonHooks;
++import org.bukkit.Material;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.Event;
++import org.bukkit.event.inventory.InventoryDragEvent;
++import org.bukkit.event.inventory.InventoryType;
++import org.bukkit.inventory.InventoryView;
+ import org.jspecify.annotations.Nullable;
+ import org.slf4j.Logger;
+ 
+@@ -64,6 +_,83 @@
+     private @Nullable ContainerSynchronizer synchronizer;
+     private boolean suppressRemoteUpdates;
+ 
++    // CraftBukkit start
++    public boolean checkReachable = true;
++    // Slime start - mods inventory
++    public InventoryView bukkitView ;
++    public Player containerOwner = null;
++
++    public InventoryView getBukkitView(){
++        if (bukkitView == null && containerOwner != null) {
++            org.bukkit.inventory.Inventory view = new CraftInventory(new SlimeModsInventory(this, containerOwner));
++            view.getType().setMods(true);
++            bukkitView = new CraftInventoryView<>(containerOwner.getBukkitEntity(), view, this);
++        }
++        return bukkitView;
++    }
++
++    public InventoryView getBukkitView(AbstractContainerMenu other){
++        if (other.bukkitView == null && other.containerOwner != null) {
++            org.bukkit.inventory.Inventory view = new CraftInventory(new SlimeModsInventory(other, containerOwner));
++            view.getType().setMods(true);
++            return new CraftInventoryView<>(other.containerOwner.getBukkitEntity(), view, other);
++        }
++        return other.bukkitView;
++    }
++
++    public void transferTo(AbstractContainerMenu other, CraftHumanEntity player) {
++        other.containerOwner = player.getHandle();
++        this.containerOwner = player.getHandle();
++        InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
++        if (destination == null) {
++            destination = this.getBukkitView(other);
++        }
++        if (source == null) {
++            org.bukkit.inventory.Inventory view = new CraftInventory(new SlimeModsInventory(this, containerOwner));
++            view.getType().setMods(true);
++            source = new CraftInventoryView<>(containerOwner.getBukkitEntity(), view, this);
++        }
++        if (source.getPlayer() == null) {
++            source.setPlayer(player);
++        }
++        ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++        ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++        ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++        ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++    }
++    // Slime end - mods inventory
++    @Nullable
++    private Component title = null;
++    public final Component getTitle() {
++        if (this.title == null) {
++            if (this.menuType != null) {
++                var key = BuiltInRegistries.MENU.getKey(this.menuType);
++                if (key == null) {
++                    this.title = Component.literal(this.toString());
++                } else {
++                    this.title = Component.translatable(key.toString());
++                }
++            } else {
++                this.title = Component.literal(this.toString());
++            }
++        }
++        return this.title;
++    }
++    public final void setTitle(Component title) {
++        if (this.title == null) {
++            if (title == null) {
++                this.title = getTitle();
++            } else {
++                this.title = title;
++            }
++        }
++    }
++    protected boolean opened;
++    public void startOpen() {
++        this.opened = true;
++    }
++    // CraftBukkit end
++
+     protected AbstractContainerMenu(@Nullable MenuType<?> menuType, int containerId) {
+         this.menuType = menuType;
+         this.containerId = containerId;
+@@ -177,6 +_,16 @@
+         }
+     }
+ 
++    // CraftBukkit start
++    public void broadcastCarriedItem() {
++        ItemStack itemstack = this.getCarried().copy();
++        this.remoteCarried.force(itemstack);
++        if (this.synchronizer != null) {
++            this.synchronizer.sendCarriedChange(this, itemstack);
++        }
++    }
++    // CraftBukkit end
++
+     public void removeSlotListener(ContainerListener listener) {
+         this.containerListeners.remove(listener);
+     }
+@@ -359,7 +_,7 @@
+                 }
+             } else if (this.quickcraftStatus == 2) {
+                 if (!this.quickcraftSlots.isEmpty()) {
+-                    if (this.quickcraftSlots.size() == 1) {
++                    if (false && this.quickcraftSlots.size() == 1) { // CraftBukkit - treat everything as a drag since we are unable to easily call InventoryClickEvent instead
+                         int slot = this.quickcraftSlots.iterator().next().index;
+                         this.resetQuickCraft();
+                         this.doClick(slot, this.quickcraftType, ContainerInput.PICKUP, player);
+@@ -373,7 +_,7 @@
+                     }
+ 
+                     int remaining = this.getCarried().getCount();
+-
++                    Map<Integer, ItemStack> draggedSlots = new HashMap<Integer, ItemStack>(); // CraftBukkit - Store slots from drag in map (raw slot id -> new stack)
+                     for (Slot slot : this.quickcraftSlots) {
+                         ItemStack carriedItemStack = this.getCarried();
+                         if (slot != null
+@@ -385,12 +_,48 @@
+                             int maxSize = Math.min(source.getMaxStackSize(), slot.getMaxStackSize(source));
+                             int newCount = Math.min(getQuickCraftPlaceCount(this.quickcraftSlots.size(), this.quickcraftType, source) + carry, maxSize);
+                             remaining -= newCount - carry;
+-                            slot.setByPlayer(source.copyWithCount(newCount));
+-                        }
+-                    }
+-
+-                    source.setCount(remaining);
+-                    this.setCarried(source);
++                            // slot.setByPlayer(source.copyWithCount(newCount));
++                            draggedSlots.put(slot.index, source.copyWithCount(newCount)); // CraftBukkit - Put in map instead of setting
++                        }
++                    }
++
++                    // CraftBukkit start - InventoryDragEvent
++                    InventoryView view = getBukkitView();
++                    org.bukkit.inventory.ItemStack newcursor = CraftItemStack.asCraftMirror(source);
++                    newcursor.setAmount(remaining);
++                    Map<Integer, org.bukkit.inventory.ItemStack> eventmap = new HashMap<Integer, org.bukkit.inventory.ItemStack>();
++                    for (Map.Entry<Integer, ItemStack> ditem : draggedSlots.entrySet()) {
++                        eventmap.put(ditem.getKey(), CraftItemStack.asBukkitCopy(ditem.getValue()));
++                    }
++
++                    // It's essential that we set the cursor to the new value here to prevent item duplication if a plugin closes the inventory.
++                    ItemStack oldCursor = this.getCarried();
++                    this.setCarried(CraftItemStack.asNMSCopy(newcursor));
++
++                    InventoryDragEvent event = new InventoryDragEvent(view, (newcursor.getType() != Material.AIR ? newcursor : null), CraftItemStack.asBukkitCopy(oldCursor), this.quickcraftType == 1, eventmap);
++                    player.level().getCraftServer().getPluginManager().callEvent(event);
++
++                    // Whether or not a change was made to the inventory that requires an update.
++                    boolean needsUpdate = event.getResult() != Event.Result.DEFAULT;
++
++                    if (event.getResult() != Event.Result.DENY) {
++                        for (Map.Entry<Integer, ItemStack> dslot : draggedSlots.entrySet()) {
++                            view.setItem(dslot.getKey(), CraftItemStack.asBukkitCopy(dslot.getValue()));
++                        }
++                        // The only time the carried item will be set to null is if the inventory is closed by the server.
++                        // If the inventory is closed by the server, then the cursor items are dropped.  This is why we change the cursor early.
++                        if (this.getCarried() != null) {
++                            this.setCarried(CraftItemStack.asNMSCopy(event.getCursor()));
++                            needsUpdate = true;
++                        }
++                    } else {
++                        this.setCarried(oldCursor);
++                    }
++
++                    if (needsUpdate && player instanceof ServerPlayer) {
++                        this.sendAllDataToRemote();
++                    }
++                    // CraftBukkit end
+                 }
+ 
+                 this.resetQuickCraft();
+@@ -404,8 +_,11 @@
+             if (slotIndex == -999) {
+                 if (!this.getCarried().isEmpty()) {
+                     if (clickAction == ClickAction.PRIMARY) {
+-                        player.drop(this.getCarried(), true);
++                        // CraftBukkit start
++                        ItemStack carried = this.getCarried();
+                         this.setCarried(ItemStack.EMPTY);
++                        player.drop(carried, true);
++                        // CraftBukkit start
+                     } else {
+                         player.drop(this.getCarried().split(1), true);
+                     }
+@@ -467,6 +_,15 @@
+                 }
+ 
+                 slot.setChanged();
++                // CraftBukkit start - Make sure the client has the right slot contents
++                if (player instanceof ServerPlayer && slot.getMaxStackSize() != Container.MAX_STACK) {
++                    ((ServerPlayer) player).connection.send(new ClientboundContainerSetSlotPacket(this.containerId, this.incrementStateId(), slot.index, slot.getItem()));
++                    // Updating a crafting inventory makes the client reset the result slot, have to send it again
++                    if (this.getBukkitView().getType() == InventoryType.WORKBENCH || this.getBukkitView().getType() == InventoryType.CRAFTING) {
++                        ((ServerPlayer) player).connection.send(new ClientboundContainerSetSlotPacket(this.containerId, this.incrementStateId(), 0, this.getSlot(0).getItem()));
++                    }
++                }
++                // CraftBukkit end
+             }
+         } else if (containerInput == ContainerInput.SWAP && (buttonNum >= 0 && buttonNum < 9 || buttonNum == 40)) {
+             ItemStack source = inventory.getItem(buttonNum);
+@@ -527,7 +_,11 @@
+                     }
+ 
+                     itemStack = slot.safeTake(amount, Integer.MAX_VALUE, player);
+-                    player.drop(itemStack, true);
++                    // CraftBukkit start - SPIGOT-8010: break loop
++                    if (player.drop(itemStack, true) == null) {
++                        break;
++                    }
++                    // CraftBukkit end
+                     player.handleCreativeModeItemDrop(itemStack);
+                 }
+             }
 @@ -558,6 +_,13 @@
      }
  
@@ -14,3 +272,26 @@
          FeatureFlagSet enabledFeatures = player.level().enabledFeatures();
          return carried.isItemEnabled(enabledFeatures) && carried.overrideStackedOnOther(slot, clickAction, player)
              ? true
+@@ -587,8 +_,9 @@
+         if (player instanceof ServerPlayer) {
+             ItemStack carried = this.getCarried();
+             if (!carried.isEmpty()) {
++                this.setCarried(ItemStack.EMPTY); // CraftBukkit - SPIGOT-4556 - from below
+                 dropOrPlaceInInventory(player, carried);
+-                this.setCarried(ItemStack.EMPTY);
++                // this.setCarried(ItemStack.EMPTY); // CraftBukkit - moved up
+             }
+         }
+     }
+@@ -769,6 +_,11 @@
+     }
+ 
+     public ItemStack getCarried() {
++        // CraftBukkit start
++        if (this.carried.isEmpty()) {
++            this.setCarried(ItemStack.EMPTY);
++        }
++        // CraftBukkit end
+         return this.carried;
+     }
+ 

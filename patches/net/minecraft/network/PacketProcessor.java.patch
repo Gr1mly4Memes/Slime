@@ -1,6 +1,13 @@
 --- a/net/minecraft/network/PacketProcessor.java
 +++ b/net/minecraft/network/PacketProcessor.java
-@@ -13,7 +_,7 @@
+@@ -7,13 +_,14 @@
+ import net.minecraft.ReportedException;
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.network.protocol.PacketUtils;
++import net.minecraft.server.network.ServerCommonPacketListenerImpl;
+ import org.slf4j.Logger;
+ 
+ import net.neoforged.neoforge.network.handling.QueuedPacket;
  
  public class PacketProcessor implements AutoCloseable {
      private static final Logger LOGGER = LogUtils.getLogger();
@@ -9,12 +16,10 @@
      private final Thread runningThread;
      private boolean closed;
  
-@@ -31,6 +_,19 @@
-         }
- 
+@@ -33,6 +_,19 @@
          this.packetsToBeHandled.add(new PacketProcessor.ListenerAndPacket<>(listener, packet));
-+    }
-+
+     }
+ 
 +    /**
 +     * Neo: Enqueue a main thread task from a custom payload packet handler.
 +     * Use via {@link net.neoforged.neoforge.network.handling.IPayloadContext#enqueueWork}
@@ -26,6 +31,16 @@
 +        } else {
 +            this.packetsToBeHandled.add(new net.neoforged.neoforge.network.handling.QueuedPacket.CustomPayload(task));
 +        }
-     }
- 
++    }
++
      public void processQueuedPackets() {
+         if (!this.closed) {
+             while (!this.packetsToBeHandled.isEmpty()) {
+@@ -48,6 +_,7 @@
+ 
+     private record ListenerAndPacket<T extends PacketListener>(T listener, Packet<T> packet) implements QueuedPacket {
+         public void handle() {
++            if (this.listener instanceof ServerCommonPacketListenerImpl serverCommonPacketListener && serverCommonPacketListener.processedDisconnect) return; // CraftBukkit - Don't handle sync packets for kicked players
+             if (this.listener.shouldHandleMessage(this.packet)) {
+                 try {
+                     this.packet.handle(this.listener);

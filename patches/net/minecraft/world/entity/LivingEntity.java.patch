@@ -1,5 +1,50 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -12,9 +_,11 @@
+ import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
+ import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
++import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.ConcurrentModificationException;
+ import java.util.EnumMap;
++import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+@@ -22,6 +_,8 @@
+ import java.util.Set;
+ import java.util.UUID;
+ import java.util.Map.Entry;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.BiConsumer;
+ import java.util.function.Consumer;
+ import java.util.function.Function;
+@@ -98,6 +_,7 @@
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.component.AttackRange;
+ import net.minecraft.world.item.component.BlocksAttacks;
++import net.minecraft.world.item.component.Consumable;
+ import net.minecraft.world.item.component.DeathProtection;
+ import net.minecraft.world.item.component.KineticWeapon;
+ import net.minecraft.world.item.component.Weapon;
+@@ -134,6 +_,15 @@
+ import net.minecraft.world.scores.Scoreboard;
+ import net.minecraft.world.waypoints.Waypoint;
+ import net.minecraft.world.waypoints.WaypointTransmitter;
++import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.ArrowBodyCountChangeEvent;
++import org.bukkit.event.entity.EntityDamageEvent;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
++import org.bukkit.event.entity.EntityRegainHealthEvent;
++import org.bukkit.event.entity.EntityRemoveEvent;
++import org.bukkit.event.player.PlayerDropItemEvent;
+ import org.jetbrains.annotations.Contract;
+ import org.jspecify.annotations.Nullable;
+ import org.slf4j.Logger;
 @@ -211,7 +_,8 @@
      public static final float ELYTRA_VERTICAL_AIR_DRAG = 0.98F;
      public static final float BASE_SWIM_SPEED = 0.02F;
@@ -18,10 +63,14 @@
 +    @Deprecated
 +    public static final Predicate<LivingEntity> PLAYER_NOT_WEARING_DISGUISE_ITEM = livingEntity -> PLAYER_NOT_WEARING_DISGUISE_ITEM_FOR_TARGET.test(livingEntity, null);
      private final AttributeMap attributes;
-     private final CombatTracker combatTracker = new CombatTracker(this);
-     private final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
-@@ -284,6 +_,13 @@
-     protected final EntityEquipment equipment;
+     public CombatTracker combatTracker = new CombatTracker(this);
+     public final Map<Holder<MobEffect>, MobEffectInstance> activeEffects = Maps.newHashMap();
+@@ -281,14 +_,40 @@
+     private final EnumMap<EquipmentSlot, Reference2ObjectMap<Enchantment, Set<EnchantmentLocationBasedEffect>>> activeLocationDependentEnchantments = new EnumMap<>(
+         EquipmentSlot.class
+     );
+-    protected final EntityEquipment equipment;
++    public final EntityEquipment equipment;
      private Waypoint.Icon locatorBarIcon = new Waypoint.Icon();
      public @Nullable Vec3 currentImpulseImpactPos;
 +    /**
@@ -31,16 +80,43 @@
 +     * the stack before the method's return.
 +     **/
 +    protected java.util.@Nullable Stack<net.neoforged.neoforge.common.damagesource.DamageContainer> damageContainers = new java.util.Stack<>();
++
++    // CraftBukkit start
++    public int expToDrop;
++    public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
++    public final org.bukkit.craftbukkit.attribute.CraftAttributeMap craftAttributes;
++    public boolean collides = true;
++    public Set<UUID> collidableExemptions = new HashSet<>();
++    public boolean bukkitPickUpLoot;
++    public int invulnerableDuration = 20;
++
++    @Override
++    public float getBukkitYaw() {
++        return getYHeadRot();
++    }
++    // CraftBukkit end
++    public EntityDamageEvent bukkitEntityDamageEvent;
  
      protected LivingEntity(EntityType<? extends LivingEntity> type, Level level) {
          super(type, level);
-@@ -358,14 +_,13 @@
+         this.attributes = new AttributeMap(DefaultAttributes.getSupplier(type));
++        this.craftAttributes = new CraftAttributeMap(attributes); // CraftBukkit
++        this.fake$setHealth(true);
+         this.setHealth(this.getMaxHealth());
++        this.entityData.set(DATA_HEALTH_ID, (float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
+         this.equipment = this.createEquipment();
+         this.blocksBuilding = true;
+         this.reapplyPosition();
+@@ -357,16 +_,14 @@
+             .add(Attributes.BOUNCINESS)
              .add(Attributes.AIR_DRAG_MODIFIER)
              .add(Attributes.FRICTION_MODIFIER)
-             .add(Attributes.NAME_TAG_DISTANCE)
-+            .add(net.neoforged.neoforge.common.NeoForgeMod.SWIM_SPEED)
-+            .add(net.neoforged.neoforge.common.NeoForgeMod.GLIDING_FLIGHT)
-             .add(Attributes.BELOW_NAME_DISTANCE);
+-            .add(Attributes.NAME_TAG_DISTANCE)
+-            .add(Attributes.BELOW_NAME_DISTANCE);
++                .add(Attributes.NAME_TAG_DISTANCE)
++                .add(net.neoforged.neoforge.common.NeoForgeMod.SWIM_SPEED)
++                .add(net.neoforged.neoforge.common.NeoForgeMod.GLIDING_FLIGHT)
++                .add(Attributes.BELOW_NAME_DISTANCE);
      }
  
      @Override
@@ -48,16 +124,24 @@
 -        if (!this.isInWater()) {
 -            this.updateFluidInteraction();
 -        }
- 
+-
          if (this.level() instanceof ServerLevel level && onGround && this.fallDistance > 0.0) {
              this.onChangedBlock(level, pos);
-@@ -385,7 +_,8 @@
+             double power = Math.max(0, Mth.floor(this.calculateFallPower(this.fallDistance)));
+@@ -385,7 +_,15 @@
  
                  double scale = Math.min(0.2F + power / 15.0, 2.5);
                  int particles = (int)(150.0 * scale);
 -                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, onState), x, y, z, particles, 0.0, 0.0, 0.0, 0.15F);
-+                if (!onState.addLandingEffects(level, pos, onState, this, particles))
-+                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, onState, pos), x, y, z, particles, 0.0, 0.0, 0.0, 0.15F);
++                if (!onState.addLandingEffects(level, pos, onState, this, particles)) {
++                    // CraftBukkit start - visiblity api
++                    if (this instanceof ServerPlayer) {
++                        level.sendParticlesSource((ServerPlayer) this, new BlockParticleOption(ParticleTypes.BLOCK, onState, pos), false, false, x, y, z, particles, 0.0, 0.0, 0.0, 0.15F);
++                    } else {
++                        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, onState, pos), x, y, z, particles, 0.0, 0.0, 0.0, 0.15F);
++                    }
++                    // CraftBukkit end
++                }
              }
          }
  
@@ -69,33 +153,186 @@
      public boolean canBreatheUnderwater() {
          return this.is(EntityTypeTags.CAN_BREATHE_UNDER_WATER);
      }
-@@ -435,6 +_,9 @@
-                 }
-             }
+@@ -574,6 +_,7 @@
+         this.deathTime++;
+         if (this.deathTime >= 20 && !this.level().isClientSide() && !this.isRemoved()) {
+             this.level().broadcastEntityEvent(this, (byte)60);
++            this.removeReason(EntityRemoveEvent.Cause.DEATH); // CraftBukkit - add Bukkit remove cause
+             this.remove(Entity.RemovalReason.KILLED);
+         }
+     }
+@@ -688,10 +_,16 @@
+     }
  
-+            int airSupply = this.getAirSupply();
-+            net.neoforged.neoforge.common.CommonHooks.onLivingBreathe(this, level, airSupply - decreaseAirSupply(airSupply), increaseAirSupply(airSupply) - airSupply);
-+            if (false) // Neo: Handled in CommonHooks#onLivingBreathe(LivingEntity, int, int)
-             if (this.isEyeInFluid(FluidTags.WATER)
-                 && !level.getBlockState(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN)) {
-                 boolean canDrownInWater = !this.canBreatheUnderwater()
-@@ -790,7 +_,11 @@
+     public void onEquipItem(EquipmentSlot slot, ItemStack oldStack, ItemStack stack) {
++        // CraftBukkit start
++        onEquipItem(slot, oldStack, stack, false);
++    }
++
++    public void onEquipItem(EquipmentSlot slot, ItemStack oldStack, ItemStack stack, boolean silent) {
++        // CraftBukkit end
+         if (!this.level().isClientSide() && !this.isSpectator()) {
+             if (!ItemStack.isSameItemSameComponents(oldStack, stack) && !this.firstTick) {
+                 Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
+-                if (!this.isSilent() && equippable != null && slot == equippable.slot()) {
++                if (!this.isSilent() && equippable != null && slot == equippable.slot() && !silent) { // CraftBukkit
+                     this.level()
+                         .playSeededSound(
+                             null,
+@@ -719,11 +_,18 @@
  
-         ItemEntity entity = this.createItemStackToDrop(itemStack, randomly, thrownFromHand);
-         if (entity != null) {
--            this.level().addFreshEntity(entity);
-+            if (captureDrops() != null) {
-+                captureDrops().add(entity);
-+            } else {
-+                this.level().addFreshEntity(entity);
-+            }
+     @Override
+     public void remove(Entity.RemovalReason reason) {
++        // CraftBukkit start - add Bukkit remove cause
++        this.remove(reason, null);
++    }
++
++    @Override
++    public void remove(Entity.RemovalReason reason, EntityRemoveEvent.Cause cause) {
++        // CraftBukkit end
+         if ((reason == Entity.RemovalReason.KILLED || reason == Entity.RemovalReason.DISCARDED) && this.level() instanceof ServerLevel level) {
+             this.triggerOnDeathMobEffects(level, reason);
          }
  
-         return entity;
-@@ -856,8 +_,10 @@
+-        super.remove(reason);
++        super.remove(reason, cause); // CraftBukkit
+         this.brain.clearMemories();
+     }
+ 
+@@ -740,6 +_,7 @@
+             effect.onMobRemoved(level, this, reason);
+         }
+ 
++        this.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DEATH); // CraftBukkit
+         this.activeEffects.clear();
+     }
+ 
+@@ -779,21 +_,54 @@
+     }
+ 
+     public @Nullable ItemEntity drop(ItemStack itemStack, boolean randomly, boolean thrownFromHand) {
++        // CraftBukkit start - SPIGOT-2942: Add boolean to call event
++        return drop(itemStack, randomly, thrownFromHand, true);
++    }
++
++    public @Nullable ItemEntity drop(ItemStack itemStack, boolean randomly, boolean thrownFromHand, boolean callEvent) {
++        // CraftBukkit end
+         if (itemStack.isEmpty()) {
+             return null;
+-        }
+-
+-        if (this.level().isClientSide()) {
++        } else if (this.level().isClientSide()) {
+             this.swing(InteractionHand.MAIN_HAND);
+             return null;
+-        }
+-
+-        ItemEntity entity = this.createItemStackToDrop(itemStack, randomly, thrownFromHand);
+-        if (entity != null) {
+-            this.level().addFreshEntity(entity);
+-        }
+-
+-        return entity;
++        } else {
++            ItemEntity entity = this.createItemStackToDrop(itemStack, randomly, thrownFromHand);
++            if (entity != null) {
++                if (captureDrops() != null) {
++                    captureDrops().add(entity);
++                } else {
++                    // CraftBukkit start - fire PlayerDropItemEvent
++                    if (callEvent && this instanceof ServerPlayer) {
++                        org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.getBukkitEntity();
++                        org.bukkit.entity.Item drop = (org.bukkit.entity.Item) entity.getBukkitEntity();
++
++                        PlayerDropItemEvent event = new PlayerDropItemEvent(player, drop);
++                        this.level().getCraftServer().getPluginManager().callEvent(event);
++
++                        if (event.isCancelled()) {
++                            org.bukkit.inventory.ItemStack cur = player.getInventory().getItemInHand();
++                            if (thrownFromHand && (cur == null || cur.getAmount() == 0)) {
++                                // The complete stack was dropped
++                                player.getInventory().setItemInHand(drop.getItemStack());
++                            } else if (thrownFromHand && cur.isSimilar(drop.getItemStack()) && cur.getAmount() < cur.getMaxStackSize() && drop.getItemStack().getAmount() == 1) {
++                                // Only one item is dropped
++                                cur.setAmount(cur.getAmount() + 1);
++                                player.getInventory().setItemInHand(cur);
++                            } else {
++                                // Fallback
++                                player.getInventory().addItem(drop.getItemStack());
++                            }
++                            return null;
++                        }
++                    }
++                    // CraftBukkit end
++                    this.level().addFreshEntity(entity);
++                }
++            }
++
++            return entity;
++        }
+     }
+ 
+     @Override
+@@ -811,9 +_,17 @@
+             this.effectsDirty = true;
+         }
+ 
++        // CraftBukkit start
++        float maxHealth = input.getFloatOr("Bukkit.MaxHealth", -1);
++        if (maxHealth > 0) {
++            this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHealth);
++        }
++        // CraftBukkit end
++
+         this.setHealth(input.getFloatOr("Health", this.getMaxHealth()));
+         this.hurtTime = input.getShortOr("HurtTime", (short)0);
+         this.deathTime = input.getShortOr("DeathTime", (short)0);
++        this.lastHurtByMobTimestamp = input.getIntOr("HurtByTimestamp", 0);
+         input.getString("Team").ifPresent(teamName -> {
+             Scoreboard scoreboard = this.level().getScoreboard();
+             PlayerTeam team = scoreboard.getPlayerTeam(teamName);
+@@ -847,23 +_,65 @@
+         this.updateDirtyEffects();
+     }
+ 
++    // CraftBukkit start
++    private boolean isTickingEffects = false;
++    private List<ProcessableEffect> effectsToProcess = Lists.newArrayList();
++
++    private static class ProcessableEffect {
++
++        private Holder<MobEffect> type;
++        private MobEffectInstance effect;
++        private final EntityPotionEffectEvent.Cause cause;
++
++        private ProcessableEffect(MobEffectInstance effect, EntityPotionEffectEvent.Cause cause) {
++            this.effect = effect;
++            this.cause = cause;
++        }
++
++        private ProcessableEffect(Holder<MobEffect> type, EntityPotionEffectEvent.Cause cause) {
++            this.type = type;
++            this.cause = cause;
++        }
++    }
++    // CraftBukkit end
++
+     protected void tickEffects() {
+         if (this.level() instanceof ServerLevel serverLevel) {
+             Iterator<Holder<MobEffect>> iterator = this.activeEffects.keySet().iterator();
+ 
++            isTickingEffects = true; // CraftBukkit
+             try {
+                 while (iterator.hasNext()) {
                      Holder<MobEffect> mobEffect = iterator.next();
                      MobEffectInstance effect = this.activeEffects.get(mobEffect);
                      if (!effect.tickServer(serverLevel, this, () -> this.onEffectUpdated(effect, true, null))) {
++                        // CraftBukkit start
++                        EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.EXPIRATION);
++                        if (event.isCancelled()) {
++                            continue;
++                        }
++                        // CraftBukkit end
 +                        if (!net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.entity.living.MobEffectEvent.Expired(this, effect)).isCanceled()) {
                          iterator.remove();
                          this.onEffectsRemoved(List.of(effect));
@@ -103,6 +340,23 @@
                      } else if (effect.getDuration() % 600 == 0) {
                          this.onEffectUpdated(effect, false, null);
                      }
+                 }
+             } catch (ConcurrentModificationException var6) {
+             }
++            // CraftBukkit start
++            isTickingEffects = false;
++            for (ProcessableEffect e : effectsToProcess) {
++                if (e.effect != null) {
++                    addEffect(e.effect, e.cause);
++                } else {
++                    removeEffect(e.type, e.cause);
++                }
++            }
++            effectsToProcess.clear();
++            // CraftBukkit end
+         } else {
+             for (MobEffectInstance effect : this.activeEffects.values()) {
+                 effect.tickClient();
 @@ -904,8 +_,9 @@
          List<ParticleOptions> visibleEffectParticles = this.activeEffects
              .values()
@@ -123,43 +377,135 @@
          return visibilityPercent;
      }
  
-@@ -982,9 +_,14 @@
+@@ -973,19 +_,32 @@
+         this.entityData.set(DATA_EFFECT_PARTICLES, List.of());
+     }
+ 
++    private final AtomicReference<EntityPotionEffectEvent.Cause> removeAllEffects$cause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
++    public void removeAllEffects$cause(EntityPotionEffectEvent.Cause cause) {
++        removeAllEffects$cause.set(cause);
++    }
+     public boolean removeAllEffects() {
+         if (this.level().isClientSide()) {
              return false;
+-        }
+-
+-        if (this.activeEffects.isEmpty()) {
++        } else if (this.activeEffects.isEmpty()) {
+             return false;
++        } else {
++            Map<Holder<MobEffect>, MobEffectInstance> map = new java.util.HashMap<>(this.activeEffects.size());
++            for (Map.Entry<Holder<MobEffect>, MobEffectInstance> entry : this.activeEffects.entrySet()) {
++                EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, entry.getValue(), null, removeAllEffects$cause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), EntityPotionEffectEvent.Action.CLEARED);
++                if (!event.isCancelled() && !net.neoforged.neoforge.event.EventHooks.onEffectRemoved(this, entry.getValue())) {
++                    map.put(entry.getKey(), entry.getValue());
++                }
++            }
++            map.keySet().forEach(this.activeEffects::remove);
++            this.onEffectsRemoved(map.values());
++            return true;
          }
++    }
  
 -        Map<Holder<MobEffect>, MobEffectInstance> copy = Maps.newHashMap(this.activeEffects);
 -        this.activeEffects.clear();
 -        this.onEffectsRemoved(copy.values());
-+        Map<Holder<MobEffect>, MobEffectInstance> map = new java.util.HashMap<>(this.activeEffects.size());
-+        for (Map.Entry<Holder<MobEffect>, MobEffectInstance> entry : this.activeEffects.entrySet()) {
-+            if (!net.neoforged.neoforge.event.EventHooks.onEffectRemoved(this, entry.getValue())) {
-+                map.put(entry.getKey(), entry.getValue());
-+            }
-+        }
-+        map.keySet().forEach(this.activeEffects::remove);
-+        this.onEffectsRemoved(map.values());
-         return true;
+-        return true;
++    public boolean removeAllEffects(EntityPotionEffectEvent.Cause cause) {
++        removeAllEffects$cause(cause);
++        return removeAllEffects();
      }
  
-@@ -1014,12 +_,13 @@
+     public Collection<MobEffectInstance> getActiveEffects() {
+@@ -1010,30 +_,79 @@
+     }
+ 
+     public final boolean addEffect(MobEffectInstance newEffect) {
+-        return this.addEffect(newEffect, null);
++        return this.addEffect(newEffect, (Entity) null);
++    }
++
++    // CraftBukkit start
++    public boolean addEffect(MobEffectInstance pEffectInstance, EntityPotionEffectEvent.Cause cause) {
++        return addEffect(pEffectInstance, (Entity) null, cause);
++    }
++
++    // Youer start
++    private final AtomicReference<EntityPotionEffectEvent.Cause> addEffect$Cause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
++
++    public void addEffectCause(EntityPotionEffectEvent.Cause cause) {
++        this.addEffect$Cause.set(cause);
      }
  
      public boolean addEffect(MobEffectInstance newEffect, @Nullable Entity source) {
 -        if (!this.canBeAffected(newEffect)) {
++        if (isTickingEffects) {
++            effectsToProcess.add(new ProcessableEffect(newEffect, addEffect$Cause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN)));
++            return true;
++        }
++        // CraftBukkit end
 +        if (!net.neoforged.neoforge.common.CommonHooks.canMobEffectBeApplied(this, newEffect, source)) {
              return false;
-         }
- 
-         MobEffectInstance effect = this.activeEffects.get(newEffect.getEffect());
-         boolean changed = false;
-+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.entity.living.MobEffectEvent.Added(this, effect, newEffect, source));
-         if (effect == null) {
-             this.activeEffects.put(newEffect.getEffect(), newEffect);
-             this.onEffectAdded(newEffect, source);
-@@ -1034,6 +_,14 @@
-         return changed;
-     }
- 
+-        }
+-
+-        MobEffectInstance effect = this.activeEffects.get(newEffect.getEffect());
+-        boolean changed = false;
+-        if (effect == null) {
+-            this.activeEffects.put(newEffect.getEffect(), newEffect);
+-            this.onEffectAdded(newEffect, source);
+-            changed = true;
+-            newEffect.onEffectAdded(this);
+-        } else if (effect.update(newEffect)) {
+-            this.onEffectUpdated(effect, true, source);
+-            changed = true;
+-        }
+-
+-        newEffect.onEffectStarted(this);
+-        return changed;
+-    }
+-
++        } else {
++            MobEffectInstance effect = this.activeEffects.get(newEffect.getEffect());
++            boolean changed = false;
++
++            // CraftBukkit start
++            boolean override = false;
++            if (effect != null) {
++                override = new MobEffectInstance(effect).update(newEffect);
++            }
++
++            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, newEffect, addEffect$Cause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), override);
++            override = event.isOverride();
++            if (event.isCancelled()) {
++                return false;
++            }
++            // CraftBukkit end
++
++            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.entity.living.MobEffectEvent.Added(this, effect, newEffect, source));
++            if (effect == null) {
++                this.activeEffects.put(newEffect.getEffect(), newEffect);
++                this.onEffectAdded(newEffect, source);
++                changed = true;
++                newEffect.onEffectAdded(this);
++                // CraftBukkit start
++            } else if (override) {
++                effect.update(newEffect);
++                this.onEffectUpdated(effect, true, source);
++                // CraftBukkit end
++                changed = true;
++            }
++
++            newEffect.onEffectStarted(this);
++            return changed;
++        }
++    }
++
++    public boolean addEffect(MobEffectInstance mobeffect, @javax.annotation.Nullable Entity entity, EntityPotionEffectEvent.Cause cause) {
++        addEffect$Cause.set(cause);
++        return addEffect(mobeffect, entity);
++    }
++    // Youer end
++
 +    /**
 +     * Neo: Override-Only. Call via {@link net.neoforged.neoforge.common.CommonHooks#canMobEffectBeApplied(LivingEntity, MobEffectInstance, Entity)}
 +     *
@@ -180,24 +526,130 @@
              MobEffectInstance previousEffect = this.activeEffects.put(newEffect.getEffect(), newEffect);
              if (previousEffect == null) {
                  this.onEffectAdded(newEffect, source);
-@@ -1065,6 +_,7 @@
+@@ -1061,11 +_,35 @@
+     }
+ 
+     public final @Nullable MobEffectInstance removeEffectNoUpdate(Holder<MobEffect> effect) {
++        return removeEffectNoUpdate(effect, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
++    }
++
++    public final @Nullable MobEffectInstance removeEffectNoUpdate(Holder<MobEffect> effect, EntityPotionEffectEvent.Cause cause) {
++        if (isTickingEffects) {
++            effectsToProcess.add(new ProcessableEffect(effect, cause));
++            return null;
++        }
++
++        MobEffectInstance activeEffect = this.activeEffects.get(effect);
++        if (activeEffect == null) {
++            return null;
++        }
++
++        EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, activeEffect, null, cause);
++        if (event.isCancelled()) {
++            return null;
++        }
++
+         return this.activeEffects.remove(effect);
      }
  
      public boolean removeEffect(Holder<MobEffect> effect) {
-+        if (net.neoforged.neoforge.event.EventHooks.onEffectRemoved(this, effect)) return false;
-         MobEffectInstance effectInstance = this.removeEffectNoUpdate(effect);
+-        MobEffectInstance effectInstance = this.removeEffectNoUpdate(effect);
++        return removeEffect(effect, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
++    }
++
++    public boolean removeEffect(Holder<MobEffect> holder, EntityPotionEffectEvent.Cause cause) {
++        if (net.neoforged.neoforge.event.EventHooks.onEffectRemoved(this, holder)) return false;
++        MobEffectInstance effectInstance = this.removeEffectNoUpdate(holder, cause);
          if (effectInstance != null) {
              this.onEffectsRemoved(List.of(effectInstance));
-@@ -1156,6 +_,8 @@
+             return true;
+@@ -1073,6 +_,7 @@
+             return false;
+         }
+     }
++    // Youer end
+ 
+     protected void onEffectAdded(MobEffectInstance effect, @Nullable Entity source) {
+         if (!this.level().isClientSide()) {
+@@ -1155,18 +_,65 @@
+         }
      }
  
++    // Youer start
++    private EntityRegainHealthEvent.RegainReason heal$regainReason = EntityRegainHealthEvent.RegainReason.CUSTOM;
++    public void pushHealReason(EntityRegainHealthEvent.RegainReason regainReason) {
++        this.heal$regainReason = regainReason;
++    }
++
++    public void heal(float f, EntityRegainHealthEvent.RegainReason regainReason) {
++        this.pushHealReason(regainReason);
++        this.heal(f);
++    }
++
      public void heal(float heal) {
 +        heal = net.neoforged.neoforge.event.EventHooks.onLivingHeal(this, heal);
 +        if (heal <= 0) return;
          float health = this.getHealth();
          if (health > 0.0F) {
-             this.setHealth(health + heal);
-@@ -1188,11 +_,18 @@
+-            this.setHealth(health + heal);
++            EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), heal, heal$regainReason);
++            // Suppress during worldgen
++            if (this.valid) {
++                this.level().getCraftServer().getPluginManager().callEvent(event);
++            }
++            if (!event.isCancelled()) {
++                this.setHealth((float) (health + event.getAmount()));
++            }
++            // CraftBukkit end
+         }
+     }
+ 
+     public float getHealth() {
++        // CraftBukkit start - Use unscaled health
++        if (this instanceof ServerPlayer serverPlayer && serverPlayer.initialized) {
++            return (float) serverPlayer.getBukkitEntity().getHealth();
++        }
++        // CraftBukkit end
+         return this.entityData.get(DATA_HEALTH_ID);
+     }
+ 
++
++    public AtomicBoolean fake$setHealth = new AtomicBoolean(false);
++    public void fake$setHealth(boolean fake) {
++        fake$setHealth.set(fake);
++    }
+     public void setHealth(float health) {
++        if (fake$setHealth.getAndSet(false)) {
++            return;
++        }
++        // Paper start - Check for NaN
++        if (Float.isNaN(health)) { health = getMaxHealth(); if (this.valid) {
++            System.err.println("[NAN-HEALTH] " + getScoreboardName() + " had NaN health set");
++        } } // Paper end - Check for NaN
++        // CraftBukkit start - Handle scaled health
++        if (this instanceof ServerPlayer serverPlayer && serverPlayer.initialized) {
++            CraftPlayer player = serverPlayer.getBukkitEntity();
++            double realHealth = Mth.clamp(health, 0.0F, player.getMaxHealth());
++            player.setRealHealth(realHealth);
++            player.updateScaledHealth(false);
++            return;
++        }
++        // CraftBukkit end
+         this.entityData.set(DATA_HEALTH_ID, Mth.clamp(health, 0.0F, this.getMaxHealth()));
+     }
+ 
+@@ -1179,7 +_,9 @@
+         if (this.isInvulnerableTo(level, source)) {
+             return false;
+         }
+-
++        if (this.isRemoved() || this.dead || this.getHealth() <= 0.0F) { // CraftBukkit - Don't allow entities that got set to dead/killed elsewhere to get damaged and die
++            return false;
++        }
+         if (this.isDeadOrDying()) {
+             return false;
+         }
+@@ -1188,25 +_,36 @@
              return false;
          }
  
@@ -215,6 +667,24 @@
 +        damage = this.damageContainers.peek().getNewDamage(); // Neo: enforce damage container as source of truth for damage amount
          if (damage < 0.0F) {
              damage = 0.0F;
+         }
+ 
++
++
+         float originalDamage = damage;
+         ItemStack itemInUse = this.getUseItem();
+         float damageBlocked = this.applyItemBlocking(level, source, damage);
+         damage -= damageBlocked;
+         boolean blocked = damageBlocked > 0.0F;
+         if (source.is(DamageTypeTags.IS_FREEZING) && this.is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES)) {
++            damage = applyBukkitDamageModifier(EntityDamageEvent.DamageModifier.FREEZING, damage);
+             damage *= 5.0F;
+         }
+ 
+         if (source.is(DamageTypeTags.DAMAGES_HELMET) && !this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
++            damage = applyBukkitDamageModifier(EntityDamageEvent.DamageModifier.HARD_HAT, damage);
+             this.hurtHelmet(source, damage);
+             damage *= 0.75F;
          }
 @@ -1214,27 +_,38 @@
          if (Float.isNaN(damage) || Float.isInfinite(damage)) {
@@ -298,7 +768,7 @@
              if (source.getDirectEntity() instanceof AbstractArrow abstractArrow && abstractArrow.getPierceLevel() > 0) {
                  return 0.0F;
              } else {
-@@ -1334,7 +_,15 @@
+@@ -1334,7 +_,25 @@
                  }
  
                  float damageBlocked = blocksAttacks.resolveBlockedDamage(source, damage, angle);
@@ -306,8 +776,18 @@
 +
 +                var damageContainer = this.damageContainers.empty() ? new net.neoforged.neoforge.common.damagesource.DamageContainer(source, damage) : this.damageContainers.peek();
 +                var ev = net.neoforged.neoforge.common.CommonHooks.onDamageBlock(this, damageContainer, damageBlocked, !blocksAttacks.bypassedBy().map(t -> t.contains(source.typeHolder())).orElse(false));
++                // Youer start
++                float bukkit = -(float) bukkitEntityDamageEvent.getDamage(EntityDamageEvent.DamageModifier.BLOCKING);
++                if (ev.getBlockedDamage() == ev.getOriginalBlockedDamage()) {
++                    if (bukkit > 0.0F) {
++                        ev.setBlocked(true);
++                        ev.setBlockedDamage(bukkit);
++                    } else {
++                        ev.setBlocked(false);
++                    }
++                }
++                // Youer end
 +                if (!ev.getBlocked()) return 0.0F;
-+
 +                damageBlocked = ev.getBlockedDamage();
 +                damageContainer.setBlockedDamage(ev);
 +                blocksAttacks.hurtBlockingItem(this.level(), blockingWith, this, this.getUsedItemHand(), damageBlocked, ev.shieldDamage());
@@ -328,15 +808,49 @@
              } else {
                  this.lastHurtByPlayer = null;
                  this.lastHurtByPlayerMemoryTime = 0;
-@@ -1396,7 +_,7 @@
+@@ -1393,18 +_,35 @@
+         ItemStack protectionItem = null;
+         DeathProtection protection = null;
+ 
++        // CraftBukkit start
++        InteractionHand foundHand = null;
++        ItemStack itemStack = ItemStack.EMPTY;
          for (InteractionHand hand : InteractionHand.values()) {
-             ItemStack itemStack = this.getItemInHand(hand);
+-            ItemStack itemStack = this.getItemInHand(hand);
++            itemStack = this.getItemInHand(hand);
++            // CraftBukkit end
              protection = itemStack.get(DataComponents.DEATH_PROTECTION);
 -            if (protection != null) {
 +            if (protection != null && net.neoforged.neoforge.common.CommonHooks.onLivingUseTotem(this, killingDamage, itemStack, hand)) {
++                foundHand = hand; // CraftBukkit
                  protectionItem = itemStack.copy();
++                // itemStack.shrink(1); // CraftBukkit - moved down
++                break;
++            }
++        }
++
++        // CraftBukkit start
++        org.bukkit.inventory.EquipmentSlot handSlot = (foundHand != null) ? org.bukkit.craftbukkit.CraftEquipmentSlot.getHand(foundHand) : null;
++        org.bukkit.event.entity.EntityResurrectEvent event = new org.bukkit.event.entity.EntityResurrectEvent((org.bukkit.entity.LivingEntity) this.getBukkitEntity(), handSlot);
++        event.setCancelled(protectionItem == null);
++        this.level().getCraftServer().getPluginManager().callEvent(event);
++
++        if (event.isCancelled()) {
++            protection = null;
++        } else {
++            if (!itemStack.isEmpty()) {
                  itemStack.shrink(1);
-                 break;
+-                break;
+             }
+-        }
+-
+-        if (protectionItem != null) {
+-            if (this instanceof ServerPlayer player) {
++            if (protectionItem != null && this instanceof ServerPlayer player) {
++                // CraftBukkit end
+                 player.awardStat(Stats.ITEM_USED.get(protectionItem.getItem()));
+                 CriteriaTriggers.USED_TOTEM.trigger(player, protectionItem);
+                 protectionItem.causeUseVibration(this, GameEvent.ITEM_INTERACT_FINISH);
 @@ -1452,6 +_,8 @@
  
      public void die(DamageSource source) {
@@ -346,7 +860,16 @@
              Entity sourceEntity = source.getEntity();
              LivingEntity killer = this.getKillCredit();
              if (killer != null) {
-@@ -1491,7 +_,7 @@
+@@ -1464,7 +_,7 @@
+ 
+             this.stopUsingItem();
+             if (!this.level().isClientSide() && this.hasCustomName()) {
+-                LOGGER.info("Named entity {} died: {}", this, this.getCombatTracker().getDeathMessage().getString());
++                if (org.spigotmc.SpigotConfig.logNamedDeaths) LOGGER.info("Named entity {} died: {}", this, this.getCombatTracker().getDeathMessage().getString()); // Spigot
+             }
+ 
+             this.handleKillingBlow();
+@@ -1491,17 +_,25 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              boolean var6 = false;
              if (killer instanceof WitherBoss) {
@@ -355,17 +878,45 @@
                      BlockPos pos = this.blockPosition();
                      BlockState state = Blocks.WITHER_ROSE.defaultBlockState();
                      if (this.level().getBlockState(pos).isAir() && state.canSurvive(this.level(), pos)) {
-@@ -1509,6 +_,7 @@
+-                        this.level().setBlock(pos, state, 3);
+-                        var6 = true;
++                        // CraftBukkit start - call EntityBlockFormEvent for Wither Rose
++                        var6 = org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this.level(), pos, state, 3, this);
++                        // CraftBukkit end
+                     }
+                 }
+ 
+                 if (!var6) {
+                     ItemEntity itemEntity = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), new ItemStack(Items.WITHER_ROSE));
++                    // CraftBukkit start
++                    org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) itemEntity.getBukkitEntity());
++                    CraftEventFactory.callEvent(event);
++                    if (event.isCancelled()) {
++                        return;
++                    }
++                    // CraftBukkit end
+                     this.level().addFreshEntity(itemEntity);
+                 }
+             }
+@@ -1509,26 +_,46 @@
      }
  
      protected void dropAllDeathLoot(ServerLevel level, DamageSource source) {
 +        this.captureDrops(new java.util.ArrayList<>());
          boolean playerKilled = this.lastHurtByPlayerMemoryTime > 0;
++
++        this.dropEquipment(level); // CraftBukkit - from below
          if (this.shouldDropLoot(level)) {
              this.dropFromLootTable(level, source, playerKilled);
-@@ -1517,6 +_,10 @@
+             this.dropCustomDeathLoot(level, source, playerKilled);
+         }
++        // CraftBukkit start - Call death event
++        CraftEventFactory.callEntityDeathEvent(this, source, this.drops);
++        this.drops = new ArrayList<>();
++        // CraftBukkit end
  
-         this.dropEquipment(level);
+-        this.dropEquipment(level);
++        // this.dropEquipment(level); // CraftBukkit - moved up
          this.dropExperience(level, source.getEntity());
 +
 +        Collection<ItemEntity> drops = captureDrops(null);
@@ -374,7 +925,19 @@
      }
  
      protected void dropEquipment(ServerLevel level) {
-@@ -1528,7 +_,8 @@
+     }
+ 
++    public int getExpReward(ServerLevel level, @Nullable Entity entity) { // CraftBukkit
++        if (!this.wasExperienceConsumed() && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerMemoryTime > 0 && this.shouldDropExperience() && (Boolean) level.getGameRules().get(GameRules.MOB_DROPS))) {
++            return this.getExperienceReward(level, entity); // CraftBukkit
++        }
++
++        return 0; // CraftBukkit
++    }
++
+     protected void dropExperience(ServerLevel level, @Nullable Entity killer) {
+         if (!this.wasExperienceConsumed()
+             && (
                  this.isAlwaysExperienceDropper()
                      || this.lastHurtByPlayerMemoryTime > 0 && this.shouldDropExperience() && level.getGameRules().get(GameRules.MOB_DROPS)
              )) {
@@ -397,6 +960,27 @@
          power *= 1.0 - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
          if (!(power <= 0.0)) {
              this.needsSync = true;
+@@ -1703,6 +_,20 @@
+         return new LivingEntity.Fallsounds(SoundEvents.GENERIC_SMALL_FALL, SoundEvents.GENERIC_BIG_FALL);
+     }
+ 
++    // CraftBukkit start - Add delegate methods
++    public SoundEvent getHurtSound0(DamageSource damagesource) {
++        return getHurtSound(damagesource);
++    }
++
++    public SoundEvent getDeathSound0() {
++        return getDeathSound();
++    }
++
++    public SoundEvent getFallDamageSound0(int fallHeight) {
++        return getFallDamageSound(fallHeight);
++    }
++    // CraftBukkit end
++
+     public Optional<BlockPos> getLastClimbablePos() {
+         return this.lastClimbablePos;
+     }
 @@ -1713,17 +_,11 @@
          } else {
              BlockPos ladderCheckPos = this.blockPosition();
@@ -455,8 +1039,47 @@
              for (EquipmentSlot slot : slots) {
                  ItemStack itemStack = this.getItemBySlot(slot);
                  Equippable equippable = itemStack.get(DataComponents.EQUIPPABLE);
-@@ -1909,6 +_,7 @@
+@@ -1885,9 +_,10 @@
+         }
+     }
+ 
+-    protected float getDamageAfterArmorAbsorb(DamageSource damageSource, float damage) {
++    public AtomicBoolean calDamageEvent = new AtomicBoolean(false);
++    public float getDamageAfterArmorAbsorb(DamageSource damageSource, float damage) {
+         if (!damageSource.is(DamageTypeTags.BYPASSES_ARMOR)) {
+-            this.hurtArmor(damageSource, damage);
++            if (!calDamageEvent.getAndSet(false)) this.hurtArmor(damageSource, damage);
+             damage = CombatRules.getDamageAfterAbsorb(
+                 this, damage, damageSource, this.getArmorValue(), (float)this.getAttributeValue(Attributes.ARMOR_TOUGHNESS)
+             );
+@@ -1896,7 +_,21 @@
+         return damage;
+     }
+ 
+-    protected float getDamageAfterMagicAbsorb(DamageSource damageSource, float damage) {
++    // Slime start
++    private float applyBukkitDamageModifier(EntityDamageEvent.DamageModifier modifier, float currentDamage) {
++        if (bukkitEntityDamageEvent != null && bukkitEntityDamageEvent.isApplicable(modifier)) {
++            double baseDamage = bukkitEntityDamageEvent.getDamage();
++            if (bukkitEntityDamageEvent.isStillOriginal(modifier, baseDamage, currentDamage)) {
++                return (float) (baseDamage + bukkitEntityDamageEvent.getDamage(modifier));
++            } else {
++                return (float) (baseDamage + (currentDamage - baseDamage));
++            }
++        }
++        return currentDamage;
++    }
++    // Slime end
++
++    public float getDamageAfterMagicAbsorb(DamageSource damageSource, float damage) {
+         if (damageSource.is(DamageTypeTags.BYPASSES_EFFECTS)) {
+             return damage;
+         }
+@@ -1907,8 +_,10 @@
+             float v = damage * absorb;
+             float oldDamage = damage;
              damage = Math.max(v / 25.0F, 0.0F);
++            damage = applyBukkitDamageModifier(EntityDamageEvent.DamageModifier.RESISTANCE, damage);
              float damageResisted = oldDamage - damage;
              if (damageResisted > 0.0F && damageResisted < 3.4028235E37F) {
 +                this.damageContainers.peek().setReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.MOB_EFFECTS, damageResisted);
@@ -471,7 +1094,7 @@
          }
  
          return damage;
-@@ -1941,22 +_,37 @@
+@@ -1941,22 +_,41 @@
  
      protected void actuallyHurt(ServerLevel level, DamageSource source, float dmg) {
          if (!this.isInvulnerableTo(level, source)) {
@@ -481,9 +1104,13 @@
 -            dmg = Math.max(dmg - this.getAbsorptionAmount(), 0.0F);
 -            this.setAbsorptionAmount(this.getAbsorptionAmount() - (originalDamage - dmg));
 -            float absorbedDamage = originalDamage - dmg;
++            // Youer start
++            float armorAbsorb = this.getDamageAfterArmorAbsorb(source, this.damageContainers.peek().getNewDamage());
++            armorAbsorb = applyBukkitDamageModifier(EntityDamageEvent.DamageModifier.ARMOR, armorAbsorb);
++            // Youer end
 +            // Neo (ImplNote): Keep this in-sync with the equivalent patches in Player#actuallyHurt.
 +            // Neo: Primary damage pipeline hooks. Compute the armor and enchantment reductions against the "original" damage, and then fire LivingDamageEvent.Pre
-+            this.damageContainers.peek().setReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ARMOR, this.damageContainers.peek().getNewDamage() - this.getDamageAfterArmorAbsorb(source, this.damageContainers.peek().getNewDamage()));
++            this.damageContainers.peek().setReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ARMOR, this.damageContainers.peek().getNewDamage() - armorAbsorb);
 +            this.getDamageAfterMagicAbsorb(source, this.damageContainers.peek().getNewDamage());
 +
 +            // LivingDamageEvent.Pre is then able to mutate the container to change the reductions and change the "real" damage that will be inflicted.
@@ -516,6 +1143,27 @@
          }
      }
  
+@@ -1985,8 +_,18 @@
+     }
+ 
+     public final void setArrowCount(int count) {
+-        this.entityData.set(DATA_ARROW_COUNT_ID, count);
+-    }
++        // CraftBukkit start
++        setArrowCount(count, false);
++    }
++
++    public final void setArrowCount(int i, boolean flag) {
++        ArrowBodyCountChangeEvent event = CraftEventFactory.callArrowBodyCountChangeEvent(this, getArrowCount(), i, flag);
++        if (event.isCancelled()) {
++            return;
++        }
++        this.entityData.set(LivingEntity.DATA_ARROW_COUNT_ID, event.getNewAmount());
++    }
++    // CraftBukkit end
+ 
+     public final int getStingerCount() {
+         return this.entityData.get(DATA_STINGER_COUNT_ID);
 @@ -2014,6 +_,8 @@
      }
  
@@ -574,15 +1222,6 @@
      }
  
      protected float getWaterSlowDown() {
-@@ -2424,7 +_,7 @@
-     }
- 
-     protected boolean shouldTravelInFluid(FluidState fluidState) {
--        return (this.isInWater() || this.isInLava()) && this.isAffectedByFluids() && !this.canStandOnFluid(fluidState);
-+        return (this.isInWater() || this.isInLava() || this.isInFluidType(fluidState)) && this.isAffectedByFluids() && !this.canStandOnFluid(fluidState);
-     }
- 
-     protected void travelFlying(Vec3 input, float speed) {
 @@ -2451,7 +_,7 @@
          BlockPos posBelow = this.getBlockPosBelowThatAffectsMyMovement();
          float blockFriction = this.onGround()
@@ -592,7 +1231,19 @@
              )
              : 1.0F;
          Vec3 movement = this.handleRelativeFrictionAndCalculateMovement(input, blockFriction);
-@@ -2487,10 +_,13 @@
+@@ -2483,10 +_,21 @@
+         return computeModifiedFriction(this.omnidirectionalAirMover() ? 0.91F : 0.98F, (float)this.getAttributeValue(Attributes.AIR_DRAG_MODIFIER));
+     }
+ 
++    /**
++     * @deprecated Neo: use {@link #travelInFluid(Vec3, FluidState)} instead
++     */
++    @Deprecated
+     protected void travelInFluid(Vec3 input) {
++        travelInFluid(input, net.minecraft.world.level.material.Fluids.EMPTY.defaultFluidState());
++    }
++
++    private void travelInFluid(Vec3 input, FluidState fluidState) {
          boolean isFalling = this.getDeltaMovement().y <= 0.0;
          double oldY = this.getY();
          double baseGravity = this.getEffectiveGravity();
@@ -602,11 +1253,6 @@
          if (this.isInWater()) {
              this.travelInWater(input, baseGravity, isFalling, oldY);
              this.floatInWaterWhileRidden();
--        } else {
-+        } else if (this.isInLava()) { // Neo: only apply lava movement if the player is actually in lava and not another fluid
-             this.travelInLava(input, baseGravity, isFalling, oldY);
-         }
-     }
 @@ -2512,6 +_,7 @@
              slowDown = 0.96F;
          }
@@ -615,14 +1261,17 @@
          this.moveRelative(speed, input);
          this.move(MoverType.SELF, this.getDeltaMovement());
          Vec3 movement = this.getDeltaMovement();
-@@ -2555,7 +_,7 @@
+@@ -2577,6 +_,11 @@
+     }
  
-     private void floatInWaterWhileRidden() {
-         boolean canEntityFloatInWater = this.is(EntityTypeTags.CAN_FLOAT_WHILE_RIDDEN);
--        if (canEntityFloatInWater && this.isVehicle() && this.getFluidHeight(FluidTags.WATER) > this.getFluidJumpThreshold()) {
-+        if (canEntityFloatInWater && this.isVehicle() && this.getFluidInteraction().getMaxFluidHeightMatching(this, (_, type, _) -> type.getIsWaterLike()) > this.getFluidJumpThreshold()) {
-             this.setDeltaMovement(this.getDeltaMovement().add(0.0, 0.04F, 0.0));
-         }
+     public void stopFallFlying() {
++        // CraftBukkit start
++        if (org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++            return;
++        }
++        // CraftBukkit end
+         this.setSharedFlag(7, true);
+         this.setSharedFlag(7, false);
      }
 @@ -2689,7 +_,7 @@
              double xd = Mth.clamp(delta.x, -0.15F, 0.15F);
@@ -633,6 +1282,26 @@
                  yd = 0.0;
              }
  
+@@ -2919,7 +_,7 @@
+     public void onAttack() {
+     }
+ 
+-    public void detectEquipmentUpdates() {
++    private void detectEquipmentUpdates() {
+         Map<EquipmentSlot, ItemStack> changedItems = this.collectEquipmentChanges(this.lastEquipmentItems);
+         if (changedItems != null) {
+             this.handleHandSwap(changedItems);
+@@ -2929,6 +_,10 @@
+         }
+     }
+ 
++    public void detectEquipmentUpdatesPublic() { // CraftBukkit
++        detectEquipmentUpdates();
++    }
++
+     protected @Nullable Map<EquipmentSlot, ItemStack> collectEquipmentChanges(Map<EquipmentSlot, ItemStack> lastEquipmentItems) {
+         Map<EquipmentSlot, ItemStack> changedItems = null;
+ 
 @@ -2936,6 +_,7 @@
              ItemStack previous = lastEquipmentItems.get(slot);
              ItemStack current = this.getItemBySlot(slot);
@@ -641,27 +1310,9 @@
                  if (changedItems == null) {
                      changedItems = Maps.newEnumMap(EquipmentSlot.class);
                  }
-@@ -3071,6 +_,10 @@
-         profiler.push("jump");
-         if (this.jumping && this.isAffectedByFluids()) {
-             double fluidHeight;
-+            net.neoforged.neoforge.fluids.FluidType fluidType = this.getFluidInteraction().getMaxHeightFluidType();
-+            if (!fluidType.isAir()) {
-+                fluidHeight = this.getFluidTypeHeight(fluidType);
-+            } else
-             if (this.isInLava()) {
-                 fluidHeight = this.getFluidHeight(FluidTags.LAVA);
-             } else {
-@@ -3081,15 +_,17 @@
-             double fluidJumpThreshold = this.getFluidJumpThreshold();
-             if (!inWaterAndHasFluidHeight || this.onGround() && !(fluidHeight > fluidJumpThreshold)) {
-                 if (!this.isInLava() || this.onGround() && this.isInShallowFluid(FluidTags.LAVA)) {
-+                    if (fluidType.isAir() || this.onGround() && !(fluidHeight > fluidJumpThreshold)) {
-                     if ((this.onGround() || inWaterAndHasFluidHeight && fluidHeight <= fluidJumpThreshold) && this.noJumpDelay == 0) {
-                         this.jumpFromGround();
+@@ -3086,10 +_,10 @@
                          this.noJumpDelay = 10;
                      }
-+                    } else this.jumpInFluid(fluidType);
                  } else {
 -                    this.jumpInLiquid(FluidTags.LAVA);
 +                    this.jumpInFluid(net.neoforged.neoforge.common.NeoForgeMod.LAVA_TYPE.value());
@@ -672,15 +1323,24 @@
              }
          } else {
              this.noJumpDelay = 0;
+@@ -3167,6 +_,7 @@
+         this.checkFallDistanceAccumulation();
+         if (!this.level().isClientSide()) {
+             if (!this.canGlide()) {
++                if (this.getSharedFlag(7) != false && !CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) // CraftBukkit
+                 this.setSharedFlag(7, false);
+                 return;
+             }
 @@ -3176,8 +_,11 @@
                  int freeFallInterval = checkFallFlyTicks / 10;
                  if (freeFallInterval % 2 == 0) {
                      List<EquipmentSlot> slotsWithGliders = EquipmentSlot.VALUES.stream().filter(slot -> canGlideUsing(this.getItemBySlot(slot), slot)).toList();
-+                    //  Neo: If the list is empty, we probably have something else adding the gliding flight attribute (directly to the entity or otherwise)
-+                    if (!slotsWithGliders.isEmpty()) {
-                     EquipmentSlot slotToDamage = Util.getRandom(slotsWithGliders, this.random);
+-                    EquipmentSlot slotToDamage = Util.getRandom(slotsWithGliders, this.random);
 -                    this.getItemBySlot(slotToDamage).hurtAndBreak(1, this, slotToDamage);
-+                    this.getItemBySlot(slotToDamage).onGlideDamage(this, slotToDamage);
++                    // Neo: If the list is empty, we probably have something else adding the gliding flight attribute (directly to the entity or otherwise)
++                    if (!slotsWithGliders.isEmpty()) {
++                        EquipmentSlot slotToDamage = Util.getRandom(slotsWithGliders, this.random);
++                        this.getItemBySlot(slotToDamage).onGlideDamage(this, slotToDamage);
 +                    }
                  }
  
@@ -701,6 +1361,30 @@
              for (EquipmentSlot slot : EquipmentSlot.VALUES) {
                  if (canGlideUsing(this.getItemBySlot(slot), slot)) {
                      return true;
+@@ -3340,13 +_,20 @@
+ 
+     @Override
+     public boolean isPickable() {
+-        return !this.isRemoved();
++        return !this.isRemoved() && this.collides; // CraftBukkit
+     }
+ 
+     @Override
+     public boolean isPushable() {
+-        return this.isAlive() && !this.isSpectator() && !this.onClimbable();
+-    }
++        return this.isAlive() && !this.isSpectator() && !this.onClimbable() && this.collides; // CraftBukkit
++    }
++
++    // CraftBukkit start - collidable API
++    @Override
++    public boolean canCollideWithBukkit(Entity entity) {
++        return isPushable() && this.collides != this.collidableExemptions.contains(entity.getUUID());
++    }
++    // CraftBukkit end
+ 
+     @Override
+     public float getYHeadRot() {
 @@ -3406,8 +_,11 @@
  
      private void updatingUsingItem() {
@@ -740,13 +1424,37 @@
              if (!this.level().isClientSide()) {
                  this.setLivingEntityFlag(1, true);
                  this.setLivingEntityFlag(2, hand == InteractionHand.OFF_HAND);
-@@ -3550,7 +_,8 @@
+@@ -3550,7 +_,32 @@
                  this.releaseUsingItem();
              } else {
                  if (!this.useItem.isEmpty() && this.isUsingItem()) {
 -                    ItemStack result = this.useItem.finishUsingItem(this.level(), this);
++                    // CraftBukkit start - fire PlayerItemConsumeEvent
++                    ItemStack itemstack;
++                    if (this instanceof ServerPlayer entityPlayer) {
++                        org.bukkit.inventory.ItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(this.useItem);
++                        org.bukkit.inventory.EquipmentSlot bukkitHand = org.bukkit.craftbukkit.CraftEquipmentSlot.getHand(hand);
++                        org.bukkit.event.player.PlayerItemConsumeEvent event = new org.bukkit.event.player.PlayerItemConsumeEvent((org.bukkit.entity.Player) this.getBukkitEntity(), craftItem, bukkitHand);
++                        this.level().getCraftServer().getPluginManager().callEvent(event);
++
++                        if (event.isCancelled()) {
++                            // Update client
++                            Consumable consumable = this.useItem.get(DataComponents.CONSUMABLE);
++                            if (consumable != null) {
++                                consumable.cancelUsingItem(entityPlayer, this.useItem);
++                            }
++                            entityPlayer.getBukkitEntity().updateInventory();
++                            entityPlayer.getBukkitEntity().updateScaledHealth();
++                            return;
++                        }
++
++                        itemstack = (craftItem.equals(event.getItem())) ? this.useItem.finishUsingItem(this.level(), this) : org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem()).finishUsingItem(this.level(), this);
++                    } else {
++                        itemstack = this.useItem.finishUsingItem(this.level(), this);
++                    }
++                    // CraftBukkit end
 +                    ItemStack copy = this.useItem.copy();
-+                    ItemStack result = net.neoforged.neoforge.event.EventHooks.onItemUseFinish(this, copy, getUseItemRemainingTicks(), this.useItem.finishUsingItem(this.level(), this));
++                    ItemStack result = net.neoforged.neoforge.event.EventHooks.onItemUseFinish(this, copy, getUseItemRemainingTicks(), itemstack);
                      if (result != this.useItem) {
                          this.setItemInHand(hand, result);
                      }
@@ -873,7 +1581,7 @@
 +        return net.neoforged.neoforge.common.CommonHooks.getProjectile(this, heldWeapon, ItemStack.EMPTY);
      }
  
-     private static byte entityEventForEquipmentBreak(EquipmentSlot equipmentSlot) {
+     public static byte entityEventForEquipmentBreak(EquipmentSlot equipmentSlot) {
 @@ -3860,6 +_,8 @@
      }
  
@@ -892,3 +1600,55 @@
          if (!itemStack.has(DataComponents.GLIDER)) {
              return false;
          }
+@@ -4027,5 +_,51 @@
+     }
+ 
+     public record Fallsounds(SoundEvent small, SoundEvent big) {
++    }
++
++    public float calculateItemBlocking(DamageSource source, float damage) {
++        // CraftBukkit end
++        if (damage <= 0.0F) {
++            return 0.0F;
++        }
++        ItemStack itemstack = this.getItemBlockingWith();
++
++        if (itemstack == null) {
++            return 0.0F;
++        }
++        BlocksAttacks blocksattacks = (BlocksAttacks) itemstack.get(DataComponents.BLOCKS_ATTACKS);
++
++        if (blocksattacks != null && !(Boolean) blocksattacks.bypassedBy().map((holderset) -> {
++            return holderset.contains(source.typeHolder());
++        }).orElse(false)) {
++            Entity entity = source.getDirectEntity();
++
++            if (entity instanceof AbstractArrow) {
++                AbstractArrow abstractarrow = (AbstractArrow) entity;
++
++                if (abstractarrow.getPierceLevel() > 0) {
++                    return 0.0F;
++                }
++            }
++
++            Vec3 vec3 = source.getSourcePosition();
++            double d0;
++
++            if (vec3 != null) {
++                Vec3 vec31 = this.calculateViewVector(0.0F, this.getYHeadRot());
++                Vec3 vec32 = vec3.subtract(this.position());
++
++                vec32 = (new Vec3(vec32.x, 0.0D, vec32.z)).normalize();
++                d0 = Math.acos(vec32.dot(vec31));
++            } else {
++                d0 = (double) (float) Math.PI;
++            }
++
++            float f1 = blocksattacks.resolveBlockedDamage(source, damage, d0);
++
++            // CraftBukkit start
++            return f1;
++        }
++        return 0.0F;
+     }
+ }

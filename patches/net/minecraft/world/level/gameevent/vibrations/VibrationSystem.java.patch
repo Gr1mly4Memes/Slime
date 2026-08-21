@@ -1,5 +1,15 @@
 --- a/net/minecraft/world/level/gameevent/vibrations/VibrationSystem.java
 +++ b/net/minecraft/world/level/gameevent/vibrations/VibrationSystem.java
+@@ -29,6 +_,9 @@
+ import net.minecraft.world.level.gameevent.PositionSource;
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.CraftGameEvent;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.event.block.BlockReceiveGameEvent;
+ import org.jspecify.annotations.Nullable;
+ 
+ public interface VibrationSystem {
 @@ -50,6 +_,8 @@
          GameEvent.RESONATE_15.key()
      );
@@ -25,3 +35,84 @@
      }
  
      static ResourceKey<GameEvent> getResonanceEventByFrequency(int vibrationFrequency) {
+@@ -185,7 +_,7 @@
+         }
+     }
+ 
+-    class Listener implements GameEventListener {
++    public static class Listener implements GameEventListener {
+         private final VibrationSystem system;
+ 
+         public Listener(VibrationSystem system) {
+@@ -208,28 +_,31 @@
+             VibrationSystem.User user = this.system.getVibrationUser();
+             if (data.getCurrentVibration() != null) {
+                 return false;
+-            }
+-
+-            if (!user.isValidVibration(event, context)) {
+-                return false;
+-            }
+-
+-            Optional<Vec3> listenerSourcePos = user.getPositionSource().getPosition(level);
+-            if (listenerSourcePos.isEmpty()) {
+-                return false;
+-            }
+-
+-            Vec3 destination = listenerSourcePos.get();
+-            if (!user.canReceiveVibration(level, BlockPos.containing(sourcePosition), event, context)) {
+-                return false;
+-            }
+-
+-            if (isOccluded(level, sourcePosition, destination)) {
+-                return false;
+-            }
+-
+-            this.scheduleVibration(level, data, event, context, sourcePosition, destination);
+-            return true;
++            } else if (!user.isValidVibration(event, context)) {
++                return false;
++            } else {
++                Optional<Vec3> listenerSourcePos = user.getPositionSource().getPosition(level);
++                if (listenerSourcePos.isEmpty()) {
++                    return false;
++                } else {
++                    Vec3 destination = listenerSourcePos.get();
++                    // CraftBukkit start
++                    boolean defaultCancel = !user.canReceiveVibration(level, BlockPos.containing(sourcePosition), event, context);
++                    Entity sourceEntity = context.sourceEntity();
++                    BlockReceiveGameEvent bukkitEvent = new BlockReceiveGameEvent(CraftGameEvent.minecraftToBukkit(event.value()), CraftBlock.at(level, BlockPos.containing(destination)), (sourceEntity == null) ? null : sourceEntity.getBukkitEntity());
++                    bukkitEvent.setCancelled(defaultCancel);
++                    level.getCraftServer().getPluginManager().callEvent(bukkitEvent);
++                    if (bukkitEvent.isCancelled()) {
++                        // CraftBukkit end
++                        return false;
++                    } else if (isOccluded(level, sourcePosition, destination)) {
++                        return false;
++                    } else {
++                        this.scheduleVibration(level, data, event, context, sourcePosition, destination);
++                        return true;
++                    }
++                }
++            }
+         }
+ 
+         public void forceScheduleVibration(ServerLevel level, Holder<GameEvent> event, GameEvent.Context context, Vec3 origin) {
+@@ -264,7 +_,7 @@
+         }
+     }
+ 
+-    interface Ticker {
++    public interface Ticker {
+         static void tick(Level level, VibrationSystem.Data data, VibrationSystem.User user) {
+             if (level instanceof ServerLevel serverLevel) {
+                 if (data.currentVibration == null) {
+@@ -370,7 +_,7 @@
+         }
+     }
+ 
+-    interface User {
++    public interface User {
+         int getListenerRadius();
+ 
+         PositionSource getPositionSource();

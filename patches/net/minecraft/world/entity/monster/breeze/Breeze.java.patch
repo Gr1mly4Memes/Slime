@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/entity/monster/breeze/Breeze.java
++++ b/net/minecraft/world/entity/monster/breeze/Breeze.java
+@@ -243,6 +_,10 @@
+ 
+     @Override
+     public boolean canAttack(LivingEntity target) {
++        // CraftBukkit start - SPIGOT-7957: Allow attack if target from brain was set
++        LivingEntity brainTarget = this.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).orElse(null);
++        if (brainTarget != null) return target.is(brainTarget);
++        // CraftBukkit end
+         return (target.is(EntityTypes.PLAYER) || target.is(EntityTypes.IRON_GOLEM)) && super.canAttack(target);
+     }
+ 

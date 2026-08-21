@@ -134,7 +134,7 @@ public class NetworkRegistry {
 
     /**
      * Registers a new payload.
-     * 
+     *
      * @param <T>           The class of the payload.
      * @param <B>           The class of the ByteBuf. Only {@link ConnectionProtocol#PLAY play} payloads may use {@link RegistryFriendlyByteBuf}.
      * @param type          The type of the payload.
@@ -231,7 +231,7 @@ public class NetworkRegistry {
      * @param protocol The protocol of the connection.
      * @param flow     The flow of the connection.
      * @return A codec for the payload, or null if the payload should be discarded on receipt.
-     * 
+     *
      * @see {@link #hasChannel(Connection, ConnectionProtocol, Identifier)} to check if a packet can be sent/received.
      * @apiNote This method must not throw exceptions, as it is called within another codec on the network thread.
      */
@@ -271,7 +271,7 @@ public class NetworkRegistry {
      * Checks if a payload is a modded payload. A modded payload is any payload that does not have `minecraft` as the domain, and is not a discarded payload.
      * <p>
      * The special handling for {@link DiscardedPayload} is because it falsely reports its type as the type that failed to decode.
-     * 
+     *
      * @return True if the payload is modded, and modded payload handling should be invoked for it.
      */
     public static boolean isModdedPayload(CustomPacketPayload payload) {
@@ -429,11 +429,11 @@ public class NetworkRegistry {
                 return;
             }
 
-            if (hasChannel(listener, customPayloadPacket.payload().type().id())) {
+            if (hasChannel(listener, id)) {
                 return;
             }
 
-            throw new UnsupportedOperationException("Payload %s may not be sent to the client!".formatted(customPayloadPacket.payload().type().id()));
+            throw new UnsupportedOperationException("Payload %s may not be sent to the client!".formatted(id));
         }
     }
 
@@ -451,11 +451,11 @@ public class NetworkRegistry {
                 return;
             }
 
-            if (hasChannel(listener, customPayloadPacket.payload().type().id())) {
+            if (hasChannel(listener, id)) {
                 return;
             }
 
-            throw new UnsupportedOperationException("Payload %s may not be sent to the server!".formatted(customPayloadPacket.payload().type().id()));
+            throw new UnsupportedOperationException("Payload %s may not be sent to the server!".formatted(id));
         }
     }
 
@@ -541,10 +541,10 @@ public class NetworkRegistry {
                 return;
             }
 
-            NetworkChannel channel = payloadSetup.getChannel(ConnectionProtocol.PLAY, customPayloadPacket.payload().type().id());
+            NetworkChannel channel = payloadSetup.getChannel(ConnectionProtocol.PLAY, id);
 
             if (channel == null) {
-                LOGGER.trace("Somebody tried to send: {} to a client which cannot accept it. Not sending packet.", customPayloadPacket.payload().type().id());
+                LOGGER.trace("Somebody tried to send: {} to a client which cannot accept it. Not sending packet.", id);
                 return;
             }
 
@@ -612,7 +612,7 @@ public class NetworkRegistry {
         nowForgottenChannels.add(MinecraftRegisterPayload.ID);
         nowForgottenChannels.add(MinecraftUnregisterPayload.ID);
         PAYLOAD_REGISTRATIONS.get(ConnectionProtocol.PLAY).entrySet().stream()
-                .filter(registration -> registration.getValue().flow().isEmpty() || registration.getValue().flow().get() == PacketFlow.SERVERBOUND)
+                .filter(registration -> registration.getValue().matchesFlow(PacketFlow.SERVERBOUND))
                 .filter(registration -> registration.getValue().optional())
                 .forEach(registration -> nowForgottenChannels.add(registration.getKey()));
         return nowForgottenChannels.build();
@@ -624,7 +624,7 @@ public class NetworkRegistry {
      * Since we only support one version, we don't need to do further handling or record the "active" version just yet.
      * <p>
      * Invoked on the network thread.
-     * 
+     *
      * @param listener The receiving listener.
      * @param payload  The incoming version payload.
      */
@@ -679,7 +679,7 @@ public class NetworkRegistry {
      * Invoked when the configuration phase of a connection is completed.
      * <p>
      * Updates the ad-hoc channels to prepare for the game phase by removing the initial channels and building a new list based on the connection type.
-     * 
+     *
      * @param listener The packet listener finishing the configuration phase
      */
     public static void onConfigurationFinished(ICommonPacketListener listener) {

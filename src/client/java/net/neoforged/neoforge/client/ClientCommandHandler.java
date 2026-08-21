@@ -39,6 +39,7 @@ import net.neoforged.neoforge.server.command.CommandHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.bukkit.command.CommandSender; // Slime
 
 public class ClientCommandHandler {
     private static final Identifier ASK_SERVER_ID = Identifier.withDefaultNamespace("ask_server");
@@ -129,6 +130,12 @@ public class ClientCommandHandler {
                 return true;
             }
 
+            // Slime start
+            @Override
+            public CommandSender getBukkitSender(CommandSourceStack wrapper) {
+                return null;
+            }
+            // Slime end
             @Override
             public void sendSystemMessage(Component message) {
                 Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(message);

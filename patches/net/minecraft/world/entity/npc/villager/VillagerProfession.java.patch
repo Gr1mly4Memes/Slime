@@ -1,0 +1,283 @@
+--- a/net/minecraft/world/entity/npc/villager/VillagerProfession.java
++++ b/net/minecraft/world/entity/npc/villager/VillagerProfession.java
+@@ -2,6 +_,8 @@
+ 
+ import com.google.common.collect.ImmutableSet;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
++import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
++import java.util.Map;
+ import java.util.function.Predicate;
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.Registry;
+@@ -69,7 +_,7 @@
+         Predicate<Holder<PoiType>> acquirableJobSite,
+         @Nullable SoundEvent workSound
+     ) {
+-        return register(registry, name, heldJobSite, acquirableJobSite, ImmutableSet.of(), ImmutableSet.of(), workSound, Int2ObjectMap.ofEntries());
++        return register(registry, name, heldJobSite, acquirableJobSite, ImmutableSet.of(), ImmutableSet.of(), workSound, new Int2ObjectOpenHashMap<>(Map.ofEntries()));
+     }
+ 
+     private static VillagerProfession register(
+@@ -127,52 +_,52 @@
+             ARMORER,
+             PoiTypes.ARMORER,
+             SoundEvents.VILLAGER_WORK_ARMORER,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.ARMORER_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.ARMORER_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.ARMORER_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.ARMORER_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.ARMORER_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.ARMORER_LEVEL_1),
++                Map.entry(2, TradeSets.ARMORER_LEVEL_2),
++                Map.entry(3, TradeSets.ARMORER_LEVEL_3),
++                Map.entry(4, TradeSets.ARMORER_LEVEL_4),
++                Map.entry(5, TradeSets.ARMORER_LEVEL_5)
++            ))
+         );
+         register(
+             registry,
+             BUTCHER,
+             PoiTypes.BUTCHER,
+             SoundEvents.VILLAGER_WORK_BUTCHER,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.BUTCHER_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.BUTCHER_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.BUTCHER_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.BUTCHER_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.BUTCHER_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.BUTCHER_LEVEL_1),
++                Map.entry(2, TradeSets.BUTCHER_LEVEL_2),
++                Map.entry(3, TradeSets.BUTCHER_LEVEL_3),
++                Map.entry(4, TradeSets.BUTCHER_LEVEL_4),
++                Map.entry(5, TradeSets.BUTCHER_LEVEL_5)
++            ))
+         );
+         register(
+             registry,
+             CARTOGRAPHER,
+             PoiTypes.CARTOGRAPHER,
+             SoundEvents.VILLAGER_WORK_CARTOGRAPHER,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.CARTOGRAPHER_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.CARTOGRAPHER_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.CARTOGRAPHER_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.CARTOGRAPHER_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.CARTOGRAPHER_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.CARTOGRAPHER_LEVEL_1),
++                Map.entry(2, TradeSets.CARTOGRAPHER_LEVEL_2),
++                Map.entry(3, TradeSets.CARTOGRAPHER_LEVEL_3),
++                Map.entry(4, TradeSets.CARTOGRAPHER_LEVEL_4),
++                Map.entry(5, TradeSets.CARTOGRAPHER_LEVEL_5)
++            ))
+         );
+         register(
+             registry,
+             CLERIC,
+             PoiTypes.CLERIC,
+             SoundEvents.VILLAGER_WORK_CLERIC,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.CLERIC_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.CLERIC_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.CLERIC_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.CLERIC_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.CLERIC_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.CLERIC_LEVEL_1),
++                Map.entry(2, TradeSets.CLERIC_LEVEL_2),
++                Map.entry(3, TradeSets.CLERIC_LEVEL_3),
++                Map.entry(4, TradeSets.CLERIC_LEVEL_4),
++                Map.entry(5, TradeSets.CLERIC_LEVEL_5)
++            ))
+         );
+         register(
+             registry,
+@@ -181,78 +_,78 @@
+             ImmutableSet.of(Items.WHEAT, Items.WHEAT_SEEDS, Items.BEETROOT_SEEDS, Items.BONE_MEAL),
+             ImmutableSet.of(Blocks.FARMLAND),
+             SoundEvents.VILLAGER_WORK_FARMER,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.FARMER_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.FARMER_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.FARMER_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.FARMER_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.FARMER_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.FARMER_LEVEL_1),
++                Map.entry(2, TradeSets.FARMER_LEVEL_2),
++                Map.entry(3, TradeSets.FARMER_LEVEL_3),
++                Map.entry(4, TradeSets.FARMER_LEVEL_4),
++                Map.entry(5, TradeSets.FARMER_LEVEL_5)
++            ))
+         );
+         register(
+             registry,
+             FISHERMAN,
+             PoiTypes.FISHERMAN,
+             SoundEvents.VILLAGER_WORK_FISHERMAN,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.FISHERMAN_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.FISHERMAN_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.FISHERMAN_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.FISHERMAN_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.FISHERMAN_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.FISHERMAN_LEVEL_1),
++                Map.entry(2, TradeSets.FISHERMAN_LEVEL_2),
++                Map.entry(3, TradeSets.FISHERMAN_LEVEL_3),
++                Map.entry(4, TradeSets.FISHERMAN_LEVEL_4),
++                Map.entry(5, TradeSets.FISHERMAN_LEVEL_5)
++            ))
+         );
+         register(
+             registry,
+             FLETCHER,
+             PoiTypes.FLETCHER,
+             SoundEvents.VILLAGER_WORK_FLETCHER,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.FLETCHER_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.FLETCHER_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.FLETCHER_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.FLETCHER_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.FLETCHER_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.FLETCHER_LEVEL_1),
++                Map.entry(2, TradeSets.FLETCHER_LEVEL_2),
++                Map.entry(3, TradeSets.FLETCHER_LEVEL_3),
++                Map.entry(4, TradeSets.FLETCHER_LEVEL_4),
++                Map.entry(5, TradeSets.FLETCHER_LEVEL_5)
++            ))
+         );
+         register(
+             registry,
+             LEATHERWORKER,
+             PoiTypes.LEATHERWORKER,
+             SoundEvents.VILLAGER_WORK_LEATHERWORKER,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.LEATHERWORKER_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.LEATHERWORKER_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.LEATHERWORKER_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.LEATHERWORKER_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.LEATHERWORKER_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.LEATHERWORKER_LEVEL_1),
++                Map.entry(2, TradeSets.LEATHERWORKER_LEVEL_2),
++                Map.entry(3, TradeSets.LEATHERWORKER_LEVEL_3),
++                Map.entry(4, TradeSets.LEATHERWORKER_LEVEL_4),
++                Map.entry(5, TradeSets.LEATHERWORKER_LEVEL_5)
++            ))
+         );
+         register(
+             registry,
+             LIBRARIAN,
+             PoiTypes.LIBRARIAN,
+             SoundEvents.VILLAGER_WORK_LIBRARIAN,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.LIBRARIAN_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.LIBRARIAN_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.LIBRARIAN_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.LIBRARIAN_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.LIBRARIAN_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.LIBRARIAN_LEVEL_1),
++                Map.entry(2, TradeSets.LIBRARIAN_LEVEL_2),
++                Map.entry(3, TradeSets.LIBRARIAN_LEVEL_3),
++                Map.entry(4, TradeSets.LIBRARIAN_LEVEL_4),
++                Map.entry(5, TradeSets.LIBRARIAN_LEVEL_5)
++            ))
+         );
+         register(
+             registry,
+             MASON,
+             PoiTypes.MASON,
+             SoundEvents.VILLAGER_WORK_MASON,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.MASON_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.MASON_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.MASON_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.MASON_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.MASON_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.MASON_LEVEL_1),
++                Map.entry(2, TradeSets.MASON_LEVEL_2),
++                Map.entry(3, TradeSets.MASON_LEVEL_3),
++                Map.entry(4, TradeSets.MASON_LEVEL_4),
++                Map.entry(5, TradeSets.MASON_LEVEL_5)
++            ))
+         );
+         register(registry, NITWIT, PoiType.NONE, PoiType.NONE, null);
+         register(
+@@ -260,39 +_,39 @@
+             SHEPHERD,
+             PoiTypes.SHEPHERD,
+             SoundEvents.VILLAGER_WORK_SHEPHERD,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.SHEPHERD_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.SHEPHERD_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.SHEPHERD_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.SHEPHERD_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.SHEPHERD_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.SHEPHERD_LEVEL_1),
++                Map.entry(2, TradeSets.SHEPHERD_LEVEL_2),
++                Map.entry(3, TradeSets.SHEPHERD_LEVEL_3),
++                Map.entry(4, TradeSets.SHEPHERD_LEVEL_4),
++                Map.entry(5, TradeSets.SHEPHERD_LEVEL_5)
++            ))
+         );
+         register(
+             registry,
+             TOOLSMITH,
+             PoiTypes.TOOLSMITH,
+             SoundEvents.VILLAGER_WORK_TOOLSMITH,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.TOOLSMITH_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.TOOLSMITH_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.TOOLSMITH_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.TOOLSMITH_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.TOOLSMITH_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.TOOLSMITH_LEVEL_1),
++                Map.entry(2, TradeSets.TOOLSMITH_LEVEL_2),
++                Map.entry(3, TradeSets.TOOLSMITH_LEVEL_3),
++                Map.entry(4, TradeSets.TOOLSMITH_LEVEL_4),
++                Map.entry(5, TradeSets.TOOLSMITH_LEVEL_5)
++            ))
+         );
+         return register(
+             registry,
+             WEAPONSMITH,
+             PoiTypes.WEAPONSMITH,
+             SoundEvents.VILLAGER_WORK_WEAPONSMITH,
+-            Int2ObjectMap.ofEntries(
+-                Int2ObjectMap.entry(1, TradeSets.WEAPONSMITH_LEVEL_1),
+-                Int2ObjectMap.entry(2, TradeSets.WEAPONSMITH_LEVEL_2),
+-                Int2ObjectMap.entry(3, TradeSets.WEAPONSMITH_LEVEL_3),
+-                Int2ObjectMap.entry(4, TradeSets.WEAPONSMITH_LEVEL_4),
+-                Int2ObjectMap.entry(5, TradeSets.WEAPONSMITH_LEVEL_5)
+-            )
++            new Int2ObjectOpenHashMap<>(Map.ofEntries(
++                Map.entry(1, TradeSets.WEAPONSMITH_LEVEL_1),
++                Map.entry(2, TradeSets.WEAPONSMITH_LEVEL_2),
++                Map.entry(3, TradeSets.WEAPONSMITH_LEVEL_3),
++                Map.entry(4, TradeSets.WEAPONSMITH_LEVEL_4),
++                Map.entry(5, TradeSets.WEAPONSMITH_LEVEL_5)
++            ))
+         );
+     }
+ 

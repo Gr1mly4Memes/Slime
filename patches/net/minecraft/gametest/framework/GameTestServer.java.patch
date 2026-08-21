@@ -12,7 +12,13 @@
  
      public static GameTestServer create(
          Thread serverThread,
-@@ -159,7 +_,7 @@
+@@ -154,12 +_,12 @@
+         boolean verify,
+         int repeatCount
+     ) {
+-        super(
++        super(null, null,
+             serverThread,
              levelStorageSource,
              packRepository,
              worldStem,

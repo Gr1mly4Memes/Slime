@@ -1,0 +1,69 @@
+--- a/net/minecraft/world/entity/item/PrimedTnt.java
++++ b/net/minecraft/world/entity/item/PrimedTnt.java
+@@ -28,6 +_,9 @@
+ import net.minecraft.world.level.portal.TeleportTransition;
+ import net.minecraft.world.level.storage.ValueInput;
+ import net.minecraft.world.level.storage.ValueOutput;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityRemoveEvent;
++import org.bukkit.event.entity.ExplosionPrimeEvent;
+ import org.jspecify.annotations.Nullable;
+ 
+ public class PrimedTnt extends Entity implements TraceableEntity {
+@@ -54,6 +_,7 @@
+     public @Nullable EntityReference<LivingEntity> owner;
+     private boolean usedPortal;
+     public float explosionPower = 4.0F;
++    public boolean isIncendiary = false; // CraftBukkit - add field
+ 
+     public PrimedTnt(EntityType<? extends PrimedTnt> type, Level level) {
+         super(type, level);
+@@ -95,6 +_,7 @@
+ 
+     @Override
+     public void tick() {
++        if (this.level().spigotConfig.maxTntTicksPerTick > 0 && ++this.level().spigotConfig.currentPrimedTnt > this.level().spigotConfig.maxTntTicksPerTick) { return; } // Spigot
+         this.handlePortal();
+         this.applyGravity();
+         this.move(MoverType.SELF, this.getDeltaMovement());
+@@ -107,10 +_,13 @@
+         int fuse = this.getFuse() - 1;
+         this.setFuse(fuse);
+         if (fuse <= 0) {
+-            this.discard();
++            // CraftBukkit start - Need to reverse the order of the explosion and the entity death
++            // this.discard();
+             if (!this.level().isClientSide()) {
+                 this.explode();
+             }
++            this.discard(EntityRemoveEvent.Cause.EXPLODE); // CraftBukkit - add Bukkit remove cause
++            // CraftBukkit end
+         } else {
+             this.updateFluidInteraction();
+             if (this.level().isClientSide()) {
+@@ -121,6 +_,11 @@
+ 
+     protected void explode() {
+         if (this.level() instanceof ServerLevel level && level.getGameRules().get(GameRules.TNT_EXPLODES)) {
++            // CraftBukkit start
++            ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent((org.bukkit.entity.Explosive) this.getBukkitEntity());
++            if (event.isCancelled()) {
++                return;
++            }
+             this.level()
+                 .explode(
+                     this,
+@@ -129,10 +_,11 @@
+                     this.getX(),
+                     this.getY(0.0625),
+                     this.getZ(),
+-                    this.explosionPower,
+-                    false,
++                    event.getRadius(),
++                    event.getFire(),
+                     Level.ExplosionInteraction.TNT
+                 );
++            // CraftBukkit end
+         }
+     }
+ 

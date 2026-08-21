@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/item/consume_effects/ClearAllStatusEffectsConsumeEffect.java
++++ b/net/minecraft/world/item/consume_effects/ClearAllStatusEffectsConsumeEffect.java
+@@ -6,6 +_,7 @@
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
+ 
+ public record ClearAllStatusEffectsConsumeEffect() implements ConsumeEffect {
+     public static final ClearAllStatusEffectsConsumeEffect INSTANCE = new ClearAllStatusEffectsConsumeEffect();
+@@ -18,7 +_,8 @@
+     }
+ 
+     @Override
+-    public boolean apply(Level level, ItemStack stack, LivingEntity user) {
++    public boolean apply(Level level, ItemStack stack, LivingEntity user, EntityPotionEffectEvent.Cause cause) {
++        user.removeAllEffects$cause(cause);
+         return user.removeAllEffects();
+     }
+ }

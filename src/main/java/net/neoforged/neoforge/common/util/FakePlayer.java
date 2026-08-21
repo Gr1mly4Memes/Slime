@@ -143,9 +143,6 @@ public class FakePlayer extends ServerPlayer {
         }
 
         @Override
-        protected void load(ServerAdvancementManager manager) {}
-
-        @Override
         public void setPlayer(ServerPlayer player) {}
 
         @Override

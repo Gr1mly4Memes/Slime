@@ -37,6 +37,10 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, V
         this.stacks = stacks;
     }
 
+    public NonNullList<ItemStack> getStacks() {
+        return stacks;
+    }
+
     public void setSize(int size) {
         stacks = NonNullList.withSize(size, ItemStack.EMPTY);
     }

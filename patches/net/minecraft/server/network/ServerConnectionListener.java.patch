@@ -26,15 +26,33 @@
                                      if (ServerConnectionListener.this.server.repliesToStatus()) {
                                          pipeline.addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this.getServer()));
                                      }
-@@ -86,7 +_,7 @@
+@@ -86,14 +_,25 @@
                                  }
                              }
                          )
 -                        .group(eventLoopGroupHolder.eventLoopGroup())
 +                        .group(eventLoopGroupHolder.serverEventLoopGroup())
                          .localAddress(address, port)
++                        .option(ChannelOption.AUTO_READ, false) // CraftBukkit
                          .bind()
                          .syncUninterruptibly()
+                 );
+         }
+     }
+ 
++    // CraftBukkit start
++    public void acceptConnections() {
++        synchronized (this.channels) {
++            for (ChannelFuture future : this.channels) {
++                future.channel().config().setAutoRead(true);
++            }
++        }
++    }
++    // CraftBukkit end
++
+     public SocketAddress startMemoryChannel() {
+         ChannelFuture newChannel;
+         synchronized (this.channels) {
 @@ -121,7 +_,7 @@
                          }
                      }
@@ -44,3 +62,28 @@
                  .localAddress(LocalAddress.ANY)
                  .bind()
                  .syncUninterruptibly();
+@@ -186,6 +_,13 @@
+ 
+     public void tick() {
+         synchronized (this.connections) {
++            // Spigot Start
++            // This prevents players from 'gaming' the server, and strategically relogging to increase their position in the tick order
++            if ( org.spigotmc.SpigotConfig.playerShuffle > 0 && MinecraftServer.currentTick % org.spigotmc.SpigotConfig.playerShuffle == 0 )
++            {
++                Collections.shuffle( this.connections );
++            }
++            // Spigot End
+             Iterator<Connection> iterator = this.connections.iterator();
+ 
+             while (iterator.hasNext()) {
+@@ -205,6 +_,10 @@
+                             connection.setReadOnly();
+                         }
+                     } else {
++                        // Spigot Start
++                        // Fix a race condition where a NetworkManager could be unregistered just before connection.
++                        if (connection.preparing) continue;
++                        // Spigot End
+                         iterator.remove();
+                         connection.handleDisconnection();
+                     }

@@ -9,6 +9,15 @@
      private final ResourceKey<? extends Registry<T>> key;
      private final ObjectList<Holder.Reference<T>> byId = new ObjectArrayList<>(256);
      private final Reference2IntMap<T> toId = Util.make(new Reference2IntOpenHashMap<>(), t -> t.defaultReturnValue(-1));
+@@ -78,7 +_,7 @@
+         }
+     }
+ 
+-    public void validateWrite(ResourceKey<T> key) {
++    private void validateWrite(ResourceKey<T> key) {
+         if (this.frozen) {
+             throw new IllegalStateException("Registry is already frozen (trying to add key " + key + ")");
+         }
 @@ -86,9 +_,17 @@
  
      @Override

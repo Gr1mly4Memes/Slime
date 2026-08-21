@@ -1,0 +1,75 @@
+--- a/net/minecraft/world/level/block/ButtonBlock.java
++++ b/net/minecraft/world/level/block/ButtonBlock.java
+@@ -39,6 +_,11 @@
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.jspecify.annotations.Nullable;
+ 
++// CraftBukkit start
++import org.bukkit.event.block.BlockRedstoneEvent;
++import org.bukkit.event.entity.EntityInteractEvent;
++// CraftBukkit end
++
+ public class ButtonBlock extends FaceAttachedHorizontalDirectionalBlock {
+     public static final MapCodec<ButtonBlock> CODEC = RecordCodecBuilder.mapCodec(
+         i -> i.group(
+@@ -88,10 +_,23 @@
+     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+         if (state.getValue(POWERED)) {
+             return InteractionResult.CONSUME;
++        } else {
++            // CraftBukkit start
++            boolean powered = state.getValue(POWERED);
++            org.bukkit.block.Block block = level.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
++            int old = powered ? 15 : 0;
++            int current = !powered ? 15 : 0;
++
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
++            level.getCraftServer().getPluginManager().callEvent(eventRedstone);
++
++            if ((eventRedstone.getNewCurrent() > 0) != !powered) {
++                return InteractionResult.SUCCESS;
++            }
++            // CraftBukkit end
++            this.press(state, level, pos, player);
++            return InteractionResult.SUCCESS;
+         }
+-
+-        this.press(state, level, pos, player);
+-        return InteractionResult.SUCCESS;
+     }
+ 
+     @Override
+@@ -161,7 +_,33 @@
+             : null;
+         boolean shouldBePressed = firstArrow != null;
+         boolean wasPressed = state.getValue(POWERED);
++
++        // CraftBukkit start - Call interact event when arrows turn on wooden buttons
++        if (wasPressed != shouldBePressed && shouldBePressed) {
++            org.bukkit.block.Block block = level.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
++            EntityInteractEvent event = new EntityInteractEvent(firstArrow.getBukkitEntity(), block);
++            level.getCraftServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++                return;
++            }
++        }
++        // CraftBukkit end
++
+         if (shouldBePressed != wasPressed) {
++            // CraftBukkit start
++            boolean powered = wasPressed;
++            org.bukkit.block.Block block = level.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
++            int old = powered ? 15 : 0;
++            int current = !powered ? 15 : 0;
++
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
++            level.getCraftServer().getPluginManager().callEvent(eventRedstone);
++
++            if ((shouldBePressed && eventRedstone.getNewCurrent() <= 0) || (!shouldBePressed && eventRedstone.getNewCurrent() > 0)) {
++                return;
++            }
++            // CraftBukkit end
+             level.setBlock(pos, state.setValue(POWERED, shouldBePressed), 3);
+             this.updateNeighbours(state, level, pos);
+             this.playSound(null, level, pos, shouldBePressed);

@@ -1,11 +1,37 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -169,12 +_,14 @@
+@@ -107,7 +_,7 @@
+         }
+     }
+ 
+-    protected void load(ServerAdvancementManager manager) {
++    private void load(ServerAdvancementManager manager) {
+         if (Files.isRegularFile(this.playerSavePath)) {
+             try (Reader reader = Files.newBufferedReader(this.playerSavePath, StandardCharsets.UTF_8)) {
+                 JsonElement json = StrictJsonParser.parse(reader);
+@@ -125,6 +_,7 @@
+     }
+ 
+     public void save() {
++        if (org.spigotmc.SpigotConfig.disableAdvancementSaving) return; // Spigot
+         JsonElement json = this.codec.encodeStart(JsonOps.INSTANCE, this.asData()).getOrThrow();
+ 
+         try {
+@@ -142,6 +_,7 @@
+         data.forEach((id, progress) -> {
+             AdvancementHolder advancement = manager.get(id);
+             if (advancement == null) {
++                if (!id.getNamespace().equals("minecraft")) return; // CraftBukkit
+                 LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", id, this.playerSavePath);
+             } else {
+                 this.startProgress(advancement, progress);
+@@ -169,12 +_,15 @@
              this.unregisterListeners(holder);
              this.progressChanged.add(holder);
              result = true;
 +            net.neoforged.neoforge.event.EventHooks.onAdvancementProgressedEvent(this.player, holder, progress, criterion, net.neoforged.neoforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType.GRANT);
              if (!wasDone && progress.isDone()) {
++                this.player.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent(this.player.getBukkitEntity(), holder.toBukkit())); // CraftBukkit
                  holder.value().rewards().grant(this.player);
                  holder.value().display().ifPresent(display -> {
                      if (display.shouldAnnounceChat() && this.player.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES)) {

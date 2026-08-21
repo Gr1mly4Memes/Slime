@@ -1,11 +1,25 @@
 --- a/net/minecraft/world/entity/EntityFluidInteraction.java
 +++ b/net/minecraft/world/entity/EntityFluidInteraction.java
-@@ -21,16 +_,17 @@
+@@ -6,6 +_,7 @@
+ import java.util.Map.Entry;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.SectionPos;
++import net.minecraft.tags.FluidTags;
+ import net.minecraft.tags.TagKey;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.entity.player.Player;
+@@ -18,19 +_,23 @@
+ import net.minecraft.world.level.material.FluidState;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
++import net.neoforged.neoforge.common.NeoForgeMod;
++import net.neoforged.neoforge.fluids.FluidType;
++import net.neoforged.neoforge.fluids.InFluidPredicate;
  import org.jspecify.annotations.Nullable;
  
  public class EntityFluidInteraction {
 -    private final Map<TagKey<Fluid>, EntityFluidInteraction.Tracker> trackerByFluid = new Reference2ObjectArrayMap<>();
-+    private final Map<net.neoforged.neoforge.fluids.FluidType, EntityFluidInteraction.Tracker> trackerByFluid = new Reference2ObjectArrayMap<>();
++    private final Map<FluidType, EntityFluidInteraction.Tracker> trackerByFluid = new Reference2ObjectArrayMap<>();
  
      public EntityFluidInteraction(Set<TagKey<Fluid>> fluids) {
          for (TagKey<Fluid> fluid : fluids) {
@@ -26,7 +40,7 @@
                  double eyeY = entity.getEyeY();
                  int eyeBlockZ = entity.getBlockZ();
 -                Fluid lastFluidType = null;
-+                net.neoforged.neoforge.fluids.FluidType lastFluidType = null;
++                FluidType lastFluidType = null;
                  EntityFluidInteraction.Tracker tracker = null;
                  BlockGetter level = entity.level();
                  BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
@@ -47,11 +61,23 @@
                                          if (x == eyeBlockX && z == eyeBlockZ && eyeY >= fluidBottom && eyeY <= fluidTop) {
                                              tracker.eyesInside = true;
                                          }
+@@ -79,6 +_,11 @@
+                                             tracker.accumulateCurrent(flow);
+                                         }
+                                     }
++                                    // CraftBukkit start - store last lava contact location
++                                    if (fluidState.is(FluidTags.LAVA)) {
++                                        entity.lastLavaContact = mutablePos.immutable();
++                                    }
++                                    // CraftBukkit end
+                                 }
+                             }
+                         }
 @@ -118,43 +_,168 @@
          return hasFluid;
      }
  
-+    /// @deprecated Neo: use [#getTrackerFor(net.neoforged.neoforge.fluids.FluidType)] instead
++    /// @deprecated Neo: use [#getTrackerFor(FluidType)] instead
 +    @Deprecated
      private EntityFluidInteraction.@Nullable Tracker getTrackerFor(Fluid fluid) {
 -        for (Entry<TagKey<Fluid>, EntityFluidInteraction.Tracker> entry : this.trackerByFluid.entrySet()) {
@@ -67,17 +93,17 @@
 +        return this.getTrackerFor(fluid.getFluidType());
 +    }
 +
-+    private EntityFluidInteraction.Tracker getTrackerFor(net.neoforged.neoforge.fluids.FluidType fluid) {
++    private EntityFluidInteraction.Tracker getTrackerFor(FluidType fluid) {
 +        return this.trackerByFluid.computeIfAbsent(fluid, _ -> new Tracker());
 +    }
 +
-+    /// @deprecated Neo: use [#applyCurrentTo(net.neoforged.neoforge.fluids.FluidType, Entity, double)] instead
++    /// @deprecated Neo: use [#applyCurrentTo(FluidType, Entity, double)] instead
 +    @Deprecated
      public void applyCurrentTo(TagKey<Fluid> fluid, Entity entity, double scale) {
 +        this.applyCurrentTo(getFluidTypeByTag(fluid), entity, scale);
 +    }
 +
-+    public void applyCurrentTo(net.neoforged.neoforge.fluids.FluidType fluid, Entity entity, double scale) {
++    public void applyCurrentTo(FluidType fluid, Entity entity, double scale) {
          EntityFluidInteraction.Tracker tracker = this.trackerByFluid.get(fluid);
          if (tracker != null) {
              tracker.applyCurrentTo(entity, scale);
@@ -92,18 +118,18 @@
 +        }
 +    }
 +
-+    /// @deprecated Neo: use [#getFluidHeight(net.neoforged.neoforge.fluids.FluidType)] instead
++    /// @deprecated Neo: use [#getFluidHeight(FluidType)] instead
 +    @Deprecated
      public double getFluidHeight(TagKey<Fluid> fluid) {
 +        return this.getFluidHeight(getFluidTypeByTag(fluid));
 +    }
 +
-+    public double getFluidHeight(net.neoforged.neoforge.fluids.FluidType fluid) {
++    public double getFluidHeight(FluidType fluid) {
          EntityFluidInteraction.Tracker tracker = this.trackerByFluid.get(fluid);
          return tracker != null ? tracker.height : 0.0;
      }
  
-+    public <E extends Entity> double getMaxFluidHeightMatching(E entity, net.neoforged.neoforge.fluids.InFluidPredicate<E> predicate) {
++    public <E extends Entity> double getMaxFluidHeightMatching(E entity, InFluidPredicate<E> predicate) {
 +        double maxHeight = 0D;
 +        for (var entry : this.trackerByFluid.entrySet()) {
 +            double height = entry.getValue().height;
@@ -114,9 +140,9 @@
 +        return maxHeight;
 +    }
 +
-+    public net.neoforged.neoforge.fluids.FluidType getMaxHeightFluidType() {
++    public FluidType getMaxHeightFluidType() {
 +        double maxHeight = 0D;
-+        var maxHeightType = net.neoforged.neoforge.common.NeoForgeMod.EMPTY_TYPE.value();
++        var maxHeightType = NeoForgeMod.EMPTY_TYPE.value();
 +        for (var entry : this.trackerByFluid.entrySet()) {
 +            double height = entry.getValue().height;
 +            if (height > maxHeight) {
@@ -141,13 +167,13 @@
 +        return minMod;
 +    }
 +
-+    /// @deprecated Neo: use [#isInFluid(net.neoforged.neoforge.fluids.FluidType)] instead
++    /// @deprecated Neo: use [#isInFluid(FluidType)] instead
 +    @Deprecated
      public boolean isInFluid(TagKey<Fluid> fluid) {
 +        return this.isInFluid(getFluidTypeByTag(fluid));
 +    }
 +
-+    public boolean isInFluid(net.neoforged.neoforge.fluids.FluidType fluid) {
++    public boolean isInFluid(FluidType fluid) {
          return this.getFluidHeight(fluid) > 0.0;
      }
  
@@ -160,7 +186,7 @@
 +        return false;
 +    }
 +
-+    public <E extends Entity> boolean isInFluidMatching(E entity, net.neoforged.neoforge.fluids.InFluidPredicate<E> predicate) {
++    public <E extends Entity> boolean isInFluidMatching(E entity, InFluidPredicate<E> predicate) {
 +        for (var entry : this.trackerByFluid.entrySet()) {
 +            double height = entry.getValue().height;
 +            if (height > 0D && predicate.test(entity, entry.getKey(), height)) {
@@ -170,18 +196,18 @@
 +        return false;
 +    }
 +
-+    /// @deprecated Neo: use [#isEyeInFluid(net.neoforged.neoforge.fluids.FluidType)] instead
++    /// @deprecated Neo: use [#isEyeInFluid(FluidType)] instead
 +    @Deprecated
      public boolean isEyeInFluid(TagKey<Fluid> fluid) {
 +        return this.isEyeInFluid(getFluidTypeByTag(fluid));
 +    }
 +
-+    public boolean isEyeInFluid(net.neoforged.neoforge.fluids.FluidType fluid) {
++    public boolean isEyeInFluid(FluidType fluid) {
          EntityFluidInteraction.Tracker tracker = this.trackerByFluid.get(fluid);
          return tracker != null && tracker.eyesInside;
      }
  
-+    public <E extends Entity> boolean isEyeInFluidMatching(E entity, net.neoforged.neoforge.fluids.InFluidPredicate<E> predicate) {
++    public <E extends Entity> boolean isEyeInFluidMatching(E entity, InFluidPredicate<E> predicate) {
 +        for (var entry : this.trackerByFluid.entrySet()) {
 +            Tracker tracker = entry.getValue();
 +            if (tracker.eyesInside && predicate.test(entity, entry.getKey(), tracker.height)) {
@@ -191,20 +217,20 @@
 +        return false;
 +    }
 +
-+    public net.neoforged.neoforge.fluids.FluidType getFirstEyeInFluid() {
++    public FluidType getFirstEyeInFluid() {
 +        for (var entry : this.trackerByFluid.entrySet()) {
 +            if (entry.getValue().eyesInside) {
 +                return entry.getKey();
 +            }
 +        }
-+        return net.neoforged.neoforge.common.NeoForgeMod.EMPTY_TYPE.value();
++        return NeoForgeMod.EMPTY_TYPE.value();
 +    }
 +
-+    static net.neoforged.neoforge.fluids.FluidType getFluidTypeByTag(TagKey<Fluid> fluidTag) {
-+        if (fluidTag == net.minecraft.tags.FluidTags.WATER) {
-+            return net.neoforged.neoforge.common.NeoForgeMod.WATER_TYPE.value();
-+        } else if (fluidTag == net.minecraft.tags.FluidTags.LAVA) {
-+            return net.neoforged.neoforge.common.NeoForgeMod.LAVA_TYPE.value();
++    static FluidType getFluidTypeByTag(TagKey<Fluid> fluidTag) {
++        if (fluidTag == FluidTags.WATER) {
++            return NeoForgeMod.WATER_TYPE.value();
++        } else if (fluidTag == FluidTags.LAVA) {
++            return NeoForgeMod.LAVA_TYPE.value();
 +        } else {
 +            throw new IllegalArgumentException("Cannot look up tracker by tag for non-vanilla fluid: " + fluidTag);
 +        }

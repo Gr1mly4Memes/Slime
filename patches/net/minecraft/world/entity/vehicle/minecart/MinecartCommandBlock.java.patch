@@ -1,5 +1,12 @@
 --- a/net/minecraft/world/entity/vehicle/minecart/MinecartCommandBlock.java
 +++ b/net/minecraft/world/entity/vehicle/minecart/MinecartCommandBlock.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.entity.vehicle.minecart;
+ 
++import java.util.Objects;
+ import net.minecraft.commands.CommandSource;
+ import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.network.chat.CommonComponents;
 @@ -87,6 +_,8 @@
  
      @Override
@@ -9,3 +16,16 @@
          if (!player.canUseGameMasterBlocks()) {
              return InteractionResult.PASS;
          }
+@@ -137,5 +_,12 @@
+         public boolean isValid() {
+             return !MinecartCommandBlock.this.isRemoved();
+         }
++
++        // CraftBukkit start
++        @Override
++        public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
++            return (org.bukkit.craftbukkit.entity.CraftMinecartCommand) MinecartCommandBlock.this.getBukkitEntity();
++        }
++        // CraftBukkit end
+     }
+ }

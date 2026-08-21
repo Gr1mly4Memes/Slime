@@ -4,7 +4,7 @@
      }
  
      @Override
-+    protected SoundEvent getPlaceSound(BlockState state, Level level, BlockPos pos, Player entity) {
++    protected SoundEvent getPlaceSound(BlockState state, Level level, BlockPos pos, Player entity) { // Neo: use the bucket's place sound regardless of context
 +        return this.getPlaceSound(state);
 +    }
 +

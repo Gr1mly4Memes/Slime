@@ -1,5 +1,79 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
+@@ -188,6 +_,12 @@
+         return this.status == Raid.RaidStatus.LOSS;
+     }
+ 
++    // CraftBukkit start
++    public boolean isInProgress() {
++        return this.status == RaidStatus.ONGOING;
++    }
++    // CraftBukkit end
++
+     public float getTotalHealth() {
+         return this.totalHealth;
+     }
+@@ -274,6 +_,7 @@
+                 boolean oldActive = this.active;
+                 this.active = level.hasChunkAt(this.center);
+                 if (level.getDifficulty() == Difficulty.PEACEFUL) {
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callRaidStopEvent(this, level, org.bukkit.event.raid.RaidStopEvent.Reason.PEACE); // CraftBukkit
+                     this.stop();
+                     return;
+                 }
+@@ -293,13 +_,16 @@
+                 if (!level.isVillage(this.center)) {
+                     if (this.groupsSpawned > 0) {
+                         this.status = Raid.RaidStatus.LOSS;
++                        org.bukkit.craftbukkit.event.CraftEventFactory.callRaidFinishEvent(this, level, new java.util.ArrayList<>()); // CraftBukkit
+                     } else {
++                        org.bukkit.craftbukkit.event.CraftEventFactory.callRaidStopEvent(this, level, org.bukkit.event.raid.RaidStopEvent.Reason.NOT_IN_VILLAGE); // CraftBukkit
+                         this.stop();
+                     }
+                 }
+ 
+                 this.ticksActive++;
+                 if (this.ticksActive >= 48000L) {
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callRaidStopEvent(this, level, org.bukkit.event.raid.RaidStopEvent.Reason.TIMEOUT); // CraftBukkit
+                     this.stop();
+                     return;
+                 }
+@@ -388,6 +_,7 @@
+                     }
+ 
+                     if (attempt > 5) {
++                        org.bukkit.craftbukkit.event.CraftEventFactory.callRaidStopEvent(this, level, org.bukkit.event.raid.RaidStopEvent.Reason.UNSPAWNABLE);  // CraftBukkit
+                         this.stop();
+                         break;
+                     }
+@@ -399,6 +_,7 @@
+                     } else {
+                         this.status = Raid.RaidStatus.VICTORY;
+ 
++                        List<org.bukkit.entity.Player> winners = new java.util.ArrayList<>(); // CraftBukkit
+                         for (UUID heroUUID : this.heroesOfTheVillage) {
+                             Entity entity = level.getEntity(heroUUID);
+                             if (entity instanceof LivingEntity hero && !entity.isSpectator()) {
+@@ -406,9 +_,11 @@
+                                 if (hero instanceof ServerPlayer playerHero) {
+                                     playerHero.awardStat(Stats.RAID_WIN);
+                                     CriteriaTriggers.RAID_WIN.trigger(playerHero);
++                                    winners.add(playerHero.getBukkitEntity()); // CraftBukkit
+                                 }
+                             }
+                         }
++                        org.bukkit.craftbukkit.event.CraftEventFactory.callRaidFinishEvent(this, level, winners); // CraftBukkit
+                     }
+                 }
+ 
+@@ -416,6 +_,7 @@
+             } else if (this.isOver()) {
+                 this.celebrationTicks++;
+                 if (this.celebrationTicks >= 600) {
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callRaidStopEvent(this, level, org.bukkit.event.raid.RaidStopEvent.Reason.FINISHED); // CraftBukkit
+                     this.stop();
+                     return;
+                 }
 @@ -533,7 +_,7 @@
              int ravagersSpawned = 0;
  
@@ -18,7 +92,38 @@
                      Raider ridingRaider = null;
                      if (groupNumber == this.getNumGroups(Difficulty.NORMAL)) {
                          ridingRaider = EntityTypes.PILLAGER.create(level, EntitySpawnReason.EVENT);
-@@ -838,12 +_,26 @@
+@@ -585,7 +_,7 @@
+                 raider.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), EntitySpawnReason.EVENT, null);
+                 raider.applyRaidBuffs(level, groupNumber, false);
+                 raider.setOnGround(true);
+-                level.addFreshEntityWithPassengers(raider);
++                level.addFreshEntityWithPassengers(raider, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.RAID); // CraftBukkit
+             }
+         }
+     }
+@@ -745,7 +_,7 @@
+     }
+ 
+     private int getDefaultNumSpawns(Raid.RaiderType type, int wav, boolean isBonusWave) {
+-        return isBonusWave ? type.spawnsPerWaveBeforeBonus[this.numGroups] : type.spawnsPerWaveBeforeBonus[wav];
++        return type.getDefaultSpawnsForWave(isBonusWave ? this.numGroups : wav); // CraftBukkit
+     }
+ 
+     private int getPotentialBonusSpawns(Raid.RaiderType type, RandomSource random, int wav, DifficultyInstance difficultyInstance, boolean isBonusWave) {
+@@ -811,6 +_,12 @@
+         this.heroesOfTheVillage.add(killer.getUUID());
+     }
+ 
++    // CraftBukkit start - a method to get all raiders
++    public java.util.Collection<Raider> getRaiders() {
++        return this.groupRaiderMap.values().stream().flatMap(Set::stream).collect(java.util.stream.Collectors.toSet());
++    }
++    // CraftBukkit end
++
+     private enum RaidStatus implements StringRepresentable {
+         ONGOING("ongoing"),
+         VICTORY("victory"),
+@@ -838,12 +_,59 @@
          RAVAGER(EntityTypes.RAVAGER, new int[]{0, 0, 0, 1, 0, 1, 0, 2});
  
          private static final Raid.RaiderType[] VALUES = values();
@@ -31,6 +136,7 @@
          RaiderType(EntityType<? extends Raider> entityType, int[] spawnsPerWaveBeforeBonus) {
              this.entityType = entityType;
              this.spawnsPerWaveBeforeBonus = spawnsPerWaveBeforeBonus;
+-        }
 +            this.entityTypeSupplier = () -> entityType;
 +        }
 +
@@ -42,6 +148,39 @@
 +
 +        public static net.neoforged.fml.common.asm.enumextension.ExtensionInfo getExtensionInfo() {
 +            return net.neoforged.fml.common.asm.enumextension.ExtensionInfo.nonExtended(Raid.RaiderType.class);
-         }
++        }
++
++        // CraftBukkit start
++        private int getDefaultSpawnsForWave(int wave) {
++            if (wave < 0) {
++                return 0;
++            }
++
++            if (wave < this.spawnsPerWaveBeforeBonus.length) {
++                return this.spawnsPerWaveBeforeBonus[wave];
++            }
++
++            return this.getExtendedSpawnsForWave(wave);
++        }
++
++        private int getExtendedSpawnsForWave(int wave) {
++            int lastHardcodedWave = this.spawnsPerWaveBeforeBonus.length - 1;
++            int lastHardcodedCount = this.spawnsPerWaveBeforeBonus[lastHardcodedWave];
++            int extraWaves = wave - lastHardcodedWave;
++
++            return lastHardcodedCount + this.getAdditionalSpawnsPerExtendedWave(extraWaves);
++        }
++
++        // TODO: Adjust this to have a better spawning curve.
++        private int getAdditionalSpawnsPerExtendedWave(int extraWaves) {
++            return switch (this) {
++                case PILLAGER -> extraWaves / 2;
++                case VINDICATOR -> extraWaves / 3;
++                case EVOKER -> extraWaves / 4;
++                case WITCH -> extraWaves / 5;
++                case RAVAGER -> extraWaves / 6;
++            };
++        }
++        // CraftBukkit end
      }
  }

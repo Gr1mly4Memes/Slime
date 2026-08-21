@@ -1,5 +1,80 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
+@@ -16,6 +_,7 @@
+ import java.util.function.BiFunction;
+ import java.util.function.Consumer;
+ import java.util.function.Predicate;
++import java.util.function.Supplier;
+ import java.util.function.UnaryOperator;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.advancements.triggers.CriteriaTriggers;
+@@ -96,6 +_,32 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import org.apache.commons.lang3.function.TriConsumer;
+ import org.apache.commons.lang3.mutable.MutableBoolean;
++// CraftBukkit start
++import java.util.Map;
++import net.minecraft.core.Direction;
++import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
++import net.minecraft.sounds.SoundSource;
++import net.minecraft.world.level.block.BedBlock;
++import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.block.SaplingBlock;
++import net.minecraft.world.level.block.SignBlock;
++import net.minecraft.world.level.block.BaseEntityBlock;
++import net.minecraft.world.level.block.WitherSkullBlock;
++import net.minecraft.world.level.block.SoundType;
++import net.minecraft.world.level.block.entity.BlockEntity;
++import net.minecraft.world.level.block.entity.SignBlockEntity;
++import net.minecraft.world.level.block.entity.SkullBlockEntity;
++import org.bukkit.Location;
++import org.bukkit.TreeType;
++import org.bukkit.craftbukkit.block.CapturedBlockState;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.craftbukkit.util.CraftLocation;
++import org.bukkit.event.block.BlockFertilizeEvent;
++import org.bukkit.event.player.PlayerItemDamageEvent;
++import org.bukkit.event.world.StructureGrowEvent;
++// CraftBukkit end
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
+ import org.jspecify.annotations.Nullable;
+ import org.slf4j.Logger;
+ 
+@@ -177,18 +_,28 @@
+                 int count = input.readVarInt();
+                 if (count <= 0) {
+                     return ItemStack.EMPTY;
++                } else {
++                    Holder<Item> item = Item.STREAM_CODEC.decode(input);
++                    DataComponentPatch patch = patchCodec.decode(input);
++                    // CraftBukkit start
++                    ItemStack itemstack = new ItemStack(item, count, patch);
++                    if (!patch.isEmpty()) {
++                        CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++                    }
++                    return itemstack;
++                    // CraftBukkit end
+                 }
+-
+-                Holder<Item> item = Item.STREAM_CODEC.decode(input);
+-                DataComponentPatch patch = patchCodec.decode(input);
+-                return new ItemStack(item, count, patch);
+             }
+ 
+             public void encode(RegistryFriendlyByteBuf output, ItemStack itemStack) {
+-                if (itemStack.isEmpty()) {
++                if (itemStack.isEmpty() || itemStack.getItem() == null) { // CraftBukkit - NPE fix itemstack.getItem()
+                     output.writeVarInt(0);
+                 } else {
+                     output.writeVarInt(itemStack.getCount());
++                    // Spigot start - filter
++                    itemStack = itemStack.copy();
++                    CraftItemStack.setItemMeta(itemStack, CraftItemStack.getItemMeta(itemStack));
++                    // Spigot end
+                     Item.STREAM_CODEC.encode(output, itemStack.typeHolder());
+                     patchCodec.encode(output, itemStack.components.asPatch());
+                 }
 @@ -239,6 +_,10 @@
          return !this.isEmpty() && this.components.hasNonDefault(type);
      }
@@ -78,7 +153,7 @@
      }
  
      public boolean isBroken() {
-@@ -445,6 +_,11 @@
+@@ -445,13 +_,37 @@
      }
  
      public void hurtAndBreak(int amount, ServerLevel level, @Nullable ServerPlayer player, Consumer<Item> onBreak) {
@@ -88,9 +163,24 @@
 +    public void hurtAndBreak(int amount, ServerLevel level, @Nullable LivingEntity player, Consumer<Item> onBreak) {
 +        amount = getItem().damageItem(this, amount, player, onBreak);
          int newAmount = this.processDurabilityChange(amount, level, player);
++        // CraftBukkit start
++        if (player instanceof ServerPlayer serverplayer) {
++            PlayerItemDamageEvent event = new PlayerItemDamageEvent(serverplayer.getBukkitEntity(), CraftItemStack.asCraftMirror(this), newAmount);
++            event.getPlayer().getServer().getPluginManager().callEvent(event);
++
++            if (newAmount != event.getDamage() || event.isCancelled()) {
++                event.getPlayer().updateInventory();
++            }
++            if (event.isCancelled()) {
++                return;
++            }
++
++            newAmount = event.getDamage();
++        }
++        // CraftBukkit end
          if (newAmount != 0) {
              this.applyDamage(this.getDamageValue() + newAmount, player, onBreak);
-@@ -452,6 +_,10 @@
+         }
      }
  
      private int processDurabilityChange(int amount, ServerLevel level, @Nullable ServerPlayer player) {
@@ -101,7 +191,7 @@
          if (!this.isDamageableItem()) {
              return 0;
          } else if (player != null && player.hasInfiniteMaterials()) {
-@@ -462,8 +_,12 @@
+@@ -462,13 +_,22 @@
      }
  
      private void applyDamage(int newDamage, @Nullable ServerPlayer player, Consumer<Item> onBreak) {
@@ -116,6 +206,16 @@
          }
  
          this.setDamageValue(newDamage);
+         if (this.isBroken()) {
+             Item item = this.getItem();
++            // CraftBukkit start - Check for item breaking
++            if (this.count == 1 && player instanceof ServerPlayer serverplayer) {
++                org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemBreakEvent(serverplayer, this);
++            }
++            // CraftBukkit end
+             this.shrink(1);
+             onBreak.accept(item);
+         }
 @@ -493,7 +_,7 @@
      public void hurtAndBreak(int amount, LivingEntity owner, EquipmentSlot slot) {
          if (owner.level() instanceof ServerLevel serverLevel) {
@@ -170,6 +270,45 @@
      public static boolean matchesIgnoringComponents(ItemStack a, ItemStack b, Predicate<DataComponentType<?>> ignoredPredicate) {
          if (a == b) {
              return true;
+@@ -758,6 +_,12 @@
+         return this.getItem().useOnRelease(this);
+     }
+ 
++    // CraftBukkit start
++    public void restorePatch(DataComponentPatch datacomponentpatch) {
++        this.components.restorePatch(datacomponentpatch);
++    }
++    // CraftBukkit end
++
+     public <T> @Nullable T set(DataComponentType<T> type, @Nullable T value) {
+         return this.components.set(type, value);
+     }
+@@ -792,6 +_,25 @@
+             this.components.restorePatch(oldPatch);
+         }
+     }
++    // Paper start - (this is just a good no conflict location)
++    public org.bukkit.inventory.ItemStack asBukkitMirror() {
++        return CraftItemStack.asCraftMirror(this);
++    }
++    public org.bukkit.inventory.ItemStack asBukkitCopy() {
++        return CraftItemStack.asCraftMirror(this.copy());
++    }
++    public static ItemStack fromBukkitCopy(org.bukkit.inventory.ItemStack itemstack) {
++        return CraftItemStack.asNMSCopy(itemstack);
++    }
++    private CraftItemStack bukkitStack;
++    public org.bukkit.inventory.ItemStack getBukkitStack() {
++        if (bukkitStack == null || bukkitStack.handle != this) {
++            bukkitStack = CraftItemStack.asCraftMirror(this);
++        }
++        return bukkitStack;
++    }
++    // Paper end
++
+ 
+     public void applyComponents(DataComponentPatch patch) {
+         this.components.applyPatch(patch);
 @@ -828,7 +_,7 @@
      }
  
@@ -212,7 +351,37 @@
          this.addToTooltip(DataComponents.TROPICAL_FISH_PATTERN, context, display, builder, tooltipFlag);
          this.addToTooltip(DataComponents.INSTRUMENT, context, display, builder, tooltipFlag);
          this.addToTooltip(DataComponents.MAP_ID, context, display, builder, tooltipFlag);
-@@ -913,7 +_,11 @@
+@@ -883,37 +_,19 @@
+         this.addToTooltip(DataComponents.PROFILE, context, display, builder, tooltipFlag);
+         this.addToTooltip(DataComponents.LORE, context, display, builder, tooltipFlag);
+         this.addToTooltip(DataComponents.SULFUR_CUBE_CONTENT, context, display, builder, tooltipFlag);
+-        this.addAttributeTooltips(builder, display, player);
+-        this.addUnitComponentToTooltip(DataComponents.INTANGIBLE_PROJECTILE, INTANGIBLE_TOOLTIP, display, builder);
+-        this.addUnitComponentToTooltip(DataComponents.UNBREAKABLE, UNBREAKABLE_TOOLTIP, display, builder);
+         this.addToTooltip(DataComponents.OMINOUS_BOTTLE_AMPLIFIER, context, display, builder, tooltipFlag);
+         this.addToTooltip(DataComponents.SUSPICIOUS_STEW_EFFECTS, context, display, builder, tooltipFlag);
+         this.addToTooltip(DataComponents.BLOCK_STATE, context, display, builder, tooltipFlag);
+         this.addToTooltip(DataComponents.ENTITY_DATA, context, display, builder, tooltipFlag);
+-        if ((this.is(Items.SPAWNER) || this.is(Items.TRIAL_SPAWNER)) && display.shows(DataComponents.BLOCK_ENTITY_DATA)) {
+-            TypedEntityData<BlockEntityType<?>> blockEntityData = this.get(DataComponents.BLOCK_ENTITY_DATA);
+-            Spawner.appendHoverText(blockEntityData, builder, "SpawnData");
+-        }
+-
+-        AdventureModePredicate canBreak = this.get(DataComponents.CAN_BREAK);
+-        if (canBreak != null && display.shows(DataComponents.CAN_BREAK)) {
+-            builder.accept(CommonComponents.EMPTY);
+-            builder.accept(AdventureModePredicate.CAN_BREAK_HEADER);
+-            canBreak.addToTooltip(builder);
+-        }
+-
+-        AdventureModePredicate canPlaceOn = this.get(DataComponents.CAN_PLACE_ON);
+-        if (canPlaceOn != null && display.shows(DataComponents.CAN_PLACE_ON)) {
+-            builder.accept(CommonComponents.EMPTY);
+-            builder.accept(AdventureModePredicate.CAN_PLACE_HEADER);
+-            canPlaceOn.addToTooltip(builder);
+-        }
+-
+         if (tooltipFlag.isAdvanced()) {
              if (this.isDamaged() && display.shows(DataComponents.DAMAGE)) {
                  builder.accept(Component.translatable("item.durability", this.getMaxDamage() - this.getDamageValue(), this.getMaxDamage()));
              }
@@ -236,7 +405,7 @@
      private void addAttributeTooltips(Consumer<Component> consumer, TooltipDisplay display, @Nullable Player player) {
          if (display.shows(DataComponents.ATTRIBUTE_MODIFIERS)) {
              for (EquipmentSlotGroup slot : EquipmentSlotGroup.values()) {
-@@ -991,19 +_,43 @@
+@@ -991,22 +_,53 @@
          return !this.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
      }
  
@@ -280,6 +449,16 @@
          EnchantmentHelper.forEachModifier(this, slot, consumer);
      }
  
++    // CraftBukkit start
++    @Deprecated
++    public void setItem(Holder<Item> item) {
++        this.item = item;
++    }
++    // CraftBukkit end
++
+     public Component getDisplayName() {
+         MutableComponent hoverName = Component.empty().append(this.getHoverName());
+         if (this.has(DataComponents.CUSTOM_NAME)) {
 @@ -1015,7 +_,7 @@
  
          MutableComponent result = ComponentUtils.wrapInSquareBrackets(hoverName);
@@ -289,6 +468,15 @@
          }
  
          return result;
+@@ -1071,7 +_,7 @@
+     }
+ 
+     public void consume(int amount, @Nullable LivingEntity owner) {
+-        if (owner == null || !owner.hasInfiniteMaterials()) {
++        if ((owner == null || !owner.hasInfiniteMaterials()) && this != ItemStack.EMPTY) { // CraftBukkit
+             this.shrink(amount);
+         }
+     }
 @@ -1096,11 +_,14 @@
          }
      }

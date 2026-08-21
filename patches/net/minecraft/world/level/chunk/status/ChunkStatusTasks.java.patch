@@ -1,6 +1,15 @@
 --- a/net/minecraft/world/level/chunk/status/ChunkStatusTasks.java
 +++ b/net/minecraft/world/level/chunk/status/ChunkStatusTasks.java
-@@ -195,11 +_,22 @@
+@@ -41,7 +_,7 @@
+         WorldGenContext context, ChunkStep step, StaticCache2D<GenerationChunkHolder> chunks, ChunkAccess chunk
+     ) {
+         ServerLevel level = context.level();
+-        if (level.getServer().getWorldGenSettings().options().generateStructures()) {
++        if (level.getWorldGenSettings().options().generateStructures()) { // CraftBukkit
+             context.generator()
+                 .createStructures(
+                     level.registryAccess(),
+@@ -195,16 +_,27 @@
              }
  
              levelChunk.setFullStatus(holder::getFullStatus);
@@ -23,3 +32,9 @@
              return levelChunk;
          }, context.mainThreadExecutor());
      }
+ 
+-    public static void postLoadProtoChunk(ServerLevel level, ValueInput.ValueInputList entities) {
++    private static void postLoadProtoChunk(ServerLevel level, ValueInput.ValueInputList entities) {
+         if (!entities.isEmpty()) {
+             level.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(entities, level, EntitySpawnReason.LOAD));
+         }

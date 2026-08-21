@@ -1,17 +1,42 @@
 --- a/net/minecraft/client/renderer/ItemInHandRenderer.java
 +++ b/net/minecraft/client/renderer/ItemInHandRenderer.java
-@@ -157,11 +_,11 @@
-         Identifier skinTexture = this.minecraft.player.getSkin().body().texturePath();
+@@ -146,22 +_,22 @@
+         return -Mth.cos(tilt * (float) Math.PI) * 0.5F + 0.5F;
+     }
+ 
+-    private void renderMapHand(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, HumanoidArm arm) {
+-        AvatarRenderer<AbstractClientPlayer> avatarRenderer = this.entityRenderDispatcher.getPlayerRenderer(this.minecraft.player);
++    private void renderMapHand(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, HumanoidArm arm, AbstractClientPlayer player) {
++        AvatarRenderer<AbstractClientPlayer> avatarRenderer = this.entityRenderDispatcher.getPlayerRenderer(player);
+         poseStack.pushPose();
+         float invert = arm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
+         poseStack.mulPose(Axis.YP.rotationDegrees(92.0F));
+         poseStack.mulPose(Axis.XP.rotationDegrees(45.0F));
+         poseStack.mulPose(Axis.ZP.rotationDegrees(invert * -41.0F));
+         poseStack.translate(invert * 0.3F, -1.1F, 0.45F);
+-        Identifier skinTexture = this.minecraft.player.getSkin().body().texturePath();
++        Identifier skinTexture = player.getSkin().body().texturePath();
          if (arm == HumanoidArm.RIGHT) {
              avatarRenderer.renderRightHand(
 -                poseStack, submitNodeCollector, lightCoords, skinTexture, this.minecraft.player.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE)
-+                poseStack, submitNodeCollector, lightCoords, skinTexture, this.minecraft.player.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE), this.minecraft.player
++                poseStack, submitNodeCollector, lightCoords, skinTexture, player.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE), player
              );
          } else {
              avatarRenderer.renderLeftHand(
 -                poseStack, submitNodeCollector, lightCoords, skinTexture, this.minecraft.player.isModelPartShown(PlayerModelPart.LEFT_SLEEVE)
-+                poseStack, submitNodeCollector, lightCoords, skinTexture, this.minecraft.player.isModelPartShown(PlayerModelPart.LEFT_SLEEVE), this.minecraft.player
++                poseStack, submitNodeCollector, lightCoords, skinTexture, player.isModelPartShown(PlayerModelPart.LEFT_SLEEVE), player
              );
+         }
+ 
+@@ -213,8 +_,8 @@
+         if (!this.minecraft.player.isInvisible()) {
+             poseStack.pushPose();
+             poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+-            this.renderMapHand(poseStack, submitNodeCollector, lightCoords, HumanoidArm.RIGHT);
+-            this.renderMapHand(poseStack, submitNodeCollector, lightCoords, HumanoidArm.LEFT);
++            this.renderMapHand(poseStack, submitNodeCollector, lightCoords, HumanoidArm.RIGHT, this.minecraft.player);
++            this.renderMapHand(poseStack, submitNodeCollector, lightCoords, HumanoidArm.LEFT, this.minecraft.player);
+             poseStack.popPose();
          }
  
 @@ -231,7 +_,7 @@

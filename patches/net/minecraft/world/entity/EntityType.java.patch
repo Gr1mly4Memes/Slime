@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -73,6 +_,11 @@
+@@ -3,6 +_,7 @@
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.Codec;
+ import java.util.Optional;
++import java.util.function.Consumer;
+ import java.util.stream.Stream;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+@@ -73,10 +_,19 @@
      private final FeatureFlagSet requiredFeatures;
      private final boolean allowedInPeaceful;
  
@@ -12,6 +20,14 @@
      public static Identifier getKey(EntityType<?> type) {
          return BuiltInRegistries.ENTITY_TYPE.getKey(type);
      }
+ 
++    public static Optional<EntityType<?>> byString(String id) {
++        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.tryParse(id));
++    }
++
+     public EntityType(
+         EntityType.EntityFactory<T> factory,
+         MobCategory category,
 @@ -94,6 +_,30 @@
          FeatureFlagSet requiredFeatures,
          boolean allowedInPeaceful
@@ -43,17 +59,93 @@
          this.factory = factory;
          this.category = category;
          this.canSpawnFarFromPlayer = canSpawnFarFromPlayer;
-@@ -109,6 +_,10 @@
+@@ -109,25 +_,28 @@
          this.lootTable = lootTable;
          this.requiredFeatures = requiredFeatures;
          this.allowedInPeaceful = allowedInPeaceful;
+-    }
+-
+-    public @Nullable T spawn(
+-        ServerLevel level,
+-        @Nullable ItemStack itemStack,
+-        @Nullable LivingEntity user,
+-        BlockPos spawnPos,
+-        EntitySpawnReason spawnReason,
+-        boolean tryMoveDown,
+-        boolean movedUp
+-    ) {
+-        PostSpawnProcessor<T> postSpawnConfig;
 +        this.trackDeltasSupplier = trackDeltasSupplier;
 +        this.trackingRangeSupplier = trackingRangeSupplier;
 +        this.updateIntervalSupplier = updateIntervalSupplier;
 +        this.onlyOpCanSetNbt = onlyOpCanSetNbt;
++    }
++
++    public @Nullable T spawn(ServerLevel level, @Nullable ItemStack itemStack, @Nullable LivingEntity user, BlockPos spawnPos, EntitySpawnReason spawnReason, boolean tryMoveDown, boolean movedUp) {
++        // CraftBukkit start
++        return this.spawn(level, itemStack, user, spawnPos, spawnReason, tryMoveDown, movedUp, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
++    }
++
++    public @Nullable T spawn(ServerLevel level, @Nullable ItemStack itemStack, @Nullable LivingEntity user, BlockPos spawnPos, EntitySpawnReason spawnReason, boolean tryMoveDown, boolean movedUp, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason bukkitSpawnReason) {
++        // CraftBukkit end
++        PostSpawnProcessor<T> consumer;
++
+         if (itemStack != null) {
+-            postSpawnConfig = createDefaultStackConfig(level, itemStack, user);
++            consumer = createDefaultStackConfig(level, itemStack, user);
+         } else {
+-            postSpawnConfig = PostSpawnProcessor.nop();
++            consumer = entity -> {};
+         }
+ 
+-        return this.spawn(level, postSpawnConfig, spawnPos, spawnReason, tryMoveDown, movedUp);
++        return (T) this.spawn(level, consumer, spawnPos, spawnReason, tryMoveDown, movedUp, bukkitSpawnReason); // CraftBukkit
      }
  
-     public @Nullable T spawn(
+     public static <T extends Entity> PostSpawnProcessor<T> createDefaultStackConfig(Level level, ItemStack itemStack, @Nullable LivingEntity user) {
+@@ -152,20 +_,30 @@
+     }
+ 
+     public @Nullable T spawn(ServerLevel level, BlockPos spawnPos, EntitySpawnReason spawnReason) {
+-        return this.spawn(level, null, spawnPos, spawnReason, false, false);
+-    }
+-
+-    public @Nullable T spawn(
+-        ServerLevel level,
+-        @Nullable PostSpawnProcessor<T> postSpawnConfig,
+-        BlockPos spawnPos,
+-        EntitySpawnReason spawnReason,
+-        boolean tryMoveDown,
+-        boolean movedUp
+-    ) {
++        // CraftBukkit start
++        return (T) this.spawn(level, spawnPos, spawnReason, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++    }
++
++    public @Nullable T spawn(ServerLevel level, BlockPos spawnPos, EntitySpawnReason spawnReason, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason bukkitSpawnReason) {
++        return (T) this.spawn(level, null, spawnPos, spawnReason, false, false, bukkitSpawnReason); // CraftBukkit
++        // CraftBukkit end
++    }
++
++    public @Nullable T spawn(ServerLevel level, @Nullable PostSpawnProcessor<T> postSpawnConfig, BlockPos spawnPos, EntitySpawnReason spawnReason, boolean tryMoveDown, boolean movedUp) {
++        // CraftBukkit start
++        return this.spawn(level, postSpawnConfig, spawnPos, spawnReason, tryMoveDown, movedUp, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++    }
++
++    public @Nullable T spawn(ServerLevel level, @Nullable PostSpawnProcessor<T> postSpawnConfig, BlockPos spawnPos, EntitySpawnReason spawnReason, boolean tryMoveDown, boolean movedUp, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason bukkitSpawnReason) {
++        // CraftBukkit end
+         T entity = this.create(level, postSpawnConfig, spawnPos, spawnReason, tryMoveDown, movedUp);
+         if (entity != null) {
+-            level.addFreshEntityWithPassengers(entity);
++            // CraftBukkit start
++            level.addFreshEntityWithPassengers(entity, bukkitSpawnReason);
++            if (entity.isRemoved()) {
++                return null; // Don't return an entity when CreatureSpawnEvent is canceled
++            }
++            // CraftBukkit end
+             if (entity instanceof Mob mob) {
+                 mob.playAmbientSound();
+             }
 @@ -200,6 +_,13 @@
              mob.yHeadRot = mob.getYRot();
              mob.yBodyRot = mob.getYRot();

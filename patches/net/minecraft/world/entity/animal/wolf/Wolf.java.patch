@@ -1,20 +1,41 @@
 --- a/net/minecraft/world/entity/animal/wolf/Wolf.java
 +++ b/net/minecraft/world/entity/animal/wolf/Wolf.java
-@@ -506,7 +_,7 @@
+@@ -87,6 +_,10 @@
+ import net.minecraft.world.level.storage.ValueInput;
+ import net.minecraft.world.level.storage.ValueOutput;
+ import net.minecraft.world.phys.Vec3;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
++// CraftBukkit end
+ import org.jspecify.annotations.Nullable;
+ 
+ public class Wolf extends TamableAnimal implements NeutralMob {
+@@ -433,7 +_,7 @@
+     protected void applyTamingSideEffects() {
+         if (this.isTame()) {
+             this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(40.0);
+-            this.setHealth(40.0F);
++            this.setHealth(this.getMaxHealth()); // CraftBukkit - 40.0 -> getMaxHealth()
+         } else {
+             this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(8.0);
+         }
+@@ -483,7 +_,7 @@
+                     this.setOrderedToSit(!this.isOrderedToSit());
+                     this.jumping = false;
+                     this.navigation.stop();
+-                    this.setTarget(null);
++                    this.setTarget((LivingEntity) null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
+                     return InteractionResult.SUCCESS.withoutItem();
+                 }
+ 
+@@ -506,7 +_,8 @@
      }
  
      private void tryToTame(Player player) {
 -        if (this.random.nextInt(3) == 0) {
-+        if (this.random.nextInt(3) == 0  && !net.neoforged.neoforge.event.EventHooks.onAnimalTame(this, player)) {
++        // CraftBukkit - added event call and isCancelled check.
++        if (this.random.nextInt(3) == 0 && (!net.neoforged.neoforge.event.EventHooks.onAnimalTame(this, player) || !CraftEventFactory.callEntityTameEvent(this, player).isCancelled())) {
              this.tame(player);
              this.navigation.stop();
              this.setTarget(null);
-@@ -659,7 +_,7 @@
-         return new Vec3(0.0, 0.6F * this.getEyeHeight(), this.getBbWidth() * 0.4F);
-     }
- 
--    public static boolean checkWolfSpawnRules(EntityType<Wolf> type, LevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
-+    public static boolean checkWolfSpawnRules(EntityType<? extends Wolf> type, LevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
-         return level.getBlockState(pos.below()).is(BlockTags.WOLVES_SPAWNABLE_ON) && isBrightEnoughToSpawn(level, pos);
-     }
- 

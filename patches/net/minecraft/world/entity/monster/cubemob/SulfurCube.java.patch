@@ -1,20 +1,33 @@
 --- a/net/minecraft/world/entity/monster/cubemob/SulfurCube.java
 +++ b/net/minecraft/world/entity/monster/cubemob/SulfurCube.java
-@@ -185,7 +_,7 @@
-         super.travelInFluid(input);
-         if (this.hasBodyItem() && this.floatsInLiquids) {
-             float vibeAmount = 0.2F * Mth.sin(this.tickCount * 0.4F);
--            double immersion = this.getFluidHeight(this.isInWater() ? FluidTags.WATER : FluidTags.LAVA) - this.getFluidJumpThreshold() + vibeAmount;
-+            double immersion = this.getFluidHeight(getMaxHeightFluidType()) - this.getFluidJumpThreshold() + vibeAmount;
-             if (immersion > 0.0) {
-                 this.setDeltaMovement(this.getDeltaMovement().add(0.0, Math.min(1.0, immersion) * 0.04F, 0.0));
+@@ -75,6 +_,7 @@
+ import net.minecraft.world.level.storage.ValueOutput;
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.event.entity.EntityRemoveEvent;
+ import org.jspecify.annotations.Nullable;
+ 
+ public class SulfurCube extends AbstractCubeMob implements Bucketable, Shearable {
+@@ -318,6 +_,7 @@
+                     this.triggerOnDeathMobEffects(level, Entity.RemovalReason.KILLED);
+                 }
+ 
++                this.removeReason(EntityRemoveEvent.Cause.EXPLODE); // CraftBukkit
+                 this.discard();
              }
-@@ -224,7 +_,7 @@
+         }
+@@ -556,12 +_,12 @@
      }
  
-     public static boolean checkSulfurCubeSpawnRules(
--        EntityType<SulfurCube> type, LevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random
-+        EntityType<? extends SulfurCube> type, LevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random
-     ) {
-         return true;
+     @Override
+-    protected SoundEvent getHurtSound(DamageSource source) {
++    public SoundEvent getHurtSound(DamageSource source) {
+         return this.isTiny() ? SoundEvents.SULFUR_CUBE_SMALL_HURT : SoundEvents.SULFUR_CUBE_HURT;
      }
+ 
+     @Override
+-    protected SoundEvent getDeathSound() {
++    public SoundEvent getDeathSound() {
+         return this.isTiny() ? SoundEvents.SULFUR_CUBE_SMALL_DEATH : SoundEvents.SULFUR_CUBE_DEATH;
+     }
+ 

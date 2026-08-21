@@ -22,15 +22,15 @@
                      this.tame(player);
                      this.level().broadcastEntityEvent(this, (byte)7);
                  } else {
-@@ -303,7 +_,7 @@
-         return false;
-     }
- 
--    public static boolean checkParrotSpawnRules(EntityType<Parrot> type, LevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
-+    public static boolean checkParrotSpawnRules(EntityType<? extends Parrot> type, LevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
-         return level.getBlockState(pos.below()).is(BlockTags.PARROTS_SPAWNABLE_ON) && isBrightEnoughToSpawn(level, pos);
-     }
- 
+@@ -289,7 +_,7 @@
+             }
+         } else {
+             this.usePlayerItem(player, hand, itemStack);
+-            this.addEffect(new MobEffectInstance(MobEffects.POISON, 900));
++            this.addEffect(new MobEffectInstance(MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
+             if (player.isCreative() || !this.isInvulnerable()) {
+                 this.hurt(this.damageSources().playerAttack(player), Float.MAX_VALUE);
+             }
 @@ -328,7 +_,10 @@
  
      public static SoundEvent getAmbient(Level level, RandomSource random) {
@@ -54,3 +54,32 @@
      }
  
      @Override
+@@ -381,7 +_,7 @@
+ 
+     @Override
+     public boolean isPushable() {
+-        return true;
++        return super.isPushable(); // CraftBukkit - collidable API
+     }
+ 
+     @Override
+@@ -395,10 +_,16 @@
+     public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
+         if (this.isInvulnerableTo(level, source)) {
+             return false;
++        } else {
++            // CraftBukkit start
++            boolean result = super.hurtServer(level, source, damage);
++            if (!result) {
++                return result;
++            }
++            // CraftBukkit end
++            this.setOrderedToSit(false);
++            return result; // CraftBukkit
+         }
+-
+-        this.setOrderedToSit(false);
+-        return super.hurtServer(level, source, damage);
+     }
+ 
+     public Parrot.Variant getVariant() {

@@ -18,7 +18,7 @@
 -                item.hurtAndBreak(itemDamage, user, hand.asEquipmentSlot());
 +            int itemDamage = fixedDamage < 0 ? this.itemDamage.apply(damage) : fixedDamage;
 +            if (itemDamage > 0 && level instanceof ServerLevel serverLevel) {
-+                ItemStack original = item.copy();
++                ItemStack original = item.copy(); // Neo: copy the stack before breaking it, so the destroy event receives the unbroken item
 +                item.hurtAndBreak(itemDamage, serverLevel, user, it -> {
 +                    user.onEquippedItemBroken(it, hand.asEquipmentSlot());
 +                    net.neoforged.neoforge.event.EventHooks.onPlayerDestroyItem(player, original, hand);
