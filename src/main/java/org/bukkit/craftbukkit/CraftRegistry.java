@@ -77,7 +77,6 @@ public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
     private static RegistryAccess registry;
 
     public static void setMinecraftRegistry(RegistryAccess registry) {
-        Preconditions.checkState(CraftRegistry.registry == null, "Registry already set");
         CraftRegistry.registry = registry;
     }
 

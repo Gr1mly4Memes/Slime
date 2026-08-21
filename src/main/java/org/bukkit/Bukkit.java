@@ -92,7 +92,10 @@ public final class Bukkit {
      */
     public static void setServer(@NotNull Server server) {
         if (Bukkit.server != null) {
-            throw new UnsupportedOperationException("Cannot redefine singleton Server");
+
+            // Slime: allow redefinition on restart/reload - log and replace
+            Bukkit.server = server;
+            return;
         }
 
         Bukkit.server = server;

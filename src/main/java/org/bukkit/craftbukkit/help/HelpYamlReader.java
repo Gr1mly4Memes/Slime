@@ -26,7 +26,8 @@ public class HelpYamlReader {
         this.server = server;
 
         File helpYamlFile = new File("help.yml");
-        YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/help.yml"), Charsets.UTF_8));
+        var helpStream = getClass().getClassLoader().getResourceAsStream("configurations/help.yml");
+        YamlConfiguration defaultConfig = helpStream != null ? YamlConfiguration.loadConfiguration(new InputStreamReader(helpStream, Charsets.UTF_8)) : new YamlConfiguration();
 
         try {
             helpYaml = YamlConfiguration.loadConfiguration(helpYamlFile);

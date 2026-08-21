@@ -285,8 +285,7 @@ public final class MapPalette {
      * @param mapColorCache The map color cache to set
      */
     public static void setMapColorCache(@NotNull MapColorCache mapColorCache) {
-        Preconditions.checkState(MapPalette.mapColorCache == null, "Map color cache already set");
-
+        if (MapPalette.mapColorCache != null) return;
         MapPalette.mapColorCache = mapColorCache;
     }
 

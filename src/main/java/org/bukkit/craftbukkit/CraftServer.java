@@ -349,7 +349,8 @@ public final class CraftServer implements Server {
 
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         configuration.options().copyDefaults(true);
-        configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
+        var bukkitStream2 = getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml");
+        if (bukkitStream2 != null) configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(bukkitStream2, Charsets.UTF_8)));
         ConfigurationSection legacyAlias = null;
         if (!configuration.isString("aliases")) {
             legacyAlias = configuration.getConfigurationSection("aliases");
@@ -361,7 +362,8 @@ public final class CraftServer implements Server {
         }
         commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
         commandsConfiguration.options().copyDefaults(true);
-        commandsConfiguration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/commands.yml"), Charsets.UTF_8)));
+        var commandsStream2 = getClass().getClassLoader().getResourceAsStream("configurations/commands.yml");
+        if (commandsStream2 != null) commandsConfiguration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(commandsStream2, Charsets.UTF_8)));
         saveCommandsConfig();
 
         // Migrate aliases from old file and add previously implicit $1- to pass all arguments
