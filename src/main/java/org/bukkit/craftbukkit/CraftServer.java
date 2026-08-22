@@ -332,7 +332,27 @@ public final class CraftServer implements Server {
                 return player.getBukkitEntity();
             }
         }));
-        this.serverVersion = CraftServer.class.getPackage().getImplementationVersion();
+        // Slime start - fallback for dev run when ImplementationVersion is null
+        String ver = CraftServer.class.getPackage().getImplementationVersion();
+        if (ver == null) {
+            try (var is = CraftServer.class.getClassLoader().getResourceAsStream("version.properties")) {
+                if (is != null) {
+                    java.util.Properties p = new java.util.Properties();
+                    p.load(is);
+                    String v = p.getProperty("neoforge_version");
+                    if (v != null && !v.contains("${")) ver = v;
+                }
+            } catch (Exception ignored) {}
+            if (ver == null) {
+                try { ver = gr1mly4memes.slime.util.SlimeVersion.getVersion(); } catch (Throwable ignored) {} // Slime - try SlimeVersion
+            }
+            if (ver == null) {
+                try { ver = net.neoforged.neoforge.common.NeoForgeVersion.getVersion(); } catch (Throwable ignored) {}
+            }
+            if (ver == null || ver.contains("${")) ver = "Slime-dev (MC: " + console.getServerVersion() + ")";
+        }
+        this.serverVersion = ver;
+        // Slime end
         this.structureManager = new CraftStructureManager(console.getStructureManager(), console.registryAccess());
         this.dataPackManager = new CraftDataPackManager(this.getServer().getPackRepository());
         this.serverTickManager = new CraftServerTickManager(console.tickRateManager());

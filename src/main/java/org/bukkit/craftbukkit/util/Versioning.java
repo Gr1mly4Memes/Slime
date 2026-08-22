@@ -24,6 +24,24 @@ public final class Versioning {
             }
         }
 
+        // Slime - fallback for hybrid dev run and custom builds
+        if ("Unknown-Version".equals(result)) {
+            try (InputStream is = Bukkit.class.getClassLoader().getResourceAsStream("version.properties")) {
+                if (is != null) {
+                    Properties p = new Properties();
+                    p.load(is);
+                    String mc = p.getProperty("minecraft_version");
+                    String neo = p.getProperty("neoforge_version");
+                    if (mc != null) result = mc + "-R0.1-SNAPSHOT" + (neo != null && !neo.contains("${") ? " (Slime " + neo + ")" : "");
+                }
+            } catch (Exception ignored) {}
+        }
+        if ("Unknown-Version".equals(result)) {
+            try {
+                result = net.minecraft.SharedConstants.getCurrentVersion().name() + "-R0.1-SNAPSHOT"; // Slime - last resort MC version
+            } catch (Throwable ignored) {}
+        }
+
         return result;
     }
 }

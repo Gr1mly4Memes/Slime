@@ -1,7 +1,7 @@
 <div align="center">
 
 # Slime
-Slime is a neoforge hybrid server implementing Bukkit and Spigot API
+Slime is a NeoForge hybrid server implementing Bukkit and Spigot API
 
 **Slime is still EXPERIMENTAL phase, may or may not cause instabilities!**
 </div>
@@ -14,9 +14,10 @@ Slime is a neoforge hybrid server implementing Bukkit and Spigot API
 Slime includes patches and features from other projects, and without these projects, Slime wouldn't exist today. Here is the list of projects that Slime takes code and patches from:
 
 - [Neoforge](https://github.com/neoforged/neoforge)
-- [Bukkit]((https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse))
+- [Bukkit](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse)
 - [Craftbukkit](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse)
 - [Spigot](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/browse)
+- [Paper](https://github.com/PaperMC/Paper)
 - [Youer](https://github.com/MohistMC/Youer)
 
 ## P.S.
