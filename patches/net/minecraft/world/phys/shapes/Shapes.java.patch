@@ -1,0 +1,54 @@
+--- a/net/minecraft/world/phys/shapes/Shapes.java
++++ b/net/minecraft/world/phys/shapes/Shapes.java
+@@ -292,9 +_,24 @@
+     }
+ 
+     @VisibleForTesting
+-    static IndexMerger createIndexMerger(int cost, DoubleList first, DoubleList second, boolean firstOnlyMatters, boolean secondOnlyMatters) {
++    private static IndexMerger createIndexMerger(int cost, DoubleList first, DoubleList second, boolean firstOnlyMatters, boolean secondOnlyMatters) { // Paper - private
++        // Paper start - fast track the most common scenario
++        // first is usually a DoubleArrayList with Infinite head/tails that falls to the final else clause
++        // This is actually the most common path, so jump to it straight away
++        if (first.getDouble(0) == Double.NEGATIVE_INFINITY && first.getDouble(first.size() - 1) == Double.POSITIVE_INFINITY) {
++            return new IndirectMerger(first, second, firstOnlyMatters, secondOnlyMatters);
++        }
++        // Split out rest to hopefully inline the above
++        return lessCommonMerge(cost, first, second, firstOnlyMatters, secondOnlyMatters);
++    }
++
++    private static IndexMerger lessCommonMerge(
++        final int cost, final DoubleList first, final DoubleList second, final boolean firstOnlyMatters, final boolean secondOnlyMatters
++    ) {
++        // Paper end - fast track the most common scenario
+         int firstSize = first.size() - 1;
+         int secondSize = second.size() - 1;
++        // Paper note - Rewrite below as optimized order if instead of nasty ternary
+         if (first instanceof CubePointRange && second instanceof CubePointRange) {
+             long size = lcm(firstSize, secondSize);
+             if (cost * size <= 256L) {
+@@ -302,14 +_,21 @@
+             }
+         }
+ 
+-        if (first.getDouble(firstSize) < second.getDouble(0) - 1.0E-7) {
++        // Paper start - Identical happens more often than Disjoint
++        if (firstSize == secondSize && Objects.equals(first, second)) {
++            if (first instanceof IdenticalMerger firstMerger) {
++                return firstMerger;
++            } else if (second instanceof IdenticalMerger secondMerger) {
++                return secondMerger;
++            }
++            return new IdenticalMerger(first);
++        } else if (first.getDouble(firstSize) < second.getDouble(0) - 1.0E-7) {
++            // Paper end - Identical happens more often than Disjoint
+             return new NonOverlappingMerger(first, second, false);
+         } else if (second.getDouble(secondSize) < first.getDouble(0) - 1.0E-7) {
+             return new NonOverlappingMerger(second, first, true);
+         } else {
+-            return firstSize == secondSize && Objects.equals(first, second)
+-                ? new IdenticalMerger(first)
+-                : new IndirectMerger(first, second, firstOnlyMatters, secondOnlyMatters);
++            return new IndirectMerger(first, second, firstOnlyMatters, secondOnlyMatters); // Paper - Identical happens more often than Disjoint
+         }
+     }
+ 
