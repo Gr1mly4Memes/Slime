@@ -1,5 +1,5 @@
 /*
- * Copyright (C) MohistMC.
+ * Copyright (C) Gr1mly4Memes.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,8 @@
 
 package gr1mly4memes.slime.eventhandler;
 
-import gr1mly4memes.slime.eventhandler.dispatcher.*;
+import gr1mly4memes.slime.eventhandler.dispatcher.ItemEventDispatcher;
+import gr1mly4memes.slime.eventhandler.dispatcher.PlayerEventDispatcher;
 import net.neoforged.neoforge.common.NeoForge;
 
 public class EventDispatcherRegistry {

@@ -8,7 +8,7 @@
  import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
  import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
-@@ -22,12 +_,20 @@
+@@ -22,12 +_,22 @@
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Block;
@@ -21,9 +21,11 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.block.CraftBlock;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.Event;
 +import org.bukkit.event.block.Action;
++import org.bukkit.event.block.BlockBreakEvent;
 +import org.bukkit.event.player.PlayerGameModeChangeEvent;
 +import org.bukkit.event.player.PlayerInteractEvent;
  import org.jspecify.annotations.Nullable;
@@ -198,19 +200,53 @@
              }
          }
      }
-@@ -258,8 +_,10 @@
+@@ -258,45 +_,99 @@
      }
  
      public boolean destroyBlock(BlockPos pos) {
 +        // Neo: Fire the BlockBreakEvent, and ignore the original ItemStack#canDestroyBlock check since the break event manages the status of it.
          BlockState state = this.level.getBlockState(pos);
 -        if (!this.player.getMainHandItem().canDestroyBlock(state, this.level, pos, this.player)) {
+-            return false;
+-        }
 +        var event = net.neoforged.neoforge.common.CommonHooks.fireBlockBreak(level, gameModeForPlayer, player, pos, state);
 +        if (event.isCanceled()) {
++            return false;
++        }
++
++        // Slime start - also fire Bukkit BlockBreakEvent for plugins
++        org.bukkit.block.Block bblock = CraftBlock.at(this.level, pos);
++        BlockBreakEvent bukkitEvent = new BlockBreakEvent(bblock, this.player.getBukkitEntity());
++        if (!this.isCreative() && this.player.hasCorrectToolForDrops(state)) {
++            bukkitEvent.setExpToDrop(state.getBlock().getExpDrop(state, this.level, pos, this.player.getMainHandItem(), true));
++        }
++        this.level.getCraftServer().getPluginManager().callEvent(bukkitEvent);
++        if (bukkitEvent.isCancelled()) {
++            this.player.connection.send(new ClientboundBlockUpdatePacket(this.level, pos));
++            for (Direction dir : Direction.values()) {
++                this.player.connection.send(new ClientboundBlockUpdatePacket(this.level, pos.relative(dir)));
++            }
++            BlockEntity be = this.level.getBlockEntity(pos);
++            if (be != null) {
++                this.player.connection.send(be.getUpdatePacket());
++            }
++            return false;
++        }
++        org.bukkit.block.BlockState bukkitState = bblock.getState();
++        this.level.captureDrops = new java.util.ArrayList<>();
++        // Slime end
+ 
+         BlockEntity blockEntity = this.level.getBlockEntity(pos);
+         Block block = state.getBlock();
+         if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
+             this.level.sendBlockUpdated(pos, state, state, 3);
++            this.level.captureDrops = null; // Slime - cleanup Bukkit capture on early return
              return false;
          }
  
-@@ -275,28 +_,44 @@
+         if (this.player.blockActionRestricted(this.level, pos, this.gameModeForPlayer)) {
++            this.level.captureDrops = null; // Slime - cleanup Bukkit capture on early return
+             return false;
          }
  
          BlockState adjustedState = block.playerWillDestroy(this.level, pos, state, this.player);
@@ -225,6 +261,7 @@
  
          if (this.player.preventsBlockDrops()) {
 +            removeBlock(pos, adjustedState, false, player.getMainHandItem().copy());
++            this.level.captureDrops = null; // Slime - cleanup Bukkit capture (no drops due to preventsBlockDrops)
              return true;
          }
  
@@ -233,12 +270,24 @@
 -        boolean canDestroy = this.player.hasCorrectToolForDrops(adjustedState);
 +        boolean canDestroy = adjustedState.canHarvestBlock(this.level, pos, this.player); // previously player.hasCorrectToolForDrops(blockstate)
          itemStack.mineBlock(this.level, adjustedState, pos, this.player);
+-        if (changed && canDestroy) {
++        // Slime start - respect Bukkit BlockBreakEvent isDropItems
++        boolean bukkitDropItems = bukkitEvent.isDropItems();
 +        boolean changed = removeBlock(pos, adjustedState, canDestroy, destroyedWith.copy());
 +
-         if (changed && canDestroy) {
++        if (changed && canDestroy && bukkitDropItems) {
              block.playerDestroy(this.level, this.player, pos, adjustedState, blockEntity, destroyedWith);
          }
  
++        if (bukkitDropItems) {
++            CraftEventFactory.handleBlockDropItemEvent(bblock, bukkitState, this.player, this.level.captureDrops);
++        }
++        this.level.captureDrops = null;
++        if (changed && bukkitEvent.getExpToDrop() > 0) {
++            state.getBlock().popExperience(this.level, pos, bukkitEvent.getExpToDrop());
++        }
++        // Slime end
++
 +        // Neo: Fire the PlayerDestroyItemEvent if the tool was broken at any point during the break process
 +        if (itemStack.isEmpty() && !destroyedWith.isEmpty()) {
 +            net.neoforged.neoforge.event.EventHooks.onPlayerDestroyItem(this.player, destroyedWith, InteractionHand.MAIN_HAND);
