@@ -71,6 +71,7 @@ import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.input.PreeditEvent;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -257,7 +258,7 @@ public class ClientHooks {
     }
 
     public static <AvatarlikeEntity extends Avatar & ClientAvatarEntity> boolean renderSpecificFirstPersonArm(PoseStack poseStack, SubmitNodeCollector submitNodeCollector,
-            int lightCoords, Identifier skinTexture, boolean hasSleeve, AvatarlikeEntity avatar, HumanoidArm arm, ModelPart armPart) {
+                                                                                                              int lightCoords, Identifier skinTexture, boolean hasSleeve, AvatarlikeEntity avatar, HumanoidArm arm, ModelPart armPart) {
         return NeoForge.EVENT_BUS.post(new RenderArmEvent<>(poseStack, submitNodeCollector, lightCoords, skinTexture, hasSleeve, avatar, arm, armPart)).isCanceled();
     }
 
@@ -545,6 +546,16 @@ public class ClientHooks {
 
     public static void onScreenCharTypedPost(Screen guiScreen, CharacterEvent charEvent) {
         Event event = new ScreenEvent.CharacterTyped.Post(guiScreen, charEvent);
+        NeoForge.EVENT_BUS.post(event);
+    }
+
+    public static boolean onScreenPreeditPre(Screen guiScreen, @Nullable PreeditEvent preeditEvent) {
+        var event = new ScreenEvent.Preedit.Pre(guiScreen, preeditEvent);
+        return NeoForge.EVENT_BUS.post(event).isCanceled();
+    }
+
+    public static void onScreenPreeditPost(Screen guiScreen, @Nullable PreeditEvent preeditEvent) {
+        Event event = new ScreenEvent.Preedit.Post(guiScreen, preeditEvent);
         NeoForge.EVENT_BUS.post(event);
     }
 
