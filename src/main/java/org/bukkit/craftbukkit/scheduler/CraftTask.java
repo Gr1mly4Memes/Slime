@@ -1,12 +1,10 @@
 package org.bukkit.craftbukkit.scheduler;
 
-import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import org.bukkit.craftbukkit.SpigotTimings; // Spigot
-import org.spigotmc.CustomTimingsHandler; // Spigot
+import java.util.function.Consumer;
 
 public class CraftTask implements BukkitTask, Runnable { // Spigot
 
@@ -26,13 +24,12 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
      */
     private volatile long period;
     private long nextRun;
-    private final Runnable rTask;
-    private final Consumer<BukkitTask> cTask;
+    public final Runnable rTask;
+    public final Consumer<BukkitTask> cTask;
     private final Plugin plugin;
     private final int id;
     private final long createdAt = System.nanoTime();
 
-    final CustomTimingsHandler timings; // Spigot
     CraftTask() {
         this(null, null, CraftTask.NO_REPEATING, CraftTask.NO_REPEATING);
     }
@@ -58,17 +55,16 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
         }
         this.id = id;
         this.period = period;
-        this.timings = this.isSync() ? SpigotTimings.getPluginTaskTimings(this, period) : null; // Spigot
     }
 
     @Override
     public final int getTaskId() {
-        return id;
+        return this.id;
     }
 
     @Override
     public final Plugin getOwner() {
-        return plugin;
+        return this.plugin;
     }
 
     @Override
@@ -78,19 +74,19 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
 
     @Override
     public void run() {
-        if (rTask != null) {
-            rTask.run();
+        if (this.rTask != null) {
+            this.rTask.run();
         } else {
-            cTask.accept(this);
+            this.cTask.accept(this);
         }
     }
 
     long getCreatedAt() {
-        return createdAt;
+        return this.createdAt;
     }
 
     long getPeriod() {
-        return period;
+        return this.period;
     }
 
     void setPeriod(long period) {
@@ -98,7 +94,7 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
     }
 
     long getNextRun() {
-        return nextRun;
+        return this.nextRun;
     }
 
     void setNextRun(long nextRun) {
@@ -106,7 +102,7 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
     }
 
     CraftTask getNext() {
-        return next;
+        return this.next;
     }
 
     void setNext(CraftTask next) {
@@ -114,17 +110,17 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
     }
 
     Class<?> getTaskClass() {
-        return (rTask != null) ? rTask.getClass() : ((cTask != null) ? cTask.getClass() : null);
+        return (this.rTask != null) ? this.rTask.getClass() : ((this.cTask != null) ? this.cTask.getClass() : null);
     }
 
     @Override
     public boolean isCancelled() {
-        return (period == CraftTask.CANCEL);
+        return (this.period == CraftTask.CANCEL);
     }
 
     @Override
     public void cancel() {
-        Bukkit.getScheduler().cancelTask(id);
+        Bukkit.getScheduler().cancelTask(this.id);
     }
 
     /**
@@ -133,13 +129,8 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
      * @return false if it is a craft future task that has already begun execution, true otherwise
      */
     boolean cancel0() {
-        setPeriod(CraftTask.CANCEL);
+        this.setPeriod(CraftTask.CANCEL);
         return true;
     }
 
-    // Spigot start
-    public String getTaskName() {
-        return (getTaskClass() == null) ? "Unknown" : getTaskClass().getName();
-    }
-    // Spigot end
 }

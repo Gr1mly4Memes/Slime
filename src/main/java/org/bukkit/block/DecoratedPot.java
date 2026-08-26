@@ -1,18 +1,18 @@
 package org.bukkit.block;
 
-import java.util.List;
-import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.Tag;
-import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.DecoratedPotInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Represents a captured state of a decorated pot.
  */
-public interface DecoratedPot extends TileState, BlockInventoryHolder {
+public interface DecoratedPot extends io.papermc.paper.block.TileStateInventoryHolder, org.bukkit.loot.Lootable { // Paper - expose loot table & TileStateInventoryHolder
 
     /**
      * Set the sherd on the provided side.
@@ -55,20 +55,22 @@ public interface DecoratedPot extends TileState, BlockInventoryHolder {
     @NotNull
     public List<Material> getShards();
 
-    /**
-     * @return inventory
-     * @see Container#getInventory()
-     */
+    // Paper - move docs to TileStateInventoryHolder
     @NotNull
     @Override
     public DecoratedPotInventory getInventory();
 
-    /**
-     * @return snapshot inventory
-     * @see Container#getSnapshotInventory()
-     */
+    @Override // Paper - move docs to TileStateInventoryHolder
     @NotNull
     public DecoratedPotInventory getSnapshotInventory();
+
+    /**
+     * Run the specified animation on the decorated pot.
+     *
+     * @param style the animation style
+     * @throws IllegalStateException if this block state is not placed
+     */
+    public void startWobble(@NotNull WobbleStyle style);
 
     /**
      * A side on a decorated pot. Sides are relative to the facing state of a
@@ -79,5 +81,13 @@ public interface DecoratedPot extends TileState, BlockInventoryHolder {
         LEFT,
         RIGHT,
         FRONT
+    }
+
+    /**
+     * Style a DecoratedPot can wobble in.
+     */
+    public static enum WobbleStyle {
+        POSITIVE,
+        NEGATIVE
     }
 }

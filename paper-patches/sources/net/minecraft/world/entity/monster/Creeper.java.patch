@@ -129,7 +129,7 @@
 +    // Paper start - Call CreeperIgniteEvent
 +    public void setIgnited(boolean ignited) {
 +        if (isIgnited() != ignited) {
-+            com.destroystokyo.paper.event.entity.CreeperIgniteEvent event = new com.destroystokyo.paper.event.entity.CreeperIgniteEvent((org.bukkit.entity.Creeper) getBukkitEntity(), ignited);
++            com.destroystokyo.entity.event.com.destroystokyo.paper.CreeperIgniteEvent event = new com.destroystokyo.entity.event.com.destroystokyo.paper.CreeperIgniteEvent((org.bukkit.entity.Creeper) getBukkitEntity(), ignited);
 +            if (event.callEvent()) {
 +                this.entityData.set(DATA_IS_IGNITED, event.isIgnited());
 +            }

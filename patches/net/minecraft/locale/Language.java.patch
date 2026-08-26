@@ -1,5 +1,13 @@
 --- a/net/minecraft/locale/Language.java
 +++ b/net/minecraft/locale/Language.java
+@@ -12,6 +_,7 @@
+ import java.nio.charset.StandardCharsets;
+ import java.util.HashMap;
+ import java.util.List;
++import java.util.Locale;
+ import java.util.Map;
+ import java.util.Optional;
+ import java.util.Map.Entry;
 @@ -36,9 +_,11 @@
          DeprecatedTranslationsInfo deprecatedInfo = DeprecatedTranslationsInfo.loadFromDefaultResource();
          Map<String, String> loadedData = new HashMap<>();

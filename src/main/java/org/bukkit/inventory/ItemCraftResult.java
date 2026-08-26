@@ -1,7 +1,8 @@
 package org.bukkit.inventory;
 
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Container class containing the results of a Crafting event.
@@ -24,8 +25,7 @@ public interface ItemCraftResult {
      *
      * @return resulting matrix
      */
-    @NotNull
-    public ItemStack[] getResultingMatrix();
+    public @NotNull ItemStack @NotNull [] getResultingMatrix();
 
     /**
      * Gets the overflowed items for items that don't fit back into the crafting

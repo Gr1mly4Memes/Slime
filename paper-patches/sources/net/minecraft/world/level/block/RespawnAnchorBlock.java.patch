@@ -6,7 +6,7 @@
                  if (respawnConfig == null || !respawnConfig.isSamePosition(newRespawnConfig)) {
 -                    serverPlayer.setRespawnPosition(newRespawnConfig, true);
 +                    // Paper start - Add PlayerSetSpawnEvent
-+                    if (!serverPlayer.setRespawnPosition(newRespawnConfig, true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.RESPAWN_ANCHOR)) {
++                    if (!serverPlayer.setRespawnPosition(newRespawnConfig, true, com.destroystokyo.player.event.com.destroystokyo.paper.PlayerSetSpawnEvent.Cause.RESPAWN_ANCHOR)) {
 +                        return InteractionResult.FAIL;
 +                    }
 +                    // Paper end - Add PlayerSetSpawnEvent

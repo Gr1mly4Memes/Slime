@@ -1,23 +1,15 @@
 package org.bukkit.configuration.file;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is a base class for all File based implementations of {@link
@@ -64,7 +56,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
 
         String data = saveToString();
 
-        Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8);
+        Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
 
         try {
             writer.write(data);
@@ -125,7 +117,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
 
         final FileInputStream stream = new FileInputStream(file);
 
-        load(new InputStreamReader(stream, Charsets.UTF_8));
+        load(new InputStreamReader(stream, StandardCharsets.UTF_8));
     }
 
     /**

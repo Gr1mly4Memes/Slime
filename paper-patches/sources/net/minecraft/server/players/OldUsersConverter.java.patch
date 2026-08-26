@@ -58,7 +58,7 @@
 +                        } catch (Exception exception) {
 +                            // Paper start
 +                            exception.printStackTrace();
-+                            com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(exception);
++                            com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException.reportInternalException(exception);
 +                            // Paper end
 +                        }
 +
@@ -74,7 +74,7 @@
 +                            } catch (Exception exception) {
 +                                // Paper start
 +                                exception.printStackTrace();
-+                                com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(exception);
++                                com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException.reportInternalException(exception);
 +                                // Paper end
 +                            }
 +                       }

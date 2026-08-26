@@ -159,11 +159,11 @@
          if (!blockState.hasBlockEntity()) {
 -            LOGGER.warn("Trying to set block entity {} at position {}, but state {} does not allow it", blockEntity, pos, blockState);
 +            // Paper start - ServerExceptionEvent
-+            com.destroystokyo.paper.exception.ServerInternalException e = new com.destroystokyo.paper.exception.ServerInternalException(
++            com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException e = new com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException(
 +                "Trying to set block entity %s at position %s, but state %s does not allow it".formatted(blockEntity, pos, blockState)
 +            );
 +            e.printStackTrace();
-+            com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(e);
++            com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException.reportInternalException(e);
 +            // Paper end - ServerExceptionEvent
          } else {
              BlockState cachedBlockState = blockEntity.getBlockState();
@@ -283,7 +283,7 @@
 +                        // Paper start - Prevent block entity and entity crashes
 +                        final String msg = String.format("BlockEntity threw exception at %s:%s,%s,%s", io.papermc.paper.util.MCUtil.getLevelName(LevelChunk.this.getLevel()), this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
 +                        LevelChunk.LOGGER.error(msg, t);
-+                        LevelChunk.this.level.getCraftServer().getPluginManager().callEvent(new com.destroystokyo.paper.event.server.ServerExceptionEvent(new com.destroystokyo.paper.exception.ServerInternalException(msg, t))); // Paper - ServerExceptionEvent
++                        LevelChunk.this.level.getCraftServer().getPluginManager().callEvent(new com.destroystokyo.server.event.com.destroystokyo.paper.ServerExceptionEvent(new com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException(msg, t))); // Paper - ServerExceptionEvent
 +                        LevelChunk.this.removeBlockEntity(this.getPos());
 +                        // Paper end - Prevent block entity and entity crashes
                      }

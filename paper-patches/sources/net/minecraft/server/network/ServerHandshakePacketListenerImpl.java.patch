@@ -95,10 +95,10 @@
 +            boolean proxyLogicEnabled = org.spigotmc.SpigotConfig.bungee;
 +            boolean handledByEvent = false;
 +            // Try and handle the handshake through the event
-+            if (com.destroystokyo.paper.event.player.PlayerHandshakeEvent.getHandlerList().getRegisteredListeners().length != 0) { // Hello? Can you hear me?
++            if (com.destroystokyo.player.event.com.destroystokyo.paper.PlayerHandshakeEvent.getHandlerList().getRegisteredListeners().length != 0) { // Hello? Can you hear me?
 +                java.net.SocketAddress socketAddress = this.connection.getRemoteAddress();
 +                String hostnameOfRemote = socketAddress instanceof java.net.InetSocketAddress ? ((java.net.InetSocketAddress) socketAddress).getHostString() : java.net.InetAddress.getLoopbackAddress().getHostAddress();
-+                com.destroystokyo.paper.event.player.PlayerHandshakeEvent event = new com.destroystokyo.paper.event.player.PlayerHandshakeEvent(packet.hostName(), hostnameOfRemote, !proxyLogicEnabled);
++                com.destroystokyo.player.event.com.destroystokyo.paper.PlayerHandshakeEvent event = new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerHandshakeEvent(packet.hostName(), hostnameOfRemote, !proxyLogicEnabled);
 +                if (event.callEvent()) {
 +                    // If we've failed somehow, let the client know so and go no further.
 +                    if (event.isFailed()) {

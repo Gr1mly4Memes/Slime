@@ -1,7 +1,7 @@
 /**
  * A Package that contains builders for building InventoryViews.
  */
-@ApiStatus.Experimental
+@NullMarked
 package org.bukkit.inventory.view.builder;
 
-import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;

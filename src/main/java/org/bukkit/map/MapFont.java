@@ -1,9 +1,10 @@
 package org.bukkit.map;
 
-import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
 
 /**
  * Represents a bitmap font drawable to a map.
@@ -112,7 +113,7 @@ public class MapFont {
         private final int height;
         private final boolean[] data;
 
-        public CharacterSprite(int width, int height, @NotNull boolean[] data) {
+        public CharacterSprite(int width, int height, boolean @NotNull [] data) {
             this.width = width;
             this.height = height;
             this.data = data;

@@ -1,10 +1,11 @@
 package org.bukkit.map;
 
-import java.util.List;
 import org.bukkit.World;
 import org.bukkit.inventory.meta.MapMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Represents a map item.
@@ -32,9 +33,9 @@ public interface MapView {
          *
          * @param value The raw scale
          * @return The enum scale, or null for an invalid input
-         * @deprecated Magic value
+         * @apiNote Internal Use Only
          */
-        @Deprecated(since = "1.6.2")
+        @org.jetbrains.annotations.ApiStatus.Internal // Paper
         @Nullable
         public static Scale valueOf(byte value) {
             switch (value) {
@@ -51,9 +52,9 @@ public interface MapView {
          * Get the raw value of this scale level.
          *
          * @return The scale value
-         * @deprecated Magic value
+         * @apiNote Internal Use Only
          */
-        @Deprecated(since = "1.6.2")
+        @org.jetbrains.annotations.ApiStatus.Internal // Paper
         public byte getValue() {
             return value;
         }

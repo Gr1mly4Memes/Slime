@@ -37,7 +37,7 @@ public class CraftCustomInventory implements InventoryHolder {
     }
 
     public CraftCustomInventory(ItemStackHandler handler) {
-        this.container = new CraftInventoryCustom(this, handler.getStacks());
+        this.container = new CraftInventoryCustom(this, handler.stacks);
     }
 
     public CraftCustomInventory(net.minecraft.world.entity.player.Inventory playerInventory) {

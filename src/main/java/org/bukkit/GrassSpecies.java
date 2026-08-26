@@ -1,12 +1,15 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
-import java.util.Map;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * Represents the different types of grass.
+ * @deprecated use {@link org.bukkit.block.data.BlockData}
  */
+@Deprecated(forRemoval = true, since = "1.13")
 public enum GrassSpecies {
 
     /**

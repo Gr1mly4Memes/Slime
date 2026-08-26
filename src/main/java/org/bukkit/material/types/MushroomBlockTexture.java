@@ -1,13 +1,16 @@
 package org.bukkit.material.types;
 
 import com.google.common.collect.Maps;
-import java.util.Map;
 import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 /**
  * Represents the different textured blocks of mushroom.
+ * @deprecated use BlockData
  */
+@Deprecated(forRemoval = true)
 public enum MushroomBlockTexture {
 
     /**
@@ -80,7 +83,7 @@ public enum MushroomBlockTexture {
      * @return A byte containing the data value of this mushroom block face
      * @deprecated Magic value
      */
-    @Deprecated(since = "1.9")
+    @Deprecated(since = "1.9", forRemoval = true)
     public byte getData() {
         return data;
     }
@@ -103,7 +106,7 @@ public enum MushroomBlockTexture {
      * null if it doesn't exist
      * @deprecated Magic value
      */
-    @Deprecated(since = "1.9")
+    @Deprecated(since = "1.9", forRemoval = true)
     @Nullable
     public static MushroomBlockTexture getByData(final byte data) {
         return BY_DATA.get(data);

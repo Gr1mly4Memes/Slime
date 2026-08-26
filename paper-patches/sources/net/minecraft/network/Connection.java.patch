@@ -318,7 +318,7 @@
 +                if (packetListener instanceof net.minecraft.server.network.ServerCommonPacketListenerImpl commonPacketListener) {
 +                    /* Player was logged in, either game listener or configuration listener */
 +                    final com.mojang.authlib.GameProfile profile = commonPacketListener.getOwner();
-+                    new com.destroystokyo.paper.event.player.PlayerConnectionCloseEvent(profile.id(),
++                    new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerConnectionCloseEvent(profile.id(),
 +                        profile.name(), ((InetSocketAddress) this.address).getAddress(), false).callEvent();
 +                } else if (packetListener instanceof net.minecraft.server.network.ServerLoginPacketListenerImpl loginListener) {
 +                    /* Player is login stage */
@@ -328,7 +328,7 @@
 +                        case PROTOCOL_SWITCHING:
 +                        case ACCEPTED:
 +                            final com.mojang.authlib.GameProfile profile = loginListener.authenticatedProfile; /* Should be non-null at this stage */
-+                            new com.destroystokyo.paper.event.player.PlayerConnectionCloseEvent(profile.id(), profile.name(),
++                            new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerConnectionCloseEvent(profile.id(), profile.name(),
 +                                ((InetSocketAddress) this.address).getAddress(), false).callEvent();
 +                    }
 +                }

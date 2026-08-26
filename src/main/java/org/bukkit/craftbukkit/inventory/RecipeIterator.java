@@ -1,14 +1,16 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.util.Iterator;
-import java.util.Map;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import org.bukkit.inventory.Recipe;
 
+import java.util.Iterator;
+import java.util.Map;
+
 public class RecipeIterator implements Iterator<Recipe> {
     private final Iterator<Map.Entry<RecipeType<?>, RecipeHolder<?>>> recipes;
+    private RecipeHolder<?> currentRecipe;
 
     public RecipeIterator() {
         this.recipes = MinecraftServer.getServer().getRecipeManager().recipes.byType.entries().iterator();
@@ -16,16 +18,20 @@ public class RecipeIterator implements Iterator<Recipe> {
 
     @Override
     public boolean hasNext() {
-        return recipes.hasNext();
+        return this.recipes.hasNext();
     }
 
     @Override
     public Recipe next() {
-        return recipes.next().getValue().toBukkitRecipe();
+        this.currentRecipe = this.recipes.next().getValue();
+        return this.currentRecipe.toBukkitRecipe();
     }
 
     @Override
     public void remove() {
-        recipes.remove();
+        MinecraftServer.getServer().getRecipeManager().recipes.byKey.remove(this.currentRecipe.id());
+        this.recipes.remove();
+        MinecraftServer.getServer().getRecipeManager().finalizeRecipeLoading();
+        MinecraftServer.getServer().getPlayerList().reloadRecipes();
     }
 }

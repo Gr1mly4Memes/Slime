@@ -1,9 +1,16 @@
 package org.bukkit.craftbukkit.configuration;
 
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import com.google.common.collect.ImmutableMap;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.craftbukkit.CraftRegistry;
+
+import java.util.*;
 
 /**
  * Utilities related to the serialization and deserialization of {@link ConfigurationSerializable}s.
@@ -15,7 +22,7 @@ public final class ConfigSerializationUtil {
     }
 
     public static UUID getUuid(Map<?, ?> map, String key, boolean nullable) {
-        String uuidString = ConfigSerializationUtil.getString(map, key, nullable);
+        String uuidString = getString(map, key, nullable);
         if (uuidString == null) return null;
         return UUID.fromString(uuidString);
     }
@@ -32,6 +39,49 @@ public final class ConfigSerializationUtil {
             return null;
         }
         throw new IllegalArgumentException(key + "(" + object + ") is not a valid " + clazz);
+    }
+
+    public static void setHolderSet(Map<String, Object> result, String key, HolderSet<?> holders) {
+        holders.unwrap()
+            .ifLeft(tag -> result.put(key, "#" + tag.location().toString())) // Tag
+            .ifRight(list -> result.put(key, list.stream().map((entry) -> entry.unwrapKey().orElseThrow().identifier().toString()).toList())); // List
+    }
+
+    public static void setHolderSet(ImmutableMap.Builder<String, Object> result, String key, HolderSet<?> holders) {
+        holders.unwrap()
+            .ifLeft(tag -> result.put(key, "#" + tag.location().toString())) // Tag
+            .ifRight(list -> result.put(key, list.stream().map((entry) -> entry.unwrapKey().orElseThrow().identifier().toString()).toList())); // List
+    }
+
+    public static <T> HolderSet<T> getHolderSet(Object from, ResourceKey<Registry<T>> registryKey) {
+        Registry<T> registry = CraftRegistry.getMinecraftRegistry(registryKey);
+        if (from instanceof String parseString && parseString.startsWith("#")) { // Tag
+            parseString = parseString.substring(1);
+            Identifier key = Identifier.tryParse(parseString);
+            if (key != null) {
+                Optional<HolderSet.Named<T>> tag = registry.get(TagKey.create(registryKey, key));
+                if (tag.isPresent()) {
+                    return tag.get();
+                }
+            }
+        } else if (from instanceof List<?> parseList) { // List
+            List<Holder.Reference<T>> holderList = new ArrayList<>(parseList.size());
+
+            for (Object entry : parseList) {
+                Identifier key = Identifier.tryParse(entry.toString());
+                if (key == null) {
+                    continue;
+                }
+
+                registry.get(key).ifPresent(holderList::add);
+            }
+
+            return HolderSet.direct(holderList);
+        } else {
+            throw new IllegalArgumentException("(" + from + ") is not a valid String or List");
+        }
+
+        return HolderSet.empty();
     }
 
     private ConfigSerializationUtil() {

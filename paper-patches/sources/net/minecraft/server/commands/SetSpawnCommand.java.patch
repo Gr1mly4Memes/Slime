@@ -9,7 +9,7 @@
 -            target.setRespawnPosition(new ServerPlayer.RespawnConfig(LevelData.RespawnData.of(dimension, pos, yaw, pitch), true), false);
 -        }
 +            // Paper start - Add PlayerSetSpawnEvent
-+            if (target.setRespawnPosition(new ServerPlayer.RespawnConfig(LevelData.RespawnData.of(dimension, pos, yaw, pitch), true), false, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.COMMAND)) {
++            if (target.setRespawnPosition(new ServerPlayer.RespawnConfig(LevelData.RespawnData.of(dimension, pos, yaw, pitch), true), false, com.destroystokyo.player.event.com.destroystokyo.paper.PlayerSetSpawnEvent.Cause.COMMAND)) {
 +                actualTargets.add(target);
 +            }
 +            // Paper end - Add PlayerSetSpawnEvent

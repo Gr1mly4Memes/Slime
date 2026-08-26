@@ -1,10 +1,5 @@
 package org.bukkit.craftbukkit;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
 import net.minecraft.CrashReportDetail;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
@@ -14,12 +9,20 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+
 public class CraftCrashReport implements CrashReportDetail<Object> {
 
     @Override
-    public Object call() throws Exception {
+    public String call() {
+        final io.papermc.paper.ServerBuildInfo build = io.papermc.paper.ServerBuildInfo.buildInfo();
         StringWriter value = new StringWriter();
         try {
+            value.append("\n   BrandInfo: ").append(String.format("%s (%s) version %s", build.brandName(), build.brandId(), build.asString(io.papermc.paper.ServerBuildInfo.StringRepresentation.VERSION_FULL)));
             value.append("\n   Running: ").append(Bukkit.getName()).append(" version ").append(Bukkit.getVersion()).append(" (Implementing API version ").append(Bukkit.getBukkitVersion()).append(") ").append(String.valueOf(MinecraftServer.getServer().usesAuthentication()));
             value.append("\n   Plugins: {");
             for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
@@ -35,8 +38,8 @@ public class CraftCrashReport implements CrashReportDetail<Object> {
             }
             value.append("}\n   ").append(Bukkit.getScheduler().toString());
             value.append("\n   Force Loaded Chunks: {");
-            for (World world : Bukkit.getWorlds()) {
-                value.append(' ').append(world.getName()).append(": {");
+            for (World world : Bukkit.getServer().getWorlds()) {
+                value.append(' ').append(world.key().asString()).append(": {");
                 for (Map.Entry<Plugin, Collection<Chunk>> entry : world.getPluginChunkTickets().entrySet()) {
                     value.append(' ').append(entry.getKey().getDescription().getFullName()).append(": ").append(Integer.toString(entry.getValue().size())).append(',');
                 }

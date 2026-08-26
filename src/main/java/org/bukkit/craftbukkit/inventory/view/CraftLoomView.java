@@ -1,7 +1,5 @@
 package org.bukkit.craftbukkit.inventory.view;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.world.inventory.LoomMenu;
 import net.minecraft.world.level.block.entity.BannerPattern;
@@ -12,6 +10,9 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.LoomInventory;
 import org.bukkit.inventory.view.LoomView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CraftLoomView extends CraftInventoryView<LoomMenu, LoomInventory> implements LoomView {
 
     public CraftLoomView(final HumanEntity player, final LoomInventory viewing, final LoomMenu container) {
@@ -20,7 +21,7 @@ public class CraftLoomView extends CraftInventoryView<LoomMenu, LoomInventory> i
 
     @Override
     public List<PatternType> getSelectablePatterns() {
-        final List<Holder<BannerPattern>> selectablePatterns = container.getSelectablePatterns();
+        final List<Holder<BannerPattern>> selectablePatterns = this.container.getSelectablePatterns();
         final List<PatternType> patternTypes = new ArrayList<>(selectablePatterns.size());
         for (final Holder<BannerPattern> selectablePattern : selectablePatterns) {
             patternTypes.add(CraftPatternType.minecraftHolderToBukkit(selectablePattern));
@@ -30,6 +31,6 @@ public class CraftLoomView extends CraftInventoryView<LoomMenu, LoomInventory> i
 
     @Override
     public int getSelectedPatternIndex() {
-        return container.getSelectedBannerPatternIndex();
+        return this.container.getSelectedBannerPatternIndex();
     }
 }

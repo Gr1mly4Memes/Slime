@@ -1,48 +1,55 @@
-/**
- * Automatically generated file, changes will be lost.
- */
 package org.bukkit.craftbukkit.block.impl;
 
-public final class CraftMovingPiston extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.TechnicalPiston, org.bukkit.block.data.Directional {
+import com.google.common.base.Preconditions;
+import io.papermc.paper.annotation.GeneratedClass;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.piston.MovingPistonBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.PistonType;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.TechnicalPiston;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.jspecify.annotations.NullMarked;
 
-    public CraftMovingPiston() {
-        super();
-    }
+import java.util.Set;
 
-    public CraftMovingPiston(net.minecraft.world.level.block.state.BlockState state) {
+@NullMarked
+@GeneratedClass
+public class CraftMovingPiston extends CraftBlockData implements TechnicalPiston {
+    private static final EnumProperty<Direction> FACING = MovingPistonBlock.FACING;
+
+    private static final EnumProperty<PistonType> TYPE = MovingPistonBlock.TYPE;
+
+    public CraftMovingPiston(BlockState state) {
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftTechnicalPiston
+    @Override
+    public BlockFace getFacing() {
+        return this.get(FACING, BlockFace.class);
+    }
 
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, Type> TYPE = getEnum(net.minecraft.world.level.block.piston.MovingPistonBlock.class, "type", Type.class);
+    @Override
+    public void setFacing(final BlockFace blockFace) {
+        Preconditions.checkArgument(blockFace != null, "blockFace cannot be null!");
+        Preconditions.checkArgument(blockFace.isCartesian(), "Invalid face, only cartesian face are allowed for this property!");
+        this.set(FACING, blockFace);
+    }
+
+    @Override
+    public Set<BlockFace> getFaces() {
+        return this.getValues(FACING, BlockFace.class);
+    }
 
     @Override
     public Type getType() {
-        return get(TYPE);
+        return this.get(TYPE, Type.class);
     }
 
     @Override
-    public void setType(Type type) {
-        set(TYPE, type);
-    }
-
-    // org.bukkit.craftbukkit.block.data.CraftDirectional
-
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, org.bukkit.block.BlockFace> FACING = getEnum(net.minecraft.world.level.block.piston.MovingPistonBlock.class, "facing", org.bukkit.block.BlockFace.class);
-
-    @Override
-    public org.bukkit.block.BlockFace getFacing() {
-        return get(FACING);
-    }
-
-    @Override
-    public void setFacing(org.bukkit.block.BlockFace facing) {
-        set(FACING, facing);
-    }
-
-    @Override
-    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
-        return getValues(FACING);
+    public void setType(final Type type) {
+        Preconditions.checkArgument(type != null, "type cannot be null!");
+        this.set(TYPE, type);
     }
 }

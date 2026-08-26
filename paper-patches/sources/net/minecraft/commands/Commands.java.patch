@@ -181,7 +181,7 @@
 +            bukkit.add(node.getName());
 +        }
 +        // Paper start - Perf: Async command map building
-+        new com.destroystokyo.paper.event.brigadier.AsyncPlayerSendCommandsEvent<CommandSourceStack>(player.getBukkitEntity(), (RootCommandNode) root, false).callEvent(); // Paper - Brigadier API
++        new com.destroystokyo.brigadier.event.com.destroystokyo.paper.AsyncPlayerSendCommandsEvent<CommandSourceStack>(player.getBukkitEntity(), (RootCommandNode) root, false).callEvent(); // Paper - Brigadier API
 +        net.minecraft.server.MinecraftServer.getServer().execute(() -> {
 +            runSync(player, bukkit, root);
 +        });
@@ -189,7 +189,7 @@
 +
 +    private void runSync(ServerPlayer player, java.util.Collection<String> bukkit, RootCommandNode<CommandSourceStack> root) {
 +        // Paper end - Perf: Async command map building
-+        new com.destroystokyo.paper.event.brigadier.AsyncPlayerSendCommandsEvent<CommandSourceStack>(player.getBukkitEntity(), (RootCommandNode) root, true).callEvent(); // Paper - Brigadier API
++        new com.destroystokyo.brigadier.event.com.destroystokyo.paper.AsyncPlayerSendCommandsEvent<CommandSourceStack>(player.getBukkitEntity(), (RootCommandNode) root, true).callEvent(); // Paper - Brigadier API
 +        org.bukkit.event.player.PlayerCommandSendEvent event = new org.bukkit.event.player.PlayerCommandSendEvent(player.getBukkitEntity(), new java.util.LinkedHashSet<>(bukkit));
 +        event.getPlayer().getServer().getPluginManager().callEvent(event);
 +

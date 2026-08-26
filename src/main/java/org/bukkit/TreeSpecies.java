@@ -1,15 +1,16 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
-import java.util.Map;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * Represents the different species of trees regardless of size.
  *
  * @deprecated Deprecated, see usage methods for replacement(s)
  */
-@Deprecated(since = "1.19")
+@Deprecated(since = "1.19", forRemoval = true)
 public enum TreeSpecies {
 
     /**

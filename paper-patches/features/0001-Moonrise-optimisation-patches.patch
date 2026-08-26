@@ -441,7 +441,7 @@ index 15c181961eb669a0ffde86c256078859f4419f23..4baf46256e90a87d684e57ff623076a8
 -                }
 -            } catch (final Throwable thr) {
 -                LOGGER.error("Exception handling chunk load callback", thr);
--                com.destroystokyo.paper.util.SneakyThrow.sneaky(thr);
+-                com.destroystokyo.util.com.destroystokyo.paper.SneakyThrow.sneaky(thr);
 -            } finally {
 -                if (addTicket) {
 -                    level.getChunkSource().addTicketAtLevel(net.minecraft.server.level.TicketType.UNKNOWN, chunkPos, minLevel);
@@ -508,7 +508,7 @@ index 15c181961eb669a0ffde86c256078859f4419f23..4baf46256e90a87d684e57ff623076a8
 -                }
 -            } catch (final Throwable thr) {
 -                LOGGER.error("Exception handling chunk load callback", thr);
--                com.destroystokyo.paper.util.SneakyThrow.sneaky(thr);
+-                com.destroystokyo.util.com.destroystokyo.paper.SneakyThrow.sneaky(thr);
 -            } finally {
 -                if (addTicket) {
 -                    level.getChunkSource().addTicketAtLevel(TicketType.UNKNOWN, chunkPos, minLevel);
@@ -25757,7 +25757,7 @@ index 4a9e9707bebe85e26d28260b389e236156ba5637..3a6410f4b061c7431ad09b23be969116
 +        Objects.checkFromIndexSize(0, len, raw.length);
 +        for (int i = 0; i < len; ++i) {
 +            // Paper start - PlayerNaturallySpawnCreaturesEvent
-+            com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent event = raw[i].playerNaturallySpawnedEvent;
++            com.destroystokyo.entity.event.com.destroystokyo.paper.PlayerNaturallySpawnCreaturesEvent event = raw[i].playerNaturallySpawnedEvent;
 +            if (event == null || event.isCancelled()) {
 +                continue;
 +            }
@@ -25838,7 +25838,7 @@ index 4a9e9707bebe85e26d28260b389e236156ba5637..3a6410f4b061c7431ad09b23be969116
 +        for (int i = 0; i < len; ++i) {
 +            final ServerPlayer player = raw[i];
              // Paper start - PlayerNaturallySpawnCreaturesEvent
-             com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent event;
+             com.destroystokyo.entity.event.com.destroystokyo.paper.PlayerNaturallySpawnCreaturesEvent event;
              blockRange = 16384.0;
 @@ -1055,26 +796,41 @@ public class ChunkMap extends SimpleRegionStorage implements ChunkHolder.PlayerP
          }

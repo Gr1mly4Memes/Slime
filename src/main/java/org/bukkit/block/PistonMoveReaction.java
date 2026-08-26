@@ -1,8 +1,9 @@
 package org.bukkit.block;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents how a block or entity will react when interacting with a piston
@@ -48,9 +49,9 @@ public enum PistonMoveReaction {
 
     /**
      * @return The ID of the move reaction
-     * @deprecated Magic value
+     * @apiNote Internal Use Only
      */
-    @Deprecated(since = "1.6.2")
+    @org.jetbrains.annotations.ApiStatus.Internal // Paper
     public int getId() {
         return this.id;
     }
@@ -58,9 +59,9 @@ public enum PistonMoveReaction {
     /**
      * @param id An ID
      * @return The move reaction with that ID
-     * @deprecated Magic value
+     * @apiNote Internal Use Only
      */
-    @Deprecated(since = "1.6.2")
+    @org.jetbrains.annotations.ApiStatus.Internal // Paper
     @Nullable
     public static PistonMoveReaction getById(int id) {
         return byId.get(id);

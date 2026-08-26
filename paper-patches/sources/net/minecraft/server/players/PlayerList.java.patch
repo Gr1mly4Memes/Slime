@@ -511,7 +511,7 @@
 +        level.getChunkSource().addTicketWithRadius(net.minecraft.server.level.TicketType.POST_TELEPORT, new net.minecraft.world.level.ChunkPos(net.minecraft.util.Mth.floor(pos.x()) >> 4, net.minecraft.util.Mth.floor(pos.z()) >> 4), 1); // Paper - post teleport ticket type
          if (respawnInfo.missingRespawnBlock()) {
              player.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE, 0.0F));
-+            player.setRespawnPosition(null, false, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.PLAYER_RESPAWN); // CraftBukkit - SPIGOT-5988: Clear respawn location when obstructed
++            player.setRespawnPosition(null, false, com.destroystokyo.player.event.com.destroystokyo.paper.PlayerSetSpawnEvent.Cause.PLAYER_RESPAWN); // CraftBukkit - SPIGOT-5988: Clear respawn location when obstructed
          }
  
          byte dataToKeep = keepAllPlayerData ? ClientboundRespawnPacket.KEEP_ATTRIBUTE_MODIFIERS : 0;
@@ -556,7 +556,7 @@
 +        }
 +
 +        // Call post respawn event
-+        new com.destroystokyo.paper.event.player.PlayerPostRespawnEvent(
++        new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerPostRespawnEvent(
 +            player.getBukkitEntity(),
 +            org.bukkit.craftbukkit.util.CraftLocation.toBukkit(respawnInfo.position(), level, respawnInfo.yRot(), respawnInfo.xRot()),
 +            result.isBedSpawn(),
@@ -680,8 +680,8 @@
 +        boolean isWhitelisted = !this.isUsingWhitelist() || isOp || this.whitelist.contains(nameAndId);
 +
 +        final net.kyori.adventure.text.Component configuredMessage = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(org.spigotmc.SpigotConfig.whitelistMessage);
-+        final com.destroystokyo.paper.event.profile.ProfileWhitelistVerifyEvent event
-+            = new com.destroystokyo.paper.event.profile.ProfileWhitelistVerifyEvent(new com.destroystokyo.paper.profile.CraftPlayerProfile(nameAndId), this.isUsingWhitelist(), isWhitelisted, isOp, configuredMessage);
++        final com.destroystokyo.profile.event.com.destroystokyo.paper.ProfileWhitelistVerifyEvent event
++            = new com.destroystokyo.profile.event.com.destroystokyo.paper.ProfileWhitelistVerifyEvent(new com.destroystokyo.paper.profile.CraftPlayerProfile(nameAndId), this.isUsingWhitelist(), isWhitelisted, isOp, configuredMessage);
 +        event.callEvent();
 +        if (!event.isWhitelisted()) {
 +            return new net.minecraft.server.players.PlayerList.LoginResult(io.papermc.paper.adventure.PaperAdventure.asVanilla(event.kickMessage() == null ? configuredMessage : event.kickMessage()), org.bukkit.event.player.PlayerLoginEvent.Result.KICK_WHITELIST);

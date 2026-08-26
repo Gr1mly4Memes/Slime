@@ -1,12 +1,13 @@
 package org.bukkit.craftbukkit.ban;
 
 import com.google.common.net.InetAddresses;
-import java.net.InetAddress;
-import java.time.Instant;
-import java.util.Date;
 import net.minecraft.server.players.IpBanList;
 import net.minecraft.server.players.IpBanListEntry;
 import org.bukkit.BanEntry;
+
+import java.net.InetAddress;
+import java.time.Instant;
+import java.util.Date;
 
 public final class CraftIpBanEntry implements BanEntry<InetAddress> {
     private static final Date minorDate = Date.from(Instant.parse("1899-12-31T04:00:00Z"));
@@ -63,7 +64,7 @@ public final class CraftIpBanEntry implements BanEntry<InetAddress> {
 
     @Override
     public void setExpiration(Date expiration) {
-        if (expiration != null && expiration.getTime() == minorDate.getTime()) {
+        if (expiration != null && expiration.getTime() == CraftIpBanEntry.minorDate.getTime()) {
             expiration = null; // Forces "forever"
         }
 
@@ -88,6 +89,6 @@ public final class CraftIpBanEntry implements BanEntry<InetAddress> {
 
     @Override
     public void remove() {
-        this.list.remove(target);
+        this.list.remove(this.target);
     }
 }

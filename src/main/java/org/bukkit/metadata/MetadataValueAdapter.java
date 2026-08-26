@@ -1,11 +1,12 @@
 package org.bukkit.metadata;
 
 import com.google.common.base.Preconditions;
-import java.lang.ref.WeakReference;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.NumberConversions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Optional base class for facilitating MetadataValue implementations.
@@ -13,7 +14,13 @@ import org.jetbrains.annotations.Nullable;
  * This provides all the conversion functions for MetadataValue so that
  * writing an implementation of MetadataValue is as simple as implementing
  * value() and invalidate().
+ *
+ * @deprecated This system is extremely misleading and does not cleanup values for metadatable entities that have been
+ * removed. It is recommended that when wanting persistent metadata, you use {@link org.bukkit.persistence.PersistentDataContainer}.
+ * <p>
+ * If you want temporary values on an entity, use the entity lifecycle events and a {@link java.util.Map} of your own. (See {@link com.destroystokyo.paper.event.entity.EntityAddToWorldEvent} and {@link com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent})
  */
+@Deprecated
 public abstract class MetadataValueAdapter implements MetadataValue {
     protected final WeakReference<Plugin> owningPlugin;
 

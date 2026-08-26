@@ -493,7 +493,7 @@
 +    // Paper start
 +    public void onAttack(@Nullable Entity entity) {
 +        if (entity != null) {
-+            if (new com.destroystokyo.paper.event.player.PlayerAttackEntityCooldownResetEvent((org.bukkit.entity.Player) this.getBukkitEntity(), entity.getBukkitEntity(), this.getAttackStrengthScale(0F)).callEvent()) {
++            if (new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerAttackEntityCooldownResetEvent((org.bukkit.entity.Player) this.getBukkitEntity(), entity.getBukkitEntity(), this.getAttackStrengthScale(0F)).callEvent()) {
 +                this.resetOnlyAttackStrengthTicker();
 +            }
 +        } else {
@@ -534,7 +534,7 @@
 +    // We pass a result mutable boolean in to allow the caller of this method to know if the event was cancelled.
 +    protected boolean tryReadyArrow(ItemStack bow, ItemStack itemstack, final org.apache.commons.lang3.mutable.MutableBoolean cancelled) {
 +        if (!(this instanceof final ServerPlayer serverPlayer)) return true;
-+        final boolean notCancelled = new com.destroystokyo.paper.event.player.PlayerReadyArrowEvent(
++        final boolean notCancelled = new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerReadyArrowEvent(
 +            serverPlayer.getBukkitEntity(),
 +            org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(bow),
 +            org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack)

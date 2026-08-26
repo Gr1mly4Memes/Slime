@@ -1,13 +1,6 @@
 package org.bukkit.attribute;
 
 import com.google.common.base.Preconditions;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.regex.Pattern;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -16,6 +9,10 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.util.NumberConversions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Concrete implementation of an attribute modifier.
@@ -47,6 +44,12 @@ public class AttributeModifier implements ConfigurationSerializable, Keyed {
     public AttributeModifier(@NotNull UUID uuid, @NotNull String name, double amount, @NotNull Operation operation, @NotNull EquipmentSlotGroup slot) {
         this(NamespacedKey.fromString(uuid.toString()), amount, operation, slot);
     }
+
+    // Paper start - Add constructor without EquipmentSlotGroup
+    public AttributeModifier(@NotNull NamespacedKey key, double amount, @NotNull Operation operation) {
+        this(key, amount, operation, EquipmentSlotGroup.ANY);
+    }
+    // Paper end
 
     public AttributeModifier(@NotNull NamespacedKey key, double amount, @NotNull Operation operation, @NotNull EquipmentSlotGroup slot) {
         Preconditions.checkArgument(key != null, "Key cannot be null");
@@ -129,8 +132,7 @@ public class AttributeModifier implements ConfigurationSerializable, Keyed {
     }
 
     /**
-     * Get the {@link EquipmentSlot} this AttributeModifier is active on,
-     * or null if this modifier is applicable for any slot.
+     * Get the {@link EquipmentSlotGroup} this AttributeModifier is active on.
      *
      * @return the slot
      */

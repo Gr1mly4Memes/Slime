@@ -746,7 +746,7 @@
 +        final org.bukkit.event.player.PlayerTeleportEvent tpEvent;
 +        // Paper start - gateway-specific teleport event
 +        if (this.portalProcess != null && this.portalProcess.isSamePortal(((net.minecraft.world.level.block.EndGatewayBlock) net.minecraft.world.level.block.Blocks.END_GATEWAY)) && this.level().getBlockEntity(this.portalProcess.getEntryPosition()) instanceof net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity theEndGatewayBlockEntity) {
-+            tpEvent = new com.destroystokyo.paper.event.player.PlayerTeleportEndGatewayEvent(this.getBukkitEntity(), enter, exit.clone(), new org.bukkit.craftbukkit.block.CraftEndGateway(this.level().getWorld(), theEndGatewayBlockEntity));
++            tpEvent = new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerTeleportEndGatewayEvent(this.getBukkitEntity(), enter, exit.clone(), new org.bukkit.craftbukkit.block.CraftEndGateway(this.level().getWorld(), theEndGatewayBlockEntity));
 +        } else {
 +            tpEvent = new org.bukkit.event.player.PlayerTeleportEvent(this.getBukkitEntity(), enter, exit.clone(), transition.cause());
 +        }
@@ -861,7 +861,7 @@
              if (canSetSpawn) {
                  this.setRespawnPosition(
 -                    new ServerPlayer.RespawnConfig(LevelData.RespawnData.of(this.level().dimension(), pos, this.getYRot(), this.getXRot()), false), true
-+                    new ServerPlayer.RespawnConfig(LevelData.RespawnData.of(this.level().dimension(), pos, this.getYRot(), this.getXRot()), false), true, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.BED // Paper - Add PlayerSetSpawnEvent
++                    new ServerPlayer.RespawnConfig(LevelData.RespawnData.of(this.level().dimension(), pos, this.getYRot(), this.getXRot()), false), true, com.destroystokyo.player.event.com.destroystokyo.paper.PlayerSetSpawnEvent.Cause.BED // Paper - Add PlayerSetSpawnEvent
                  );
              }
  
@@ -1309,16 +1309,16 @@
  
      public void updateOptions(final ClientInformation information) {
 +        // Paper start - settings event
-+        new com.destroystokyo.paper.event.player.PlayerClientOptionsChangeEvent(this.getBukkitEntity(), Util.make(new java.util.IdentityHashMap<>(), map -> {
-+            map.put(com.destroystokyo.paper.ClientOption.LOCALE, information.language());
-+            map.put(com.destroystokyo.paper.ClientOption.VIEW_DISTANCE, information.viewDistance());
-+            map.put(com.destroystokyo.paper.ClientOption.CHAT_VISIBILITY, com.destroystokyo.paper.ClientOption.ChatVisibility.valueOf(information.chatVisibility().name()));
-+            map.put(com.destroystokyo.paper.ClientOption.CHAT_COLORS_ENABLED, information.chatColors());
-+            map.put(com.destroystokyo.paper.ClientOption.SKIN_PARTS, new com.destroystokyo.paper.PaperSkinParts(information.modelCustomisation()));
-+            map.put(com.destroystokyo.paper.ClientOption.MAIN_HAND, information.mainHand() == net.minecraft.world.entity.HumanoidArm.LEFT ? org.bukkit.inventory.MainHand.LEFT : org.bukkit.inventory.MainHand.RIGHT);
-+            map.put(com.destroystokyo.paper.ClientOption.TEXT_FILTERING_ENABLED, information.textFilteringEnabled());
-+            map.put(com.destroystokyo.paper.ClientOption.ALLOW_SERVER_LISTINGS, information.allowsListing());
-+            map.put(com.destroystokyo.paper.ClientOption.PARTICLE_VISIBILITY, com.destroystokyo.paper.ClientOption.ParticleVisibility.valueOf(information.particleStatus().name()));
++        new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerClientOptionsChangeEvent(this.getBukkitEntity(), Util.make(new java.util.IdentityHashMap<>(), map -> {
++            map.put(com.destroystokyo.com.destroystokyo.paper.ClientOption.LOCALE, information.language());
++            map.put(com.destroystokyo.com.destroystokyo.paper.ClientOption.VIEW_DISTANCE, information.viewDistance());
++            map.put(com.destroystokyo.com.destroystokyo.paper.ClientOption.CHAT_VISIBILITY, com.destroystokyo.com.destroystokyo.paper.ClientOption.ChatVisibility.valueOf(information.chatVisibility().name()));
++            map.put(com.destroystokyo.com.destroystokyo.paper.ClientOption.CHAT_COLORS_ENABLED, information.chatColors());
++            map.put(com.destroystokyo.com.destroystokyo.paper.ClientOption.SKIN_PARTS, new com.destroystokyo.paper.PaperSkinParts(information.modelCustomisation()));
++            map.put(com.destroystokyo.com.destroystokyo.paper.ClientOption.MAIN_HAND, information.mainHand() == net.minecraft.world.entity.HumanoidArm.LEFT ? org.bukkit.inventory.MainHand.LEFT : org.bukkit.inventory.MainHand.RIGHT);
++            map.put(com.destroystokyo.com.destroystokyo.paper.ClientOption.TEXT_FILTERING_ENABLED, information.textFilteringEnabled());
++            map.put(com.destroystokyo.com.destroystokyo.paper.ClientOption.ALLOW_SERVER_LISTINGS, information.allowsListing());
++            map.put(com.destroystokyo.com.destroystokyo.paper.ClientOption.PARTICLE_VISIBILITY, com.destroystokyo.com.destroystokyo.paper.ClientOption.ParticleVisibility.valueOf(information.particleStatus().name()));
 +        })).callEvent();
 +        // Paper end - settings event
 +        // CraftBukkit start
@@ -1353,13 +1353,13 @@
          if (oldCamera != this.camera) {
 +            // Paper start - Add PlayerStartSpectatingEntityEvent and PlayerStopSpectatingEntity
 +            if (this.camera == this) {
-+                com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent spectateEvent = new com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent(this.getBukkitEntity(), oldCamera.getBukkitEntity());
++                com.destroystokyo.player.event.com.destroystokyo.paper.PlayerStopSpectatingEntityEvent spectateEvent = new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerStopSpectatingEntityEvent(this.getBukkitEntity(), oldCamera.getBukkitEntity());
 +                if (!spectateEvent.callEvent()) {
 +                    this.camera = oldCamera; // rollback camera entity again
 +                    return;
 +                }
 +            } else {
-+                com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent spectateEvent = new com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent(this.getBukkitEntity(), oldCamera.getBukkitEntity(), newCamera.getBukkitEntity());
++                com.destroystokyo.player.event.com.destroystokyo.paper.PlayerStartSpectatingEntityEvent spectateEvent = new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerStartSpectatingEntityEvent(this.getBukkitEntity(), oldCamera.getBukkitEntity(), newCamera.getBukkitEntity());
 +                if (!spectateEvent.callEvent()) {
 +                    this.camera = oldCamera; // rollback camera entity again
 +                    return;
@@ -1393,10 +1393,10 @@
 -        if (showMessage && respawnConfig != null && !respawnConfig.isSamePosition(this.respawnConfig)) {
 -            this.sendSystemMessage(SPAWN_SET_MESSAGE);
 +        // Paper start - Add PlayerSetSpawnEvent
-+        this.setRespawnPosition(respawnConfig, showMessage, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.UNKNOWN);
++        this.setRespawnPosition(respawnConfig, showMessage, com.destroystokyo.player.event.com.destroystokyo.paper.PlayerSetSpawnEvent.Cause.UNKNOWN);
 +    }
 +
-+    public boolean setRespawnPosition(ServerPlayer.@Nullable RespawnConfig respawnConfig, final boolean showMessage, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause cause) {
++    public boolean setRespawnPosition(ServerPlayer.@Nullable RespawnConfig respawnConfig, final boolean showMessage, com.destroystokyo.player.event.com.destroystokyo.paper.PlayerSetSpawnEvent.Cause cause) {
 +        org.bukkit.Location spawnLoc = null;
 +        boolean actuallyDisplayInChat = false;
 +        if (respawnConfig != null) {
@@ -1409,13 +1409,13 @@
 +            this.getBukkitEntity(),
 +            spawnLoc,
 +            respawnConfig != null && respawnConfig.forced(),
-+            cause == com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.PLAYER_RESPAWN
++            cause == com.destroystokyo.player.event.com.destroystokyo.paper.PlayerSetSpawnEvent.Cause.PLAYER_RESPAWN
 +                ? org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.RESET
 +                : org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.valueOf(cause.name())
 +        );
 +        dumbEvent.callEvent();
 +
-+        com.destroystokyo.paper.event.player.PlayerSetSpawnEvent event = new com.destroystokyo.paper.event.player.PlayerSetSpawnEvent(
++        com.destroystokyo.player.event.com.destroystokyo.paper.PlayerSetSpawnEvent event = new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerSetSpawnEvent(
 +            this.getBukkitEntity(),
 +            cause,
 +            dumbEvent.getNewSpawn(),

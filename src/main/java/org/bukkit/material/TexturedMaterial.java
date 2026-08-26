@@ -1,7 +1,8 @@
 package org.bukkit.material;
 
-import java.util.List;
 import org.bukkit.Material;
+
+import java.util.List;
 
 /**
  * Represents textured materials like steps and smooth bricks
@@ -9,7 +10,7 @@ import org.bukkit.Material;
  * @deprecated all usage of MaterialData is deprecated and subject to removal.
  * Use {@link org.bukkit.block.data.BlockData}.
  */
-@Deprecated(since = "1.14.1")
+@Deprecated(since = "1.13", forRemoval = true)
 public abstract class TexturedMaterial extends MaterialData {
 
     public TexturedMaterial(Material m) {

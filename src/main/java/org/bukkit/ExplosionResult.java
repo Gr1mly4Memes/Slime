@@ -8,7 +8,7 @@ public enum ExplosionResult {
     /**
      * Represents an explosion where no change took place.
      *
-     * This is the case when {@link GameRule#MOB_GRIEFING} is
+     * This is the case when {@link GameRules#MOB_GRIEFING} is
      * disabled.
      */
     KEEP,
@@ -16,8 +16,8 @@ public enum ExplosionResult {
      * Represents an explosion where all destroyed blocks drop their items.
      *
      * This is the case when
-     * {@link GameRule#TNT_EXPLOSION_DROP_DECAY} or
-     * {@link GameRule#BLOCK_EXPLOSION_DROP_DECAY} is disabled.
+     * {@link GameRules#TNT_EXPLOSION_DROP_DECAY} or
+     * {@link GameRules#BLOCK_EXPLOSION_DROP_DECAY} is disabled.
      */
     DESTROY,
     /**

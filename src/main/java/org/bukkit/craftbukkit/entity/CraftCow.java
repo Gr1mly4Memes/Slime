@@ -1,16 +1,17 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
+import io.papermc.paper.registry.HolderableBase;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.entity.animal.cow.CowSoundVariant;
 import net.minecraft.world.entity.animal.cow.CowVariant;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.craftbukkit.CraftRegistry;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.registry.CraftRegistryItem;
 import org.bukkit.entity.Cow;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class CraftCow extends CraftAbstractCow implements Cow {
 
     public CraftCow(CraftServer server, net.minecraft.world.entity.animal.cow.Cow entity) {
@@ -19,51 +20,60 @@ public class CraftCow extends CraftAbstractCow implements Cow {
 
     @Override
     public net.minecraft.world.entity.animal.cow.Cow getHandle() {
-        return (net.minecraft.world.entity.animal.cow.Cow) entity;
-    }
-
-    @Override
-    public String toString() {
-        return "CraftCow";
+        return (net.minecraft.world.entity.animal.cow.Cow) this.entity;
     }
 
     @Override
     public Variant getVariant() {
-        return CraftVariant.minecraftHolderToBukkit(getHandle().getVariant());
+        return CraftVariant.minecraftHolderToBukkit(this.getHandle().getVariant());
     }
 
     @Override
     public void setVariant(Variant variant) {
-        Preconditions.checkArgument(variant != null, "variant");
+        Preconditions.checkArgument(variant != null, "variant cannot be null");
 
-        getHandle().setVariant(CraftVariant.bukkitToMinecraftHolder(variant));
+        this.getHandle().setVariant(CraftVariant.bukkitToMinecraftHolder(variant));
     }
 
-    public static class CraftVariant extends CraftRegistryItem<CowVariant> implements Variant {
+    @Override
+    public SoundVariant getSoundVariant() {
+        return CraftSoundVariant.minecraftHolderToBukkit(this.getHandle().getSoundVariant());
+    }
 
-        public static Variant minecraftToBukkit(CowVariant minecraft) {
-            return CraftRegistry.minecraftToBukkit(minecraft, Registries.COW_VARIANT, Registry.COW_VARIANT);
-        }
+    @Override
+    public void setSoundVariant(SoundVariant variant) {
+        Preconditions.checkArgument(variant != null, "variant cannot be null");
+
+        this.getHandle().setSoundVariant(CraftSoundVariant.bukkitToMinecraftHolder(variant));
+    }
+
+    public static class CraftVariant extends HolderableBase<CowVariant> implements Variant {
 
         public static Variant minecraftHolderToBukkit(Holder<CowVariant> minecraft) {
-            return minecraftToBukkit(minecraft.value());
-        }
-
-        public static CowVariant bukkitToMinecraft(Variant bukkit) {
-            return CraftRegistry.bukkitToMinecraft(bukkit);
+            return CraftRegistry.minecraftHolderToBukkit(minecraft, Registries.COW_VARIANT);
         }
 
         public static Holder<CowVariant> bukkitToMinecraftHolder(Variant bukkit) {
-            return CraftRegistry.bukkitToMinecraftHolder(bukkit, Registries.COW_VARIANT);
+            return CraftRegistry.bukkitToMinecraftHolder(bukkit);
         }
 
-        public CraftVariant(NamespacedKey key, Holder<CowVariant> handle) {
-            super(key, handle);
+        public CraftVariant(final Holder<CowVariant> holder) {
+            super(holder);
+        }
+    }
+
+    public static class CraftSoundVariant extends HolderableBase<CowSoundVariant> implements SoundVariant {
+
+        public static SoundVariant minecraftHolderToBukkit(Holder<CowSoundVariant> minecraft) {
+            return CraftRegistry.minecraftHolderToBukkit(minecraft, Registries.COW_SOUND_VARIANT);
         }
 
-        @Override
-        public NamespacedKey getKey() {
-            return getKeyOrThrow();
+        public static Holder<CowSoundVariant> bukkitToMinecraftHolder(SoundVariant bukkit) {
+            return CraftRegistry.bukkitToMinecraftHolder(bukkit);
+        }
+
+        public CraftSoundVariant(final Holder<CowSoundVariant> holder) {
+            super(holder);
         }
     }
 }

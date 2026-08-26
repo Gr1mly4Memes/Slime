@@ -51,7 +51,7 @@
          return this.tags.put(name, tag);
      }
  
-@@ -392,9 +_,15 @@
+@@ -392,9 +_,16 @@
      }
  
      public CompoundTag copy() {
@@ -65,35 +65,14 @@
 +            Map.Entry<String, Tag> entry = iterator.next();
 +            ret.put(entry.getKey(), entry.getValue().copy());
 +        }
++
 +        return new CompoundTag(ret);
 +        // Paper end - Reduce memory footprint of CompoundTag
      }
  
      @Override
-@@ -515,22 +_,47 @@
-         this.merge((CompoundTag)codec.encoder().encodeStart(ops, value).getOrThrow());
-     }
- 
--    public <T> Optional<T> read(String name, Codec<T> codec) {
-+    public <T> Optional<T> read(final String name, final Codec<T> codec) { // Paper - option to read via codec without logging errors - diff on change
-         return this.read(name, codec, NbtOps.INSTANCE);
-     }
- 
--    public <T> Optional<T> read(String name, Codec<T> codec, DynamicOps<Tag> ops) {
-+    public <T> Optional<T> read(final String name, final Codec<T> codec, final DynamicOps<Tag> ops) { // Paper - option to read via codec without logging errors - diff on change
-         Tag tag = this.get(name);
-         return tag == null
-             ? Optional.empty()
-             : codec.parse(ops, tag).resultOrPartial(error -> LOGGER.error("Failed to read field ({}={}): {}", name, tag, error));
-     }
- 
--    public <T> Optional<T> read(MapCodec<T> codec) {
-+    public <T> Optional<T> read(final MapCodec<T> codec) { // Paper - option to read via codec without logging errors - diff on change
-         return this.read(codec, NbtOps.INSTANCE);
-     }
- 
--    public <T> Optional<T> read(MapCodec<T> codec, DynamicOps<Tag> ops) {
-+    public <T> Optional<T> read(final MapCodec<T> codec, final DynamicOps<Tag> ops) { // Paper - option to read via codec without logging errors - diff on change
+@@ -533,4 +_,29 @@
+     public <T> Optional<T> read(MapCodec<T> codec, DynamicOps<Tag> ops) {
          return codec.decode(ops, ops.getMap(this).getOrThrow()).resultOrPartial(error -> LOGGER.error("Failed to read value ({}): {}", this, error));
      }
 +

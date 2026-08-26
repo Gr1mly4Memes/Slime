@@ -1,59 +1,68 @@
-/**
- * Automatically generated file, changes will be lost.
- */
 package org.bukkit.craftbukkit.block.impl;
 
-public final class CraftPointedDripstone extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.PointedDripstone, org.bukkit.block.data.Waterlogged {
+import com.google.common.base.Preconditions;
+import io.papermc.paper.annotation.GeneratedClass;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.PointedDripstoneBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.SpeleothemThickness;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Speleothem;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.jspecify.annotations.NullMarked;
 
-    public CraftPointedDripstone() {
-        super();
-    }
+import java.util.Set;
 
-    public CraftPointedDripstone(net.minecraft.world.level.block.state.BlockState state) {
+@NullMarked
+@GeneratedClass
+public class CraftPointedDripstone extends CraftBlockData implements Speleothem {
+    private static final EnumProperty<SpeleothemThickness> THICKNESS = PointedDripstoneBlock.THICKNESS;
+
+    private static final EnumProperty<Direction> TIP_DIRECTION = PointedDripstoneBlock.TIP_DIRECTION;
+
+    private static final BooleanProperty WATERLOGGED = PointedDripstoneBlock.WATERLOGGED;
+
+    public CraftPointedDripstone(BlockState state) {
         super(state);
-    }
-
-    // org.bukkit.craftbukkit.block.data.type.CraftPointedDripstone
-
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, org.bukkit.block.BlockFace> VERTICAL_DIRECTION = getEnum(net.minecraft.world.level.block.PointedDripstoneBlock.class, "vertical_direction", org.bukkit.block.BlockFace.class);
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, Thickness> THICKNESS = getEnum(net.minecraft.world.level.block.PointedDripstoneBlock.class, "thickness", Thickness.class);
-
-    @Override
-    public org.bukkit.block.BlockFace getVerticalDirection() {
-        return get(VERTICAL_DIRECTION);
-    }
-
-    @Override
-    public void setVerticalDirection(org.bukkit.block.BlockFace direction) {
-        set(VERTICAL_DIRECTION, direction);
-    }
-
-    @Override
-    public java.util.Set<org.bukkit.block.BlockFace> getVerticalDirections() {
-        return getValues(VERTICAL_DIRECTION);
     }
 
     @Override
     public Thickness getThickness() {
-        return get(THICKNESS);
+        return this.get(THICKNESS, Thickness.class);
     }
 
     @Override
-    public void setThickness(Thickness thickness) {
-        set(THICKNESS, thickness);
+    public void setThickness(final Thickness thickness) {
+        Preconditions.checkArgument(thickness != null, "thickness cannot be null!");
+        this.set(THICKNESS, thickness);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+    @Override
+    public BlockFace getVerticalDirection() {
+        return this.get(TIP_DIRECTION, BlockFace.class);
+    }
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.PointedDripstoneBlock.class, "waterlogged");
+    @Override
+    public void setVerticalDirection(final BlockFace blockFace) {
+        Preconditions.checkArgument(blockFace != null, "blockFace cannot be null!");
+        Preconditions.checkArgument(blockFace.getModY() != 0, "Invalid face, only vertical face are allowed for this property!");
+        this.set(TIP_DIRECTION, blockFace);
+    }
+
+    @Override
+    public Set<BlockFace> getVerticalDirections() {
+        return this.getValues(TIP_DIRECTION, BlockFace.class);
+    }
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(WATERLOGGED);
     }
 
     @Override
-    public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+    public void setWaterlogged(final boolean waterlogged) {
+        this.set(WATERLOGGED, waterlogged);
     }
 }

@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-@@ -1,6 +_,7 @@
- package net.minecraft.world.level.block.entity;
- 
- import java.util.List;
-+import java.util.Objects;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.core.NonNullList;
-@@ -24,6 +_,8 @@
+@@ -24,12 +_,21 @@
  import net.minecraft.world.level.block.state.properties.ChestType;
  import net.minecraft.world.level.storage.ValueInput;
  import net.minecraft.world.level.storage.ValueOutput;
@@ -17,6 +9,19 @@
  
  public class ChestBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity {
      private static final int EVENT_SET_OPEN_COUNT = 1;
+     public static final Component DEFAULT_NAME = Component.translatable("container.chest");
+     private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
+     public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
++        // Paper start - delay open/close callbacks
++        @Override
++        public boolean delayCallbacks() {
++            return true;
++        }
++        // Paper end - delay open/close callbacks
++
+         @Override
+         protected void onOpen(Level level, BlockPos pos, BlockState blockState) {
+             if (blockState.getBlock() instanceof ChestBlock chestBlock) {
 @@ -62,6 +_,36 @@
      };
      private final ChestLidController chestLidController = new ChestLidController();

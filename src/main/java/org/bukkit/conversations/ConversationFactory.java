@@ -1,13 +1,14 @@
 package org.bukkit.conversations;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A ConversationFactory is responsible for creating a {@link Conversation}
@@ -18,7 +19,13 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * The ConversationFactory implements a fluid API, allowing parameters to be
  * set as an extension to the constructor.
+ *
+ * @deprecated The conversation API has been deprecated for removal. This system does not support component based messages
+ * and has been slowly losing functionality over the years as Minecraft has changed that this API can not adapt to.
+ * It is recommended you instead manually listen to the {@link io.papermc.paper.event.player.AsyncChatEvent}
+ * or alternatively using {@link io.papermc.paper.dialog.Dialog} to get user input.
  */
+@Deprecated(forRemoval = true)
 public class ConversationFactory {
 
     protected Plugin plugin;

@@ -7,10 +7,10 @@ public class SlimeVersion {
     }
 
     public static String getPaperVersion() {
-        return "${slime_version}";
+        return "${paper_version}";
     }
 
     public static String getPurpurVersion() {
-        return "${slime_version}";
+        return "${purpur_version}";
     }
 }

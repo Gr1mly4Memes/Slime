@@ -30,7 +30,7 @@
          boolean wasDone = progress.isDone();
          if (progress.grantProgress(criterion)) {
 +            // Paper start - Add PlayerAdvancementCriterionGrantEvent
-+            if (!new com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent(this.player.getBukkitEntity(), holder.toBukkit(), criterion).callEvent()) {
++            if (!new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerAdvancementCriterionGrantEvent(this.player.getBukkitEntity(), holder.toBukkit(), criterion).callEvent()) {
 +                progress.revokeProgress(criterion);
 +                return false;
 +            }

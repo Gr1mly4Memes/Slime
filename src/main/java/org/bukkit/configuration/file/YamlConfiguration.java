@@ -1,18 +1,6 @@
 package org.bukkit.configuration.file;
 
 import com.google.common.base.Preconditions;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
@@ -25,14 +13,16 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.comments.CommentLine;
 import org.yaml.snakeyaml.comments.CommentType;
 import org.yaml.snakeyaml.error.YAMLException;
-import org.yaml.snakeyaml.nodes.AnchorNode;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.ScalarNode;
-import org.yaml.snakeyaml.nodes.SequenceNode;
-import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.reader.UnicodeReader;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * An implementation of {@link Configuration} which saves all files in Yaml.
@@ -98,6 +88,7 @@ public class YamlConfiguration extends FileConfiguration {
     public void loadFromString(@NotNull String contents) throws InvalidConfigurationException {
         Preconditions.checkArgument(contents != null, "Contents cannot be null");
         yamlLoaderOptions.setProcessComments(options().parseComments());
+        yamlLoaderOptions.setCodePointLimit(options().codePointLimit()); // Paper
 
         MappingNode node;
         try (Reader reader = new UnicodeReader(new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8)))) {

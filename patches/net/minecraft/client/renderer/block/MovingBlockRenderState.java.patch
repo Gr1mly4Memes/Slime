@@ -8,6 +8,30 @@
  
      @Override
      public CardinalLighting cardinalLighting() {
+@@ -48,11 +_,23 @@
+         return pos.equals(this.blockPos) ? this.blockState : Blocks.AIR.defaultBlockState();
+     }
+ 
++    // Slime - add getBlockStateIfLoaded() override
++    @Override
++    public @Nullable BlockState getBlockStateIfLoaded(BlockPos pos) {
++        return this.getBlockState(pos);
++    }
++
+     @Override
+     public FluidState getFluidState(BlockPos pos) {
+         return this.getBlockState(pos).getFluidState();
+     }
+ 
++    // Slime - add getFluidIfLoaded() override
++    @Override
++    public @Nullable FluidState getFluidIfLoaded(BlockPos pos) {
++        return this.getFluidState(pos);
++    }
++
+     @Override
+     public int getHeight() {
+         return 1;
 @@ -61,5 +_,10 @@
      @Override
      public int getMinY() {

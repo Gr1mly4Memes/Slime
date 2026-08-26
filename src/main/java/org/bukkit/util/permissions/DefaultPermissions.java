@@ -1,11 +1,12 @@
 package org.bukkit.util.permissions;
 
-import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public final class DefaultPermissions {
     private static final String ROOT = "craftbukkit";
@@ -31,7 +32,7 @@ public final class DefaultPermissions {
 
         if (withLegacy) {
             Permission legacy = new Permission(LEGACY_PREFIX + result.getName(), result.getDescription(), PermissionDefault.FALSE);
-            legacy.getChildren().put(result.getName(), true);
+            legacy.getChildren().put(result.getName(), null); // Purpur - Fix default permission system
             registerPermission(perm, false);
         }
 
@@ -40,7 +41,7 @@ public final class DefaultPermissions {
 
     @NotNull
     public static Permission registerPermission(@NotNull Permission perm, @NotNull Permission parent) {
-        parent.getChildren().put(perm.getName(), true);
+        parent.getChildren().put(perm.getName(), null); // Purpur - Fix default permission system
         return registerPermission(perm);
     }
 
@@ -53,7 +54,7 @@ public final class DefaultPermissions {
     @NotNull
     public static Permission registerPermission(@NotNull String name, @Nullable String desc, @NotNull Permission parent) {
         Permission perm = registerPermission(name, desc);
-        parent.getChildren().put(perm.getName(), true);
+        parent.getChildren().put(perm.getName(), null); // Purpur - Fix default permission system
         return perm;
     }
 
@@ -66,7 +67,7 @@ public final class DefaultPermissions {
     @NotNull
     public static Permission registerPermission(@NotNull String name, @Nullable String desc, @Nullable PermissionDefault def, @NotNull Permission parent) {
         Permission perm = registerPermission(name, desc, def);
-        parent.getChildren().put(perm.getName(), true);
+        parent.getChildren().put(perm.getName(), null); // Purpur - Fix default permission system
         return perm;
     }
 
@@ -79,7 +80,7 @@ public final class DefaultPermissions {
     @NotNull
     public static Permission registerPermission(@NotNull String name, @Nullable String desc, @Nullable PermissionDefault def, @Nullable Map<String, Boolean> children, @NotNull Permission parent) {
         Permission perm = registerPermission(name, desc, def, children);
-        parent.getChildren().put(perm.getName(), true);
+        parent.getChildren().put(perm.getName(), null); // Purpur - Fix default permission system
         return perm;
     }
 
@@ -88,6 +89,8 @@ public final class DefaultPermissions {
 
         CommandPermissions.registerPermissions(parent);
         BroadcastPermissions.registerPermissions(parent);
+
+        org.purpurmc.purpur.util.permissions.PurpurPermissions.registerPermissions(); // Purpur - Default permissions
 
         parent.recalculatePermissibles();
     }

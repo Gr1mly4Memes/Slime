@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "gr1mly4memes.slime.mixins",
+  "compatibilityLevel": "JAVA_25",
+
+  "mixins": [
+    "compat.spark.MixinNeoForgeWorldInfoProvider",
+    "server.dedicated.MixinDedicatedServer"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

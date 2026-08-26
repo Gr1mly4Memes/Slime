@@ -1,12 +1,15 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
-import java.util.Map;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * Represents the three different types of Sandstone
+ * @deprecated use {@link org.bukkit.block.data.BlockData}
  */
+@Deprecated(forRemoval = true, since = "1.13")
 public enum SandstoneType {
     CRACKED(0x0),
     GLYPHED(0x1),

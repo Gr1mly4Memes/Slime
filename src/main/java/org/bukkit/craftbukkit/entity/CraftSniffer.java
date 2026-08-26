@@ -1,14 +1,15 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
-import java.util.Collection;
-import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.entity.Sniffer;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class CraftSniffer extends CraftAnimals implements Sniffer {
 
@@ -18,12 +19,7 @@ public class CraftSniffer extends CraftAnimals implements Sniffer {
 
     @Override
     public net.minecraft.world.entity.animal.sniffer.Sniffer getHandle() {
-        return (net.minecraft.world.entity.animal.sniffer.Sniffer) super.getHandle();
-    }
-
-    @Override
-    public String toString() {
-        return "CraftSniffer";
+        return (net.minecraft.world.entity.animal.sniffer.Sniffer) this.entity;
     }
 
     @Override
@@ -34,31 +30,30 @@ public class CraftSniffer extends CraftAnimals implements Sniffer {
     @Override
     public void removeExploredLocation(Location location) {
         Preconditions.checkArgument(location != null, "location cannot be null");
-        if (location.getWorld() != getWorld()) {
-            return;
-        }
 
-        BlockPos blockPosition = CraftLocation.toBlockPosition(location);
-        this.getHandle().getBrain().setMemory(MemoryModuleType.SNIFFER_EXPLORED_POSITIONS, this.getHandle().getExploredPositions().filter(blockPositionExplored -> !blockPositionExplored.equals(blockPosition)).collect(Collectors.toList()));
+        BlockPos pos = CraftLocation.toBlockPos(location);
+        net.minecraft.world.level.Level level = location.getWorld() != null ? ((org.bukkit.craftbukkit.CraftWorld) location.getWorld()).getHandle() : this.getHandle().level();
+        net.minecraft.core.GlobalPos globalPos = net.minecraft.core.GlobalPos.of(level.dimension(), pos);
+        this.getHandle().getBrain().setMemory(MemoryModuleType.SNIFFER_EXPLORED_POSITIONS, this.getHandle().getExploredPositions().filter(blockPositionExplored -> !blockPositionExplored.equals(globalPos)).collect(Collectors.toList()));
     }
 
     @Override
     public void addExploredLocation(Location location) {
         Preconditions.checkArgument(location != null, "location cannot be null");
-        if (location.getWorld() != getWorld()) {
+        if (location.getWorld() != this.getWorld()) {
             return;
         }
 
-        this.getHandle().storeExploredPosition(CraftLocation.toBlockPosition(location));
+        this.getHandle().storeExploredPosition(CraftLocation.toBlockPos(location));
     }
 
     @Override
-    public State getState() {
+    public Sniffer.State getState() {
         return this.stateToBukkit(this.getHandle().getState());
     }
 
     @Override
-    public void setState(State state) {
+    public void setState(Sniffer.State state) {
         Preconditions.checkArgument(state != null, "state cannot be null");
         this.getHandle().transitionTo(this.stateToNMS(state));
     }
@@ -73,7 +68,7 @@ public class CraftSniffer extends CraftAnimals implements Sniffer {
         return this.getHandle().canDig();
     }
 
-    private net.minecraft.world.entity.animal.sniffer.Sniffer.State stateToNMS(State state) {
+    private net.minecraft.world.entity.animal.sniffer.Sniffer.State stateToNMS(Sniffer.State state) {
         return switch (state) {
             case IDLING -> net.minecraft.world.entity.animal.sniffer.Sniffer.State.IDLING;
             case FEELING_HAPPY -> net.minecraft.world.entity.animal.sniffer.Sniffer.State.FEELING_HAPPY;
@@ -85,15 +80,15 @@ public class CraftSniffer extends CraftAnimals implements Sniffer {
         };
     }
 
-    private State stateToBukkit(net.minecraft.world.entity.animal.sniffer.Sniffer.State state) {
+    private Sniffer.State stateToBukkit(net.minecraft.world.entity.animal.sniffer.Sniffer.State state) {
         return switch (state) {
-            case IDLING -> State.IDLING;
-            case FEELING_HAPPY -> State.FEELING_HAPPY;
-            case SCENTING -> State.SCENTING;
-            case SNIFFING -> State.SNIFFING;
-            case SEARCHING -> State.SEARCHING;
-            case DIGGING -> State.DIGGING;
-            case RISING -> State.RISING;
+            case IDLING -> Sniffer.State.IDLING;
+            case FEELING_HAPPY -> Sniffer.State.FEELING_HAPPY;
+            case SCENTING -> Sniffer.State.SCENTING;
+            case SNIFFING -> Sniffer.State.SNIFFING;
+            case SEARCHING -> Sniffer.State.SEARCHING;
+            case DIGGING -> Sniffer.State.DIGGING;
+            case RISING -> Sniffer.State.RISING;
         };
     }
 }

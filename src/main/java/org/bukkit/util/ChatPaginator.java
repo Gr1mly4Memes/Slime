@@ -1,11 +1,12 @@
 package org.bukkit.util;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The ChatPaginator takes a raw string of arbitrary length and breaks it down
@@ -150,7 +151,7 @@ public class ChatPaginator {
         private int pageNumber;
         private int totalPages;
 
-        public ChatPage(@NotNull String[] lines, int pageNumber, int totalPages) {
+        public ChatPage(@NotNull String @NotNull [] lines, int pageNumber, int totalPages) {
             this.lines = lines;
             this.pageNumber = pageNumber;
             this.totalPages = totalPages;
@@ -165,7 +166,7 @@ public class ChatPaginator {
         }
 
         @NotNull
-        public String[] getLines() {
+        public String @NotNull [] getLines() {
             return lines;
         }
     }

@@ -1,48 +1,52 @@
-/**
- * Automatically generated file, changes will be lost.
- */
 package org.bukkit.craftbukkit.block.impl;
 
-public final class CraftRail extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Rail, org.bukkit.block.data.Waterlogged {
+import com.google.common.base.Preconditions;
+import io.papermc.paper.annotation.GeneratedClass;
+import net.minecraft.world.level.block.RailBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.RailShape;
+import org.bukkit.block.data.Rail;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.jspecify.annotations.NullMarked;
 
-    public CraftRail() {
-        super();
-    }
+import java.util.Set;
 
-    public CraftRail(net.minecraft.world.level.block.state.BlockState state) {
+@NullMarked
+@GeneratedClass
+public class CraftRail extends CraftBlockData implements Rail {
+    private static final EnumProperty<RailShape> SHAPE = RailBlock.SHAPE;
+
+    private static final BooleanProperty WATERLOGGED = RailBlock.WATERLOGGED;
+
+    public CraftRail(BlockState state) {
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftRail
-
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, Shape> SHAPE = getEnum(net.minecraft.world.level.block.RailBlock.class, "shape", Shape.class);
-
     @Override
     public Shape getShape() {
-        return get(SHAPE);
+        return this.get(SHAPE, Shape.class);
     }
 
     @Override
-    public void setShape(Shape shape) {
-        set(SHAPE, shape);
+    public void setShape(final Shape shape) {
+        Preconditions.checkArgument(shape != null, "shape cannot be null!");
+        this.set(SHAPE, shape);
     }
 
     @Override
-    public java.util.Set<Shape> getShapes() {
-        return getValues(SHAPE);
+    public Set<Shape> getShapes() {
+        return this.getValues(SHAPE, Shape.class);
     }
-
-    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
-
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.RailBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(WATERLOGGED);
     }
 
     @Override
-    public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+    public void setWaterlogged(final boolean waterlogged) {
+        this.set(WATERLOGGED, waterlogged);
     }
 }

@@ -1,12 +1,14 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
-import java.util.Map;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * Represents the two types of coal
  */
+@Deprecated(forRemoval = true, since = "1.13")
 public enum CoalType {
     COAL(0x0),
     CHARCOAL(0x1);

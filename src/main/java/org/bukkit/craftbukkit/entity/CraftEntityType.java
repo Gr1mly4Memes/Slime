@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
-import java.util.Locale;
+import io.papermc.paper.registry.RegistryKey;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import org.bukkit.NamespacedKey;
@@ -12,32 +12,32 @@ import org.bukkit.craftbukkit.util.ApiVersion;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 
+import java.util.Locale;
+
 public class CraftEntityType {
 
     public static EntityType minecraftToBukkit(net.minecraft.world.entity.EntityType<?> minecraft) {
         Preconditions.checkArgument(minecraft != null);
 
-        net.minecraft.core.Registry<net.minecraft.world.entity.EntityType<?>> registry = CraftRegistry.getMinecraftRegistry(Registries.ENTITY_TYPE);
-        EntityType bukkit = Registry.ENTITY_TYPE.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().identifier()));
-
+        EntityType bukkit = Registry.ENTITY_TYPE.get(CraftNamespacedKey.fromMinecraft(net.minecraft.world.entity.EntityType.getKey(minecraft)));
         Preconditions.checkArgument(bukkit != null);
-
         return bukkit;
     }
 
+    private static final java.util.Map<EntityType, net.minecraft.resources.ResourceKey<net.minecraft.world.entity.EntityType<?>>> KEY_CACHE = java.util.Collections.synchronizedMap(new java.util.EnumMap<>(EntityType.class)); // Paper
     public static net.minecraft.world.entity.EntityType<?> bukkitToMinecraft(EntityType bukkit) {
         Preconditions.checkArgument(bukkit != null);
-
         return CraftRegistry.getMinecraftRegistry(Registries.ENTITY_TYPE)
-                .getOptional(CraftNamespacedKey.toMinecraft(bukkit.getKey())).orElseThrow();
+                .getOptional(KEY_CACHE.computeIfAbsent(bukkit, type -> CraftNamespacedKey.toResourceKey(Registries.ENTITY_TYPE, type.getKey()))).orElseThrow();
     }
 
+    @Deprecated // for now until this is a proper registry type
     public static Holder<net.minecraft.world.entity.EntityType<?>> bukkitToMinecraftHolder(EntityType bukkit) {
         Preconditions.checkArgument(bukkit != null);
 
         net.minecraft.core.Registry<net.minecraft.world.entity.EntityType<?>> registry = CraftRegistry.getMinecraftRegistry(Registries.ENTITY_TYPE);
 
-        if (registry.wrapAsHolder(bukkitToMinecraft(bukkit)) instanceof Holder.Reference<net.minecraft.world.entity.EntityType<?>> holder) {
+        if (registry.wrapAsHolder(CraftEntityType.bukkitToMinecraft(bukkit)) instanceof Holder.Reference<net.minecraft.world.entity.EntityType<?>> holder) {
             return holder;
         }
 
@@ -61,6 +61,6 @@ public class CraftEntityType {
         NamespacedKey key = NamespacedKey.fromString(string);
 
         // Now also convert from when keys where saved
-        return CraftRegistry.get(Registry.ENTITY_TYPE, key, ApiVersion.CURRENT);
+        return CraftRegistry.get(RegistryKey.ENTITY_TYPE, key, ApiVersion.CURRENT);
     }
 }

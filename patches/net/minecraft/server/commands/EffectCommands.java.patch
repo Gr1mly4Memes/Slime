@@ -1,38 +1,29 @@
 --- a/net/minecraft/server/commands/EffectCommands.java
 +++ b/net/minecraft/server/commands/EffectCommands.java
-@@ -178,6 +_,7 @@
+@@ -178,7 +_,7 @@
          for (Entity entity : entities) {
              if (entity instanceof LivingEntity livingEntity) {
                  MobEffectInstance instance = new MobEffectInstance(effectHolder, duration, amplifier, false, particles);
-+                livingEntity.addEffectCause(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.COMMAND); // CraftBukkit
-                 if (livingEntity.addEffect(instance, source.getEntity())) {
+-                if (livingEntity.addEffect(instance, source.getEntity())) {
++                if (livingEntity.addEffect(instance, source.getEntity(), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.COMMAND)) {
                      count++;
                  }
-@@ -208,8 +_,11 @@
+             }
+@@ -208,7 +_,7 @@
          int count = 0;
  
          for (Entity entity : entities) {
 -            if (entity instanceof LivingEntity livingEntity && livingEntity.removeAllEffects()) {
--                count++;
-+            if (entity instanceof LivingEntity livingEntity) {
-+                livingEntity.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.COMMAND);
-+                if (livingEntity.removeAllEffects()) {
-+                    count++;
-+                }
++            if (entity instanceof LivingEntity livingEntity && livingEntity.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.COMMAND)) { // CraftBukkit
+                 count++;
              }
          }
- 
-@@ -233,8 +_,11 @@
+@@ -233,7 +_,7 @@
          int count = 0;
  
          for (Entity entity : entities) {
 -            if (entity instanceof LivingEntity livingEntity && livingEntity.removeEffect(effectHolder)) {
--                count++;
-+            if (entity instanceof LivingEntity livingEntity) {
-+                livingEntity.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.COMMAND);
-+                if (livingEntity.removeEffect(effectHolder)) {
-+                    count++;
-+                }
++            if (entity instanceof LivingEntity livingEntity && livingEntity.removeEffect(effectHolder, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.COMMAND)) { // CraftBukkit
+                 count++;
              }
          }
- 

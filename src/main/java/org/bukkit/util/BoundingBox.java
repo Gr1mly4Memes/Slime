@@ -1,9 +1,6 @@
 package org.bukkit.util;
 
 import com.google.common.base.Preconditions;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -11,6 +8,10 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * A mutable axis aligned bounding box (AABB).
@@ -358,7 +359,7 @@ public class BoundingBox implements Cloneable, ConfigurationSerializable {
      * <p>
      * Negative values will shrink the bounding box in the corresponding
      * direction. Shrinking will be limited to the point where the affected
-     * opposite faces would meet if the they shrank at uniform speeds.
+     * opposite faces would meet if they shrank at uniform speeds.
      *
      * @param negativeX the amount of expansion in the negative x direction
      * @param negativeY the amount of expansion in the negative y direction
@@ -932,7 +933,7 @@ public class BoundingBox implements Cloneable, ConfigurationSerializable {
 
         // intersections are behind the start:
         if (tMax < 0.0D) return null;
-        // intersections are to far away:
+        // intersections are too far away:
         if (tMin > maxDistance) {
             return null;
         }

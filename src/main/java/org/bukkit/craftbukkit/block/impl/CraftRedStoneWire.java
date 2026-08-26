@@ -1,82 +1,69 @@
-/**
- * Automatically generated file, changes will be lost.
- */
 package org.bukkit.craftbukkit.block.impl;
 
-public final class CraftRedStoneWire extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.RedstoneWire, org.bukkit.block.data.AnaloguePowerable {
+import com.google.common.base.Preconditions;
+import io.papermc.paper.annotation.GeneratedClass;
+import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.RedstoneSide;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.RedstoneWire;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.jspecify.annotations.NullMarked;
 
-    public CraftRedStoneWire() {
-        super();
-    }
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-    public CraftRedStoneWire(net.minecraft.world.level.block.state.BlockState state) {
+@NullMarked
+@GeneratedClass
+public class CraftRedStoneWire extends CraftBlockData implements RedstoneWire {
+    private static final IntegerProperty POWER = RedStoneWireBlock.POWER;
+
+    private static final Map<BlockFace, EnumProperty<RedstoneSide>> PROPERTY_BY_DIRECTION = RedStoneWireBlock.PROPERTY_BY_DIRECTION.entrySet().stream()
+            .collect(Collectors.toMap(entry -> CraftBlock.notchToBlockFace(entry.getKey()), entry -> entry.getValue()));
+
+    public CraftRedStoneWire(BlockState state) {
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftRedstoneWire
-
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, Connection> NORTH = getEnum(net.minecraft.world.level.block.RedStoneWireBlock.class, "north", Connection.class);
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, Connection> EAST = getEnum(net.minecraft.world.level.block.RedStoneWireBlock.class, "east", Connection.class);
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, Connection> SOUTH = getEnum(net.minecraft.world.level.block.RedStoneWireBlock.class, "south", Connection.class);
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, Connection> WEST = getEnum(net.minecraft.world.level.block.RedStoneWireBlock.class, "west", Connection.class);
-
-    @Override
-    public Connection getFace(org.bukkit.block.BlockFace face) {
-        switch (face) {
-            case NORTH:
-                return get(NORTH);
-            case EAST:
-                return get(EAST);
-            case SOUTH:
-                return get(SOUTH);
-            case WEST:
-                return get(WEST);
-            default:
-                throw new IllegalArgumentException("Cannot have face " + face);
-        }
-    }
-
-    @Override
-    public void setFace(org.bukkit.block.BlockFace face, Connection connection) {
-        switch (face) {
-            case NORTH:
-                set(NORTH, connection);
-                break;
-            case EAST:
-                set(EAST, connection);
-                break;
-            case SOUTH:
-                set(SOUTH, connection);
-                break;
-            case WEST:
-                set(WEST, connection);
-                break;
-            default:
-                throw new IllegalArgumentException("Cannot have face " + face);
-        }
-    }
-
-    @Override
-    public java.util.Set<org.bukkit.block.BlockFace> getAllowedFaces() {
-        return com.google.common.collect.ImmutableSet.of(org.bukkit.block.BlockFace.NORTH, org.bukkit.block.BlockFace.EAST, org.bukkit.block.BlockFace.SOUTH, org.bukkit.block.BlockFace.WEST);
-    }
-
-    // org.bukkit.craftbukkit.block.data.CraftAnaloguePowerable
-
-    private static final net.minecraft.world.level.block.state.properties.IntegerProperty POWER = getInteger(net.minecraft.world.level.block.RedStoneWireBlock.class, "power");
-
     @Override
     public int getPower() {
-        return get(POWER);
+        return this.get(POWER);
     }
 
     @Override
-    public void setPower(int power) {
-        set(POWER, power);
+    public void setPower(final int power) {
+        this.set(POWER, power);
     }
 
     @Override
     public int getMaximumPower() {
-        return getMax(POWER);
+        return POWER.max;
+    }
+
+    @Override
+    public Connection getFace(final BlockFace blockFace) {
+        Preconditions.checkArgument(blockFace != null, "blockFace cannot be null!");
+        EnumProperty<RedstoneSide> property = PROPERTY_BY_DIRECTION.get(blockFace);
+        Preconditions.checkArgument(property != null, "Invalid blockFace, only %s are allowed!", PROPERTY_BY_DIRECTION.keySet().stream().map(Enum::name).collect(Collectors.joining(", ")));
+        return this.get(property, Connection.class);
+    }
+
+    @Override
+    public void setFace(final BlockFace blockFace, final Connection connection) {
+        Preconditions.checkArgument(blockFace != null, "blockFace cannot be null!");
+        Preconditions.checkArgument(connection != null, "connection cannot be null!");
+        EnumProperty<RedstoneSide> property = PROPERTY_BY_DIRECTION.get(blockFace);
+        Preconditions.checkArgument(property != null, "Invalid blockFace, only %s are allowed!", PROPERTY_BY_DIRECTION.keySet().stream().map(Enum::name).collect(Collectors.joining(", ")));
+        this.set(property, connection);
+    }
+
+    @Override
+    public Set<BlockFace> getAllowedFaces() {
+        return Collections.unmodifiableSet(PROPERTY_BY_DIRECTION.keySet());
     }
 }

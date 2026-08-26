@@ -109,4 +109,10 @@ public enum TreeType {
      * Pale oak tree with a creaking heart
      */
     PALE_OAK_CREAKING,
+    // Slime start - Custom tree
+    /**
+     * Custom tree
+     */
+    CUSTOM
+    // Slime end - Custom tree
 }

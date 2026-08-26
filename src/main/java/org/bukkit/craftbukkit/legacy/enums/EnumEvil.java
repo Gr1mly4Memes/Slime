@@ -4,34 +4,12 @@ import com.google.common.base.Converter;
 import com.google.common.base.Enums;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import org.bukkit.Art;
-import org.bukkit.Fluid;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.legacy.FieldRename;
-import org.bukkit.craftbukkit.legacy.reroute.DoNotReroute;
-import org.bukkit.craftbukkit.legacy.reroute.InjectPluginVersion;
-import org.bukkit.craftbukkit.legacy.reroute.NotInBukkit;
-import org.bukkit.craftbukkit.legacy.reroute.RequireCompatibility;
-import org.bukkit.craftbukkit.legacy.reroute.RequirePluginVersion;
-import org.bukkit.craftbukkit.legacy.reroute.RerouteArgumentType;
-import org.bukkit.craftbukkit.legacy.reroute.RerouteReturnType;
-import org.bukkit.craftbukkit.legacy.reroute.RerouteStatic;
+import org.bukkit.craftbukkit.legacy.reroute.*;
 import org.bukkit.craftbukkit.util.ApiVersion;
 import org.bukkit.craftbukkit.util.ClassTraverser;
 import org.bukkit.entity.Cat;
@@ -40,6 +18,15 @@ import org.bukkit.entity.Villager;
 import org.bukkit.map.MapCursor;
 import org.bukkit.util.OldEnum;
 
+import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+@Deprecated
 @NotInBukkit
 @RequireCompatibility("enum-compatibility-mode")
 @RequirePluginVersion(maxInclusive = "1.20.6")
@@ -66,7 +53,7 @@ public class EnumEvil {
         ClassTraverser it = new ClassTraverser(clazz);
         LegacyRegistryData registryData;
         while (it.hasNext()) {
-            registryData = REGISTRIES.get(it.next());
+            registryData = EnumEvil.REGISTRIES.get(it.next());
             if (registryData != null) {
                 return registryData;
             }
@@ -77,7 +64,7 @@ public class EnumEvil {
 
     @DoNotReroute
     public static Registry<?> getRegistry(Class<?> clazz) {
-        LegacyRegistryData registryData = getRegistryData(clazz);
+        LegacyRegistryData registryData = EnumEvil.getRegistryData(clazz);
 
         if (registryData != null) {
             return registryData.registry();
@@ -144,7 +131,7 @@ public class EnumEvil {
             return Enums.getIfPresent(clazz, name);
         }
 
-        Registry registry = getRegistry(clazz);
+        Registry registry = EnumEvil.getRegistry(clazz);
         if (registry == null) {
             return com.google.common.base.Optional.absent();
         }
@@ -167,7 +154,7 @@ public class EnumEvil {
             return clazz.getEnumConstants();
         }
 
-        Registry<?> registry = getRegistry(clazz);
+        Registry<?> registry = EnumEvil.getRegistry(clazz);
 
         if (registry == null) {
             return clazz.getEnumConstants();
@@ -207,16 +194,16 @@ public class EnumEvil {
     }
 
     public static Optional<Enum.EnumDesc> describeConstable(@RerouteArgumentType("java/lang/Enum") Object object) {
-        return getDeclaringClass(object)
+        return EnumEvil.getDeclaringClass(object)
                 .describeConstable()
-                .map(c -> Enum.EnumDesc.of(c, name(object)));
+                .map(c -> Enum.EnumDesc.of(c, EnumEvil.name(object)));
     }
 
     @RerouteStatic("java/lang/Enum")
     @RerouteReturnType("java/lang/Enum")
     public static Object valueOf(Class enumClass, String name, @InjectPluginVersion ApiVersion apiVersion) {
         name = FieldRename.rename(apiVersion, enumClass.getName().replace('.', '/'), name);
-        LegacyRegistryData registryData = getRegistryData(enumClass);
+        LegacyRegistryData registryData = EnumEvil.getRegistryData(enumClass);
         if (registryData != null) {
             return registryData.function().apply(name);
         }
@@ -252,11 +239,11 @@ public class EnumEvil {
 
         @Override
         protected T doForward(String value) {
-            if (registryData == null) {
-                registryData = getRegistryData(clazz);
+            if (this.registryData == null) {
+                this.registryData = EnumEvil.getRegistryData(this.clazz);
             }
-            value = FieldRename.rename(apiVersion, clazz.getName().replace('.', '/'), value);
-            return (T) registryData.function().apply(value);
+            value = FieldRename.rename(this.apiVersion, this.clazz.getName().replace('.', '/'), value);
+            return (T) this.registryData.function().apply(value);
         }
 
         @Override
@@ -274,12 +261,12 @@ public class EnumEvil {
 
         @Override
         public int hashCode() {
-            return clazz.hashCode();
+            return this.clazz.hashCode();
         }
 
         @Override
         public String toString() {
-            return "Enums.stringConverter(" + clazz.getName() + ".class)";
+            return "Enums.stringConverter(" + this.clazz.getName() + ".class)";
         }
 
         private static final long serialVersionUID = 0L;

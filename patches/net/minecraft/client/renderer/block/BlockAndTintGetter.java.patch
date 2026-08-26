@@ -1,0 +1,23 @@
+--- a/net/minecraft/client/renderer/block/BlockAndTintGetter.java
++++ b/net/minecraft/client/renderer/block/BlockAndTintGetter.java
+@@ -42,8 +_,20 @@
+             return Blocks.AIR.defaultBlockState();
+         }
+ 
++        // Slime - add getBlockStateIfLoaded() override
++        @Override
++        public @Nullable BlockState getBlockStateIfLoaded(BlockPos pos) {
++            return Blocks.AIR.defaultBlockState();
++        }
++
+         @Override
+         public FluidState getFluidState(BlockPos pos) {
++            return Fluids.EMPTY.defaultFluidState();
++        }
++
++        // Slime - add getFluidIfLoaded() override
++        @Override
++        public @Nullable FluidState getFluidIfLoaded(BlockPos pos) {
+             return Fluids.EMPTY.defaultFluidState();
+         }
+ 

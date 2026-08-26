@@ -1,14 +1,16 @@
 package org.bukkit.command.defaults;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+@Deprecated(forRemoval = true) // Paper
 public class PluginsCommand extends BukkitCommand {
     public PluginsCommand(@NotNull String name) {
         super(name);

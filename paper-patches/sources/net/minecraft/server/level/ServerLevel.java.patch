@@ -1165,7 +1165,7 @@
 +                entity.originWorld = ServerLevel.this.getWorld().getUID();
 +            }
 +            // Paper end - Entity origin API
-+            new com.destroystokyo.paper.event.entity.EntityAddToWorldEvent(entity.getBukkitEntity(), ServerLevel.this.getWorld()).callEvent(); // Paper - fire while valid
++            new com.destroystokyo.entity.event.com.destroystokyo.paper.EntityAddToWorldEvent(entity.getBukkitEntity(), ServerLevel.this.getWorld()).callEvent(); // Paper - fire while valid
          }
  
          @Override
@@ -1223,7 +1223,7 @@
 +                }
 +            }
 +            // CraftBukkit end
-+            new com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent(entity.getBukkitEntity(), ServerLevel.this.getWorld()).callEvent(); // Paper - fire while valid
++            new com.destroystokyo.entity.event.com.destroystokyo.paper.EntityRemoveFromWorldEvent(entity.getBukkitEntity(), ServerLevel.this.getWorld()).callEvent(); // Paper - fire while valid
          }
  
          @Override

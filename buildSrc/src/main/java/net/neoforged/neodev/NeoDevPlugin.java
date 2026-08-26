@@ -300,7 +300,7 @@ public class NeoDevPlugin implements Plugin<Project> {
 
             task.from(project.zipTree(joinedJar.flatMap(AbstractArchiveTask::getArchiveFile)));
             task.exclude("net/minecraft/**");
-            task.exclude("com/**");
+            task.exclude("com/mojang/math/**");
             task.exclude("mcp/**");
             task.from(binaryPatchOutputs, spec -> {
                 spec.into("net/neoforged/neoforge/common/");
@@ -396,7 +396,7 @@ public class NeoDevPlugin implements Plugin<Project> {
                 spec.rename(s -> "install_profile.json");
             });
             task.from(project.getRootProject().file("src/main/resources/url.png"));
-            task.from(project.getRootProject().file("src/main/resources/neoforge_logo.png"), spec -> {
+            task.from(project.getRootProject().file("src/main/resources/neoforged_logo.png"), spec -> {
                 spec.rename(s -> "big_logo.png");
             });
             task.from(createUnixServerArgsFile.flatMap(CreateArgsFile::getArgsFile), spec -> {
@@ -722,16 +722,16 @@ public class NeoDevPlugin implements Plugin<Project> {
             var mainSourceSet = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME);
             task.from(mainSourceSet.getJava().getClassesDirectory(), spec -> {
                 spec.exclude("net/neoforged/**");
-                spec.exclude("net/neoforged/**");
                 spec.exclude("org/**");
                 spec.exclude("io/papermc/**");
+                spec.exclude("com/mohistmc/**");
+                spec.exclude("gr1mly4memes/**");
                 spec.exclude("com/destroystokyo/**");
                 spec.exclude("ca/spottedleaf/**");
                 spec.exclude("alternate/current/wire/**");
-                spec.exclude("co/aikar/util/**");
+                spec.exclude("co/aikar/**");
                 spec.exclude("com/mojang/brigadier/**");
                 spec.exclude("gg/pufferfish/**");
-                spec.exclude("gr1mly4memes/**");
             });
             if (type == BinaryPatchBaseType.CLIENT || type == BinaryPatchBaseType.JOINED) {
                 var clientSourceSet = sourceSets.getByName("client");

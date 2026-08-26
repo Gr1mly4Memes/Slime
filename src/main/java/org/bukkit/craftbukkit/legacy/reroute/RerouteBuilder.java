@@ -1,6 +1,9 @@
 package org.bukkit.craftbukkit.legacy.reroute;
 
 import com.google.common.base.Preconditions;
+import org.bukkit.craftbukkit.util.ApiVersion;
+import org.objectweb.asm.Type;
+
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -10,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import org.bukkit.craftbukkit.util.ApiVersion;
-import org.objectweb.asm.Type;
 
 public class RerouteBuilder {
 
@@ -27,15 +28,15 @@ public class RerouteBuilder {
     }
 
     public RerouteBuilder forClass(Class<?> clazz) {
-        classes.add(clazz);
+        this.classes.add(clazz);
         return this;
     }
 
     public Reroute build() {
         Map<String, Reroute.RerouteDataHolder> rerouteDataHolderMap = new HashMap<>();
 
-        for (Class<?> clazz : classes) {
-            List<RerouteMethodData> data = buildFromClass(clazz, compatibilityPresent);
+        for (Class<?> clazz : this.classes) {
+            List<RerouteMethodData> data = RerouteBuilder.buildFromClass(clazz, this.compatibilityPresent);
             data.forEach(value -> rerouteDataHolderMap.computeIfAbsent(value.methodKey(), v -> new Reroute.RerouteDataHolder()).add(value));
         }
 
@@ -46,18 +47,18 @@ public class RerouteBuilder {
         Preconditions.checkArgument(!clazz.isInterface(), "Interface Classes are currently not supported");
 
         List<RerouteMethodData> result = new ArrayList<>();
-        boolean shouldInclude = shouldInclude(getRequireCompatibility(clazz), true, compatibilityPresent);
+        boolean shouldInclude = RerouteBuilder.shouldInclude(RerouteBuilder.getRequireCompatibility(clazz), true, compatibilityPresent);
 
         for (Method method : clazz.getDeclaredMethods()) {
-            if (!isMethodValid(method)) {
+            if (!RerouteBuilder.isMethodValid(method)) {
                 continue;
             }
 
-            if (!shouldInclude(getRequireCompatibility(method), shouldInclude, compatibilityPresent)) {
+            if (!RerouteBuilder.shouldInclude(RerouteBuilder.getRequireCompatibility(method), shouldInclude, compatibilityPresent)) {
                 continue;
             }
 
-            result.add(buildFromMethod(method));
+            result.add(RerouteBuilder.buildFromMethod(method));
         }
 
         return result;

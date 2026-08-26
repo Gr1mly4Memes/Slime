@@ -1,9 +1,10 @@
 package org.bukkit.configuration;
 
-import java.util.Collections;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 final class SectionPathData {
 
@@ -31,7 +32,7 @@ final class SectionPathData {
      * list represents an empty line and an empty String represents an empty
      * comment line.
      *
-     * @return A unmodifiable list of the requested comments, every entry
+     * @return An unmodifiable list of the requested comments, every entry
      * represents one line.
      */
     @NotNull
@@ -57,7 +58,7 @@ final class SectionPathData {
      * list represents an empty line and an empty String represents an empty
      * comment line.
      *
-     * @return A unmodifiable list of the requested comments, every entry
+     * @return An unmodifiable list of the requested comments, every entry
      * represents one line.
      */
     @NotNull

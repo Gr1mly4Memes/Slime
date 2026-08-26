@@ -93,7 +93,7 @@
 +    ) {
 +        // CraftBukkit end
 +        // Paper start - PreCreatureSpawnEvent
-+        com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent event = new com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent(
++        com.destroystokyo.entity.event.com.destroystokyo.paper.PreCreatureSpawnEvent event = new com.destroystokyo.entity.event.com.destroystokyo.paper.PreCreatureSpawnEvent(
 +            org.bukkit.craftbukkit.util.CraftLocation.toBukkit(spawnPos, level),
 +            org.bukkit.craftbukkit.entity.CraftEntityType.minecraftToBukkit(this),
 +            creatureSpawnReason

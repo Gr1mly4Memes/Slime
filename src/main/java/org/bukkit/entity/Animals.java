@@ -1,10 +1,11 @@
 package org.bukkit.entity;
 
-import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 /**
  * Represents an Animal.
@@ -65,11 +66,11 @@ public interface Animals extends Breedable {
     boolean isBreedItem(@NotNull ItemStack stack);
 
     /**
-     * Check if the provided ItemStack is the correct item used for breeding
-     * this entity..
+     * Check if the provided Material is the correct item used for breeding
+     * this entity.
      *
      * @param material Material to check.
-     * @return if the provided ItemStack is the correct food item for this
+     * @return if the provided Material is the correct food item for this
      * entity.
      */
     boolean isBreedItem(@NotNull Material material);

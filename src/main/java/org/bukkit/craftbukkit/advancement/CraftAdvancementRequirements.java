@@ -1,9 +1,10 @@
 package org.bukkit.craftbukkit.advancement;
 
-import java.util.List;
 import net.minecraft.advancements.AdvancementRequirements;
 import org.bukkit.advancement.AdvancementRequirement;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class CraftAdvancementRequirements implements org.bukkit.advancement.AdvancementRequirements {
 
@@ -16,6 +17,6 @@ public class CraftAdvancementRequirements implements org.bukkit.advancement.Adva
     @NotNull
     @Override
     public List<AdvancementRequirement> getRequirements() {
-        return requirements.requirements().stream().map((requirement) -> (AdvancementRequirement) new CraftAdvancementRequirement(requirement)).toList();
+        return this.requirements.requirements().stream().map((requirement) -> (AdvancementRequirement) new CraftAdvancementRequirement(requirement)).toList();
     }
 }

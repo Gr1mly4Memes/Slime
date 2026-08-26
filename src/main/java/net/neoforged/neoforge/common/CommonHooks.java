@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -131,6 +132,7 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TippedArrowItem;
@@ -171,6 +173,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoader;
@@ -186,6 +189,7 @@ import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifierManager;
 import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 import net.neoforged.neoforge.common.util.BlockSnapshot;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.DifficultyChangeEvent;
@@ -248,6 +252,9 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.transformer.meta.MixinMerged;
@@ -398,7 +405,35 @@ public class CommonHooks {
     }
 
     public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, boolean recentlyHit) {
-        return NeoForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, recentlyHit)).isCanceled();
+        // Paper start - Integrate with Paper's deathDropItems mechanism
+        // When deathDropItems is active during death, spawnAtLocation returns null
+        // in the deathDropItems path, causing NeoForge's captureDrops to remain empty.
+        // Pre-populate drops from deathDropItems so LivingDropsEvent has the actual items.
+        boolean hasDeathDrops = false;
+        if (entity.deathDropItems != null && !entity.deathDropItems.isEmpty()) {
+            hasDeathDrops = true;
+            for (Entity.DefaultDrop dd : entity.deathDropItems) {
+                net.minecraft.world.item.ItemStack stack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(dd.stack());
+                if (!stack.isEmpty()) {
+                    ItemEntity itemEntity = new ItemEntity(entity.level(), entity.getX(), entity.getY(), entity.getZ(), stack);
+                    itemEntity.setDefaultPickUpDelay();
+                    drops.add(itemEntity);
+                }
+            }
+        }
+        // Paper end
+
+        boolean cancelled = NeoForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, recentlyHit)).isCanceled();
+
+        // Paper start - If items were pre-released (event not cancelled), clear deathDropItems
+        // to prevent the Paper death mechanism from creating duplicates in postDeathEventTasks.
+        // If the event was cancelled, keep deathDropItems intact for EntityDeathEvent fallback.
+        if (hasDeathDrops && !cancelled) {
+            entity.deathDropItems.clear();
+        }
+        // Paper end
+
+        return cancelled;
     }
 
     public static LivingFallEvent onLivingFall(LivingEntity entity, double distance, float damageMultiplier) {
@@ -475,12 +510,12 @@ public class CommonHooks {
     }
 
     public static ChatDecorator getServerChatSubmittedDecorator() {
-        return (sender, message) -> {
+        return (sender, message) -> CompletableFuture.supplyAsync(() -> {
             if (sender == null)
                 return message; // Vanilla should never get here with the patches we use, but let's be safe with dumb mods
 
             return onServerChatSubmittedEvent(sender, getRawText(message), message);
-        };
+        });
     }
 
     static final Pattern URL_PATTERN = Pattern.compile(
@@ -616,7 +651,22 @@ public class CommonHooks {
         var event = new BreakBlockEvent(level, pos, state, player);
         event.setCanceled(preCancelEvent);
         NeoForge.EVENT_BUS.post(event);
-
+        // CraftBukkit start - fire BlockBreakEvent
+        org.bukkit.block.Block bblock = CraftBlock.at(level, pos);
+        if (player instanceof ServerPlayer serverPlayer && !(player instanceof FakePlayer)) {
+            if (level instanceof ServerLevel) {
+                BlockBreakEvent bukkitEvent = new BlockBreakEvent(bblock, serverPlayer.getBukkitEntity());
+                // event.setDropItems(bukkitEvent.isDropItems()); // TODO
+                Bukkit.getPluginManager().callEvent(bukkitEvent);
+                if (event.isCanceled() && !bukkitEvent.isCancelled()) {
+                    bukkitEvent.setCancelled(event.isCanceled());
+                }
+                if (!event.isCanceled() && bukkitEvent.isCancelled()) {
+                    event.setCanceled(bukkitEvent.isCancelled());
+                }
+            }
+        }
+        // CraftBukkit end
         // If the event is canceled on the server, let the client know the block still exists
         if (event.isCanceled() && event.shouldNotifyClient() && player instanceof ServerPlayer sp) {
             sp.connection.send(new ClientboundBlockUpdatePacket(pos, state));
@@ -669,9 +719,9 @@ public class CommonHooks {
 
             boolean eventResult = false;
             if (blockSnapshots.size() > 1) {
-                eventResult = EventHooks.onMultiBlockPlace(player, blockSnapshots, side);
+                eventResult = EventHooks.onMultiBlockPlace(player, blockSnapshots, side, context.getHand());
             } else if (blockSnapshots.size() == 1) {
-                eventResult = EventHooks.onBlockPlace(player, blockSnapshots.get(0), side);
+                eventResult = EventHooks.onBlockPlace(player, blockSnapshots.get(0), side, context.getHand());
             }
 
             if (eventResult) {
@@ -681,6 +731,7 @@ public class CommonHooks {
                     level.restoringBlockSnapshots = true;
                     blocksnapshot.restore(blocksnapshot.getFlags() | Block.UPDATE_CLIENTS);
                     level.restoringBlockSnapshots = false;
+                    blocksnapshot.getState().getBlock().forgetPlacer(); // Purpur - Store placer on Block when placed
                 }
                 // inform the client that the item was not consumed
                 if (player instanceof ServerPlayer serverPlayer) {
@@ -697,7 +748,7 @@ public class CommonHooks {
                     BlockState oldBlock = snap.getState();
                     BlockState newBlock = level.getBlockState(snap.getPos());
                     newBlock.onPlace(level, snap.getPos(), oldBlock, false);
-
+                    newBlock.getBlock().forgetPlacer(); // Purpur - Store placer on Block when placed
                     level.markAndNotifyBlock(snap.getPos(), level.getChunkAt(snap.getPos()), oldBlock, newBlock, updateFlag, 512);
                 }
                 if (player != null)

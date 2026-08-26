@@ -5,7 +5,7 @@
          }
  
 -        LOGGER.info("Forgot about advancement {}", node.holder());
-+        LOGGER.debug("Forgot about advancement {}", node.holder()); // Paper - Improve logging and errors;
++        LOGGER.debug("Forgot about advancement {}", node.holder()); // Paper - Improve logging and errors
          this.nodes.remove(node.holder().id());
          if (node.parent() == null) {
              this.roots.remove(node);

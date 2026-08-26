@@ -96,7 +96,7 @@
 +                }
 +            } catch (final Throwable thr) {
 +                LOGGER.error("Exception handling chunk load callback", thr);
-+                com.destroystokyo.paper.util.SneakyThrow.sneaky(thr);
++                com.destroystokyo.util.com.destroystokyo.paper.SneakyThrow.sneaky(thr);
 +            } finally {
 +                if (addTicket) {
 +                    level.getChunkSource().addTicketAtLevel(net.minecraft.server.level.TicketType.UNKNOWN, chunkPos, minLevel);
@@ -162,7 +162,7 @@
 +                }
 +            } catch (final Throwable thr) {
 +                LOGGER.error("Exception handling chunk load callback", thr);
-+                com.destroystokyo.paper.util.SneakyThrow.sneaky(thr);
++                com.destroystokyo.util.com.destroystokyo.paper.SneakyThrow.sneaky(thr);
 +            } finally {
 +                if (addTicket) {
 +                    level.getChunkSource().addTicketAtLevel(TicketType.UNKNOWN, chunkPos, minLevel);

@@ -18,7 +18,7 @@ index 5c369a0b14253f119cdf3578e26451d873e703a2..82377ee76caac220f7565cb729b9e608
 +        }
 +
 +        for (final org.apache.logging.log4j.core.Appender appender : context.getConfiguration().getAppenders().values()) {
-+            if (appender instanceof org.apache.logging.log4j.core.appender.AsyncAppender asyncAppender) {
++            if (appender instanceof org.apache.logging.log4j.core.org.apache.logging.log4j.core.appender.AsyncAppender asyncAppender) {
 +                final boolean flushed = asyncAppender.flush(100, java.util.concurrent.TimeUnit.MILLISECONDS);
 +                if (!flushed) {
 +                    net.minecraft.server.MinecraftServer.LOGGER.warn("Failed to flush log messages before plugin unload.");

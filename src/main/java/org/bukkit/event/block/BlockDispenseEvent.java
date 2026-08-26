@@ -5,23 +5,28 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when an item is dispensed from a block.
  * <p>
- * If a Block Dispense event is cancelled, the block will not dispense the
+ * If this event is cancelled, the block will not dispense the
  * item.
  */
 public class BlockDispenseEvent extends BlockEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-    private boolean cancelled = false;
+
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
     private ItemStack item;
     private Vector velocity;
 
-    public BlockDispenseEvent(@NotNull final Block block, @NotNull final ItemStack dispensed, @NotNull final Vector velocity) {
+    private boolean cancelled;
+
+    @ApiStatus.Internal
+    public BlockDispenseEvent(@NotNull final Block block, @NotNull final ItemStack item, @NotNull final Vector velocity) {
         super(block);
-        this.item = dispensed;
+        this.item = item;
         this.velocity = velocity;
     }
 
@@ -34,7 +39,7 @@ public class BlockDispenseEvent extends BlockEvent implements Cancellable {
      */
     @NotNull
     public ItemStack getItem() {
-        return item.clone();
+        return this.item.clone();
     }
 
     /**
@@ -56,36 +61,36 @@ public class BlockDispenseEvent extends BlockEvent implements Cancellable {
      */
     @NotNull
     public Vector getVelocity() {
-        return velocity.clone();
+        return this.velocity.clone();
     }
 
     /**
      * Sets the velocity of the item being dispensed in meters per tick.
      *
-     * @param vel the velocity of the item being dispensed
+     * @param velocity the velocity of the item being dispensed
      */
-    public void setVelocity(@NotNull Vector vel) {
-        velocity = vel;
+    public void setVelocity(@NotNull Vector velocity) {
+        this.velocity = velocity.clone();
     }
 
     @Override
     public boolean isCancelled() {
-        return cancelled;
+        return this.cancelled;
     }
 
     @Override
     public void setCancelled(boolean cancel) {
-        cancelled = cancel;
+        this.cancelled = cancel;
     }
 
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return handlers;
+        return HANDLER_LIST;
     }
 
     @NotNull
     public static HandlerList getHandlerList() {
-        return handlers;
+        return HANDLER_LIST;
     }
 }

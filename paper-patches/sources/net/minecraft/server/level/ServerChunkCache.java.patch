@@ -206,7 +206,7 @@
 +            for (ServerPlayer player : this.level.players()) {
 +                int chunkRange = Math.min(level.spigotConfig.mobSpawnRange, player.getBukkitEntity().getViewDistance());
 +                chunkRange = Math.min(chunkRange, 8);
-+                player.playerNaturallySpawnedEvent = new com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent(player.getBukkitEntity(), (byte) chunkRange);
++                player.playerNaturallySpawnedEvent = new com.destroystokyo.entity.event.com.destroystokyo.paper.PlayerNaturallySpawnCreaturesEvent(player.getBukkitEntity(), (byte) chunkRange);
 +                player.playerNaturallySpawnedEvent.callEvent();
 +            }
 +            // Paper end - PlayerNaturallySpawnCreaturesEvent

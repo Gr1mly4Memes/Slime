@@ -1,62 +1,67 @@
-/**
- * Automatically generated file, changes will be lost.
- */
 package org.bukkit.craftbukkit.block.impl;
 
-public final class CraftWeatheringCopperGolemStatue extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.CopperGolemStatue, org.bukkit.block.data.Directional, org.bukkit.block.data.Waterlogged {
+import com.google.common.base.Preconditions;
+import io.papermc.paper.annotation.GeneratedClass;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.WeatheringCopperGolemStatueBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.CopperGolemStatue;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.jspecify.annotations.NullMarked;
 
-    public CraftWeatheringCopperGolemStatue() {
-        super();
-    }
+import java.util.Set;
 
-    public CraftWeatheringCopperGolemStatue(net.minecraft.world.level.block.state.BlockState state) {
+@NullMarked
+@GeneratedClass
+public class CraftWeatheringCopperGolemStatue extends CraftBlockData implements CopperGolemStatue {
+    private static final EnumProperty<net.minecraft.world.level.block.CopperGolemStatueBlock.Pose> POSE = WeatheringCopperGolemStatueBlock.POSE;
+
+    private static final EnumProperty<Direction> FACING = WeatheringCopperGolemStatueBlock.FACING;
+
+    private static final BooleanProperty WATERLOGGED = WeatheringCopperGolemStatueBlock.WATERLOGGED;
+
+    public CraftWeatheringCopperGolemStatue(BlockState state) {
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftCopperGolemStatue
-
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, CopperGolemPose> COPPER_GOLEM_POSE = getEnum(net.minecraft.world.level.block.WeatheringCopperGolemStatueBlock.class, "copper_golem_pose", CopperGolemPose.class);
-
     @Override
-    public CopperGolemPose getCopperGolemPose() {
-        return get(COPPER_GOLEM_POSE);
+    public Pose getCopperGolemPose() {
+        return this.get(POSE, Pose.class);
     }
 
     @Override
-    public void setCopperGolemPose(CopperGolemPose copperGolemPose) {
-        set(COPPER_GOLEM_POSE, copperGolemPose);
-    }
-
-    // org.bukkit.craftbukkit.block.data.CraftDirectional
-
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, org.bukkit.block.BlockFace> FACING = getEnum(net.minecraft.world.level.block.WeatheringCopperGolemStatueBlock.class, "facing", org.bukkit.block.BlockFace.class);
-
-    @Override
-    public org.bukkit.block.BlockFace getFacing() {
-        return get(FACING);
+    public void setCopperGolemPose(final Pose pose) {
+        Preconditions.checkArgument(pose != null, "pose cannot be null!");
+        this.set(POSE, pose);
     }
 
     @Override
-    public void setFacing(org.bukkit.block.BlockFace facing) {
-        set(FACING, facing);
+    public BlockFace getFacing() {
+        return this.get(FACING, BlockFace.class);
     }
 
     @Override
-    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
-        return getValues(FACING);
+    public void setFacing(final BlockFace blockFace) {
+        Preconditions.checkArgument(blockFace != null, "blockFace cannot be null!");
+        Preconditions.checkArgument(blockFace.isCartesian() && blockFace.getModY() == 0, "Invalid face, only cartesian horizontal face are allowed for this property!");
+        this.set(FACING, blockFace);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
-
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.WeatheringCopperGolemStatueBlock.class, "waterlogged");
+    @Override
+    public Set<BlockFace> getFaces() {
+        return this.getValues(FACING, BlockFace.class);
+    }
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(WATERLOGGED);
     }
 
     @Override
-    public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+    public void setWaterlogged(final boolean waterlogged) {
+        this.set(WATERLOGGED, waterlogged);
     }
 }

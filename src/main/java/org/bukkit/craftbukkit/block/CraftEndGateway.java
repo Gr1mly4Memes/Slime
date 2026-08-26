@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.block;
 
-import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import org.bukkit.Location;
@@ -8,10 +7,12 @@ import org.bukkit.World;
 import org.bukkit.block.EndGateway;
 import org.bukkit.craftbukkit.util.CraftLocation;
 
+import java.util.Objects;
+
 public class CraftEndGateway extends CraftBlockEntityState<TheEndGatewayBlockEntity> implements EndGateway {
 
-    public CraftEndGateway(World world, TheEndGatewayBlockEntity tileEntity) {
-        super(world, tileEntity);
+    public CraftEndGateway(World world, TheEndGatewayBlockEntity blockEntity) {
+        super(world, blockEntity);
     }
 
     protected CraftEndGateway(CraftEndGateway state, Location location) {
@@ -31,7 +32,7 @@ public class CraftEndGateway extends CraftBlockEntityState<TheEndGatewayBlockEnt
         } else if (!Objects.equals(location.getWorld(), this.isPlaced() ? this.getWorld() : null)) {
             throw new IllegalArgumentException("Cannot set exit location to different world");
         } else {
-            this.getSnapshot().exitPortal = CraftLocation.toBlockPosition(location);
+            this.getSnapshot().exitPortal = CraftLocation.toBlockPos(location);
         }
     }
 
@@ -56,11 +57,11 @@ public class CraftEndGateway extends CraftBlockEntityState<TheEndGatewayBlockEnt
     }
 
     @Override
-    protected void applyTo(TheEndGatewayBlockEntity endGateway) {
-        super.applyTo(endGateway);
+    public void applyTo(TheEndGatewayBlockEntity blockEntity) {
+        super.applyTo(blockEntity);
 
         if (this.getSnapshot().exitPortal == null) {
-            endGateway.exitPortal = null;
+            blockEntity.exitPortal = null;
         }
     }
 

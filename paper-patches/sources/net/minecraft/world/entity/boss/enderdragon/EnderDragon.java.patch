@@ -139,7 +139,7 @@
 +                }
 +                // Paper start - TNTPrimeEvent
 +                org.bukkit.block.Block tntBlock = org.bukkit.craftbukkit.block.CraftBlock.at(this.level(), pos);
-+                if (!new com.destroystokyo.paper.event.block.TNTPrimeEvent(tntBlock, com.destroystokyo.paper.event.block.TNTPrimeEvent.PrimeReason.EXPLOSION, explosionSource.getIndirectSourceEntity().getBukkitEntity()).callEvent())
++                if (!new com.destroystokyo.block.event.com.destroystokyo.paper.TNTPrimeEvent(tntBlock, com.destroystokyo.block.event.com.destroystokyo.paper.TNTPrimeEvent.PrimeReason.EXPLOSION, explosionSource.getIndirectSourceEntity().getBukkitEntity()).callEvent())
 +                    continue;
 +                // Paper end - TNTPrimeEvent
 +                block.wasExploded((ServerLevel) this.level(), pos, this.explosionSource);

@@ -40,7 +40,7 @@ import org.gradle.process.JavaExecSpec;
 /**
  * Runs a production client previously installed by {@link InstallProductionClient}.
  * <p>
- * This task has to extend from {@link JavaExec} instead of using {@link org.gradle.process.ExecOperations} internally
+ * This task has to extend from {@link JavaExec} instead of using {@link ExecOperations} internally
  * to allow debugging it via IntelliJ directly.
  * (Technically, implementing {@link org.gradle.process.JavaForkOptions} would suffice).
  * <p>

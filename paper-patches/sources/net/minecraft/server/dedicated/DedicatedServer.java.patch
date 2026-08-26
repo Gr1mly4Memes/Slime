@@ -247,7 +247,7 @@
  
      @Override
      public void setUsingWhitelist(final boolean usingWhitelist) {
-+        new com.destroystokyo.paper.event.server.WhitelistToggleEvent(usingWhitelist).callEvent(); // Paper - WhitelistToggleEvent
++        new com.destroystokyo.server.event.com.destroystokyo.paper.WhitelistToggleEvent(usingWhitelist).callEvent(); // Paper - WhitelistToggleEvent
          this.settings.update(p -> p.whiteList.update(this.registryAccess(), usingWhitelist));
      }
  

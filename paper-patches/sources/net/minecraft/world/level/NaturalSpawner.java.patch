@@ -143,7 +143,7 @@
 +        // Paper start - PreCreatureSpawnEvent
          EntityType<?> type = currentSpawnData.type();
 -        return type.getCategory() != MobCategory.MISC
-+        com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent event = new com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent(
++        com.destroystokyo.entity.event.com.destroystokyo.paper.PreCreatureSpawnEvent event = new com.destroystokyo.entity.event.com.destroystokyo.paper.PreCreatureSpawnEvent(
 +                org.bukkit.craftbukkit.util.CraftLocation.toBukkit(pos, level),
 +                org.bukkit.craftbukkit.entity.CraftEntityType.minecraftToBukkit(type), org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL
 +        );
@@ -169,7 +169,7 @@
              LOGGER.warn("Can't spawn entity of type: {}", BuiltInRegistries.ENTITY_TYPE.getKey(type));
          } catch (Exception e) {
              LOGGER.warn("Failed to create mob", e);
-+            com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(e); // Paper - ServerExceptionEvent
++            com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException.reportInternalException(e); // Paper - ServerExceptionEvent
          }
  
          return null;
@@ -177,7 +177,7 @@
                                      entity = spawnerData.type().create(level.getLevel(), EntitySpawnReason.NATURAL);
                                  } catch (Exception e) {
                                      LOGGER.warn("Failed to create mob", e);
-+                                    com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(e); // Paper - ServerExceptionEvent
++                                    com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException.reportInternalException(e); // Paper - ServerExceptionEvent
                                      continue;
                                  }
  

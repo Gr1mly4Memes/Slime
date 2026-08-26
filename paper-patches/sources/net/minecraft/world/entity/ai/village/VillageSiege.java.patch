@@ -4,7 +4,7 @@
                  zombie.finalizeSpawn(level, level.getCurrentDifficultyAt(zombie.blockPosition()), EntitySpawnReason.EVENT, null);
              } catch (Exception e) {
                  LOGGER.warn("Failed to create zombie for village siege at {}", spawnPos, e);
-+                com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(e); // Paper - ServerExceptionEvent
++                com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException.reportInternalException(e); // Paper - ServerExceptionEvent
                  return;
              }
  

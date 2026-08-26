@@ -10,13 +10,16 @@ import java.util.EnumSet;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.GameMasterBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalShape;
 import net.neoforged.bus.api.Event;
@@ -61,6 +64,8 @@ public abstract class BlockEvent extends Event {
         private final BlockSnapshot blockSnapshot;
         private final BlockState placedBlock;
         private final BlockState placedAgainst;
+        private Direction placeEventDirection = null;
+        private InteractionHand placeEventHand = InteractionHand.MAIN_HAND;
 
         public EntityPlaceEvent(BlockSnapshot blockSnapshot, BlockState placedAgainst, @Nullable Entity entity) {
             super(blockSnapshot.getLevel(), blockSnapshot.getPos(), !(entity instanceof Player) ? blockSnapshot.getState() : blockSnapshot.getCurrentState());
@@ -90,6 +95,20 @@ public abstract class BlockEvent extends Event {
         public BlockState getPlacedAgainst() {
             return placedAgainst;
         }
+        // Slime start
+        public void setPlaceEventDirection(Direction placeEventDirection) {
+            this.placeEventDirection = placeEventDirection;
+        }
+        public Direction getPlaceEventDirection() {
+            return placeEventDirection;
+        }
+        public void setPlaceEventHand(InteractionHand placeEventHand) {
+            this.placeEventHand = placeEventHand;
+        }
+        public InteractionHand getPlaceEventHand() {
+            return placeEventHand;
+        }
+        // Slime end
     }
 
     /**
@@ -147,7 +166,7 @@ public abstract class BlockEvent extends Event {
 
         /**
          * Get if redstone update was forced during setBlock call (0x16 to flags)
-         * 
+         *
          * @return if the flag was set
          */
         public boolean getForceRedstoneUpdate() {

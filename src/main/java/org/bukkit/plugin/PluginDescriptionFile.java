@@ -3,21 +3,7 @@ package org.bukkit.plugin;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -33,6 +19,12 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
+
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * This type is the runtime-container for the information in the plugin.yml.
@@ -199,7 +191,7 @@ import org.yaml.snakeyaml.representer.Representer;
  *      inferno.burningdeaths: true
  *</pre></blockquote>
  */
-public final class PluginDescriptionFile {
+public final class PluginDescriptionFile implements io.papermc.paper.plugin.configuration.PluginMeta { // Paper
     private static final Pattern VALID_NAME = Pattern.compile("^[A-Za-z0-9 _.-]+$");
     private static final ThreadLocal<Yaml> YAML = new ThreadLocal<Yaml>() {
         @Override
@@ -260,6 +252,77 @@ public final class PluginDescriptionFile {
     private Set<PluginAwareness> awareness = ImmutableSet.of();
     private String apiVersion = null;
     private List<String> libraries = ImmutableList.of();
+    // Paper start - plugin loader api
+    private String paperPluginLoader;
+    @ApiStatus.Internal @Nullable
+    public String getPaperPluginLoader() {
+        return this.paperPluginLoader;
+    }
+    // Paper end - plugin loader api
+    // Paper start - oh my goddddd
+    /**
+     * @hidden
+     */
+    @ApiStatus.Internal
+    public PluginDescriptionFile(String rawName, String name, List<String> provides, String main, String classLoaderOf, List<String> depend, List<String> softDepend, List<String> loadBefore, String version, Map<String, Map<String, Object>> commands, String description, List<String> authors, List<String> contributors, String website, String prefix, PluginLoadOrder order, List<Permission> permissions, PermissionDefault defaultPerm, Set<PluginAwareness> awareness, String apiVersion, List<String> libraries) {
+        this.rawName = rawName;
+        this.name = name;
+        this.provides = provides;
+        this.main = main;
+        this.classLoaderOf = classLoaderOf;
+        this.depend = depend;
+        this.softDepend = softDepend;
+        this.loadBefore = loadBefore;
+        this.version = version;
+        this.commands = commands;
+        this.description = description;
+        this.authors = authors;
+        this.contributors = contributors;
+        this.website = website;
+        this.prefix = prefix;
+        this.order = order;
+        this.permissions = permissions;
+        this.defaultPerm = defaultPerm;
+        this.awareness = awareness;
+        this.apiVersion = apiVersion;
+        this.libraries = libraries;
+    }
+
+    @Override
+    public @NotNull String getMainClass() {
+        return this.main;
+    }
+
+    @Override
+    public @NotNull PluginLoadOrder getLoadOrder() {
+        return this.order;
+    }
+
+    @Override
+    public @Nullable String getLoggerPrefix() {
+        return this.prefix;
+    }
+
+    @Override
+    public @NotNull List<String> getPluginDependencies() {
+        return this.depend;
+    }
+
+    @Override
+    public @NotNull List<String> getPluginSoftDependencies() {
+        return this.softDepend;
+    }
+
+    @Override
+    public @NotNull List<String> getLoadBeforePlugins() {
+        return this.loadBefore;
+    }
+
+    @Override
+    public @NotNull List<String> getProvidedPlugins() {
+        return this.provides;
+    }
+    // Paper end
 
     public PluginDescriptionFile(@NotNull final InputStream stream) throws InvalidDescriptionException {
         loadMap(asMap(YAML.get().load(stream)));
@@ -308,7 +371,7 @@ public final class PluginDescriptionFile {
      * <li>It is good practice to name your jar the same as this, for example
      *     'MyPlugin.jar'.
      * <li>Case sensitive.
-     * <li>The is the token referenced in {@link #getDepend()}, {@link
+     * <li>It's the token referenced in {@link #getDepend()}, {@link
      *     #getSoftDepend()}, and {@link #getLoadBefore()}.
      * <li>Using spaces in the plugin's name is deprecated.
      * </ul>
@@ -473,7 +536,7 @@ public final class PluginDescriptionFile {
      *authors:
      *- feildmaster
      *- amaranth</pre></blockquote>
-     * Is equivilant to this example:
+     * Is equivalent to this example:
      * <pre>authors: [Grum, feildmaster, aramanth]</pre>
      *
      * @return an immutable list of the plugin's authors
@@ -569,7 +632,7 @@ public final class PluginDescriptionFile {
      * <li>When an unresolvable plugin is listed, it will be ignored and does
      *     not affect load order.
      * <li>When a circular dependency occurs (a network of plugins depending
-     *     or soft-dependending each other), it will arbitrarily choose a
+     *     or soft-depending on each other), it will arbitrarily choose a
      *     plugin that can be resolved when ignoring soft-dependencies.
      * <li><code>softdepend</code> must be in <a
      *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
@@ -718,7 +781,7 @@ public final class PluginDescriptionFile {
      *         <blockquote><pre>usage: "Usage: /god [player]"</pre></blockquote></td>
      * </tr>
      * </table>
-     * The commands are structured as a hiearchy of <a
+     * The commands are structured as a hierarchy of <a
      * href="http://yaml.org/spec/current.html#id2502325">nested mappings</a>.
      * The primary (top-level, no intendentation) node is
      * `<code>commands</code>', while each individual command name is
@@ -759,7 +822,7 @@ public final class PluginDescriptionFile {
 
     /**
      * Gives the list of permissions the plugin will register at runtime,
-     * immediately proceding enabling. The format for defining permissions is
+     * immediately preceding enabling. The format for defining permissions is
      * a map from permission name to properties. To represent a map without
      * any specific property, empty <a
      * href="http://yaml.org/spec/current.html#id2502702">curly-braces</a> (
@@ -823,7 +886,7 @@ public final class PluginDescriptionFile {
      *             properties. To define a valid nested permission without
      *             defining any specific property, empty curly-braces (
      *             <code>&#123;&#125;</code> ) must be used.
-     *          <li>A nested permission may carry it's own nested permissions
+     *          <li>A nested permission may carry its own nested permissions
      *              as children, as they may also have nested permissions, and
      *              so forth. There is no direct limit to how deep the
      *              permission tree is defined.
@@ -839,9 +902,9 @@ public final class PluginDescriptionFile {
      *         </td>
      * </tr>
      * </table>
-     * The permissions are structured as a hiearchy of <a
+     * The permissions are structured as a hierarchy of <a
      * href="http://yaml.org/spec/current.html#id2502325">nested mappings</a>.
-     * The primary (top-level, no intendentation) node is
+     * The primary (top-level, no indentation) node is
      * `<code>permissions</code>', while each individual permission name is
      * indented, indicating it maps to some value (in our case, the
      * properties of the table above).
@@ -903,7 +966,7 @@ public final class PluginDescriptionFile {
     /**
      * Gives a set of every {@link PluginAwareness} for a plugin. An awareness
      * dictates something that a plugin developer acknowledges when the plugin
-     * is compiled. Some implementions may define extra awarenesses that are
+     * is compiled. Some implementations may define extra awarenesses that are
      * not included in the API. Any unrecognized
      * awareness (one unsupported or in a future version) will cause a dummy
      * object to be created instead of failing.
@@ -990,7 +1053,7 @@ public final class PluginDescriptionFile {
      * @return unused
      * @deprecated unused
      */
-    @Deprecated(since = "1.7.2")
+    @Deprecated(since = "1.7.2", forRemoval = true)
     @Nullable
     public String getClassLoaderOf() {
         return classLoaderOf;
@@ -1169,6 +1232,23 @@ public final class PluginDescriptionFile {
         } else {
             libraries = ImmutableList.<String>of();
         }
+        // Paper start - plugin loader api
+        if (map.containsKey("paper-plugin-loader")) {
+            this.paperPluginLoader = map.get("paper-plugin-loader").toString();
+        }
+
+        /*
+        Allow skipping the Bukkit/Spigot 'libraries' list. By default, both the 'libraries'
+        list and the 'paper-plugin-loader' will contribute libraries. It may be desired to only
+        use one or the other. (i.e. 'libraries' on Spigot and 'paper-plugin-loader' on Paper)
+        */
+        if (map.containsKey("paper-skip-libraries")) {
+            String skip = map.get("paper-skip-libraries").toString();
+            if (skip.equalsIgnoreCase("true")) {
+                this.libraries = ImmutableList.of();
+            }
+        }
+        // Paper end - plugin loader api
 
         try {
             lazyPermissions = (Map<?, ?>) map.get("permissions");
@@ -1268,8 +1348,7 @@ public final class PluginDescriptionFile {
     }
 
     /**
-     * @return internal use
-     * @apiNote Internal use
+     * @hidden
      */
     @ApiStatus.Internal
     @NotNull

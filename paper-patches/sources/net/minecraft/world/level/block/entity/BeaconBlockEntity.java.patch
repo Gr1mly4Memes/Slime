@@ -175,7 +175,7 @@
 +        final org.bukkit.potion.PotionEffect apiEffect = org.bukkit.craftbukkit.potion.CraftPotionUtil.toBukkit(mobEffectInstance);
 +        final org.bukkit.craftbukkit.block.CraftBlock apiBlock = org.bukkit.craftbukkit.block.CraftBlock.at(level, position);
 +        for (final Player player : players) {
-+            final com.destroystokyo.paper.event.block.BeaconEffectEvent event = new com.destroystokyo.paper.event.block.BeaconEffectEvent(
++            final com.destroystokyo.block.event.com.destroystokyo.paper.BeaconEffectEvent event = new com.destroystokyo.block.event.com.destroystokyo.paper.BeaconEffectEvent(
 +                apiBlock, apiEffect, (org.bukkit.entity.Player) player.getBukkitEntity(), isPrimary
 +            );
 +            if (!event.callEvent()) continue;

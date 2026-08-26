@@ -1,9 +1,10 @@
 package org.bukkit.configuration.file;
 
 import com.google.common.base.Preconditions;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Various settings for controlling the input and output of a {@link
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public class YamlConfigurationOptions extends FileConfigurationOptions {
     private int indent = 2;
     private int width = 80;
+    private int codePointLimit = Integer.MAX_VALUE; // Paper - use upstream's default from YamlConfiguration
 
     protected YamlConfigurationOptions(@NotNull YamlConfiguration configuration) {
         super(configuration);
@@ -122,4 +124,29 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
         this.width = value;
         return this;
     }
+
+    // Paper start
+    /**
+     * Gets the maximum code point limit, that being, the maximum length of the document
+     * in which the loader will read
+     *
+     * @return The current value
+     */
+    public int codePointLimit() {
+        return codePointLimit;
+    }
+
+    /**
+     * Sets the maximum code point limit, that being, the maximum length of the document
+     * in which the loader will read
+     *
+     * @param codePointLimit new codepoint limit
+     * @return This object, for chaining
+     */
+    @NotNull
+    public YamlConfigurationOptions codePointLimit(int codePointLimit) {
+        this.codePointLimit = codePointLimit;
+        return this;
+    }
+    // Paper end
 }

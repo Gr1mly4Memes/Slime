@@ -39,7 +39,7 @@
  
                                                  for (int i = 0; i < groupSize; i++) {
 +                                                    // Paper start - PhantomPreSpawnEvent
-+                                                    com.destroystokyo.paper.event.entity.PhantomPreSpawnEvent event = new com.destroystokyo.paper.event.entity.PhantomPreSpawnEvent(org.bukkit.craftbukkit.util.CraftLocation.toBukkit(spawnPos, level), player.getBukkitEntity(), org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL);
++                                                    com.destroystokyo.entity.event.com.destroystokyo.paper.PhantomPreSpawnEvent event = new com.destroystokyo.entity.event.com.destroystokyo.paper.PhantomPreSpawnEvent(org.bukkit.craftbukkit.util.CraftLocation.toBukkit(spawnPos, level), player.getBukkitEntity(), org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL);
 +                                                    if (!event.callEvent()) {
 +                                                        if (event.shouldAbortSpawn()) {
 +                                                            break;

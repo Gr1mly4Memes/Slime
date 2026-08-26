@@ -30,7 +30,7 @@
 +                }
 +                // CraftBukkit end
 +                // Paper start - Add ThrownEggHatchEvent
-+                com.destroystokyo.paper.event.entity.ThrownEggHatchEvent event = new com.destroystokyo.paper.event.entity.ThrownEggHatchEvent((org.bukkit.entity.Egg) getBukkitEntity(), hatching, (byte) count, hatchingType);
++                com.destroystokyo.entity.event.com.destroystokyo.paper.ThrownEggHatchEvent event = new com.destroystokyo.entity.event.com.destroystokyo.paper.ThrownEggHatchEvent((org.bukkit.entity.Egg) getBukkitEntity(), hatching, (byte) count, hatchingType);
 +                event.callEvent();
 +                hatching = event.isHatching();
 +                count = hatching ? event.getNumHatches() : 0; // If hatching is set to false, ensure child count is 0

@@ -33,7 +33,7 @@
  
              return true;
          } catch (IOException e) {
-+            com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(e); // Paper - ServerExceptionEvent
++            com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException.reportInternalException(e); // Paper - ServerExceptionEvent
              return false;
          }
      }
@@ -43,7 +43,7 @@
              extFile.write(data);
 +            // Paper start - ServerExceptionEvent
 +        } catch (Throwable throwable) {
-+            com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(throwable);
++            com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException.reportInternalException(throwable);
 +            throw throwable;
 +            // Paper end - ServerExceptionEvent
          }

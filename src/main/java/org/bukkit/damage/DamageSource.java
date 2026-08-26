@@ -1,10 +1,13 @@
 package org.bukkit.damage;
 
-import org.bukkit.Bukkit;
+import io.papermc.paper.InternalAPIBridge;
+import net.kyori.adventure.pointer.Pointers;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.function.Consumer;
 
 /**
  * Represents a source of damage.
@@ -49,6 +52,8 @@ public interface DamageSource {
      * be present if an entity did not cause the damage.
      *
      * @return the location, or null if none
+     * @apiNote the world of the location might be null for positioned-only damage source
+     * not caused by any entity
      */
     @Nullable
     public Location getDamageLocation();
@@ -64,6 +69,8 @@ public interface DamageSource {
      * returned.
      *
      * @return the source of the location or null.
+     * @apiNote the world of the location might be null for positioned-only damage source
+     * not caused by any entity
      */
     @Nullable
     public Location getSourceLocation();
@@ -94,15 +101,23 @@ public interface DamageSource {
     public boolean scalesWithDifficulty();
 
     /**
+     * Gets the {@link Pointers} used for plugin-provided damage context.
+     *
+     * @return the damage context
+     */
+    @ApiStatus.Experimental
+    @NotNull
+    public Pointers getDamageContext();
+
+    /**
      * Create a new {@link Builder}.
      *
      * @param damageType the {@link DamageType} to use
      * @return a {@link Builder}
      */
     @NotNull
-    @SuppressWarnings("deprecation")
     public static Builder builder(@NotNull DamageType damageType) {
-        return Bukkit.getUnsafe().createDamageSourceBuilder(damageType);
+        return InternalAPIBridge.get().createDamageSourceBuilder(damageType);
     }
 
     /**
@@ -140,6 +155,17 @@ public interface DamageSource {
          */
         @NotNull
         public Builder withDamageLocation(@NotNull Location location);
+
+        /**
+         * Configures a builder for the {@link Pointers} used for plugin-provided damage context.
+         *
+         * @param consumer a consumer
+         * @return this instance. Allows for chained method calls
+         * @see DamageSource#getDamageContext()
+         */
+        @ApiStatus.Experimental
+        @NotNull
+        public Builder withDamageContext(@NotNull Consumer<Pointers.Builder> consumer);
 
         /**
          * Create a new {@link DamageSource} instance using the supplied

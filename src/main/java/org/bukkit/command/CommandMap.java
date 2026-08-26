@@ -1,9 +1,10 @@
 package org.bukkit.command;
 
-import java.util.List;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface CommandMap {
 
@@ -128,4 +129,14 @@ public interface CommandMap {
      */
     @Nullable
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String cmdLine, @Nullable Location location) throws IllegalArgumentException;
+
+    // Paper start - Expose Known Commands
+    /**
+     * Return a Map of known commands
+     *
+     * @return known commands
+     */
+    @NotNull
+    public java.util.Map<String, Command> getKnownCommands();
+    // Paper end
 }

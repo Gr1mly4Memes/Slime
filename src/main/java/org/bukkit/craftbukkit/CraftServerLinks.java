@@ -1,12 +1,13 @@
 package org.bukkit.craftbukkit;
 
 import com.google.common.base.Preconditions;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.server.dedicated.DedicatedServer;
 import org.bukkit.ServerLinks;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CraftServerLinks implements ServerLinks {
 
@@ -30,12 +31,12 @@ public class CraftServerLinks implements ServerLinks {
     public ServerLink getLink(Type type) {
         Preconditions.checkArgument(type != null, "type cannot be null");
 
-        return getServerLinks().findKnownType(fromBukkit(type)).map(CraftServerLink::new).orElse(null);
+        return this.getServerLinks().findKnownType(CraftServerLinks.fromBukkit(type)).map(CraftServerLink::new).orElse(null);
     }
 
     @Override
     public List<ServerLink> getLinks() {
-        return getServerLinks().entries().stream().map(nms -> (ServerLink) new CraftServerLink(nms)).toList();
+        return this.getServerLinks().entries().stream().map(nms -> (ServerLink) new CraftServerLink(nms)).toList();
     }
 
     @Override
@@ -43,11 +44,11 @@ public class CraftServerLinks implements ServerLinks {
         Preconditions.checkArgument(type != null, "type cannot be null");
         Preconditions.checkArgument(url != null, "url cannot be null");
 
-        ServerLink existing = getLink(type);
+        ServerLink existing = this.getLink(type);
         if (existing != null) {
-            removeLink(existing);
+            this.removeLink(existing);
         }
-        return addLink(type, url);
+        return this.addLink(type, url);
     }
 
     @Override
@@ -55,8 +56,19 @@ public class CraftServerLinks implements ServerLinks {
         Preconditions.checkArgument(type != null, "type cannot be null");
         Preconditions.checkArgument(url != null, "url cannot be null");
 
-        CraftServerLink link = new CraftServerLink(net.minecraft.server.ServerLinks.Entry.knownType(fromBukkit(type), url));
-        addLink(link);
+        CraftServerLink link = new CraftServerLink(net.minecraft.server.ServerLinks.Entry.knownType(CraftServerLinks.fromBukkit(type), url));
+        this.addLink(link);
+
+        return link;
+    }
+
+    @Override
+    public ServerLink addLink(net.kyori.adventure.text.Component displayName, URI url) {
+        Preconditions.checkArgument(displayName != null, "displayName cannot be null");
+        Preconditions.checkArgument(url != null, "url cannot be null");
+
+        CraftServerLink link = new CraftServerLink(net.minecraft.server.ServerLinks.Entry.custom(io.papermc.paper.adventure.PaperAdventure.asVanilla(displayName), url));
+        this.addLink(link);
 
         return link;
     }
@@ -67,42 +79,42 @@ public class CraftServerLinks implements ServerLinks {
         Preconditions.checkArgument(url != null, "url cannot be null");
 
         CraftServerLink link = new CraftServerLink(net.minecraft.server.ServerLinks.Entry.custom(CraftChatMessage.fromStringOrNull(displayName), url));
-        addLink(link);
+        this.addLink(link);
 
         return link;
     }
 
     private void addLink(CraftServerLink link) {
-        List<net.minecraft.server.ServerLinks.Entry> lst = new ArrayList<>(getServerLinks().entries());
+        List<net.minecraft.server.ServerLinks.Entry> lst = new ArrayList<>(this.getServerLinks().entries());
         lst.add(link.handle);
 
-        setLinks(new net.minecraft.server.ServerLinks(lst));
+        this.setLinks(new net.minecraft.server.ServerLinks(lst));
     }
 
     @Override
     public boolean removeLink(ServerLink link) {
         Preconditions.checkArgument(link != null, "link cannot be null");
 
-        List<net.minecraft.server.ServerLinks.Entry> lst = new ArrayList<>(getServerLinks().entries());
+        List<net.minecraft.server.ServerLinks.Entry> lst = new ArrayList<>(this.getServerLinks().entries());
         boolean result = lst.remove(((CraftServerLink) link).handle);
 
-        setLinks(new net.minecraft.server.ServerLinks(lst));
+        this.setLinks(new net.minecraft.server.ServerLinks(lst));
 
         return result;
     }
 
     @Override
     public ServerLinks copy() {
-        return new CraftServerLinks(getServerLinks());
+        return new CraftServerLinks(this.getServerLinks());
     }
 
     public net.minecraft.server.ServerLinks getServerLinks() {
-        return (server != null) ? server.serverLinks() : serverLinks;
+        return (this.server != null) ? this.server.serverLinks() : this.serverLinks;
     }
 
     private void setLinks(net.minecraft.server.ServerLinks links) {
-        if (server != null) {
-            server.serverLinks = links;
+        if (this.server != null) {
+            this.server.serverLinks = links;
         } else {
             this.serverLinks = links;
         }
@@ -112,8 +124,8 @@ public class CraftServerLinks implements ServerLinks {
         return net.minecraft.server.ServerLinks.KnownLinkType.values()[type.ordinal()];
     }
 
-    private static Type fromNMS(net.minecraft.server.ServerLinks.KnownLinkType nms) {
-        return Type.values()[nms.ordinal()];
+    private static ServerLinks.Type fromNMS(net.minecraft.server.ServerLinks.KnownLinkType nms) {
+        return ServerLinks.Type.values()[nms.ordinal()];
     }
 
     public static class CraftServerLink implements ServerLink {
@@ -126,17 +138,22 @@ public class CraftServerLinks implements ServerLinks {
 
         @Override
         public Type getType() {
-            return handle.type().left().map(CraftServerLinks::fromNMS).orElse(null);
+            return this.handle.type().left().map(CraftServerLinks::fromNMS).orElse(null);
         }
 
         @Override
         public String getDisplayName() {
-            return CraftChatMessage.fromComponent(handle.displayName());
+            return CraftChatMessage.fromComponent(this.handle.displayName());
+        }
+
+        @Override
+        public net.kyori.adventure.text.Component displayName() {
+            return io.papermc.paper.adventure.PaperAdventure.asAdventure(this.handle.displayName());
         }
 
         @Override
         public URI getUrl() {
-            return handle.link();
+            return this.handle.link();
         }
     }
 }

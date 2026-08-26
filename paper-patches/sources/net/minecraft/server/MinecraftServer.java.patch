@@ -1007,7 +1007,7 @@
          }
  
 +        this.server.spark.tickStart(); // Paper - spark
-+        new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
++        new com.destroystokyo.server.event.com.destroystokyo.paper.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
          this.tickCount++;
          this.tickRateManager.tick();
          this.tickChildren(haveTime);
@@ -1025,7 +1025,7 @@
 +        // Paper start - Server Tick Events
 +        long endTime = System.nanoTime();
 +        long remaining = this.nextTickTimeNanos - endTime;
-+        new com.destroystokyo.paper.event.server.ServerTickEndEvent(this.tickCount, ((double)(endTime - this.currentTickStart) / 1000000D), remaining).callEvent();
++        new com.destroystokyo.server.event.com.destroystokyo.paper.ServerTickEndEvent(this.tickCount, ((double)(endTime - this.currentTickStart) / 1000000D), remaining).callEvent();
 +        // Paper end - Server Tick Events
 +        this.server.spark.tickEnd(((double)(endTime - this.currentTickStart) / 1000000D)); // Paper - spark
          profiler.push("tallying");

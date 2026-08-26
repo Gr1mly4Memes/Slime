@@ -1,9 +1,11 @@
 package org.bukkit.event.player;
 
-import java.util.Collection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 /**
  * This event is called when the list of available server commands is sent to
@@ -16,9 +18,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PlayerCommandSendEvent extends PlayerEvent {
 
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
     private final Collection<String> commands;
 
+    @ApiStatus.Internal
     public PlayerCommandSendEvent(@NotNull final Player player, @NotNull final Collection<String> commands) {
         super(player);
         this.commands = commands;
@@ -34,17 +38,17 @@ public class PlayerCommandSendEvent extends PlayerEvent {
      */
     @NotNull
     public Collection<String> getCommands() {
-        return commands;
+        return this.commands;
     }
 
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return handlers;
+        return HANDLER_LIST;
     }
 
     @NotNull
     public static HandlerList getHandlerList() {
-        return handlers;
+        return HANDLER_LIST;
     }
 }

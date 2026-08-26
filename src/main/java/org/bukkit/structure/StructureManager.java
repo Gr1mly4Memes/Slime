@@ -1,13 +1,14 @@
 package org.bukkit.structure;
 
+import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
-import org.bukkit.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface StructureManager {
 
@@ -96,7 +97,7 @@ public interface StructureManager {
     /**
      * Saves the currently {@link #getStructures() registered structure} for the
      * specified {@link NamespacedKey key} to the primary world folder as
-     * specified by {#getStructureFile(NamespacedKey}.
+     * specified by {@link #getStructureFile(NamespacedKey)}.
      *
      * @param structureKey The key for which to save the structure for
      */
@@ -139,7 +140,7 @@ public interface StructureManager {
     /**
      * Gets the location where a structure file would exist in the primary world
      * directory based on the NamespacedKey using the format
-     * world/generated/{NAMESPACE}/structures/{KEY}.nbt. This method will always
+     * world/generated/{NAMESPACE}/structure/{KEY}.nbt. This method will always
      * return a file, even if none exists at the moment.
      *
      * @param structureKey The key to build the filepath from.

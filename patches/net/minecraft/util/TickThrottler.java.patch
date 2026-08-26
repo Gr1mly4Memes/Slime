@@ -13,7 +13,7 @@
  
      public TickThrottler(int incrementStep, int threshold) {
          this.incrementStep = incrementStep;
-@@ -11,16 +_,31 @@
+@@ -11,16 +_,24 @@
      }
  
      public void increment() {
@@ -25,14 +25,7 @@
 -        if (this.count > 0) {
 -            this.count--;
 -        }
-+        // CraftBukkit start
-+        for (int val; (val = this.count.get()) > 0 && !this.count.compareAndSet(val, val - 1); ) ;
-+        /* Use thread-safe field access instead
-+         if (this.count > 0) {
-+             this.count--;
-+         }
-+        */
-+        // CraftBukkit end
++        for (int val; (val = this.count.get()) > 0 && !count.compareAndSet(val, val - 1); ) ;
      }
  
      public boolean isUnderThreshold() {

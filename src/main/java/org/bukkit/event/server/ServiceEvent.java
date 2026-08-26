@@ -8,14 +8,15 @@ import org.jetbrains.annotations.NotNull;
  * org.bukkit.plugin.ServicesManager}
  */
 public abstract class ServiceEvent extends ServerEvent {
+
     private final RegisteredServiceProvider<?> provider;
 
-    public ServiceEvent(@NotNull final RegisteredServiceProvider<?> provider) {
+    protected ServiceEvent(@NotNull final RegisteredServiceProvider<?> provider) {
         this.provider = provider;
     }
 
     @NotNull
     public RegisteredServiceProvider<?> getProvider() {
-        return provider;
+        return this.provider;
     }
 }

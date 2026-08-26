@@ -24,6 +24,32 @@
      }
  
      @Override
+@@ -44,6 +_,12 @@
+             .getBlockState(pos);
+     }
+ 
++    // Slime - add getBlockStateIfLoaded() override
++    @Override
++    public @Nullable BlockState getBlockStateIfLoaded(BlockPos pos) {
++        return this.getBlockState(pos);
++    }
++
+     @Override
+     public FluidState getFluidState(BlockPos pos) {
+         return this.getSection(
+@@ -53,6 +_,12 @@
+             .getFluidState();
+     }
+ 
++    // Slime - add getFluidIfLoaded() override
++    @Override
++    public @Nullable FluidState getFluidIfLoaded(BlockPos pos) {
++        return this.getFluidState(pos);
++    }
++
+     @Override
+     public CardinalLighting cardinalLighting() {
+         return this.cardinalLighting;
 @@ -88,6 +_,16 @@
      @Override
      public int getHeight() {

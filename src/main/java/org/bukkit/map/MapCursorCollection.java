@@ -1,9 +1,10 @@
 package org.bukkit.map;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents all the map cursors on a {@link MapCanvas}. Like MapCanvas, a
@@ -117,4 +118,22 @@ public final class MapCursorCollection {
     public MapCursor addCursor(int x, int y, byte direction, byte type, boolean visible, @Nullable String caption) {
         return addCursor(new MapCursor((byte) x, (byte) y, direction, type, visible, caption));
     }
+    // Paper start
+    /**
+     * Add a cursor to the collection.
+     *
+     * @param x The x coordinate, from -128 to 127.
+     * @param y The y coordinate, from -128 to 127.
+     * @param direction The facing of the cursor, from 0 to 15.
+     * @param type The type (color/style) of the map cursor.
+     * @param visible Whether the cursor is visible.
+     * @param caption banner caption
+     * @return The newly added MapCursor.
+     * @deprecated Magic value
+     */
+    @Deprecated
+    public @NotNull MapCursor addCursor(int x, int y, byte direction, byte type, boolean visible, net.kyori.adventure.text.@Nullable Component caption) {
+        return addCursor(new MapCursor((byte) x, (byte) y, direction, type, visible, caption));
+    }
+    // Paper end
 }

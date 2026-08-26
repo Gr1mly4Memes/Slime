@@ -1,0 +1,57 @@
+--- a/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
++++ b/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
+@@ -45,6 +_,8 @@
+ import net.minecraft.network.protocol.login.ServerboundCustomQueryAnswerPacket;
+ import net.minecraft.network.protocol.login.ServerboundKeyPacket;
+ import net.minecraft.network.protocol.login.ServerboundLoginAcknowledgedPacket;
++// Slime - import CryptException for setEncryptionKey() exception handling
++import net.minecraft.util.CryptException;
+ import net.minecraft.resources.Identifier;
+ import net.minecraft.server.ServerLinks;
+ import net.minecraft.util.Crypt;
+@@ -113,12 +_,14 @@
+     public void handleHello(ClientboundHelloPacket packet) {
+         this.switchState(ClientHandshakePacketListenerImpl.State.AUTHORIZING);
+ 
++        // Slime - add secretKey variable for setEncryptionKey() call
+         Cipher decryptCipher;
+         Cipher encryptCipher;
+         String digest;
+         ServerboundKeyPacket setKeyPacket;
++        SecretKey secretKey;
+         try {
+-            SecretKey secretKey = Crypt.generateSecretKey();
++            secretKey = Crypt.generateSecretKey();
+             PublicKey publicKey = packet.getPublicKey();
+             digest = new BigInteger(Crypt.digestData(packet.getServerId(), publicKey, secretKey)).toString(16);
+             decryptCipher = Crypt.getCipher(2, secretKey);
+@@ -141,17 +_,25 @@
+                     LOGGER.warn(error.getString());
+                 }
+ 
+-                this.setEncryption(setKeyPacket, decryptCipher, encryptCipher);
++                this.setEncryption(setKeyPacket, decryptCipher, encryptCipher, secretKey);
+             });
+         } else {
+-            this.setEncryption(setKeyPacket, decryptCipher, encryptCipher);
++            this.setEncryption(setKeyPacket, decryptCipher, encryptCipher, secretKey);
+         }
+     }
+ 
+-    private void setEncryption(ServerboundKeyPacket setKeyPacket, Cipher decryptCipher, Cipher encryptCipher) {
++    // Slime start - fix setEncryptionKey() to use SecretKey with exception handling
++    private void setEncryption(ServerboundKeyPacket setKeyPacket, Cipher decryptCipher, Cipher encryptCipher, SecretKey secretKey) {
+         this.switchState(ClientHandshakePacketListenerImpl.State.ENCRYPTING);
+-        this.connection.send(setKeyPacket, PacketSendListener.thenRun(() -> this.connection.setEncryptionKey(decryptCipher, encryptCipher)));
++        this.connection.send(setKeyPacket, PacketSendListener.thenRun(() -> {
++            try {
++                this.connection.setEncryptionKey(secretKey);
++            } catch (CryptException e) {
++                throw new RuntimeException("Failed to set encryption key", e);
++            }
++        }));
+     }
++    // Slime end - fix setEncryptionKey() to use SecretKey with exception handling
+ 
+     private @Nullable Component authenticateServer(String digest) {
+         try {

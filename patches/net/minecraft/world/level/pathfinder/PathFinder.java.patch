@@ -18,7 +18,7 @@
      }
  
 -    private @Nullable Path findPath(Node from, Map<Target, BlockPos> targetMap, float maxPathLength, int reachRange, float maxVisitedNodesMultiplier) {
-+    private @Nullable Path findPath(Node from, final List<Map.Entry<Target, BlockPos>> targets, final float maxPathLength, final int reachRange, final float maxVisitedNodesMultiplier) { // Paper - optimize collection
++    private @Nullable Path findPath(Node from, List<Map.Entry<Target, BlockPos>> targets, float maxPathLength, int reachRange, float maxVisitedNodesMultiplier) { // Paper - optimize collection
          ProfilerFiller profiler = Profiler.get();
          profiler.push("find_path");
          profiler.markForCharting(MetricCategory.PATH_FINDING);
@@ -53,7 +53,7 @@
                  }
              }
  
-@@ -119,34 +_,43 @@
+@@ -119,34 +_,41 @@
              }
          }
  
@@ -76,7 +76,6 @@
 +                best = path;
 +            }
 +        }
-+
          profiler.pop();
 -        if (optPath.isEmpty()) {
 -            return null;
@@ -95,7 +94,6 @@
 +            }
 +            best.setDebug(this.openSet.getHeap(), closedSet.toArray(Node[]::new), set);
 +        }
-+
 +        return best;
 +        // Paper end - Perf: remove streams and optimize collection
      }
@@ -105,7 +103,7 @@
      }
  
 -    private float getBestH(Node from, Set<Target> targets) {
-+    private float getBestH(final Node from, final List<Map.Entry<Target, BlockPos>> targets) { // Paper - Perf: remove streams and optimize collection; Set<Target> -> List<Map.Entry<Target, BlockPos>>
++    private float getBestH(Node from, final List<Map.Entry<Target, BlockPos>> targets) { // Paper - Perf: remove streams and optimize collection; Set<Target> -> List<Map.Entry<Target, BlockPos>>
          float bestH = Float.MAX_VALUE;
  
 -        for (Target target : targets) {

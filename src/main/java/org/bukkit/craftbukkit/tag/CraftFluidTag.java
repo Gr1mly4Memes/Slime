@@ -1,12 +1,13 @@
 package org.bukkit.craftbukkit.tag;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import org.bukkit.Fluid;
 import org.bukkit.craftbukkit.CraftFluid;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CraftFluidTag extends CraftTag<net.minecraft.world.level.material.Fluid, Fluid> {
 
@@ -16,11 +17,11 @@ public class CraftFluidTag extends CraftTag<net.minecraft.world.level.material.F
 
     @Override
     public boolean isTagged(Fluid fluid) {
-        return CraftFluid.bukkitToMinecraft(fluid).is(tag);
+        return CraftFluid.bukkitToMinecraft(fluid).is(this.tag);
     }
 
     @Override
     public Set<Fluid> getValues() {
-        return getHandle().stream().map(Holder::value).map(CraftFluid::minecraftToBukkit).collect(Collectors.toUnmodifiableSet());
+        return this.getHandle().stream().map(Holder::value).map(CraftFluid::minecraftToBukkit).collect(Collectors.toUnmodifiableSet());
     }
 }

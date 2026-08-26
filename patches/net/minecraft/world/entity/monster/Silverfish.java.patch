@@ -12,6 +12,55 @@
  import org.jspecify.annotations.Nullable;
  
  public class Silverfish extends Monster {
+@@ -37,6 +_,30 @@
+         super(type, level);
+     }
+ 
++    // Purpur start - Toggle for water sensitive mob damage
++    @Override
++    public boolean isSensitiveToWater() {
++        return this.level().purpurConfig.silverfishTakeDamageFromWater;
++    }
++    // Purpur end - Toggle for water sensitive mob damage
++
++    // Purpur start - Mobs always drop experience
++    @Override
++    protected boolean isAlwaysExperienceDropper() {
++        return this.level().purpurConfig.silverfishAlwaysDropExp;
++    }
++    // Purpur end - Mobs always drop experience
++
++    // Purpur start - Configurable entity base attributes
++    @Override
++    public void initAttributes() {
++        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(this.level().purpurConfig.silverfishMaxHealth);
++        this.getAttribute(Attributes.SCALE).setBaseValue(this.level().purpurConfig.silverfishScale);
++        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.level().purpurConfig.silverfishMovementSpeed);
++        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(this.level().purpurConfig.silverfishAttackDamage);
++    }
++    // Purpur end - Configurable entity base attributes
++
+     @Override
+     protected void registerGoals() {
+         this.friendsGoal = new Silverfish.SilverfishWakeUpFriendsGoal(this);
+@@ -109,7 +_,7 @@
+     }
+ 
+     public static boolean checkSilverfishSpawnRules(
+-        EntityType<Silverfish> type, LevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random
++        EntityType<? extends Silverfish> type, LevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random
+     ) {
+         if (!checkAnyLightMonsterSpawnRules(type, level, spawnReason, pos, random)) {
+             return false;
+@@ -119,7 +_,7 @@
+             return true;
+         }
+ 
+-        Player nearestPlayer = level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 5.0, true);
++        Player nearestPlayer = level.getNearestPlayerThatAffectsSpawning(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 5.0, true); // Paper - Affects Spawning API
+         return nearestPlayer == null;
+     }
+ 
 @@ -143,7 +_,7 @@
              }
  
@@ -37,13 +86,14 @@
                  }
              }
          }
-@@ -212,7 +_,12 @@
+@@ -212,7 +_,13 @@
                              BlockPos testPos = basePos.offset(xOff, yOff, zOff);
                              BlockState blockState = level.getBlockState(testPos);
                              if (blockState.getBlock() instanceof InfestedBlock infestedBlock) {
 -                                if (getServerLevel(level).getGameRules().get(GameRules.MOB_GRIEFING)) {
 +                                // CraftBukkit start
-+                                if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, testPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
++                                BlockState afterState = getServerLevel(level).getGameRules().get(GameRules.MOB_GRIEFING) ? blockState.getFluidState().createLegacyBlock() : infestedBlock.hostStateByInfested(level.getBlockState(testPos)); // Paper - fix wrong block state
++                                if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, testPos, afterState)) { // Paper - fix wrong block state
 +                                    continue;
 +                                }
 +                                // CraftBukkit end

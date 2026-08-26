@@ -5,7 +5,7 @@
      }
  
 -    public static CompoundTag read(DataInput input, NbtAccounter accounter) throws IOException {
-+        // Spigot start
++    // Spigot start
 +    public static CompoundTag read(DataInput input, final NbtAccounter accounter) throws IOException {
 +        if (input instanceof io.netty.buffer.ByteBufInputStream byteBufInputStream) {
 +            input = new DataInputStream(new org.spigotmc.LimitStream(byteBufInputStream, accounter));

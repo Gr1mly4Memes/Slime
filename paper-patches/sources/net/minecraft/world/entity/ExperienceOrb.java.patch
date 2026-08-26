@@ -139,7 +139,7 @@
  
      private void merge(final ExperienceOrb orb) {
 +        // Paper start - call orb merge event
-+        if (!new com.destroystokyo.paper.event.entity.ExperienceOrbMergeEvent((org.bukkit.entity.ExperienceOrb) this.getBukkitEntity(), (org.bukkit.entity.ExperienceOrb) orb.getBukkitEntity()).callEvent()) {
++        if (!new com.destroystokyo.entity.event.com.destroystokyo.paper.ExperienceOrbMergeEvent((org.bukkit.entity.ExperienceOrb) this.getBukkitEntity(), (org.bukkit.entity.ExperienceOrb) orb.getBukkitEntity()).callEvent()) {
 +            return;
 +        }
 +        // Paper end - call orb merge event
@@ -184,7 +184,7 @@
          if (player instanceof ServerPlayer serverPlayer) {
 -            if (player.takeXpDelay == 0) {
 -                player.takeXpDelay = 2;
-+            if (player.takeXpDelay == 0 && new com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent(serverPlayer.getBukkitEntity(), (org.bukkit.entity.ExperienceOrb) this.getBukkitEntity()).callEvent()) { // Paper - PlayerPickupExperienceEvent
++            if (player.takeXpDelay == 0 && new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerPickupExperienceEvent(serverPlayer.getBukkitEntity(), (org.bukkit.entity.ExperienceOrb) this.getBukkitEntity()).callEvent()) { // Paper - PlayerPickupExperienceEvent
 +                player.takeXpDelay = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerXpCooldownEvent(player, 2, org.bukkit.event.player.PlayerExpCooldownChangeEvent.ChangeReason.PICKUP_ORB).getNewCooldown(); // CraftBukkit - entity.takeXpDelay = 2;
                  player.take(this, 1);
                  int remaining = this.repairPlayerItems(serverPlayer, this.getValue());

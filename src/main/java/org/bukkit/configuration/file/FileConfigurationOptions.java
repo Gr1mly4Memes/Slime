@@ -1,12 +1,13 @@
 package org.bukkit.configuration.file;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.MemoryConfigurationOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Various settings for controlling the input and output of a {@link
@@ -15,7 +16,10 @@ import org.jetbrains.annotations.Nullable;
 public class FileConfigurationOptions extends MemoryConfigurationOptions {
     private List<String> header = Collections.emptyList();
     private List<String> footer = Collections.emptyList();
-    private boolean parseComments = true;
+    // Paper start - add system prop for comment parsing
+    private static final boolean PAPER_PARSE_COMMENTS_BY_DEFAULT = Boolean.parseBoolean(System.getProperty("Paper.parseYamlCommentsByDefault", "true"));
+    private boolean parseComments = PAPER_PARSE_COMMENTS_BY_DEFAULT;
+    // Paper end
 
     protected FileConfigurationOptions(@NotNull MemoryConfiguration configuration) {
         super(configuration);

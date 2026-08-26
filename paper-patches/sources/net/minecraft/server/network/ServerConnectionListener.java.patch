@@ -122,7 +122,7 @@
 +
 +                // Need to manually throw to match how ChannelFuture#sync throws
 +                if (closeFuture.state() == ChannelFuture.State.FAILED) {
-+                    com.destroystokyo.paper.util.SneakyThrow.sneaky(closeFuture.exceptionNow());
++                    com.destroystokyo.util.com.destroystokyo.paper.SneakyThrow.sneaky(closeFuture.exceptionNow());
 +                }
 +                // Paper end - Add maximum time to wait for channels to close
              } catch (InterruptedException ignored) {

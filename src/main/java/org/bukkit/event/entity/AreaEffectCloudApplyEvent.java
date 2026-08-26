@@ -1,40 +1,36 @@
 package org.bukkit.event.entity;
 
-import java.util.List;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
- * Called when a lingering potion applies it's effects. Happens
+ * Called when a lingering potion applies its effects. Happens
  * once every 5 ticks
  */
 public class AreaEffectCloudApplyEvent extends EntityEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-    private final List<LivingEntity> affectedEntities;
-    private boolean cancelled = false;
 
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
+    private final List<LivingEntity> affectedEntities;
+
+    private boolean cancelled;
+
+    @ApiStatus.Internal
     public AreaEffectCloudApplyEvent(@NotNull final AreaEffectCloud entity, @NotNull final List<LivingEntity> affectedEntities) {
         super(entity);
         this.affectedEntities = affectedEntities;
     }
 
     @Override
-    public boolean isCancelled() {
-        return this.cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
-    }
-
-    @Override
     @NotNull
     public AreaEffectCloud getEntity() {
-        return (AreaEffectCloud) entity;
+        return (AreaEffectCloud) this.entity;
     }
 
     /**
@@ -49,17 +45,27 @@ public class AreaEffectCloudApplyEvent extends EntityEvent implements Cancellabl
      */
     @NotNull
     public List<LivingEntity> getAffectedEntities() {
-        return affectedEntities;
+        return this.affectedEntities;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
     }
 
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return handlers;
+        return HANDLER_LIST;
     }
 
     @NotNull
     public static HandlerList getHandlerList() {
-        return handlers;
+        return HANDLER_LIST;
     }
 }

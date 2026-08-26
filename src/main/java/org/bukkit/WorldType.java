@@ -1,10 +1,11 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
-import java.util.Locale;
-import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Represents various types of worlds that may exist
@@ -13,7 +14,9 @@ public enum WorldType {
     NORMAL("DEFAULT"),
     FLAT("FLAT"),
     LARGE_BIOMES("LARGEBIOMES"),
-    AMPLIFIED("AMPLIFIED");
+    AMPLIFIED("AMPLIFIED"),
+    SINGLE_BIOME_SURFACE("SINGLE_BIOME_SURFACE"),
+    DEBUG_ALL_BLOCK_STATES("DEBUG");
 
     private static final Map<String, WorldType> BY_NAME = Maps.newHashMap();
     private final String name;

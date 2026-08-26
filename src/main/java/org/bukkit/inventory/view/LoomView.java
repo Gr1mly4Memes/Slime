@@ -1,10 +1,11 @@
 package org.bukkit.inventory.view;
 
-import java.util.List;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.LoomInventory;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * An instance of {@link InventoryView} which provides extra methods related to

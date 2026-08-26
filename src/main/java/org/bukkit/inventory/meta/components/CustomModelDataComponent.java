@@ -1,10 +1,11 @@
 package org.bukkit.inventory.meta.components;
 
-import java.util.List;
 import org.bukkit.Color;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Represents a component which adds custom model data.

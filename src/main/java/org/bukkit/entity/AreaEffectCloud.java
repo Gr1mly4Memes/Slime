@@ -1,6 +1,5 @@
 package org.bukkit.entity;
 
-import java.util.List;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.potion.PotionData;
@@ -11,6 +10,8 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Represents an area effect cloud which will imbue a potion effect onto
  * entities which enter it.
@@ -20,14 +21,14 @@ public interface AreaEffectCloud extends Entity {
     /**
      * Gets the duration which this cloud will exist for (in ticks).
      *
-     * @return cloud duration
+     * @return cloud duration or {@link PotionEffect#INFINITE_DURATION} for no duration
      */
     int getDuration();
 
     /**
      * Sets the duration which this cloud will exist for (in ticks).
      *
-     * @param duration cloud duration
+     * @param duration cloud duration or {@link PotionEffect#INFINITE_DURATION} for no duration
      */
     void setDuration(int duration);
 
@@ -115,7 +116,7 @@ public interface AreaEffectCloud extends Entity {
     float getRadiusPerTick();
 
     /**
-     * Gets the amount that the radius of this cloud will decrease by each tick.
+     * Sets the amount that the radius of this cloud will decrease by each tick.
      *
      * @param radius per tick delta
      */
@@ -139,7 +140,7 @@ public interface AreaEffectCloud extends Entity {
     /**
      * Sets the particle which this cloud will be composed of
      *
-     * @param <T> type of particle data (see {@link Particle#getDataType()}
+     * @param <T> type of particle data (see {@link Particle#getDataType()})
      * @param particle the new particle type
      * @param data the data to use for the particle or null,
      *             the type of this depends on {@link Particle#getDataType()}
@@ -152,7 +153,7 @@ public interface AreaEffectCloud extends Entity {
      * @param data PotionData to set the base potion state to
      * @deprecated Upgraded / extended potions are now their own {@link PotionType} use {@link #setBasePotionType} instead.
      */
-    @Deprecated(since = "1.20.6")
+    @Deprecated(since = "1.20.6", forRemoval = true)
     void setBasePotionData(@Nullable PotionData data);
 
     /**
@@ -162,7 +163,7 @@ public interface AreaEffectCloud extends Entity {
      * @deprecated Upgraded / extended potions are now their own {@link PotionType} use {@link #getBasePotionType()} instead.
      */
     @Nullable
-    @Deprecated(since = "1.20.6")
+    @Deprecated(since = "1.20.6", forRemoval = true)
     PotionData getBasePotionData();
 
     /**
@@ -213,7 +214,7 @@ public interface AreaEffectCloud extends Entity {
      * Removes a custom potion effect from this cloud.
      *
      * @param type the potion effect type to remove
-     * @return true if the an effect was removed as a result of this call
+     * @return true if the effect was removed as a result of this call
      */
     boolean removeCustomEffect(@NotNull PotionEffectType type);
 
@@ -223,7 +224,7 @@ public interface AreaEffectCloud extends Entity {
      * @param type the potion effect type to check for
      * @return true if the potion has this effect
      */
-    boolean hasCustomEffect(@Nullable PotionEffectType type);
+    boolean hasCustomEffect(@NotNull PotionEffectType type);
 
     /**
      * Removes all custom potion effects from this cloud.
@@ -241,9 +242,9 @@ public interface AreaEffectCloud extends Entity {
     /**
      * Sets the color of this cloud. Will be applied as a tint to its particles.
      *
-     * @param color cloud color
+     * @param color cloud color or {@code null} to reset to default
      */
-    void setColor(@NotNull Color color);
+    void setColor(@Nullable Color color);
 
     /**
      * Retrieve the original source of this cloud.
@@ -259,4 +260,20 @@ public interface AreaEffectCloud extends Entity {
      * @param source the {@link ProjectileSource} that threw the LingeringPotion
      */
     public void setSource(@Nullable ProjectileSource source);
+
+    // Paper start - owner API
+    /**
+     * Get the entity UUID for the owner of this area effect cloud.
+     *
+     * @return the entity owner uuid or null
+     */
+    @Nullable java.util.UUID getOwnerUniqueId();
+
+    /**
+     * Sets the entity UUID for the owner of this area effect cloud.
+     *
+     * @param ownerUuid the entity owner uuid or null to clear
+     */
+    void setOwnerUniqueId(@Nullable java.util.UUID ownerUuid);
+    // Paper end
 }

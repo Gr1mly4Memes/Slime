@@ -1366,7 +1366,7 @@
 +                final org.bukkit.inventory.ItemStack oldItem = CraftItemStack.asBukkitCopy(previous);
 +                final org.bukkit.inventory.ItemStack newItem = CraftItemStack.asBukkitCopy(current);
 +                if (this instanceof ServerPlayer && slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
-+                    new com.destroystokyo.paper.event.player.PlayerArmorChangeEvent((org.bukkit.entity.Player)this.getBukkitEntity(), com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType.valueOf(slot.name()), oldItem, newItem).callEvent();
++                    new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerArmorChangeEvent((org.bukkit.entity.Player)this.getBukkitEntity(), com.destroystokyo.player.event.com.destroystokyo.paper.PlayerArmorChangeEvent.SlotType.valueOf(slot.name()), oldItem, newItem).callEvent();
 +                }
 +                // Paper end - EntityEquipmentChangedEvent, PlayerArmorChangeEvent
                  if (changedItems == null) {
@@ -1401,7 +1401,7 @@
              if (!inWaterAndHasFluidHeight || this.onGround() && !(fluidHeight > fluidJumpThreshold)) {
                  if (!this.isInLava() || this.onGround() && this.isInShallowFluid(FluidTags.LAVA)) {
                      if ((this.onGround() || inWaterAndHasFluidHeight && fluidHeight <= fluidJumpThreshold) && this.noJumpDelay == 0) {
-+                        if (new com.destroystokyo.paper.event.entity.EntityJumpEvent(getBukkitLivingEntity()).callEvent()) { // Paper - Entity Jump API
++                        if (new com.destroystokyo.entity.event.com.destroystokyo.paper.EntityJumpEvent(getBukkitLivingEntity()).callEvent()) { // Paper - Entity Jump API
                          this.jumpFromGround();
                          this.noJumpDelay = 10;
 +                        } else { this.setJumping(false); } // Paper - Entity Jump API; setJumping(false) stops a potential loop

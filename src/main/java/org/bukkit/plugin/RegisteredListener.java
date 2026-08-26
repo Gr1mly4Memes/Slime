@@ -1,16 +1,13 @@
 package org.bukkit.plugin;
 
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Stores relevant information for plugin listeners
  */
 public class RegisteredListener {
+
     private final Listener listener;
     private final EventPriority priority;
     private final Plugin plugin;
@@ -77,5 +74,26 @@ public class RegisteredListener {
      */
     public boolean isIgnoringCancelled() {
         return ignoreCancelled;
+    }
+
+    /**
+     * Get the executor for this registration.
+     *
+     * @return executor
+     */
+    @NotNull
+    public EventExecutor getExecutor() {
+        return this.executor;
+    }
+
+    @Override
+    public String toString() {
+        return "RegisteredListener{"
+            + "plugin=\"" + this.plugin.getName()
+            + "\", listener=\"" + this.listener
+            + "\", executor=\"" + this.executor
+            + "\", priority=\"" + this.priority.name() + " (" + this.priority.getSlot() + ")"
+            + "\", ignoringCancelled=" + this.ignoreCancelled
+            + "}";
     }
 }

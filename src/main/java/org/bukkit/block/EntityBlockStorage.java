@@ -1,8 +1,9 @@
 package org.bukkit.block;
 
-import java.util.List;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Represents a captured state of a block which stores entities.
@@ -47,10 +48,36 @@ public interface EntityBlockStorage<T extends Entity> extends TileState {
     @NotNull
     List<T> releaseEntities();
 
+    // Purpur start - Stored Bee API
+    /**
+     * Releases a stored entity, and returns the entity in the world.
+     *
+     * @param entity Entity to release
+     * @return The entity which was released, or null if the stored entity is not in the hive
+     */
+    @org.jetbrains.annotations.Nullable
+    T releaseEntity(@NotNull org.purpurmc.purpur.entity.StoredEntity<T> entity);
+
+    /**
+     * Gets all the entities currently stored in the block.
+     *
+     * @return List of all entities which are stored in the block
+     */
+    @NotNull
+    List<org.purpurmc.purpur.entity.StoredEntity<T>> getEntities();
+    // Purpur end - Stored Bee API
+
     /**
      * Add an entity to the block.
      *
      * @param entity Entity to add to the block
      */
     void addEntity(@NotNull T entity);
+
+    // Paper start - Add EntityBlockStorage clearEntities
+    /**
+     * Clear all currently stored entities in the block.
+     */
+    void clearEntities();
+    // Paper end
 }

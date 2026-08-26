@@ -1,11 +1,12 @@
 package org.bukkit.material;
 
 import com.google.common.base.Preconditions;
-import java.util.EnumSet;
-import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.material.types.MushroomBlockTexture;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Represents a huge mushroom block with certain combinations of faces set to
@@ -17,7 +18,7 @@ import org.bukkit.material.types.MushroomBlockTexture;
  * @deprecated all usage of MaterialData is deprecated and subject to removal.
  * Use {@link org.bukkit.block.data.BlockData}.
  */
-@Deprecated(since = "1.14.1")
+@Deprecated(since = "1.13", forRemoval = true)
 public class Mushroom extends MaterialData {
     private static final byte NORTH_LIMIT = 4;
     private static final byte SOUTH_LIMIT = 6;

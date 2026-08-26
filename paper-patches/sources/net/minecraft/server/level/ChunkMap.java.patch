@@ -223,7 +223,7 @@
          for (ServerPlayer player : this.playerMap.getAllPlayers()) {
 -            if (this.playerIsCloseEnoughForSpawning(player, pos)) {
 +            // Paper start - PlayerNaturallySpawnCreaturesEvent
-+            com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent event;
++            com.destroystokyo.entity.event.com.destroystokyo.paper.PlayerNaturallySpawnCreaturesEvent event;
 +            blockRange = 16384.0;
 +            if (reducedRange) {
 +                event = player.playerNaturallySpawnedEvent;

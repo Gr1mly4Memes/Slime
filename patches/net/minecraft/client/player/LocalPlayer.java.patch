@@ -42,17 +42,19 @@
      }
  
      public Portal.Transition getActivePortalLocalTransition() {
-@@ -971,8 +_,19 @@
+@@ -970,9 +_,21 @@
+         this.portalEffectIntensity = Mth.clamp(this.portalEffectIntensity + step, 0.0F, 1.0F);
      }
  
-     @Override
-+    protected boolean canGlide() {
++    // Slime - change canGlide() access modifier to public
++    @Override
++    public boolean canGlide() {
 +        // Neo: Override canGlide for the client to check if it is connected to a neo forge server, and if not then fall back to checking the worn items.
 +        // This way when Player#tryToStartFallFlying is called, on the client, it is able to check for the vanilla components on equipped items
 +        return !getAbilities().flying && canGlide(connection.getConnectionType().isNeoForge());
 +    }
 +
-+    @Override
+     @Override
      public void rideTick() {
          super.rideTick();
 +        if (this.wantsToStopRiding() && this.isPassenger()) {

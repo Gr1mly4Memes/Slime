@@ -1,9 +1,10 @@
 package org.bukkit.craftbukkit.advancement;
 
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.advancement.AdvancementRequirement;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
 
 public class CraftAdvancementRequirement implements AdvancementRequirement {
 
@@ -16,11 +17,11 @@ public class CraftAdvancementRequirement implements AdvancementRequirement {
     @NotNull
     @Override
     public List<String> getRequiredCriteria() {
-        return Collections.unmodifiableList(requirements);
+        return Collections.unmodifiableList(this.requirements);
     }
 
     @Override
     public boolean isStrict() {
-        return requirements.size() == 1;
+        return this.requirements.size() == 1;
     }
 }

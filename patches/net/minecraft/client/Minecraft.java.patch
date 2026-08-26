@@ -8,6 +8,21 @@
      private final ItemModelResolver itemModelResolver;
      private final MapRenderer mapRenderer;
      public final ParticleEngine particleEngine;
+@@ -397,7 +_,13 @@
+         YggdrasilAuthenticationService authenticationService = this.offlineDeveloperMode
+             ? YggdrasilAuthenticationService.createOffline(this.proxy)
+             : new YggdrasilAuthenticationService(this.proxy);
+-        this.services = Services.create(authenticationService, this.gameDirectory);
++        // Slime start - fix Services.create() call with missing parameters
++        try {
++            this.services = Services.create(authenticationService, this.gameDirectory, new File(this.gameDirectory, Services.USERID_CACHE_FILE), null);
++        } catch (Exception e) {
++            throw new RuntimeException("Failed to create services", e);
++        }
++        // Slime end - fix Services.create() call with missing parameters
+         this.user = gameConfig.user.user;
+         this.profileFuture = this.offlineDeveloperMode
+             ? CompletableFuture.completedFuture(null)
 @@ -412,7 +_,6 @@
              }
          }, Util.nonCriticalIoPool());

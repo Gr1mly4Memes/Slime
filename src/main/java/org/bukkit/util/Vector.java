@@ -2,21 +2,17 @@ package org.bukkit.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Doubles;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
-import org.joml.RoundingMode;
-import org.joml.Vector3d;
-import org.joml.Vector3dc;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
-import org.joml.Vector3i;
-import org.joml.Vector3ic;
+import org.joml.*;
+
+import java.lang.Math;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Represents a mutable vector. Because the components of Vectors are mutable,
@@ -388,9 +384,9 @@ public class Vector implements Cloneable, ConfigurationSerializable {
      */
     @NotNull
     Vector normalizeZeros() {
-        if (x == -0.0D) x = 0.0D;
-        if (y == -0.0D) y = 0.0D;
-        if (z == -0.0D) z = 0.0D;
+        if (x == -0.0) x = 0.0;
+        if (y == -0.0) y = 0.0;
+        if (z == -0.0) z = 0.0;
         return this;
     }
 

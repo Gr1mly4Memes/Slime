@@ -3,8 +3,6 @@ package gr1mly4memes.launcher.slime.libraries;
 import gr1mly4memes.launcher.slime.Main;
 import gr1mly4memes.launcher.slime.action.Action;
 import gr1mly4memes.launcher.slime.util.SHA256;
-import lombok.SneakyThrows;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,9 +10,14 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import lombok.SneakyThrows;
 
 import static gr1mly4memes.launcher.slime.Main.DEBUG;
 

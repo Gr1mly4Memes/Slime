@@ -1,10 +1,13 @@
 package org.bukkit.generator;
 
-import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.RegionAccessor;
+import org.bukkit.World;
 import org.bukkit.block.BlockState;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * A limited region is used in world generation for features which are
@@ -53,4 +56,102 @@ public interface LimitedRegion extends RegionAccessor {
      */
     @NotNull
     List<BlockState> getTileEntities();
+
+    /**
+     * Sets the {@link BlockState} at a location.
+     *
+     * @param x X coordinate.
+     * @param y Y coordinate.
+     * @param z Z coordinate.
+     * @param state The block state.
+     */
+    void setBlockState(int x, int y, int z, @NotNull BlockState state);
+
+    /**
+     * Sets the {@link BlockState} at a location.
+     *
+     * @param location Location to set block state.
+     * @param state The block state.
+     */
+    default void setBlockState(@NotNull Vector location, @NotNull BlockState state) {
+        this.setBlockState(location.getBlockX(), location.getBlockY(), location.getBlockZ(), state);
+    }
+
+    /**
+     * Schedules a block update at (x, y, z).
+     *
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param z Z coordinate
+     */
+    void scheduleBlockUpdate(int x, int y, int z);
+
+    /**
+     * Schedules a block update at a vector location.
+     *
+     * @param location {@link Vector} representing the position of the block to update.
+     */
+    default void scheduleBlockUpdate(@NotNull Vector location) {
+        this.scheduleBlockUpdate(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    /**
+     * Schedules a fluid update at (x, y, z).
+     *
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param z Z coordinate
+     */
+    void scheduleFluidUpdate(int x, int y, int z);
+
+    /**
+     * Schedules a fluid update at a vector location.
+     *
+     * @param location {@link Vector} representing the position of the block to update.
+     */
+    default void scheduleFluidUpdate(@NotNull Vector location) {
+        this.scheduleFluidUpdate(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    /**
+     * Gets the {@link World} object this region represents.
+     * <p>
+     * Do <b>not</b> attempt to read from/write to this world! Doing so during generation <b>will cause a deadlock!</b>
+     *
+     * @return The {@link World} object that this region represents.
+     */
+    @NotNull
+    World getWorld();
+
+    /**
+     * Gets the X-coordinate of the chunk in the center of the region.
+     *
+     * @return The center chunk's X coordinate.
+     */
+    int getCenterChunkX();
+
+    /**
+     * Gets the X-coordinate of the block in the center of the region.
+     *
+     * @return The center chunk's X coordinate.
+     */
+    default int getCenterBlockX() {
+        return this.getCenterChunkX() << 4;
+    }
+
+    /**
+     * Gets the Z-coordinate of the chunk in the center of the region.
+     *
+     * @return The center chunk's Z coordinate.
+     */
+    int getCenterChunkZ();
+
+    /**
+     * Gets the Z-coordinate of the block in the center of the region.
+     *
+     * @return The center chunk's Z coordinate.
+     */
+    default int getCenterBlockZ() {
+        return this.getCenterChunkZ() << 4;
+    }
 }

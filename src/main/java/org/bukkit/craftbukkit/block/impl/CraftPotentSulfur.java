@@ -1,29 +1,32 @@
-/**
- * Automatically generated file, changes will be lost.
- */
 package org.bukkit.craftbukkit.block.impl;
 
-public final class CraftPotentSulfur extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.PotentSulfur {
+import com.google.common.base.Preconditions;
+import io.papermc.paper.annotation.GeneratedClass;
+import net.minecraft.world.level.block.PotentSulfurBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.PotentSulfurState;
+import org.bukkit.block.data.type.PotentSulfur;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.jspecify.annotations.NullMarked;
 
-    public CraftPotentSulfur() {
-        super();
-    }
+@NullMarked
+@GeneratedClass
+public class CraftPotentSulfur extends CraftBlockData implements PotentSulfur {
+    private static final EnumProperty<PotentSulfurState> STATE = PotentSulfurBlock.STATE;
 
-    public CraftPotentSulfur(net.minecraft.world.level.block.state.BlockState state) {
+    public CraftPotentSulfur(BlockState state) {
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftPotentSulfur
-
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, State> POTENT_SULFUR_STATE = getEnum(net.minecraft.world.level.block.PotentSulfurBlock.class, "potent_sulfur_state", State.class);
-
     @Override
     public State getPotentSulfurState() {
-        return get(POTENT_SULFUR_STATE);
+        return this.get(STATE, State.class);
     }
 
     @Override
-    public void setPotentSulfurState(State state) {
-        set(POTENT_SULFUR_STATE, state);
+    public void setPotentSulfurState(final State state) {
+        Preconditions.checkArgument(state != null, "state cannot be null!");
+        this.set(STATE, state);
     }
 }

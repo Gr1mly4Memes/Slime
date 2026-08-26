@@ -34,7 +34,7 @@
                      this.turtle.hasEgg()
                          || this.turtle.getRandom().nextInt(reducedTickDelay(700)) == 0 && !this.turtle.homePos.closerToCenterThan(this.turtle.position(), 64.0)
 -                );
-+                ) && new com.destroystokyo.paper.event.entity.TurtleGoHomeEvent((org.bukkit.entity.Turtle) this.turtle.getBukkitEntity()).callEvent(); // Paper - Turtle API
++                ) && new com.destroystokyo.entity.event.com.destroystokyo.paper.TurtleGoHomeEvent((org.bukkit.entity.Turtle) this.turtle.getBukkitEntity()).callEvent(); // Paper - Turtle API
          }
  
          @Override
@@ -43,11 +43,11 @@
              if (!this.turtle.isInWater() && this.isReachedTarget()) {
                  if (this.turtle.layEggCounter < 1) {
 -                    this.turtle.setLayingEgg(true);
-+                    this.turtle.setLayingEgg(new com.destroystokyo.paper.event.entity.TurtleStartDiggingEvent((org.bukkit.entity.Turtle) this.turtle.getBukkitEntity(), org.bukkit.craftbukkit.util.CraftLocation.toBukkit(this.blockPos, this.turtle.level())).callEvent()); // Paper - Turtle API
++                    this.turtle.setLayingEgg(new com.destroystokyo.entity.event.com.destroystokyo.paper.TurtleStartDiggingEvent((org.bukkit.entity.Turtle) this.turtle.getBukkitEntity(), org.bukkit.craftbukkit.util.CraftLocation.toBukkit(this.blockPos, this.turtle.level())).callEvent()); // Paper - Turtle API
                  } else if (this.turtle.layEggCounter > this.adjustedTickDelay(200)) {
 +                    // Paper start - Turtle API
 +                    int eggCount = this.turtle.random.nextInt(4) + 1;
-+                    com.destroystokyo.paper.event.entity.TurtleLayEggEvent layEggEvent = new com.destroystokyo.paper.event.entity.TurtleLayEggEvent((org.bukkit.entity.Turtle) this.turtle.getBukkitEntity(), org.bukkit.craftbukkit.util.CraftLocation.toBukkit(this.blockPos.above(), this.turtle.level()), eggCount);
++                    com.destroystokyo.entity.event.com.destroystokyo.paper.TurtleLayEggEvent layEggEvent = new com.destroystokyo.entity.event.com.destroystokyo.paper.TurtleLayEggEvent((org.bukkit.entity.Turtle) this.turtle.getBukkitEntity(), org.bukkit.craftbukkit.util.CraftLocation.toBukkit(this.blockPos.above(), this.turtle.level()), eggCount);
 +                    if (layEggEvent.callEvent() && org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.turtle, this.blockPos.above(), Blocks.TURTLE_EGG.defaultBlockState().setValue(TurtleEggBlock.EGGS, layEggEvent.getEggCount()))) {
 +                    // Paper end - Turtle API
                      Level level = this.turtle.level();

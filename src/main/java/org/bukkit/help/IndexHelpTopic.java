@@ -1,6 +1,5 @@
 package org.bukkit.help;
 
-import java.util.Collection;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -8,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * This help topic generates a list of other help topics. This class is useful
@@ -49,10 +50,15 @@ public class IndexHelpTopic extends HelpTopic {
         if (sender instanceof ConsoleCommandSender) {
             return true;
         }
-        if (permission == null) {
-            return true;
+        // Paper start - Fix HelpCommand searching - do not show index if no topic is visible to the sender
+        if (permission != null && !sender.hasPermission(permission)) return false; // old spigot permission check
+
+        for (HelpTopic topic : allTopics) {
+            if (topic.canSee(sender)) return true;
         }
-        return sender.hasPermission(permission);
+
+        return false;
+        // Paper end - Fix HelpCommand searching - do not show index if no topic is visible to the sender
     }
 
     @Override

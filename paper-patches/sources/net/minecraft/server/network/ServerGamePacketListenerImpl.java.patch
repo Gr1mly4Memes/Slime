@@ -431,9 +431,9 @@
          }
  
 +        // Paper start - AsyncTabCompleteEvent
-+        final com.destroystokyo.paper.event.server.AsyncTabCompleteEvent event = new com.destroystokyo.paper.event.server.AsyncTabCompleteEvent(this.getCraftPlayer(), packet.getCommand(), true, null);
++        final com.destroystokyo.server.event.com.destroystokyo.paper.AsyncTabCompleteEvent event = new com.destroystokyo.server.event.com.destroystokyo.paper.AsyncTabCompleteEvent(this.getCraftPlayer(), packet.getCommand(), true, null);
 +        event.callEvent();
-+        final List<com.destroystokyo.paper.event.server.AsyncTabCompleteEvent.Completion> completions = event.isCancelled() ? com.google.common.collect.ImmutableList.of() : event.completions();
++        final List<com.destroystokyo.server.event.com.destroystokyo.paper.AsyncTabCompleteEvent.Completion> completions = event.isCancelled() ? com.google.common.collect.ImmutableList.of() : event.completions();
 +        // If the event isn't handled, we can assume that we have no completions, and so we'll ask the server
 +        if (!event.isHandled()) {
 +            if (event.isCancelled()) {
@@ -445,7 +445,7 @@
 +        } else if (!completions.isEmpty()) {
 +            final com.mojang.brigadier.suggestion.SuggestionsBuilder builder0 = new com.mojang.brigadier.suggestion.SuggestionsBuilder(packet.getCommand(), command.getTotalLength());
 +            final com.mojang.brigadier.suggestion.SuggestionsBuilder builder = builder0.createOffset(builder0.getInput().lastIndexOf(' ') + 1);
-+            for (final com.destroystokyo.paper.event.server.AsyncTabCompleteEvent.Completion completion : completions) {
++            for (final com.destroystokyo.server.event.com.destroystokyo.paper.AsyncTabCompleteEvent.Completion completion : completions) {
 +                final Integer intSuggestion = com.google.common.primitives.Ints.tryParse(completion.suggestion());
 +                if (intSuggestion != null) {
 +                    builder.suggest(intSuggestion, PaperAdventure.asVanilla(completion.tooltip()));
@@ -455,7 +455,7 @@
 +            }
 +            // Paper start - Brigadier API
 +            com.mojang.brigadier.suggestion.Suggestions suggestions = builder.buildFuture().join();
-+            com.destroystokyo.paper.event.brigadier.AsyncPlayerSendSuggestionsEvent suggestEvent = new com.destroystokyo.paper.event.brigadier.AsyncPlayerSendSuggestionsEvent(this.getCraftPlayer(), suggestions, packet.getCommand());
++            com.destroystokyo.brigadier.event.com.destroystokyo.paper.AsyncPlayerSendSuggestionsEvent suggestEvent = new com.destroystokyo.brigadier.event.com.destroystokyo.paper.AsyncPlayerSendSuggestionsEvent(this.getCraftPlayer(), suggestions, packet.getCommand());
 +            suggestEvent.setCancelled(suggestions.isEmpty());
 +            if (suggestEvent.callEvent()) {
 +                this.connection.send(new ClientboundCommandSuggestionsPacket(packet.getId(), limitTo(suggestEvent.getSuggestions(), ServerGamePacketListenerImpl.MAX_COMMAND_SUGGESTIONS)));
@@ -488,7 +488,7 @@
 +            }
 +            // Paper end - Don't tab-complete namespaced commands if send-namespaced is false
 +            // Paper start - Brigadier API
-+            com.destroystokyo.paper.event.brigadier.AsyncPlayerSendSuggestionsEvent suggestEvent = new com.destroystokyo.paper.event.brigadier.AsyncPlayerSendSuggestionsEvent(this.getCraftPlayer(), results, packet.getCommand());
++            com.destroystokyo.brigadier.event.com.destroystokyo.paper.AsyncPlayerSendSuggestionsEvent suggestEvent = new com.destroystokyo.brigadier.event.com.destroystokyo.paper.AsyncPlayerSendSuggestionsEvent(this.getCraftPlayer(), results, packet.getCommand());
 +            suggestEvent.setCancelled(results.isEmpty());
 +            if (suggestEvent.callEvent()) {
 +                this.send(new ClientboundCommandSuggestionsPacket(packet.getId(), limitTo(suggestEvent.getSuggestions(), ServerGamePacketListenerImpl.MAX_COMMAND_SUGGESTIONS)));
@@ -826,7 +826,7 @@
 +                                    Location from = new Location(player.getWorld(), this.lastPosX, this.lastPosY, this.lastPosZ, this.lastYRot, this.lastXRot); // Get the Players previous Event location.
 +                                    Location to = new Location(player.getWorld(), targetX, targetY, targetZ, targetYRot, targetXRot);
 +
-+                                    com.destroystokyo.paper.event.player.PlayerJumpEvent event = new com.destroystokyo.paper.event.player.PlayerJumpEvent(player, from, to);
++                                    com.destroystokyo.player.event.com.destroystokyo.paper.PlayerJumpEvent event = new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerJumpEvent(player, from, to);
 +
 +                                    if (event.callEvent()) {
 +                                        this.player.jumpFromGround();
@@ -2312,7 +2312,7 @@
 +                            // Paper start - Add PlayerRecipeBookClickEvent
 +                            NamespacedKey recipeName = org.bukkit.craftbukkit.util.CraftNamespacedKey.fromMinecraft(recipe.id().identifier());
 +                            boolean makeAll = packet.useMaxItems();
-+                            com.destroystokyo.paper.event.player.PlayerRecipeBookClickEvent paperEvent = new com.destroystokyo.paper.event.player.PlayerRecipeBookClickEvent(
++                            com.destroystokyo.player.event.com.destroystokyo.paper.PlayerRecipeBookClickEvent paperEvent = new com.destroystokyo.player.event.com.destroystokyo.paper.PlayerRecipeBookClickEvent(
 +                                this.player.getBukkitEntity(), recipeName, makeAll
 +                            );
 +                            if (!paperEvent.callEvent()) {

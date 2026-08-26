@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/player/RemotePlayer.java
++++ b/net/minecraft/client/player/RemotePlayer.java
+@@ -78,8 +_,9 @@
+         this.lerpDeltaMovementSteps = this.getType().updateInterval() + 1;
+     }
+ 
++    // Slime - change updatePlayerPose() access modifier to public
+     @Override
+-    protected void updatePlayerPose() {
++    public void updatePlayerPose() {
+     }
+ 
+     @Override

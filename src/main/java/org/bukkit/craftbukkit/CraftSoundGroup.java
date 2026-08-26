@@ -1,9 +1,10 @@
 package org.bukkit.craftbukkit;
 
-import java.util.HashMap;
 import net.minecraft.world.level.block.SoundType;
 import org.bukkit.Sound;
 import org.bukkit.SoundGroup;
+
+import java.util.HashMap;
 
 public class CraftSoundGroup implements SoundGroup {
 
@@ -11,7 +12,7 @@ public class CraftSoundGroup implements SoundGroup {
     private static final HashMap<SoundType, CraftSoundGroup> SOUND_GROUPS = new HashMap<>();
 
     public static SoundGroup getSoundGroup(SoundType soundEffectType) {
-        return SOUND_GROUPS.computeIfAbsent(soundEffectType, CraftSoundGroup::new);
+        return CraftSoundGroup.SOUND_GROUPS.computeIfAbsent(soundEffectType, CraftSoundGroup::new);
     }
 
     private CraftSoundGroup(SoundType soundEffectType) {
@@ -19,41 +20,41 @@ public class CraftSoundGroup implements SoundGroup {
     }
 
     public SoundType getHandle() {
-        return handle;
+        return this.handle;
     }
 
     @Override
     public float getVolume() {
-        return getHandle().getVolume();
+        return this.getHandle().getVolume();
     }
 
     @Override
     public float getPitch() {
-        return getHandle().getPitch();
+        return this.getHandle().getPitch();
     }
 
     @Override
     public Sound getBreakSound() {
-        return CraftSound.minecraftToBukkit(getHandle().breakSound);
+        return CraftSound.minecraftToBukkit(this.getHandle().getBreakSound());
     }
 
     @Override
     public Sound getStepSound() {
-        return CraftSound.minecraftToBukkit(getHandle().getStepSound());
+        return CraftSound.minecraftToBukkit(this.getHandle().getStepSound());
     }
 
     @Override
     public Sound getPlaceSound() {
-        return CraftSound.minecraftToBukkit(getHandle().getPlaceSound());
+        return CraftSound.minecraftToBukkit(this.getHandle().getPlaceSound());
     }
 
     @Override
     public Sound getHitSound() {
-        return CraftSound.minecraftToBukkit(getHandle().hitSound);
+        return CraftSound.minecraftToBukkit(this.getHandle().getHitSound());
     }
 
     @Override
     public Sound getFallSound() {
-        return CraftSound.minecraftToBukkit(getHandle().getFallSound());
+        return CraftSound.minecraftToBukkit(this.getHandle().getFallSound());
     }
 }

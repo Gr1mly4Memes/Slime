@@ -1,62 +1,68 @@
-/**
- * Automatically generated file, changes will be lost.
- */
 package org.bukkit.craftbukkit.block.impl;
 
-public final class CraftComparator extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Comparator, org.bukkit.block.data.Directional, org.bukkit.block.data.Powerable {
+import com.google.common.base.Preconditions;
+import io.papermc.paper.annotation.GeneratedClass;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.ComparatorBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.ComparatorMode;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Comparator;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.jspecify.annotations.NullMarked;
 
-    public CraftComparator() {
-        super();
-    }
+import java.util.Set;
 
-    public CraftComparator(net.minecraft.world.level.block.state.BlockState state) {
+@NullMarked
+@GeneratedClass
+public class CraftComparator extends CraftBlockData implements Comparator {
+    private static final EnumProperty<Direction> FACING = ComparatorBlock.FACING;
+
+    private static final EnumProperty<ComparatorMode> MODE = ComparatorBlock.MODE;
+
+    private static final BooleanProperty POWERED = ComparatorBlock.POWERED;
+
+    public CraftComparator(BlockState state) {
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftComparator
+    @Override
+    public BlockFace getFacing() {
+        return this.get(FACING, BlockFace.class);
+    }
 
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, Mode> MODE = getEnum(net.minecraft.world.level.block.ComparatorBlock.class, "mode", Mode.class);
+    @Override
+    public void setFacing(final BlockFace blockFace) {
+        Preconditions.checkArgument(blockFace != null, "blockFace cannot be null!");
+        Preconditions.checkArgument(blockFace.isCartesian() && blockFace.getModY() == 0, "Invalid face, only cartesian horizontal face are allowed for this property!");
+        this.set(FACING, blockFace);
+    }
+
+    @Override
+    public Set<BlockFace> getFaces() {
+        return this.getValues(FACING, BlockFace.class);
+    }
 
     @Override
     public Mode getMode() {
-        return get(MODE);
+        return this.get(MODE, Mode.class);
     }
 
     @Override
-    public void setMode(Mode mode) {
-        set(MODE, mode);
+    public void setMode(final Mode mode) {
+        Preconditions.checkArgument(mode != null, "mode cannot be null!");
+        this.set(MODE, mode);
     }
-
-    // org.bukkit.craftbukkit.block.data.CraftDirectional
-
-    private static final org.bukkit.craftbukkit.block.data.CraftBlockStateEnum<?, org.bukkit.block.BlockFace> FACING = getEnum(net.minecraft.world.level.block.ComparatorBlock.class, "facing", org.bukkit.block.BlockFace.class);
-
-    @Override
-    public org.bukkit.block.BlockFace getFacing() {
-        return get(FACING);
-    }
-
-    @Override
-    public void setFacing(org.bukkit.block.BlockFace facing) {
-        set(FACING, facing);
-    }
-
-    @Override
-    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
-        return getValues(FACING);
-    }
-
-    // org.bukkit.craftbukkit.block.data.CraftPowerable
-
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.ComparatorBlock.class, "powered");
 
     @Override
     public boolean isPowered() {
-        return get(POWERED);
+        return this.get(POWERED);
     }
 
     @Override
-    public void setPowered(boolean powered) {
-        set(POWERED, powered);
+    public void setPowered(final boolean powered) {
+        this.set(POWERED, powered);
     }
 }

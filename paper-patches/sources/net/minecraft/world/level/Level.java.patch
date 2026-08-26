@@ -399,8 +399,8 @@
 +        boolean playEffect = true;
 +        BlockState effectType = blockState;
 +        int xp = blockState.getBlock().getExpDrop(blockState, (ServerLevel) this, pos, ItemStack.EMPTY, true);
-+        if (com.destroystokyo.paper.event.block.BlockDestroyEvent.getHandlerList().getRegisteredListeners().length > 0) {
-+            com.destroystokyo.paper.event.block.BlockDestroyEvent event = new com.destroystokyo.paper.event.block.BlockDestroyEvent(org.bukkit.craftbukkit.block.CraftBlock.at(this, pos), fluidState.createLegacyBlock().asBlockData(), effectType.asBlockData(), xp, dropResources);
++        if (com.destroystokyo.block.event.com.destroystokyo.paper.BlockDestroyEvent.getHandlerList().getRegisteredListeners().length > 0) {
++            com.destroystokyo.block.event.com.destroystokyo.paper.BlockDestroyEvent event = new com.destroystokyo.block.event.com.destroystokyo.paper.BlockDestroyEvent(org.bukkit.craftbukkit.block.CraftBlock.at(this, pos), fluidState.createLegacyBlock().asBlockData(), effectType.asBlockData(), xp, dropResources);
 +            if (!event.callEvent()) {
 +                return false;
 +            }
@@ -490,7 +490,7 @@
 +            // Paper start - Prevent block entity and entity crashes
 +            final String msg = String.format("Entity threw exception at %s:%s,%s,%s", io.papermc.paper.util.MCUtil.getLevelName(entity.level()), entity.getX(), entity.getY(), entity.getZ());
 +            MinecraftServer.LOGGER.error(msg, t);
-+            getCraftServer().getPluginManager().callEvent(new com.destroystokyo.paper.event.server.ServerExceptionEvent(new com.destroystokyo.paper.exception.ServerInternalException(msg, t))); // Paper - ServerExceptionEvent
++            getCraftServer().getPluginManager().callEvent(new com.destroystokyo.server.event.com.destroystokyo.paper.ServerExceptionEvent(new com.destroystokyo.exception.com.destroystokyo.paper.ServerInternalException(msg, t))); // Paper - ServerExceptionEvent
 +            entity.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DISCARD);
 +            // Paper end - Prevent block entity and entity crashes
          }
