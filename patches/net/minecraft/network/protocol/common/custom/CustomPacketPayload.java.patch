@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/protocol/common/custom/CustomPacketPayload.java
 +++ b/net/minecraft/network/protocol/common/custom/CustomPacketPayload.java
-@@ -22,20 +_,25 @@
+@@ -22,20 +_,32 @@
      }
  
      static <B extends FriendlyByteBuf> StreamCodec<B, CustomPacketPayload> codec(
@@ -18,7 +18,15 @@
  
              private <T extends CustomPacketPayload> void writeCap(B output, CustomPacketPayload.Type<T> type, CustomPacketPayload payload) {
                  output.writeIdentifier(type.id());
-                 StreamCodec<B, T> codec = (StreamCodec<B, T>)this.findCodec(type.id);
+-                StreamCodec<B, T> codec = (StreamCodec<B, T>)this.findCodec(type.id);
++                // Slime start - fix ClassCastException when sending DiscardedPayload for known id like minecraft:register (NeoForge registers MinecraftRegisterPayload but Bukkit sends DiscardedPayload)
++                StreamCodec<B, T> codec;
++                if (payload instanceof DiscardedPayload) {
++                    codec = (StreamCodec<B, T>) fallback.create(type.id());
++                } else {
++                    codec = (StreamCodec<B, T>)this.findCodec(type.id);
++                }
++                // Slime end
 +                try {
                  codec.encode(output, (T)payload);
 +                } catch (RuntimeException e) {

@@ -181,6 +181,22 @@ public class Action {
             forgeArgs.add(arg.split(" ")[0]);
             forgeArgs.add(arg.split(" ")[1]);
         }
+        // Slime start - forward user server args (e.g. --nogui) from command line to FML Server; DataParser.launchArgs only contains fml bootstrap args
+        for (int i = 0; i < Main.mainArgs.size(); i++) {
+            String a = Main.mainArgs.get(i);
+            // Skip fml bootstrap args already added above to avoid duplicate
+            if (a.equals("--launchTarget") || a.equals("--fml.neoForgeVersion") || a.equals("--fml.mcVersion") || a.equals("--fml.neoFormVersion")) {
+                if (i + 1 < Main.mainArgs.size()) i++;
+                continue;
+            }
+            // Skip jvm/system args already handled by LaunchArgsParser (--add-opens, --add-exports, -D, -classpath) – forward only server args
+            if (a.startsWith("--add-opens") || a.startsWith("--add-exports") || a.startsWith("-D") || a.equals("-classpath") || a.equals("-cp")) {
+                if (a.equals("-classpath") || a.equals("-cp")) i++; // skip value
+                continue;
+            }
+            forgeArgs.add(a);
+        }
+        // Slime end
         LaunchArgsParser.init(DataParser.launchArgs);
 
         if (!MojangEulaUtil.hasAcceptedEULA() && OSUtil.getOS().isWindows()) {

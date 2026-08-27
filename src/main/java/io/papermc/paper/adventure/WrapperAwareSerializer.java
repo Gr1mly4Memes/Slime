@@ -15,7 +15,7 @@ public final class WrapperAwareSerializer implements ComponentSerializer<Compone
     private final Supplier<RegistryOps<Object>> javaOps;
 
     public WrapperAwareSerializer(final Supplier<RegistryOps<Object>> javaOps) {
-        this.javaOps = Suppliers.memoize(javaOps::get);
+        this.javaOps = javaOps; // Slime - don't memoize, CraftRegistry is null during early datapack load and becomes available later; memoizing fallback would stick to EMPTY
     }
 
     @Override

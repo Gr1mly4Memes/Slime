@@ -125,7 +125,12 @@ public final class PaperAdventure {
             return decoded.toString();
         }
     };
-    public static final ComponentSerializer<Component, Component, net.minecraft.network.chat.Component> WRAPPER_AWARE_SERIALIZER = new WrapperAwareSerializer(() -> CraftRegistry.getMinecraftRegistry().createSerializationContext(JavaOps.INSTANCE));
+    public static final ComponentSerializer<Component, Component, net.minecraft.network.chat.Component> WRAPPER_AWARE_SERIALIZER = new WrapperAwareSerializer(() -> { // Slime - fix NPE during early datapack load when CraftRegistry not yet initialized
+        var reg = CraftRegistry.getMinecraftRegistry();
+        if (reg != null) return reg.createSerializationContext(JavaOps.INSTANCE);
+        // Fallback for bootstrap before registry is available – use empty access, sufficient for pack name hashing
+        return net.minecraft.core.RegistryAccess.EMPTY.createSerializationContext(JavaOps.INSTANCE);
+    });
 
     private PaperAdventure() {
     }
