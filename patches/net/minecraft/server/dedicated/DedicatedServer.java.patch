@@ -136,7 +136,7 @@
          consoleThread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
 -        consoleThread.start();
 +        // consoleThread.start(); // Paper - Enhance console tab completions for brigadier commands; moved down
-+        // Slime start - NeoForge hybrid: Adventure BossBar ServiceLoader fails due to classloader split (Provider loaded by platform loader cannot see META-INF/services in minecraft classpath) -> pre-inject Paper provider
++        // Slime start - Adventure BossBar ServiceLoader fails due to classloader split (Provider loaded by platform loader cannot see META-INF/services in minecraft classpath) -> pre-inject Paper provider
 +        // Note: SERVICE is static final, Field.set fails on Java 21+ (IllegalAccessException: Can not set static final). Use Unsafe/VarHandle fallback.
 +        try {
 +            Class<?> _slimeAccessor = Class.forName("net.kyori.adventure.bossbar.BossBarImpl$ImplementationAccessor");
@@ -221,7 +221,7 @@
          LOGGER.info("Loading properties");
          DedicatedServerProperties properties = this.settings.getProperties();
          if (this.isSingleplayer()) {
-@@ -197,57 +_,157 @@
+@@ -197,57 +_,159 @@
              this.setLocalIp(properties.serverIp);
          }
  
@@ -255,6 +255,8 @@
 +        io.papermc.paper.command.PaperCommands.registerCommands(this); // Paper - setup /paper command
 +        //com.destroystokyo.paper.Metrics.PaperMetrics.startMetrics(); // Paper - start metrics // Slime remove sparks fly due to loading problems
 +        com.destroystokyo.paper.VersionHistoryManager.INSTANCE.getClass(); // Paper - load version history now
++        gg.pufferfish.pufferfish.PufferfishConfig.load(); // Pufferfish
++        gg.pufferfish.pufferfish.PufferfishCommand.init(); // Pufferfish
 +
 +        // this.worldData.setGameType(properties.gameMode.get()); // CraftBukkit - moved to world loading
          LOGGER.info("Default game type: {}", properties.gameMode.get());
@@ -403,12 +405,13 @@
              Thread watchdog = new Thread(new ServerWatchdog(this), "Server Watchdog");
              watchdog.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(LOGGER));
              watchdog.setDaemon(true);
-@@ -272,10 +_,23 @@
+@@ -272,10 +_,24 @@
              LOGGER.info("JMX monitoring enabled");
          }
  
 +        org.purpurmc.purpur.task.BossBarTask.startAll(); // Purpur - Implement TPSBar
 +        if (org.purpurmc.purpur.PurpurConfig.beeCountPayload) org.purpurmc.purpur.task.BeehiveTask.instance().register(); // Purpur - Give bee counts in beehives to Purpur clients
++        if (gg.pufferfish.pufferfish.PufferfishConfig.enableAsyncMobSpawning) mobSpawnExecutor.start(); // Pufferfish - optimize mob spawning
          this.saveEverything(false, true, true);
          this.notificationManager().serverStarted();
 +        if (net.neoforged.neoforge.common.config.NeoForgeServerConfig.INSTANCE.advertiseDedicatedServerToLan.get()) {

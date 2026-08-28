@@ -16,8 +16,11 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private final Holder.Reference<EntityType<?>> builtInRegistryHolder = BuiltInRegistries.ENTITY_TYPE.createIntrusiveHolder(this);
      public static final Codec<EntityType<?>> CODEC = BuiltInRegistries.ENTITY_TYPE.byNameCodec();
-@@ -68,15 +_,36 @@
+@@ -66,17 +_,39 @@
+     private final int clientTrackingRange;
+     private final int updateInterval;
      private final String descriptionId;
++    public boolean dabEnabled = false; // Pufferfish
      private @Nullable Component description;
      private final Optional<ResourceKey<LootTable>> lootTable;
 -    private final EntityDimensions dimensions;

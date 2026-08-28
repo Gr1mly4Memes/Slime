@@ -45,6 +45,19 @@
      public ItemStack createHorn() {
          RandomSource random = RandomSource.createThreadLocalInstance(this.getUUID().hashCode());
          TagKey<Instrument> key = this.isScreamingGoat() ? InstrumentTags.SCREAMING_GOAT_HORNS : InstrumentTags.REGULAR_GOAT_HORNS;
+@@ -170,10 +_,12 @@
+         return (Brain<Goat>) super.getBrain();
+     }
+ 
++    private int behaviorTick = 0; // Pufferfish
+     @Override
+     protected void customServerAiStep(ServerLevel level) {
+         ProfilerFiller profiler = Profiler.get();
+         profiler.push("goatBrain");
++        if (this.behaviorTick++ % this.activatedPriority == 0) // Pufferfish
+         this.getBrain().tick(level, this);
+         profiler.pop();
+         profiler.push("goatActivityUpdate");
 @@ -217,18 +_,25 @@
      public InteractionResult mobInteract(Player player, InteractionHand hand) {
          ItemStack heldItem = player.getItemInHand(hand);

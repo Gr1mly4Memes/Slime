@@ -33,7 +33,18 @@
      @VisibleForTesting
      public void setTimeInOverworld(int timeInOverworld) {
          this.timeInOverworld = timeInOverworld;
-@@ -148,7 +_,7 @@
+@@ -139,16 +_,18 @@
+         return (Brain<Hoglin>) super.getBrain();
+     }
+ 
++    private int behaviorTick; // Pufferfish
+     @Override
+     protected void customServerAiStep(ServerLevel level) {
+         ProfilerFiller profiler = Profiler.get();
+         profiler.push("hoglinBrain");
++        if (this.behaviorTick++ % this.activatedPriority == 0) // Pufferfish
+         this.getBrain().tick(level, this);
+         profiler.pop();
          HoglinAi.updateActivity(this);
          if (this.isConverting()) {
              this.timeInOverworld++;

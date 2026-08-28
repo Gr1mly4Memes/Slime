@@ -14,6 +14,19 @@
      public Frog(EntityType<? extends Animal> type, Level level) {
          super(type, level);
          this.lookControl = new Frog.FrogLookControl(this);
+@@ -173,10 +_,12 @@
+         VariantUtils.readVariant(input, Registries.FROG_VARIANT).ifPresent(this::setVariant);
+     }
+ 
++    private int behaviorTick = 0; // Pufferfish
+     @Override
+     protected void customServerAiStep(ServerLevel level) {
+         ProfilerFiller profiler = Profiler.get();
+         profiler.push("frogBrain");
++        if (this.behaviorTick++ % this.activatedPriority == 0) // Pufferfish
+         this.getBrain().tick(level, this);
+         profiler.pop();
+         profiler.push("frogActivityUpdate");
 @@ -254,7 +_,12 @@
  
      @Override

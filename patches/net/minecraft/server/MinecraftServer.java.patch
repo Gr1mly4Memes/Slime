@@ -103,11 +103,12 @@
      private final ServerFunctionManager functionManager;
      private boolean enforceWhitelist;
      private boolean usingWhitelist;
-@@ -291,12 +_,217 @@
+@@ -291,12 +_,218 @@
      private final SuppressedExceptionCollector suppressedExceptions = new SuppressedExceptionCollector();
      private final DiscontinuousFrame tickFrame;
      private final PacketProcessor packetProcessor;
 -    private final TimerQueue<MinecraftServer> scheduledEvents;
++    public gg.pufferfish.pufferfish.util.AsyncExecutor mobSpawnExecutor = new gg.pufferfish.pufferfish.util.AsyncExecutor("MobSpawning"); // Pufferfish - optimize mob spawning
 +    // Paper - per-level scheduledEvents
      private final ServerClockManager clockManager;
  
@@ -1942,7 +1943,7 @@
              gameRules.visitGameRuleTypes(new GameRuleTypeVisitor() {
                  @Override
                  public <T> void visit(GameRule<T> gameRule) {
-@@ -1937,6 +_,23 @@
+@@ -1937,7 +_,25 @@
          }
      }
  
@@ -1964,8 +1965,10 @@
 +    // CraftBukkit end
 +
      private ProfilerFiller createProfiler() {
++        if (gg.pufferfish.pufferfish.PufferfishConfig.disableMethodProfiler) return net.minecraft.util.profiling.InactiveProfiler.INSTANCE; // Pufferfish
          if (this.willStartRecordingMetrics) {
              this.metricsRecorder = ActiveMetricsRecorder.createStarted(
+                 new ServerMetricsSamplersProvider(Util.timeSource(), this.isDedicatedServer()),
 @@ -2002,6 +_,10 @@
          return this.worldData;
      }

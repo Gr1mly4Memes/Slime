@@ -20,19 +20,26 @@
              )
              .apply(i, ShapelessRecipe::new)
      );
-@@ -38,12 +_,29 @@
+@@ -38,12 +_,36 @@
      public static final RecipeSerializer<ShapelessRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
      private final ItemStackTemplate result;
      private final List<Ingredient> ingredients;
 +    private final boolean isSimple;
++    private final boolean isBukkit; // Pufferfish
  
++    // Pufferfish start
      public ShapelessRecipe(Recipe.CommonInfo commonInfo, CraftingRecipe.CraftingBookInfo bookInfo, ItemStackTemplate result, List<Ingredient> ingredients) {
++        this(commonInfo, bookInfo, result, ingredients, false);
++    }
++    public ShapelessRecipe(Recipe.CommonInfo commonInfo, CraftingRecipe.CraftingBookInfo bookInfo, ItemStackTemplate result, List<Ingredient> ingredients, boolean isBukkit) {
          super(commonInfo, bookInfo);
          this.result = result;
          this.ingredients = ingredients;
 -    }
 +        this.isSimple = ingredients.stream().allMatch(Ingredient::isSimple);
++        this.isBukkit = isBukkit;
 +    }
++    // Pufferfish end
 +
 +    // CraftBukkit start
 +    @Override
@@ -51,10 +58,32 @@
  
      @Override
      public RecipeSerializer<ShapelessRecipe> getSerializer() {
-@@ -56,13 +_,32 @@
+@@ -56,13 +_,54 @@
      }
  
      public boolean matches(CraftingInput input, Level level) {
++        // Pufferfish start
++        if (!this.isBukkit) {
++            java.util.List<Ingredient> ingredients = com.google.common.collect.Lists.newArrayList(this.ingredients.toArray(new Ingredient[0]));
++
++            inventory: for (int index = 0; index < input.size(); index++) {
++                ItemStack itemStack = input.getItem(index);
++
++                if (!itemStack.isEmpty()) {
++                    for (int i = 0; i < ingredients.size(); i++) {
++                        if (ingredients.get(i).test(itemStack)) {
++                            ingredients.remove(i);
++                            continue inventory;
++                        }
++                    }
++                    return false;
++                }
++            }
++
++            return ingredients.isEmpty();
++        }
++        // Pufferfish end
++
 +        // Paper start - Improve exact choice recipe ingredients & unwrap ternary
          if (input.ingredientCount() != this.ingredients.size()) {
              return false;

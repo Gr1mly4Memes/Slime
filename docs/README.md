@@ -9,6 +9,7 @@ Slime is a NeoForge hybrid server implementing PurPur and Paper API
 ## ⚙️ Features
 - **Based on NeoForge** - A modding API for Minecraft and mods
 - **Fully Almost Fully Compatible** - Works with PurPur, Paper, Spigot, and Bukkit plugins
+- **Performance Optimized** - With Pufferfish and Paper optimizations
 
 ## 📜 Credits
 Slime includes patches and features from other projects, and without these projects, Slime wouldn't exist today. Here is the list of projects that Slime takes code and patches from:
@@ -20,6 +21,7 @@ Slime includes patches and features from other projects, and without these proje
 - [Paper](https://github.com/PaperMC/Paper)
 - [Youer](https://github.com/MohistMC/Youer)
 - [PurPur](https://github.com/PurpurMC/Purpur)
+- [Pufferfish](https://github.com/pufferfish-gg/Pufferfish)
 
 ## P.S.
 This project is still in early development, and may not be stable. Im planning to add fabric support in the future.
@@ -27,5 +29,5 @@ And this project is welcome to contributions! Anything to improve and fix bugs i
 Also, this is a Fork of Youer, but I’m planning to make it separate from it!
 
 ## ALSO!
-This project does not NEED PERFORMANCE OPTIMIZATIONS MODS/PLUGINS, because it contains Paper!, which is already optimized.
+This project does NOT NEED PERFORMANCE OPTIMIZATIONS MODS/PLUGINS, because it contains Paper!, which is already optimized.
 Most if not all performance optimizations will break and produce unexpected behavior and errors. 

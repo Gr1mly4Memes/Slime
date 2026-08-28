@@ -123,8 +123,8 @@
 +        if (chunk == null) {
 +            return false;
 +        }
-+        while (pos.getY() > this.level().getMinY() && !chunk.getBlockState(pos).blocksMotion()) {
-+            // Pufferfish end - single chunk lookup
++        // Pufferfish end
++        while (pos.getY() > this.level().getMinY() && !chunk.getBlockState(pos).blocksMotion()) { // Pufferfish
              pos.move(Direction.DOWN);
          }
  

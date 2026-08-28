@@ -141,8 +141,8 @@
 +    }
 +    // Paper end - chunk tick iteration optimisations
 +
-+    public boolean pufferfish$firstRunSpawnCounts = true; // Pufferfish
-+    public final java.util.concurrent.atomic.AtomicBoolean pufferfish$spawnCountsReady = new java.util.concurrent.atomic.AtomicBoolean(false); // Pufferfish - Optimize count mobs
++    public boolean firstRunSpawnCounts = true; // Pufferfish
++    public final AtomicBoolean _pufferfish_spawnCountsReady = new AtomicBoolean(false); // Pufferfish - optimize countmobs
      public ServerChunkCache(
          ServerLevel level,
          LevelStorageSource.LevelStorageAccess levelStorage,
@@ -500,25 +500,46 @@
                  profiler.push("tickingChunks");
                  this.tickChunks(profiler, timeDiff);
                  profiler.pop();
-@@ -350,13 +_,28 @@
+@@ -350,13 +_,49 @@
              this.broadcastChangedChunks(profiler);
              profiler.pop();
          }
-+        if (true) {
++        // Pufferfish start - optimize mob spawning
++        if (gg.pufferfish.pufferfish.PufferfishConfig.enableAsyncMobSpawning) {
 +            for (ServerPlayer player : this.level.players()) {
 +                // Paper start - per player mob spawning backoff
-+                for (int j = 0; j < ServerPlayer.MOBCATEGORY_TOTAL_ENUMS; j++) {
-+                    player.mobCounts[j] = 0;
++                for (int ii = 0; ii < ServerPlayer.MOBCATEGORY_TOTAL_ENUMS; ii++) {
++                    player.mobCounts[ii] = 0;
 +
-+                    int newBackoff = player.mobBackoffCounts[j] - 1; // TODO make configurable bleed // TODO use nonlinear algorithm?
++                    int newBackoff = player.mobBackoffCounts[ii] - 1; // TODO make configurable bleed // TODO use nonlinear algorithm?
 +                    if (newBackoff < 0) {
 +                        newBackoff = 0;
 +                    }
-+                    player.mobBackoffCounts[j] = newBackoff;
++                    player.mobBackoffCounts[ii] = newBackoff;
 +                }
 +                // Paper end - per player mob spawning backoff
 +            }
++            if (firstRunSpawnCounts) {
++                firstRunSpawnCounts = false;
++                _pufferfish_spawnCountsReady.set(true);
++            }
++            if (_pufferfish_spawnCountsReady.getAndSet(false)) {
++                net.minecraft.server.MinecraftServer.getServer().mobSpawnExecutor.submit(() -> {
++                    int mapped = distanceManager.getNaturalSpawnChunkCount();
++                    ca.spottedleaf.moonrise.common.list.IteratorSafeOrderedReferenceSet.Iterator<Entity> objectiterator =
++                            level.entityTickList.entities.iterator(ca.spottedleaf.moonrise.common.list.IteratorSafeOrderedReferenceSet.ITERATOR_FLAG_SEE_ADDITIONS);
++                    try {
++                        gg.pufferfish.pufferfish.util.IterableWrapper<Entity> wrappedIterator =
++                                new gg.pufferfish.pufferfish.util.IterableWrapper<>(objectiterator);
++                        lastSpawnState = NaturalSpawner.createState(mapped, wrappedIterator, this::getFullChunk, null, true);
++                    } finally {
++                        objectiterator.finishedIterating();
++                    }
++                    _pufferfish_spawnCountsReady.set(true);
++                });
++            }
 +        }
++        // Pufferfish end
      }
  
      private void broadcastChangedChunks(ProfilerFiller profiler) {
@@ -530,7 +551,7 @@
              if (chunk != null) {
                  chunkHolder.broadcastChanges(chunk);
              }
-@@ -369,16 +_,26 @@
+@@ -369,16 +_,48 @@
      private void tickChunks(ProfilerFiller profiler, long timeDiff) {
          profiler.push("naturalSpawnCount");
          int chunkCount = this.distanceManager.getNaturalSpawnChunkCount();
@@ -541,7 +562,29 @@
 -        boolean doMobSpawning = this.level.getGameRules().get(GameRules.SPAWN_MOBS);
 +        // Paper start - Optional per player mob spawns
 +        NaturalSpawner.SpawnState spawnCookie;
-+        if ((!this.spawnFriendlies && !this.spawnEnemies) || !this.level.paperConfig().entities.spawning.perPlayerMobSpawns) {
++        if ((this.spawnFriendlies || this.spawnEnemies) && this.level.paperConfig().entities.spawning.perPlayerMobSpawns) { // don't count mobs when animals and monsters are disabled
++            if (!gg.pufferfish.pufferfish.PufferfishConfig.enableAsyncMobSpawning) { // Pufferfish - moved down when async processing
++                // re-set mob counts
++                for (ServerPlayer player : this.level.players()) {
++                    // Paper start - per player mob spawning backoff
++                    for (int j = 0; j < ServerPlayer.MOBCATEGORY_TOTAL_ENUMS; j++) {
++                        player.mobCounts[j] = 0;
++                        int newBackoff = player.mobBackoffCounts[j] - 1; // TODO make configurable bleed // TODO use nonlinear algorithm?
++                        if (newBackoff < 0) {
++                            newBackoff = 0;
++                        }
++                        player.mobBackoffCounts[j] = newBackoff;
++                    }
++                    // Paper end - per player mob spawning backoff
++                }
++                lastSpawnState = NaturalSpawner.createState(chunkCount, this.level.getAllEntities(), this::getFullChunk, null, true); // Pufferfish - async mob spawning
++            } // Pufferfish - (endif) moved down when async processing
++
++        } else {
++            // Pufferfish start - async mob spawning
++            lastSpawnState = NaturalSpawner.createState(chunkCount, this.level.getAllEntities(), this::getFullChunk, !this.level.paperConfig().entities.spawning.perPlayerMobSpawns ? new LocalMobCapCalculator(this.chunkMap) : null, false);
++            _pufferfish_spawnCountsReady.set(true);
++            // Pufferfish end
 +        }
 +        // Paper end - Optional per player mob spawns
 +        // this.lastSpawnState = spawnCookie; // Pufferfish - this is managed asynchronously
@@ -561,7 +604,7 @@
 +            }
 +            // Paper end - PlayerNaturallySpawnCreaturesEvent
 +            boolean spawnPersistent = this.level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) != 0L && this.level.getGameTime() % this.level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) == 0L; // CraftBukkit
-+            spawningCategories = NaturalSpawner.getFilteredSpawningCategories(this.lastSpawnState, this.spawnFriendlies, this.spawnEnemies, spawnPersistent, this.level); // CraftBukkit  // Pufferfish - Async mob spawning
++            spawningCategories = NaturalSpawner.getFilteredSpawningCategories(lastSpawnState, this.spawnFriendlies, this.spawnEnemies, spawnPersistent, this.level); // CraftBukkit // Pufferfish
          } else {
              spawningCategories = List.of();
          }
@@ -578,7 +621,7 @@
  
              for (LevelChunk chunk : spawningChunks) {
 -                this.tickSpawningChunk(chunk, timeDiff, spawningCategories, spawnCookie);
-+                this.tickSpawningChunk(chunk, timeDiff, spawningCategories, this.lastSpawnState); // Pufferfish - Async mob spawning
++                this.tickSpawningChunk(chunk, timeDiff, spawningCategories, lastSpawnState); // Pufferfish
              }
          } finally {
              spawningChunks.clear();
@@ -601,8 +644,9 @@
  
          if (!spawningCategories.isEmpty()) {
 -            if (this.level.canSpawnEntitiesInChunk(chunkPos)) {
-+            if (this.level.getWorldBorder().isWithinBounds(chunkPos) && pufferfish$spawnCountsReady.get() && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkPos, true)) { // Paper - rewrite chunk system // Pufferfish - Async mob spawning
-                 NaturalSpawner.spawnForChunk(this.level, chunk, spawnCookie, spawningCategories);
+-                NaturalSpawner.spawnForChunk(this.level, chunk, spawnCookie, spawningCategories);
++            if (this.level.getWorldBorder().isWithinBounds(chunkPos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkPos, true)) { // Paper - rewrite chunk system
++                NaturalSpawner.spawnForChunk(this.level, chunk, lastSpawnState, spawningCategories); // Pufferfish
              }
          }
      }

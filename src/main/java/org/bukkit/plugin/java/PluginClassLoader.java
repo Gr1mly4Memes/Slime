@@ -45,6 +45,7 @@ public final class PluginClassLoader extends URLClassLoader implements io.paperm
     private java.util.logging.Logger logger; // Paper - add field
     private io.papermc.paper.plugin.provider.classloader.PluginClassLoaderGroup classLoaderGroup; // Paper
     public io.papermc.paper.plugin.provider.entrypoint.DependencyContext dependencyContext; // Paper
+    private boolean closed = false; // Pufferfish
 
     static {
         ClassLoader.registerAsParallelCapable();
@@ -203,6 +204,7 @@ public final class PluginClassLoader extends URLClassLoader implements io.paperm
         throw new ClassNotFoundException(name);
     }
 
+    public boolean _airplane_hasClass(@NotNull String name) { return this.classes.containsKey(name); } // Pufferfish
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         if (name.startsWith("org.bukkit.") || name.startsWith("net.minecraft.")) {
@@ -210,7 +212,7 @@ public final class PluginClassLoader extends URLClassLoader implements io.paperm
         }
         Class<?> result = classes.get(name);
 
-        if (result == null) {
+        if (result == null && !this.closed) { // Pufferfish
             String path = name.replace('.', '/').concat(".class");
             // Add details to zip file errors - help debug classloading
             JarEntry entry;
@@ -266,6 +268,7 @@ public final class PluginClassLoader extends URLClassLoader implements io.paperm
             this.setClass(name, result); // Paper
         }
 
+        if (result == null) throw new ClassNotFoundException(name); // Pufferfish
         return result;
     }
 
@@ -280,6 +283,7 @@ public final class PluginClassLoader extends URLClassLoader implements io.paperm
             // Paper end
             super.close();
         } finally {
+            this.closed = true; // Pufferfish
             jar.close();
         }
     }

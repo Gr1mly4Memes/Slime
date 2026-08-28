@@ -181,7 +181,7 @@
              }
  
              return null;
-@@ -411,17 +_,110 @@
+@@ -411,17 +_,116 @@
      }
  
      public void sendCommands(ServerPlayer player) {
@@ -196,7 +196,14 @@
 +        // Paper start - Perf: Async command map building
 +        // Copy root children to avoid concurrent modification during building
 +        final java.util.Collection<CommandNode<CommandSourceStack>> commandNodes = new java.util.ArrayList<>(this.dispatcher.getRoot().getChildren());
-+        COMMAND_SENDING_POOL.execute(() -> this.sendAsync(player, commandNodes));
++        try {
++            COMMAND_SENDING_POOL.execute(() -> this.sendAsync(player, commandNodes));
++        } catch (java.util.concurrent.RejectedExecutionException e) { // Slime - handle executor shutdown during server stop
++            // Server is stopping and pool is shut down - skip sending commands to avoid PluginDisableEvent error
++            if (LOGGER.isDebugEnabled()) {
++                LOGGER.debug("Skipping sendCommands for {} - executor rejected (server shutting down)", player.getName().getString(), e);
++            }
++        }
 +    }
 +
 +    // Fixed pool, but with discard policy
@@ -208,7 +215,6 @@
          RootCommandNode<CommandSourceStack> root = new RootCommandNode<>();
          playerCommands.put(this.dispatcher.getRoot(), root);
 -        fillUsableCommands(this.dispatcher.getRoot(), root, player.createCommandSourceStack(), playerCommands);
-+        // Youer TODO
 +        fillUsableCommands(dispatcherRootChildren, root, player.createCommandSourceStack(), playerCommands); // Paper - Perf: Async command map building; pass copy of children
 +        // Neo: Use our own command node merging method to handle redirect nodes properly, see issue Forge-7551
 +        net.neoforged.neoforge.server.command.CommandHelper.mergeCommandNode(this.dispatcher.getRoot(), root, playerCommands, player.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.cast((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));

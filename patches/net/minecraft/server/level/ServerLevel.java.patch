@@ -796,7 +796,7 @@
          if (isActive) {
              this.resetEmptyTime();
          }
-@@ -422,6 +_,7 @@
+@@ -422,16 +_,17 @@
                  profiler.pop();
              }
  
@@ -804,7 +804,9 @@
              this.entityTickList
                  .forEach(
                      entity -> {
-@@ -430,8 +_,7 @@
++                        entity.activatedPriorityReset = false; // Pufferfish - DAB
+                         if (!entity.isRemoved()) {
+                             if (!tickRateManager.isEntityFrozen(entity)) {
                                  profiler.push("checkDespawn");
                                  entity.checkDespawn();
                                  profiler.pop();
@@ -978,7 +980,7 @@
          ProfilerFiller profiler = Profiler.get();
          profiler.push("thunder");
 -        if (raining && this.isThundering() && this.random.nextInt(100000) == 0) {
-+        if (raining && this.isThundering() && this.spigotConfig.thunderChance > 0 && this.random.nextInt(this.spigotConfig.thunderChance) == 0) { // Spigot
++        if (raining && this.isThundering() && this.spigotConfig.thunderChance > 0 && chunk.shouldDoLightning(this.random)) { // Spigot // Pufferfish - replace random with shouldDoLightning
              BlockPos pos = this.findLightningTargetAround(this.getBlockRandomPos(minX, 0, minZ, 15));
              if (this.isRainingAt(pos)) {
                  DifficultyInstance difficulty = this.getCurrentDifficultyAt(pos);

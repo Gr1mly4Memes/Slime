@@ -103,6 +103,31 @@
              this.kill(level);
              this.dropItem(level, null);
          }
+@@ -126,7 +_,23 @@
+         if (storedPos != null && storedPos.closerThan(this.blockPosition(), 16.0)) {
+             this.pos = storedPos;
+         } else {
+-            LOGGER.error("Block-attached entity at invalid position: {}", storedPos);
++            // Slime start - fix handling of invalid block-attached entity positions to prevent log spam
++            if (storedPos != null) {
++                // Restore saved attachment position even when considered "invalid" (e.g., Pos at 0,0,0 due to corruption)
++                // This prevents repeated ERROR spam on every chunk load and restores the entity to its intended block.
++                // Downgrade to DEBUG to avoid console spam; survives() will still remove truly invalid entities next tick.
++                BlockPos entityPos = this.blockPosition();
++                this.pos = storedPos;
++                this.recalculateBoundingBox();
++                if (LOGGER.isDebugEnabled()) {
++                    LOGGER.debug("Block-attached entity at invalid position corrected: {} (entity was at {})", storedPos, entityPos);
++                }
++            } else {
++                LOGGER.warn("Block-attached entity with missing block_pos at {}", this.blockPosition()); // Slime - downgrade and ensure pos initialized
++                this.pos = this.blockPosition();
++                this.recalculateBoundingBox();
++            }
++            // Slime end - fix handling of invalid block-attached entity positions
+         }
+     }
+ 
 @@ -155,4 +_,13 @@
      @Override
      public void refreshDimensions() {

@@ -197,7 +197,6 @@ dependencies {
     libraries 'org.apache.maven:maven-model-builder:3.9.6'
     libraries 'org.apache.maven:maven-repository-metadata:3.9.6'
     libraries 'org.apache.maven:maven-resolver-provider:3.9.6'
-
     libraries 'org.apache.maven.resolver:maven-resolver-api:1.9.18'
     libraries 'org.apache.maven.resolver:maven-resolver-connector-basic:1.9.18'
     libraries 'org.apache.maven.resolver:maven-resolver-impl:1.9.18'
@@ -234,11 +233,18 @@ dependencies {
     //libraries("me.lucko:spark-api:0.1-20240720.200737-2") // Slime remove sparks fly due to loading problems
     //libraries("me.lucko:spark-paper:1.10.180")
     // Paper end
-    // Purpur
-    libraries("org.mozilla:rhino-runtime:1.7.14") // Purpur
-    libraries("org.mozilla:rhino-engine:1.7.14") // Purpur
-    libraries("dev.omega24:upnp4j:1.0") // Purpur
+    // Purpur start
+    libraries("org.mozilla:rhino-runtime:1.7.14")
+    libraries("org.mozilla:rhino-engine:1.7.14")
+    libraries("dev.omega24:upnp4j:1.0")
+    // Purpur end
+    // Pufferfish start
     libraries 'io.sentry:sentry:8.25.0'
+    libraries('me.carleslc.Simple-YAML:Simple-Yaml:1.8.4') {
+        exclude group: 'org.yaml', module: 'snakeyaml'
+    }
+    libraries "com.github.technove:Flare:34637f3f87"
+    // Pufferfish end
 
     // compat
     implementation "maven.modrinth:lhGA9TYQ:LKQeKupY" // Architectury v21.0.4 for 26.2
@@ -393,11 +399,11 @@ tasks.withType(Javadoc.class).configureEach {
 Map<String, String> placeholders = [
         'version' : project.version.toString(),
         'slime_version' : gradleutils.gitInfo.abbreviatedId,
-        'paper_version' : '6c8d413223-#111',
-        'purpur_version' : '5a85de0eb-#2618',
+        'paper_version' : 'bd0c804a19-#117',
+        'purpur_version' : '48bcd91aa-#2622',
         'neoform_version' : project.neoform_version,
         'minecraft_version' : project.minecraft_version,
-        'build_type' : 'BETA'
+        'build_type' : 'STABLE'
 ]
 
 // Generates the neoforge.mods.toml and version.properties, so they contain fully realized version numbers

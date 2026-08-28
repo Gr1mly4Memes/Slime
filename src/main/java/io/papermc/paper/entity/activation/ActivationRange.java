@@ -34,6 +34,7 @@ import org.spigotmc.SpigotWorldConfig;
 
 import java.util.List;
 import java.util.Set;
+import net.minecraft.world.phys.Vec3; // Pufferfish
 
 public final class ActivationRange {
 
@@ -162,6 +163,24 @@ public final class ActivationRange {
                 }
 
                 ActivationRange.activateEntity(entity);
+
+                // Pufferfish start
+                if (gg.pufferfish.pufferfish.PufferfishConfig.dearEnabled && entity.getType().dabEnabled) {
+                    if (!entity.activatedPriorityReset) {
+                        entity.activatedPriorityReset = true;
+                        entity.activatedPriority = gg.pufferfish.pufferfish.PufferfishConfig.maximumActivationPrio;
+                    }
+                    Vec3 playerVec = player.position();
+                    Vec3 entityVec = entity.position();
+                    double diffX = playerVec.x - entityVec.x, diffY = playerVec.y - entityVec.y, diffZ = playerVec.z - entityVec.z;
+                    int squaredDistance = (int) (diffX * diffX + diffY * diffY + diffZ * diffZ);
+                    entity.activatedPriority = squaredDistance > gg.pufferfish.pufferfish.PufferfishConfig.startDistanceSquared ?
+                            Math.max(1, Math.min(squaredDistance >> gg.pufferfish.pufferfish.PufferfishConfig.activationDistanceMod, entity.activatedPriority)) :
+                            1;
+                } else {
+                    entity.activatedPriority = 1;
+                }
+                // Pufferfish end
             }
         }
     }
@@ -173,11 +192,11 @@ public final class ActivationRange {
      */
     private static void activateEntity(final Entity entity) {
         if (MinecraftServer.currentTick > entity.activatedTick) {
-            if (entity.defaultActivationState) {
+            if (entity.defaultActivationState) { // Pufferfish - diff on change
                 entity.activatedTick = MinecraftServer.currentTick;
                 return;
             }
-            if (entity.activationType.boundingBox.intersects(entity.getBoundingBox())) {
+            if (entity.activationType.boundingBox.intersects(entity.getBoundingBox())) { // Pufferfish - diff on change
                 entity.activatedTick = MinecraftServer.currentTick;
             }
         }
@@ -218,7 +237,7 @@ public final class ActivationRange {
         }
         // special cases.
         if (entity instanceof final LivingEntity living) {
-            if (living.blockPosition().equals(living.getLastClimbablePos().orElse(null)) || living.isJumping() || living.hurtTime > 0 || !living.getActiveEffectsMap().isEmpty() || living.isFreezing()) {
+            if (living.onClimbableCached() || living.isJumping() || living.hurtTime > 0 || !living.getActiveEffectsMap().isEmpty() || living.isFreezing()) { // Pufferfish - Use cached climbing check
                 return 1;
             }
             if (entity instanceof final Mob mob && mob.getTarget() != null) {

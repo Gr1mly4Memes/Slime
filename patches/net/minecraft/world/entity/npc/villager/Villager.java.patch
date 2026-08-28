@@ -150,7 +150,7 @@
      @Override
      public Brain<Villager> getBrain() {
          return (Brain<Villager>) super.getBrain();
-@@ -227,18 +_,53 @@
+@@ -227,18 +_,59 @@
      }
  
      public static AttributeSupplier.Builder createAttributes() {
@@ -181,6 +181,8 @@
 +    }
 +    // Paper end - EAR 2
 +
++    public long nextGolemPanic = -1; // Pufferfish
++    private int behaviorTick = 0; // Pufferfish
      @Override
      protected void customServerAiStep(ServerLevel level) {
 +        // Paper start - EAR 2
@@ -198,9 +200,13 @@
 +        } else {
 +            this.isLobotomized = false;
 +        }
-+        if (!inactive && (getRider() == null || !this.isControllable())) { // Purpur - Ridables
-+            this.getBrain().tick(level, this); // Paper - EAR 2
++        // Pufferfish start
++        if (!inactive && this.behaviorTick++ % this.activatedPriority == 0) {
++            if (getRider() == null || !this.isControllable()) { // Purpur - Ridables
++                this.getBrain().tick(level, this); // Paper - EAR 2
++            }
 +        }
++        // Pufferfish end
 +        else if (this.isLobotomized && shouldRestock(level)) restock();
 +        // Purpur end - Lobotomize stuck villagers
          profiler.pop();

@@ -19,16 +19,19 @@
          for (WrappedGoal availableGoal : this.availableGoals) {
              if (predicate.test(availableGoal.getGoal()) && availableGoal.isRunning()) {
                  availableGoal.stop();
-@@ -39,22 +_,38 @@
+@@ -39,22 +_,41 @@
          this.availableGoals.removeIf(goal -> predicate.test(goal.getGoal()));
      }
  
 -    public void removeGoal(Goal toRemove) {
 -        this.removeAllGoals(goal -> goal == toRemove);
 +    // Paper start - EAR 2
-+    public boolean inactiveTick() {
++    public boolean inactiveTick(int tickRate, boolean inactive) { // Pufferfish start
++        if (inactive && !gg.pufferfish.pufferfish.PufferfishConfig.dearEnabled) tickRate = 4; // reset to Paper's
++        tickRate = Math.min(tickRate, 3);
 +        this.curRate++;
-+        return this.curRate % 3 == 0; // TODO newGoalRate was already unused in 1.20.4, check if this is correct
++        return this.curRate % tickRate == 0; // TODO newGoalRate was already unused in 1.20.4, check if this is correct
++        // Pufferfish end
      }
  
 -    private static boolean goalContainsAnyFlags(WrappedGoal goal, EnumSet<Goal.Flag> disabledFlags) {

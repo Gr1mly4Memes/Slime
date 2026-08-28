@@ -113,6 +113,19 @@
          return !level.getBlockState(pos.below()).is(Blocks.NETHER_WART_BLOCK);
      }
  
+@@ -263,10 +_,12 @@
+         return !this.cannotHunt;
+     }
+ 
++    private int behaviorTick; // Pufferfish
+     @Override
+     protected void customServerAiStep(ServerLevel level) {
+         ProfilerFiller profiler = Profiler.get();
+         profiler.push("piglinBrain");
++        if (this.behaviorTick++ % this.activatedPriority == 0) // Pufferfish
+         this.getBrain().tick(level, this);
+         profiler.pop();
+         PiglinAi.updateActivity(this);
 @@ -321,7 +_,7 @@
          } else if (this.isChargingCrossbow()) {
              return PiglinArmPose.CROSSBOW_CHARGE;
