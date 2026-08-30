@@ -8,7 +8,7 @@
  import java.util.Objects;
  import java.util.Optional;
  import java.util.function.Predicate;
-@@ -21,20 +_,47 @@
+@@ -21,20 +_,48 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.item.crafting.display.SlotDisplay;
  import net.minecraft.world.level.ItemLike;
@@ -37,6 +37,7 @@
 +
 +    // CraftBukkit start
 +    private java.util.@org.jspecify.annotations.Nullable Set<ItemStack> itemStacks; // Paper - Improve exact choice recipe ingredients
++    public java.util.function.@org.jspecify.annotations.Nullable Predicate<ItemStack> stackPredicate; // Paper - add PredicateChoice
 +    public Predicate<org.bukkit.inventory.ItemStack> predicate; // Purpur - Add predicate to recipe's ExactChoice ingredient
 +
 +    public boolean isExact() {
@@ -63,7 +64,7 @@
          values.unwrap().ifRight(directValues -> {
              if (directValues.isEmpty()) {
                  throw new UnsupportedOperationException("Ingredients can't be empty");
-@@ -47,35 +_,115 @@
+@@ -47,35 +_,130 @@
          this.values = values;
      }
  
@@ -95,6 +96,11 @@
 +        if (this.customIngredient != null) {
 +            return this.customIngredient.test(input);
 +        }
++        // Paper start - add PredicateChoice
++        if (this.stackPredicate != null) {
++            return this.stackPredicate.test(input);
++        }
++        // Paper end - add PredicateChoice
 +        // CraftBukkit start
 +        if (this.isExact()) {
 +            return this.itemStacks.contains(input); // Paper - Improve exact choice recipe ingredients (hashing FTW!)
@@ -121,8 +127,18 @@
 +            case io.papermc.paper.inventory.recipe.ItemOrExact.Item(final Holder<Item> item)
 +                    -> !this.isExact() && this.values.contains(item);
 +
-+            case io.papermc.paper.inventory.recipe.ItemOrExact.Exact(final ItemStack exact)
-+                    -> this.isExact() && this.itemStacks.contains(exact);
++            case io.papermc.paper.inventory.recipe.ItemOrExact.Exact(final ItemStack exact) -> {
++                if (this.stackPredicate != null) {
++                    yield this.stackPredicate.test(exact);
++                }
++                if (this.isExact()) {
++                    yield this.itemStacks.contains(exact);
++                }
++                // A plain, usable item can be routed to the Exact pool because it also matched a
++                // predicate/exact ingredient in the same recipe; a regular ingredient must still be
++                // able to draw from that shared pool (the picker's per-key count keeps it double-count free).
++                yield net.minecraft.world.entity.player.Inventory.isUsableForCrafting(exact) && exact.is(this.values);
++            }
 +        };
      }
 +    // Paper end - Improve exact choice recipe ingredients

@@ -2,6 +2,7 @@ package io.papermc.paper.potion;
 
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.Contract;
@@ -42,10 +43,12 @@ public final class PotionMix implements Keyed {
      *
      * @param stackPredicate a predicate for an itemstack.
      * @return a new RecipeChoice
+     * @deprecated use {@link RecipeChoice#predicateChoice(Predicate, ItemStack)}
      */
     @Contract(value = "_ -> new", pure = true)
+    @Deprecated(since = "26.2")
     public static RecipeChoice createPredicateChoice(final Predicate<? super ItemStack> stackPredicate) {
-        return new PredicateRecipeChoice(stackPredicate);
+        return RecipeChoice.predicateChoice(stackPredicate, ItemType.STONE.createItemStack());
     }
 
     @Override

@@ -144,7 +144,7 @@ public class ShapelessRecipe extends CraftingRecipe {
         Preconditions.checkArgument(!item.getType().isAir(), "Item cannot be air"); // Paper
         item = item.clone(); // Paper
         while (count-- > 0) {
-            this.ingredients.add(new RecipeChoice.ExactChoice(item));
+            this.ingredients.add(RecipeChoice.exactChoice(item));
         }
         return this;
     }

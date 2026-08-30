@@ -398,9 +398,9 @@ tasks.withType(Javadoc.class).configureEach {
 // Exposed project properties
 Map<String, String> placeholders = [
         'version' : project.version.toString(),
-        'slime_version' : gradleutils.gitInfo.abbreviatedId,
-        'paper_version' : 'bd0c804a19-#117',
-        'purpur_version' : '48bcd91aa-#2622',
+        'slime_version' : project.minecraft_version,
+        'paper_version' : project.apiVersion,
+        'purpur_version' : project.apiVersion,
         'neoform_version' : project.neoform_version,
         'minecraft_version' : project.minecraft_version,
         'build_type' : 'STABLE'
