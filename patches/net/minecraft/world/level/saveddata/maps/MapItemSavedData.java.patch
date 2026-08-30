@@ -76,12 +76,13 @@
  
      private MapItemSavedData(
          ResourceKey<Level> dimension,
-@@ -120,6 +_,8 @@
+@@ -120,6 +_,9 @@
              this.frameMarkers.put(frame.getId(), frame);
              this.addDecoration(MapDecorationTypes.FRAME, null, getFrameKey(frame.entityId()), frame.pos().getX(), frame.pos().getZ(), frame.rotation(), null);
          }
 +
 +        this.vanillaRender.buffer = colors.array(); // Paper - Use Vanilla map renderer when possible
++        this.setDirty(false); // DivineMC - SparklyPaper: Reset dirty flag when loading maps from the disk
      }
  
      public static MapItemSavedData createFresh(

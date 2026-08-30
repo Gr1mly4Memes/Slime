@@ -12,16 +12,10 @@ Slime is a NeoForge hybrid server implementing PurPur and Paper API
 - **Performance Optimized** - With Pufferfish and Paper optimizations
 
 ## 📜 Credits
-Slime includes patches and features from other projects, and without these projects, Slime wouldn't exist today. Here is the list of projects that Slime takes code and patches from:
+Slime includes patches and features from other projects
 
 - [Neoforge](https://github.com/neoforged/neoforge)
-- [Bukkit](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse)
-- [Craftbukkit](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse)
-- [Spigot](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/browse)
-- [Paper](https://github.com/PaperMC/Paper)
-- [Youer](https://github.com/MohistMC/Youer)
-- [PurPur](https://github.com/PurpurMC/Purpur)
-- [Pufferfish](https://github.com/pufferfish-gg/Pufferfish)
+- [List of credits](CREDITS.md)
 
 ## P.S.
 This project is still in early development, and may not be stable. Im planning to add fabric support in the future.

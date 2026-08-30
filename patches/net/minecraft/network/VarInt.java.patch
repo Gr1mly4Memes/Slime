@@ -19,25 +19,54 @@
          for (int i = 1; i < 5; i++) {
              if ((value & -1 << i * 7) == 0) {
                  return i;
-@@ -39,6 +_,21 @@
+@@ -38,13 +_,45 @@
+         return out;
      }
  
-     public static ByteBuf write(ByteBuf output, int value) {
-+        // Paper start - Optimize VarInts
-+        // Peel the one and two byte count cases explicitly as they are the most common VarInt sizes
-+        // that the proxy will write, to improve inlining.
-+        if ((value & (0xFFFFFFFF << 7)) == 0) {
-+            output.writeByte(value);
-+        } else if ((value & (0xFFFFFFFF << 14)) == 0) {
-+            int s = (value & 0x7F | 0x80) << 8 | (value >>> 7);
-+            output.writeShort(s);
-+        } else {
-+            writeSlow(output, value);
-+        }
-+        return output;
-+    }
-+    public static ByteBuf writeSlow(final ByteBuf output, int value) {
-+        // Paper end - Optimize VarInts
-         while ((value & -128) != 0) {
-             output.writeByte(value & 127 | 128);
-             value >>>= 7;
+-    public static ByteBuf write(ByteBuf output, int value) {
+-        while ((value & -128) != 0) {
+-            output.writeByte(value & 127 | 128);
+-            value >>>= 7;
++    // DivineMC start - Optimize VarInt
++    public static ByteBuf write(final ByteBuf output, int value) {
++        int bytesNeeded = getByteSize(value);
++
++        switch (bytesNeeded) {
++            case 1:
++                output.writeByte(value);
++                break;
++            case 2:
++                int w2 = ((value & 0x7F) << 8) | (value >>> 7) | 0x00008000;
++                output.writeShort(w2);
++                break;
++            case 3:
++                int w3 = (value & 0x7F) << 16
++                    | (value & 0x3F80) << 1
++                    | (value >>> 14)
++                    | 0x00808000;
++                output.writeMedium(w3);
++                break;
++            case 4:
++                int w4 = (value & 0x7F) << 24
++                    | ((value & 0x3F80) << 9)
++                    | (value & 0x1FC000) >> 6
++                    | (value >>> 21)
++                    | 0x80808000;
++                output.writeInt(w4);
++                break;
++            case 5:
++                int w5 = (value & 0x7F) << 24
++                    | (value & 0x3F80) << 9
++                    | (value & 0x1FC000) >> 6
++                    | ((value >>> 21) & 0x7F)
++                    | 0x80808080;
++                output.writeInt(w5);
++                output.writeByte(value >>> 28);
++                break;
+         }
+ 
+-        output.writeByte(value);
+         return output;
+     }
++    // DivineMC end - Optimize VarInt
+ }

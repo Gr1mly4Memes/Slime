@@ -279,7 +279,7 @@ public class SpigotConfig {
 
     public static boolean saveUserCacheOnStopOnly;
     private static void saveUserCacheOnStopOnly() {
-        SpigotConfig.saveUserCacheOnStopOnly = SpigotConfig.getBoolean("settings.save-user-cache-on-stop-only", false);
+        SpigotConfig.saveUserCacheOnStopOnly = SpigotConfig.getBoolean("settings.save-user-cache-on-stop-only", true); // Slime - Optimize default values for configs - usercache is a rebuildable cache, no need to rewrite it on every disconnect
     }
 
     public static double movedWronglyThreshold;

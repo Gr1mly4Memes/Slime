@@ -694,7 +694,7 @@
              this.chunkSource.chunkScanner(),
              this.registryAccess(),
              server.getStructureManager(),
-@@ -301,10 +_,34 @@
+@@ -301,17 +_,46 @@
  
          this.sleepStatus = new SleepStatus();
          this.gameEventDispatcher = new GameEventDispatcher(this);
@@ -731,6 +731,19 @@
  
      @Override
      public int getNextEntityId() {
+         int id = 0;
+ 
+-        while (id == 0 || this.chunkSource.hasEntityWithId(id)) {
++        while (id <= 0 || this.chunkSource.hasEntityWithId(id)) { // Slime - Prevent Entity ID counter overflow
+             id = ENTITY_COUNTER.incrementAndGet();
++            // Slime start - Prevent Entity ID counter overflow
++            if (id <= 0) {
++                ENTITY_COUNTER.set(0);
++            }
++            // Slime end - Prevent Entity ID counter overflow
+         }
+ 
+         return id;
 @@ -333,7 +_,7 @@
      }
  
@@ -1475,7 +1488,7 @@
          Entity existing = this.getEntity(player.getUUID());
          if (existing != null) {
              LOGGER.warn("Force-added player with duplicate UUID {}", player.getUUID());
-@@ -988,45 +_,133 @@
+@@ -988,46 +_,141 @@
              this.removePlayerImmediately((ServerPlayer)existing, Entity.RemovalReason.DISCARDED);
          }
  
@@ -1587,6 +1600,14 @@
  
      @Override
      public void destroyBlockProgress(int id, BlockPos blockPos, int progress) {
+-        for (ServerPlayer player : this.server.getPlayerList().getPlayers()) {
++        // Nitro - reduce block destruction packet allocations
++        var players = this.server.getPlayerList().getPlayers();
++        if (players.isEmpty()) {
++            return;
++        }
++        ClientboundBlockDestructionPacket packet = new ClientboundBlockDestructionPacket(id, blockPos, progress);
++        // Nitro - reduce block destruction packet allocations
 +        // CraftBukkit start
 +        Player breakerPlayer = null;
 +        Entity entity = this.getEntity(id);
@@ -1603,20 +1624,22 @@
 +                    .callEvent();
 +        }
 +        // Paper end - Add BlockBreakProgressUpdateEvent
-         for (ServerPlayer player : this.server.getPlayerList().getPlayers()) {
++        for (ServerPlayer player : players) { // Nitro - reduce block destruction packet allocations
              if (player.level() == this && player.getId() != id) {
                  double xd = blockPos.getX() - player.getX();
                  double yd = blockPos.getY() - player.getY();
                  double zd = blockPos.getZ() - player.getZ();
                  if (xd * xd + yd * yd + zd * zd < 1024.0) {
+-                    player.connection.send(new ClientboundBlockDestructionPacket(id, blockPos, progress));
 +                    // CraftBukkit start
 +                    if (breakerPlayer != null && !player.getBukkitEntity().canSee(breakerPlayer.getBukkitEntity())) {
 +                        continue;
 +                    }
 +                    // CraftBukkit end
-                     player.connection.send(new ClientboundBlockDestructionPacket(id, blockPos, progress));
++                    player.connection.send(packet); // Nitro - reduce block destruction packet allocations
                  }
              }
+         }
 @@ -1037,6 +_,12 @@
      public void playSeededSound(
          @Nullable Entity except, double x, double y, double z, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch, long seed

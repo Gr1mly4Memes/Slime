@@ -36,7 +36,7 @@
          try {
              FileUtil.createDirectoriesSafe(this.file.getParent());
  
-@@ -91,6 +_,8 @@
+@@ -91,15 +_,12 @@
  
      @Override
      public void setValue(Player player, Stat<?> stat, int count) {
@@ -44,4 +44,26 @@
 +        if (stat.getType() == Stats.CUSTOM && stat.getValue() instanceof final net.minecraft.resources.Identifier key && org.spigotmc.SpigotConfig.forcedStats.get(key) != null) return; // Paper - disable saving forced stats
          super.setValue(player, stat, count);
          this.dirty.add(stat);
+     }
+ 
+-    private Set<Stat<?>> getDirty() {
+-        Set<Stat<?>> result = Sets.newHashSet(this.dirty);
+-        this.dirty.clear();
+-        return result;
+-    }
+ 
+     public void parse(DataFixer fixerUpper, JsonElement element) {
+         Dynamic<JsonElement> data = new Dynamic<>(JsonOps.INSTANCE, element);
+@@ -126,9 +_,11 @@
+     public void sendStats(ServerPlayer player) {
+         Object2IntMap<Stat<?>> statsToSend = new Object2IntOpenHashMap<>();
+ 
+-        for (Stat<?> stat : this.getDirty()) {
++        for (Stat<?> stat : this.dirty) { // Slime - SparklyPaper: Skip dirty stats copy when requesting player stats
+             statsToSend.put(stat, this.getValue(stat));
+         }
++
++        this.dirty.clear(); // Slime - SparklyPaper: Clear dirty stats after copying
+ 
+         player.connection.send(new ClientboundAwardStatsPacket(statsToSend));
      }

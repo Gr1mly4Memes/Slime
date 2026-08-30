@@ -488,7 +488,7 @@ public class WireHandler {
             }
         }
 
-        updateOrder = UpdateOrder.values()[level.paperConfig().misc.alternateCurrentUpdateOrder.ordinal()];
+        updateOrder = UpdateOrder.VALUES[level.paperConfig().misc.alternateCurrentUpdateOrder.ordinal()]; // Slime - use cached VALUES
     }
 
     /**

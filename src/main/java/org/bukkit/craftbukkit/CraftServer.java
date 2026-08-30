@@ -926,7 +926,7 @@ public final class CraftServer implements Server {
 
     @Override
     public List<World> getWorlds() {
-        return new ArrayList<World>(this.worlds.values());
+        return new it.unimi.dsi.fastutil.objects.ObjectArrayList<World>(this.worlds.values()); // Slime - Replace CraftServer#getWorlds ArrayList with a fastutil ObjectArrayList
     }
 
     @Override

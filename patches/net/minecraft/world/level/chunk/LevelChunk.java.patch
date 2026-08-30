@@ -17,9 +17,12 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final TickingBlockEntity NULL_TICKER = new TickingBlockEntity() {
          @Override
-@@ -89,7 +_,7 @@
+@@ -87,9 +_,9 @@
+             return "<null>";
+         }
      };
-     private final Map<BlockPos, LevelChunk.RebindableTickingBlockEntityWrapper> tickersInLevel = Maps.newHashMap();
+-    private final Map<BlockPos, LevelChunk.RebindableTickingBlockEntityWrapper> tickersInLevel = Maps.newHashMap();
++    private final Map<BlockPos, LevelChunk.RebindableTickingBlockEntityWrapper> tickersInLevel = new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(); // DivineMC - Optimize level ticking
      public boolean loaded;
 -    public final Level level;
 +    public final ServerLevel level; // CraftBukkit - type
@@ -157,7 +160,7 @@
      @Override
      public void markUnsaved() {
          boolean wasUnsaved = this.isUnsaved();
-@@ -206,8 +_,28 @@
+@@ -206,8 +_,35 @@
              : super.getListenerRegistry(section);
      }
  
@@ -170,11 +173,18 @@
 +    public BlockState getBlockStateFinal(final int x, final int y, final int z) {
 +        // Copied and modified from below
 +        final int sectionIndex = this.getSectionIndex(y);
-+        if (sectionIndex < 0 || sectionIndex >= this.sections.length
-+                || this.sections[sectionIndex].nonEmptyBlockCount == 0) {
++        // DivineMC start - Optimize block state lookup
++        if (sectionIndex < 0 || sectionIndex >= this.sections.length) {
 +            return Blocks.AIR.defaultBlockState();
 +        }
-+        return this.sections[sectionIndex].getStates().get((y & 15) << 8 | (z & 15) << 4 | x & 15);
++
++        final LevelChunkSection section = this.sections[sectionIndex];
++        if (section.nonEmptyBlockCount == 0) {
++            return Blocks.AIR.defaultBlockState();
++        }
++
++        return section.states.get((y & 15) << 8 | (z & 15) << 4 | (x & 15));
++        // DivineMC end - Optimize block state lookup
 +    }
 +
      @Override

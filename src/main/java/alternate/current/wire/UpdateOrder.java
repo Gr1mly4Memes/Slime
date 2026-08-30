@@ -351,6 +351,8 @@ public enum UpdateOrder {
         }
     };
 
+    public static final UpdateOrder[] VALUES = values(); // Slime - cache UpdateOrder values()
+
     private final int[][] directNeighbors;
     private final int[][] cardinalNeighbors;
 
