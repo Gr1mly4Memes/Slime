@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/feline/Ocelot.java
 +++ b/net/minecraft/world/entity/animal/feline/Ocelot.java
-@@ -67,11 +_,57 @@
+@@ -67,11 +_,74 @@
      private Ocelot.@Nullable OcelotAvoidEntityGoal<Player> ocelotAvoidPlayersGoal;
      private Ocelot.@Nullable OcelotTemptGoal temptGoal;
  
@@ -10,6 +10,23 @@
 +        return this.level().purpurConfig.ocelotBreedingTicks;
 +    }
 +    // Purpur end - Make entity breeding times configurable
++
++    // Purpur start - Breedable mobs can have multiple babies
++    @Override
++    public boolean willHaveAnotherBaby() {
++        return (this.level().purpurConfig.ocelotBreedingChance > 0.0D) && (this.level().purpurConfig.ocelotBreedingChance >= this.random.nextDouble());
++    }
++
++    @Override
++    public int getBreedingMinOffspring() {
++        return this.level().purpurConfig.ocelotBreedingMinOffspring;
++    }
++
++    @Override
++    public int getBreedingMaxOffspring() {
++        return this.level().purpurConfig.ocelotBreedingMaxOffspring;
++    }
++    // Purpur end - Breedable mobs can have multiple babies
 +
 +    // Purpur start - Mobs always drop experience
 +    @Override

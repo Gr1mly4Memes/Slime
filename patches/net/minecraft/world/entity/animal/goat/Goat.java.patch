@@ -10,7 +10,7 @@
  import org.jspecify.annotations.Nullable;
  
  public class Goat extends Animal {
-@@ -87,6 +_,20 @@
+@@ -87,6 +_,37 @@
      private boolean isLoweringHead;
      private int lowerHeadTick;
  
@@ -20,6 +20,23 @@
 +        return this.level().purpurConfig.goatBreedingTicks;
 +    }
 +    // Purpur end - Make entity breeding times configurable
++
++    // Purpur start - Breedable mobs can have multiple babies
++    @Override
++    public boolean willHaveAnotherBaby() {
++        return (this.level().purpurConfig.goatBreedingChance > 0.0D) && (this.level().purpurConfig.goatBreedingChance >= this.random.nextDouble());
++    }
++
++    @Override
++    public int getBreedingMinOffspring() {
++        return this.level().purpurConfig.goatBreedingMinOffspring;
++    }
++
++    @Override
++    public int getBreedingMaxOffspring() {
++        return this.level().purpurConfig.goatBreedingMaxOffspring;
++    }
++    // Purpur end - Breedable mobs can have multiple babies
 +
 +    // Purpur start - Mobs always drop experience
 +    @Override

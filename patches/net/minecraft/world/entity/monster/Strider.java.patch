@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Strider.java
 +++ b/net/minecraft/world/entity/monster/Strider.java
-@@ -90,17 +_,39 @@
+@@ -90,17 +_,56 @@
      public final ItemBasedSteering steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME);
      private @Nullable TemptGoal temptGoal;
  
@@ -10,6 +10,23 @@
 +        return this.level().purpurConfig.striderBreedingTicks;
 +    }
 +    // Purpur end - Make entity breeding times configurable
++
++    // Purpur start - Breedable mobs can have multiple babies
++    @Override
++    public boolean willHaveAnotherBaby() {
++        return (this.level().purpurConfig.striderBreedingChance > 0.0D) && (this.level().purpurConfig.striderBreedingChance >= this.random.nextDouble());
++    }
++
++    @Override
++    public int getBreedingMinOffspring() {
++        return this.level().purpurConfig.striderBreedingMinOffspring;
++    }
++
++    @Override
++    public int getBreedingMaxOffspring() {
++        return this.level().purpurConfig.striderBreedingMaxOffspring;
++    }
++    // Purpur end - Breedable mobs can have multiple babies
 +
      public Strider(EntityType<? extends Strider> strider, Level level) {
          super(strider, level);

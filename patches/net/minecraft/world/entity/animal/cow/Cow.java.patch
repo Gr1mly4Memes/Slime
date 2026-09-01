@@ -8,7 +8,7 @@
      private static final EntityDataAccessor<Holder<CowVariant>> DATA_VARIANT_ID = SynchedEntityData.defineId(Cow.class, EntityDataSerializers.COW_VARIANT);
      private static final EntityDataAccessor<Holder<CowSoundVariant>> DATA_SOUND_VARIANT_ID = SynchedEntityData.defineId(
          Cow.class, EntityDataSerializers.COW_SOUND_VARIANT
-@@ -42,6 +_,60 @@
+@@ -42,6 +_,77 @@
          super(type, level);
      }
  
@@ -44,6 +44,23 @@
 +        return this.level().purpurConfig.cowBreedingTicks;
 +    }
 +    // Purpur end - Make entity breeding times configurable
++
++    // Purpur start - Breedable mobs can have multiple babies
++    @Override
++    public boolean willHaveAnotherBaby() {
++        return (this.level().purpurConfig.cowBreedingChance > 0.0D) && (this.level().purpurConfig.cowBreedingChance >= this.random.nextDouble());
++    }
++
++    @Override
++    public int getBreedingMinOffspring() {
++        return this.level().purpurConfig.cowBreedingMinOffspring;
++    }
++
++    @Override
++    public int getBreedingMaxOffspring() {
++        return this.level().purpurConfig.cowBreedingMaxOffspring;
++    }
++    // Purpur end - Breedable mobs can have multiple babies
 +
 +    // Purpur start - Toggle for water sensitive mob damage
 +    @Override

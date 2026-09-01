@@ -8,7 +8,7 @@
  import org.jspecify.annotations.Nullable;
  
  public class Sheep extends Animal implements Shearable {
-@@ -66,10 +_,39 @@
+@@ -66,10 +_,56 @@
      private int eatAnimationTick;
      private EatBlockGoal eatBlockGoal;
  
@@ -18,6 +18,23 @@
 +        return this.level().purpurConfig.sheepBreedingTicks;
 +    }
 +    // Purpur end - Make entity breeding times configurable
++
++    // Purpur start - Breedable mobs can have multiple babies
++    @Override
++    public boolean willHaveAnotherBaby() {
++        return (this.level().purpurConfig.sheepBreedingChance > 0.0D) && (this.level().purpurConfig.sheepBreedingChance >= this.random.nextDouble());
++    }
++
++    @Override
++    public int getBreedingMinOffspring() {
++        return this.level().purpurConfig.sheepBreedingMinOffspring;
++    }
++
++    @Override
++    public int getBreedingMaxOffspring() {
++        return this.level().purpurConfig.sheepBreedingMaxOffspring;
++    }
++    // Purpur end - Breedable mobs can have multiple babies
 +
      public Sheep(EntityType<? extends Sheep> type, Level level) {
          super(type, level);

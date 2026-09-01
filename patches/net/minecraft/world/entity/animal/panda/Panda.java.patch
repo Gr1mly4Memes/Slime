@@ -16,7 +16,7 @@
  import org.jspecify.annotations.Nullable;
  
  public class Panda extends Animal {
-@@ -104,6 +_,13 @@
+@@ -104,6 +_,30 @@
      private float rollAmountO;
      private Panda.PandaLookAtPlayerGoal lookAtPlayerGoal;
  
@@ -26,6 +26,23 @@
 +        return this.level().purpurConfig.pandaBreedingTicks;
 +    }
 +    // Purpur end - Make entity breeding times configurable
++
++    // Purpur start - Breedable mobs can have multiple babies
++    @Override
++    public boolean willHaveAnotherBaby() {
++        return (this.level().purpurConfig.pandaBreedingChance > 0.0D) && (this.level().purpurConfig.pandaBreedingChance >= this.random.nextDouble());
++    }
++
++    @Override
++    public int getBreedingMinOffspring() {
++        return this.level().purpurConfig.pandaBreedingMinOffspring;
++    }
++
++    @Override
++    public int getBreedingMaxOffspring() {
++        return this.level().purpurConfig.pandaBreedingMaxOffspring;
++    }
++    // Purpur end - Breedable mobs can have multiple babies
 +
      public Panda(EntityType<? extends Panda> type, Level level) {
          super(type, level);

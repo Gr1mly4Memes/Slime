@@ -48,7 +48,7 @@
      public GoalSelector targetSelector;
      private @Nullable LivingEntity target;
      private final Sensing sensing;
-@@ -144,13 +_,21 @@
+@@ -144,13 +_,22 @@
      private Leashable.@Nullable LeashData leashData;
      private BlockPos homePosition = BlockPos.ZERO;
      private int homeRadius = -1;
@@ -60,6 +60,7 @@
 +
 +    public boolean aware = true; // CraftBukkit
 +    public int ticksSinceLastInteraction; // Purpur - Entity lifespan
++    public boolean willHaveAnotherBaby() { return false; } public int getBreedingMinOffspring() { return 1; } public int getBreedingMaxOffspring() { return 1; } // Purpur - Breedable mobs can have multiple babies
  
      protected Mob(EntityType<? extends Mob> type, Level level) {
          super(type, level);

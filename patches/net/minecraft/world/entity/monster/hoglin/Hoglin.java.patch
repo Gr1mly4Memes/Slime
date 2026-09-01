@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/hoglin/Hoglin.java
 +++ b/net/minecraft/world/entity/monster/hoglin/Hoglin.java
-@@ -75,11 +_,32 @@
+@@ -75,11 +_,49 @@
          var0 -> HoglinAi.getActivities()
      );
  
@@ -10,6 +10,23 @@
 +        return this.level().purpurConfig.hoglinBreedingTicks;
 +    }
 +    // Purpur end - Make entity breeding times configurable
++
++    // Purpur start - Breedable mobs can have multiple babies
++    @Override
++    public boolean willHaveAnotherBaby() {
++        return (this.level().purpurConfig.hoglinBreedingChance > 0.0D) && (this.level().purpurConfig.hoglinBreedingChance >= this.random.nextDouble());
++    }
++
++    @Override
++    public int getBreedingMinOffspring() {
++        return this.level().purpurConfig.hoglinBreedingMinOffspring;
++    }
++
++    @Override
++    public int getBreedingMaxOffspring() {
++        return this.level().purpurConfig.hoglinBreedingMaxOffspring;
++    }
++    // Purpur end - Breedable mobs can have multiple babies
 +
      public Hoglin(EntityType<? extends Hoglin> type, Level level) {
          super(type, level);
