@@ -4,6 +4,8 @@
 Slime is a NeoForge hybrid server implementing PurPur and Paper API
 
 **Slime is still EXPERIMENTAL phase, may or may not cause instabilities!**
+
+Join my small Discord: https://discord.gg/vzy3DwcbUT
 </div>
 
 ## ⚙️ Features
@@ -24,4 +26,4 @@ Also, this is a Fork of Youer, but I’m planning to make it separate from it!
 
 ## ALSO!
 This project does NOT NEED PERFORMANCE OPTIMIZATIONS MODS/PLUGINS, because it contains Paper!, which is already optimized.
-Most if not all performance optimizations will break and produce unexpected behavior and errors. 
+Most if not all performance optimizations will break and produce unexpected behavior and errors. [List of compatibilty](COMPATIBILTY.md)
