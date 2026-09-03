@@ -10,58 +10,8 @@ The following NeoForge server-side mods have been tested and **do not currently 
 - **Most optimization mods** ❌
 
 > **Observed pattern:** Most optimization/performance-focused mods tested so far appear to be incompatible with Slime.
-
-### Gameplay / Content
-- **Advanced Netherite** ❌
-- **Neo Origins** ❌
-
-### World Generation
-- **Moderner Beta** ❌
-
 ---
 
-## Confirmed Compatible Mods
-
-The following NeoForge server-side mods have been tested and **work with Slime 26.2**:
-
-- **Chunky (Mod)** ✅
-- **Lithostitched** ✅
-- **Tectonic** ✅
-- **Towns and Towers** ✅
-- **Lomka** ✅
-- **Retromod** ✅
-
----
-
-# Confirmed Compatible Plugins
-
-The following Bukkit/Paper plugins have been tested and **work with Slime 26.2**:
-
-- **WorldEdit** ✅
-- **LuckPerms** ✅
-- **Vault** ✅
-- **WorldGuard** ✅
-- **Chunky (Plugin)** ✅
-- **DiscordSRV (Plugin)** ✅
-
-### Known Plugin Limitation
-
-- **EssentialsX** ⏸️
-  - Not currently testable because its latest available version targets **Minecraft 26.1.2**, rather than 26.2.
-  - This is **not currently classified as a Slime incompatibility**.
-
----
-
-# Current Compatibility Summary
-
-| Component | Status |
-|---|---|
-| Bukkit/Paper plugins | 🟢 Generally strong |
-| World-generation mods | 🟢 Generally strong |
-| Compatibility/bridge mods | 🟢 Generally strong |
-| Optimization mods | 🔴 Major compatibility problem |
-| Content/gameplay mods | 🟠 Some incompatibilities |
-| Custom player-power mods | 🔴 Incompatible in tested cases |
 
 ## Current Known Incompatibility List
 
@@ -71,12 +21,12 @@ The following Bukkit/Paper plugins have been tested and **work with Slime 26.2**
 3. Advanced Netherite
 4. Neo Origins
 5. Moderner Beta
+6. Open Parties and Claims
+7. Dimension Fixer
+8. World Portal
 
 **Plugins:**
 - None confirmed incompatible so far.
-
-**Untestable due to upstream version:**
-- EssentialsX (26.1.2 only)
 
 ## Important Note
 
