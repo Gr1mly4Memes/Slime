@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatType;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.Item;
@@ -61,6 +62,7 @@ public class NeoForgeInjectBukkit {
     public static void init() {
         addEnumMaterialInItems();
         addEnumEffectAndPotion();
+        addEnumMobEffect();
         addEnumMaterialsInBlocks();
         addEnumEntity();
         addStatistic();
@@ -161,6 +163,19 @@ public class NeoForgeInjectBukkit {
         }
     }
 
+    public static void addEnumMobEffect() {
+        var registry = BuiltInRegistries.MOB_EFFECT;
+        for (MobEffect effect : registry) {
+            Identifier resourceLocation = registry.getKey(effect);
+            if (resourceLocation != null && isMods(resourceLocation)) {
+                NamespacedKey key = NamespacedKey.fromString(resourceLocation.toString());
+                if (key != null) {
+                    org.bukkit.Registry.MOB_EFFECT.get(key);
+                    debug("Save-MobEffect:{}", key);
+                }
+            }
+        }
+    }
     public static void addEnumParticle() {
         var registry = BuiltInRegistries.PARTICLE_TYPE;
         for (ParticleType<?> particleType : registry) {

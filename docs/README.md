@@ -1,29 +1,27 @@
 <div align="center">
 
 # Slime
-Slime is a NeoForge hybrid server implementing PurPur and Paper API
+Slime is an experimental NeoForge hybrid server based on **[Youer](https://github.com/MohistMC/Youer)**, implementing PurPur and Paper APIs.
 
-**Slime is still EXPERIMENTAL phase, may or may not cause instabilities!**
+**Slime is still in an EXPERIMENTAL phase and may cause instability!**
 
 Join my small Discord: https://discord.gg/vzy3DwcbUT
 </div>
 
 ## ⚙️ Features
-- **Based on NeoForge** - A modding API for Minecraft and mods
-- **Fully Almost Fully Compatible** - Works with PurPur, Paper, Spigot, and Bukkit plugins
+- **Based on NeoForge & Youer** - A modding API for Minecraft mods and plugins
+- **Almost Fully Compatible** - Works with PurPur, Paper, Spigot, and Bukkit plugins
 - **Performance Optimized** - With Pufferfish and Paper optimizations
 
 ## 📜 Credits
-Slime includes patches and features from other projects
+Slime is built on top of [Youer](https://github.com/MohistMC/Youer) and includes patches and features from open-source projects:
 
-- [Neoforge](https://github.com/neoforged/neoforge)
-- [List of credits](CREDITS.md)
+- [Youer](https://github.com/MohistMC/Youer) (Upstream Base Project)
+- [NeoForge](https://github.com/neoforged/neoforge)
+- [Full List of Credits](CREDITS.md)
 
-## P.S.
-This project is still in early development, and may not be stable. Im planning to add fabric support in the future.
-And this project is welcome to contributions! Anything to improve and fix bugs is welcome!
-Also, this is a Fork of Youer, but I’m planning to make it separate from it!
+## 📌 Development Notice
+This project is still in early development. While it originates as a fork of Youer, future updates plan to introduce independent features and potential Fabric support. Contributions are welcome!
 
-## ALSO!
-This project does NOT NEED PERFORMANCE OPTIMIZATIONS MODS/PLUGINS, because it contains Paper!, which is already optimized.
-Most if not all performance optimizations will break and produce unexpected behavior and errors. [List of compatibilty](COMPATIBILTY.md)
+## ⚡ Performance Mods & Plugins
+This project includes Paper optimizations out of the box. Adding external performance optimization mods or plugins is unnecessary and may break unexpected server behavior. See [Compatibility](COMPATIBILTY.md) for details.
