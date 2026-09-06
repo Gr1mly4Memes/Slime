@@ -1,9 +1,20 @@
 --- a/net/minecraft/world/item/ItemStackTemplate.java
 +++ b/net/minecraft/world/item/ItemStackTemplate.java
-@@ -49,6 +_,26 @@
-         this(item.builtInRegistryHolder(), 1, patch);
-     }
+@@ -21,7 +_,7 @@
+     public static final MapCodec<ItemStackTemplate> MAP_CODEC = RecordCodecBuilder.mapCodec(
+         i -> i.group(
+                 Item.CODEC.fieldOf("id").forGetter(ItemStackTemplate::item),
+-                ExtraCodecs.intRange(1, 99).optionalFieldOf("count", 1).forGetter(ItemStackTemplate::count),
++                ExtraCodecs.intRange(0, 99).optionalFieldOf("count", 1).forGetter(ItemStackTemplate::count), // Slime - count:0
+                 DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(ItemStackTemplate::components)
+             )
+             .apply(i, ItemStackTemplate::new)
+@@ -47,6 +_,26 @@
  
+     public ItemStackTemplate(Item item, DataComponentPatch patch) {
+         this(item.builtInRegistryHolder(), 1, patch);
++    }
++
 +    // Neo: Provide full set of overloads
 +    public ItemStackTemplate(Item item, int count, DataComponentPatch patch) {
 +        this(item.builtInRegistryHolder(), count, patch);
@@ -22,8 +33,6 @@
 +    // Neo: Easier integration with DeferredItem
 +    public ItemStackTemplate(Holder<Item> item, DataComponentPatch patch) {
 +        this(item, 1, patch);
-+    }
-+
+     }
+ 
      public ItemStackTemplate(Holder<Item> item, int count, DataComponentPatch components) {
-         if (count != 0 && !item.is(Items.AIR.builtInRegistryHolder())) {
-             this.item = item;

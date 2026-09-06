@@ -221,7 +221,7 @@
          LOGGER.info("Loading properties");
          DedicatedServerProperties properties = this.settings.getProperties();
          if (this.isSingleplayer()) {
-@@ -197,57 +_,159 @@
+@@ -197,57 +_,160 @@
              this.setLocalIp(properties.serverIp);
          }
  
@@ -257,6 +257,7 @@
 +        com.destroystokyo.paper.VersionHistoryManager.INSTANCE.getClass(); // Paper - load version history now
 +        gg.pufferfish.pufferfish.PufferfishConfig.load(); // Pufferfish
 +        gg.pufferfish.pufferfish.PufferfishCommand.init(); // Pufferfish
++        gr1mly4memes.slime.SlimeConfig.init((java.io.File) options.valueOf("slime-settings")); // Slime - Server Config
 +
 +        // this.worldData.setGameType(properties.gameMode.get()); // CraftBukkit - moved to world loading
          LOGGER.info("Default game type: {}", properties.gameMode.get());

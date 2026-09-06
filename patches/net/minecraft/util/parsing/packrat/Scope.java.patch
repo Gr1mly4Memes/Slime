@@ -9,7 +9,7 @@
 +    private int depth;
 +
 +    private static final Term<?> INCREASING_DEPTH_TERM = (parseState, scope, control) -> {
-+        if (++scope.depth > 512) {
++        if (++scope.depth > 2048) { // Slime - 512 to 2048
 +            parseState.errorCollector().store(parseState.mark(), new IllegalStateException("Too deep"));
 +            return false;
 +        }

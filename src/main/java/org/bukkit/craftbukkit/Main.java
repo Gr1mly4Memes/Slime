@@ -148,6 +148,14 @@ public class Main {
                     .describedAs("Yml file");
                 // Purpur end - Purpur config files
 
+                // Slime start - Server Config
+                acceptsAll(asList("slime", "slime-settings"), "File for slime settings")
+                        .withRequiredArg()
+                        .ofType(File.class)
+                        .defaultsTo(new File("slime.yml"))
+                        .describedAs("Yml file");
+                // Slime end - Server Config
+
                 this.accepts("server-name", "Name of the server")
                         .withRequiredArg()
                         .ofType(String.class)

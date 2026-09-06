@@ -1042,6 +1042,7 @@ public final class CraftServer implements Server {
         }
         // Paper end
         this.reloadData();
+        gr1mly4memes.slime.SlimeConfig.init((File) console.options.valueOf("slime-settings")); // Slime - Server Config
         org.spigotmc.SpigotConfig.registerCommands(); // Spigot
         io.papermc.paper.command.PaperCommands.registerCommands(this.console); // Paper
         //this.spark.registerCommandBeforePlugins(this); // Paper - spark // Slime remove sparks fly due to loading problems
@@ -2820,6 +2821,13 @@ public final class CraftServer implements Server {
             return getProperties().properties;
         }
         // Purpur end - Purpur config files
+
+        // Slime start
+        @Override
+        public YamlConfiguration getSlimeConfig() {
+            return gr1mly4memes.slime.SlimeConfig.config;
+        }
+        // Slime end
 
         @Override
         public void restart() {

@@ -103,7 +103,7 @@
      private final ServerFunctionManager functionManager;
      private boolean enforceWhitelist;
      private boolean usingWhitelist;
-@@ -291,12 +_,218 @@
+@@ -291,12 +_,219 @@
      private final SuppressedExceptionCollector suppressedExceptions = new SuppressedExceptionCollector();
      private final DiscontinuousFrame tickFrame;
      private final PacketProcessor packetProcessor;
@@ -137,6 +137,7 @@
 +    public static final long SERVER_INIT = System.nanoTime(); // Paper - Lag compensation
 +    public boolean lagging = false; // Purpur - Lagging threshold
 +    protected boolean upnp = false; // Purpur - UPnP Port Forwarding
++    public final gr1mly4memes.slime.util.tps.TPSCalculator tpsCalculator = new gr1mly4memes.slime.util.tps.TPSCalculator(); // Slime - Lag compensation
 +    // Paper start - improve tick loop
 +    public final ca.spottedleaf.common.time.TickData tickTimes1s  = new ca.spottedleaf.common.time.TickData(java.util.concurrent.TimeUnit.SECONDS.toNanos(1L));
 +    public final ca.spottedleaf.common.time.TickData tickTimes5s  = new ca.spottedleaf.common.time.TickData(java.util.concurrent.TimeUnit.SECONDS.toNanos(5L));
@@ -845,7 +846,7 @@
  
          this.isSaving = false;
          this.savedDataStorage.close();
-@@ -690,6 +_,29 @@
+@@ -690,6 +_,30 @@
          } catch (IOException e) {
              LOGGER.error("Failed to unlock level {}", this.storageSource.getLevelId(), e);
          }
@@ -869,6 +870,7 @@
 +        // Paper end - rewrite chunk system
 +        // Paper start - Improved watchdog support - move final shutdown items here
 +        Util.shutdownExecutors();
++        gr1mly4memes.slime.SlimeConfig.createWorldSections = false; // Slime
 +        net.neoforged.neoforge.server.ServerLifecycleHooks.handleServerStopped(this);
 +        this.onServerExit();
 +        // Paper end - Improved watchdog support - move final shutdown items here
@@ -1292,7 +1294,7 @@
                  this.emptyTicks++;
              } else {
                  this.emptyTicks = 0;
-@@ -971,25 +_,66 @@
+@@ -971,25 +_,67 @@
                      this.autoSave();
                  }
  
@@ -1312,6 +1314,7 @@
              }
          }
  
++        this.tpsCalculator.doTick(); // Slime - Lag compenstation
 +        new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
          this.tickCount++;
 +        net.neoforged.neoforge.event.EventHooks.fireServerTickPre(haveTime, this);

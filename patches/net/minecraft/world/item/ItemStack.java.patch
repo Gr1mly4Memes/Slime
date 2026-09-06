@@ -18,6 +18,15 @@
  import org.jspecify.annotations.Nullable;
  import org.slf4j.Logger;
  
+@@ -115,7 +_,7 @@
+         subCodec -> RecordCodecBuilder.mapCodec(
+             i -> i.group(
+                     Item.CODEC_WITH_BOUND_COMPONENTS.fieldOf("id").forGetter(ItemStack::typeHolder),
+-                    ExtraCodecs.optionalAlwaysPresentFieldOf(ExtraCodecs.intRange(1, 99), "count", 1).forGetter(ItemStack::getCount),
++                    ExtraCodecs.optionalAlwaysPresentFieldOf(ExtraCodecs.intRange(0, 99), "count", 1).forGetter(ItemStack::getCount), // Slime - count:0
+                     DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(s -> s.components.asPatch())
+                 )
+                 .apply(i, ItemStack::new)
 @@ -188,9 +_,17 @@
                  if (itemStack.isEmpty()) {
                      output.writeVarInt(0);

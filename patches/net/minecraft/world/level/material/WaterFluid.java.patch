@@ -23,12 +23,21 @@
      @Override
      protected void beforeDestroyingBlock(LevelAccessor level, BlockPos pos, BlockState state) {
          BlockEntity blockEntity = state.hasBlockEntity() ? level.getBlockEntity(pos) : null;
-@@ -109,7 +_,7 @@
+@@ -108,8 +_,16 @@
+         return 1;
      }
  
++    // Slime start - Lag compensation
++    private int lagCompensation(ServerLevel level) {
++        if (!gr1mly4memes.slime.SlimeConfig.lagCompensationEnabled || !gr1mly4memes.slime.SlimeConfig.fluidAcceleration) return 5;
++        return gr1mly4memes.slime.util.tps.TPSUtil.tt20(5, true, level);
++    }
++    // Slime end - Lag compensation
++
      @Override
 -    public int getTickDelay(LevelReader level) {
 +    public int getTickDelay(final LevelReader level) {
++        if (level instanceof ServerLevel serverLevel) return lagCompensation(serverLevel); // Slime - Lag compensation
          return 5;
      }
  

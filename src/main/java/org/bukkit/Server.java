@@ -2430,6 +2430,13 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
         }
         // Purpur end
 
+        // Slime start
+        @NotNull
+        public org.bukkit.configuration.file.YamlConfiguration getSlimeConfig() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        // Slime end
+
         /**
          * Sends the component to the player
          *

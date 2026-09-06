@@ -72,6 +72,37 @@
      public final @Nullable ItemStackTemplate getCraftingRemainder() {
          return this.craftingRemainingItem;
      }
+@@ -297,6 +_,13 @@
+     public void onCraftedPostProcess(ItemStack itemStack, Level level) {
+     }
+ 
++    // Slime start - Lag compensation
++    private int lagCompensation(int original, net.minecraft.server.level.ServerLevel level) {
++        if (!gr1mly4memes.slime.SlimeConfig.lagCompensationEnabled || !gr1mly4memes.slime.SlimeConfig.eatingAcceleration || original == 0) return original;
++        return gr1mly4memes.slime.util.tps.TPSUtil.tt20(original, true, level);
++    }
++    // Slime end - Lag compensation
++
+     public ItemUseAnimation getUseAnimation(ItemStack itemStack) {
+         Consumable consumable = itemStack.get(DataComponents.CONSUMABLE);
+         if (consumable != null) {
+@@ -311,7 +_,15 @@
+     public int getUseDuration(ItemStack itemStack, LivingEntity user) {
+         Consumable consumable = itemStack.get(DataComponents.CONSUMABLE);
+         if (consumable != null) {
+-            return consumable.consumeTicks();
++            // Slime start - Lag compensation
++            int original = consumable.consumeTicks();
++
++            if (user.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
++                return lagCompensation(original, serverLevel);
++            }
++
++            return original;
++            // Slime end - Lag compensation
+         } else {
+             return !itemStack.has(DataComponents.BLOCKS_ATTACKS) && !itemStack.has(DataComponents.KINETIC_WEAPON) ? 0 : 72000;
+         }
 @@ -349,13 +_,26 @@
      }
  
