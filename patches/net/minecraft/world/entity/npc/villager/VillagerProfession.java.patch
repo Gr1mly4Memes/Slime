@@ -17,7 +17,7 @@
      }
  
      private static VillagerProfession register(
-@@ -127,132 +_,72 @@
+@@ -127,52 +_,30 @@
              ARMORER,
              PoiTypes.ARMORER,
              SoundEvents.VILLAGER_WORK_ARMORER,
@@ -62,6 +62,8 @@
              registry,
              CLERIC,
              PoiTypes.CLERIC,
++            ImmutableSet.of(Items.NETHER_WART), // Purpur - Option for Villager Clerics to farm Nether Wart
++            ImmutableSet.of(Blocks.SOUL_SAND), // Purpur - Option for Villager Clerics to farm Nether Wart
              SoundEvents.VILLAGER_WORK_CLERIC,
 -            Int2ObjectMap.ofEntries(
 -                Int2ObjectMap.entry(1, TradeSets.CLERIC_LEVEL_1),
@@ -74,11 +76,9 @@
          );
          register(
              registry,
-             FARMER,
-             PoiTypes.FARMER,
+@@ -181,78 +_,42 @@
              ImmutableSet.of(Items.WHEAT, Items.WHEAT_SEEDS, Items.BEETROOT_SEEDS, Items.BONE_MEAL),
--            ImmutableSet.of(Blocks.FARMLAND),
-+            ImmutableSet.of(Blocks.SOUL_SAND), // Purpur - Option for Villager Clerics to farm Nether Wart
+             ImmutableSet.of(Blocks.FARMLAND),
              SoundEvents.VILLAGER_WORK_FARMER,
 -            Int2ObjectMap.ofEntries(
 -                Int2ObjectMap.entry(1, TradeSets.FARMER_LEVEL_1),
