@@ -95,7 +95,7 @@
          }
      }
  
-@@ -205,4 +_,39 @@
+@@ -205,4 +_,46 @@
      public final boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
          return false;
      }
@@ -134,4 +134,11 @@
 +        return super.interact(player, hand, location);
 +    }
 +    // Purpur end - Shears can defuse TNT
++
++    // Leaf start - Dont save entity
++    @Override
++    public boolean canSaveToDisk() {
++        return !gr1mly4memes.slime.SlimeConfig.dontSavePrimedTNT;
++    }
++    // Leaf end - Dont save entity
  }

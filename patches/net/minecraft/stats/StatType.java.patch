@@ -1,0 +1,13 @@
+--- a/net/minecraft/stats/StatType.java
++++ b/net/minecraft/stats/StatType.java
+@@ -26,7 +_,9 @@
+     }
+ 
+     public boolean contains(T key) {
+-        return this.map.containsKey(key);
++        // Leaf start - Optimize map lookups with isEmpty check
++        return !this.map.isEmpty() && this.map.containsKey(key);
++        // Leaf end - Optimize map lookups with isEmpty check
+     }
+ 
+     public Stat<T> get(T argument, StatFormatter formatter) {

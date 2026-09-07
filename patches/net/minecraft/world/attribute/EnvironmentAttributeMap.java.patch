@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/attribute/EnvironmentAttributeMap.java
++++ b/net/minecraft/world/attribute/EnvironmentAttributeMap.java
+@@ -55,7 +_,9 @@
+     }
+ 
+     public boolean contains(EnvironmentAttribute<?> attribute) {
+-        return this.entries.containsKey(attribute);
++        // Leaf start - Optimize map lookups with isEmpty check
++        return !this.entries.isEmpty() && this.entries.containsKey(attribute);
++        // Leaf end - Optimize map lookups with isEmpty check
+     }
+ 
+     public Set<EnvironmentAttribute<?>> keySet() {

@@ -101,7 +101,25 @@ public final class SlimeConfig {
     public static boolean pickupAcceleration = true;
     @GlobalConfig(name = "portal-acceleration", category = {"Lag Compensation"})
     public static boolean portalAcceleration = true;
-    @GlobalConfig(name = "time-acceleration", category = {"Lag Compensation"})
-    public static boolean timeAcceleration = true;
     // Slime end - Lag compensation
+
+    // Leaf start - Performance configurations
+    @GlobalConfig(name = "skip-ai-for-non-aware-mob", category = {"Performance", "Entity AI"})
+    public static boolean skipAIForNonAwareMob = true;
+    @GlobalConfig(name = "skip-inactive-entity-for-execute", category = {"Performance", "Entity AI"})
+    public static boolean skipInactiveEntityForExecute = true;
+    @GlobalConfig(name = "dont-save-primed-tnt", category = {"Performance", "Entity Saving"})
+    public static boolean dontSavePrimedTNT = false;
+    @GlobalConfig(name = "dont-save-falling-block", category = {"Performance", "Entity Saving"})
+    public static boolean dontSaveFallingBlock = false;
+    @GlobalConfig(name = "chance-follow-parent", category = {"Performance", "Entity Goals"})
+    public static int chanceFollowParent = 0;
+    @GlobalConfig(name = "chance-tempt", category = {"Performance", "Entity Goals"})
+    public static int chanceTempt = 0;
+    @GlobalConfig(name = "chance-target", category = {"Performance", "Entity Goals"})
+    public static int chanceTarget = 0;
+    @GlobalConfig(name = "chance-enderman-look-for-player", category = {"Performance", "Entity Goals"})
+    public static int chanceEndermanLookForPlayer = 0;
+    // Leaf end - Performance configurations
+
 }

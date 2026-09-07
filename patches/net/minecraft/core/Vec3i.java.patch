@@ -21,14 +21,23 @@
      public boolean equals(Object o) {
          if (this == o) {
              return true;
-@@ -50,6 +_,7 @@
+@@ -50,8 +_,15 @@
      }
  
      @Override
 +    // Paper - Perf: Final for inline (disabled for Create mod compatibility)
      public int hashCode() {
-         return (this.getY() + this.getZ() * 31) * 31 + this.getX();
+-        return (this.getY() + this.getZ() * 31) * 31 + this.getX();
++        // Leaf start - Optimize Vec3i hashing
++        // Uses high-quality spatial hasher with large prime coefficients and Phi mixing
++        // to significantly reduce hash collisions and improve HashMap lookup performance
++        final int h = this.x * 31337 + this.y * 961 + this.z;
++        final int hash = h * 0x9E3779B9; // Phi constant
++        return hash ^ (hash >>> 16);
++        // Leaf end - Optimize Vec3i hashing
      }
+ 
+     public int compareTo(Vec3i pos) {
 @@ -62,15 +_,15 @@
          }
      }

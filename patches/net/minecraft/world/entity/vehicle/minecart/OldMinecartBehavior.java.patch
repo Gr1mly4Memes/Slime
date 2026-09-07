@@ -39,6 +39,15 @@
          switch (shape) {
              case ASCENDING_EAST:
                  this.setDeltaMovement(movement.add(-slideSpeed, 0.0, 0.0));
+@@ -148,7 +_,7 @@
+         Vec3i exit1 = exits.getSecond();
+         double xD = exit1.getX() - exit0.getX();
+         double zD = exit1.getZ() - exit0.getZ();
+-        double length = Math.sqrt(xD * xD + zD * zD);
++        double length = Math.hypot(xD, zD); // Leaf - Use Math.hypot instead of Math.sqrt
+         double flip = movement.x * xD + movement.z * zD;
+         if (flip < 0.0) {
+             xD = -xD;
 @@ -242,8 +_,8 @@
              Vec3 vec3 = this.getDeltaMovement();
              double speedLength = vec3.horizontalDistance();
@@ -63,6 +72,15 @@
              y = yt;
              if (shape.isSlope()) {
                  y = yt + 1;
+@@ -292,7 +_,7 @@
+             Vec3i exit1 = exits.getSecond();
+             double xD = exit1.getX() - exit0.getX();
+             double zD = exit1.getZ() - exit0.getZ();
+-            double dd = Math.sqrt(xD * xD + zD * zD);
++            double dd = Math.hypot(xD, zD); // Leaf - Use Math.hypot instead of Math.sqrt
+             xD /= dd;
+             zD /= dd;
+             x += xD * offs;
 @@ -317,9 +_,10 @@
              yt--;
          }

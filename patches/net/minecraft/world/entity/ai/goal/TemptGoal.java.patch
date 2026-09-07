@@ -17,7 +17,7 @@
  import org.jspecify.annotations.Nullable;
  
  public class TemptGoal extends Goal {
-@@ -23,7 +_,7 @@
+@@ -23,12 +_,16 @@
      private double pz;
      private double pRotX;
      private double pRotY;
@@ -26,7 +26,38 @@
      private int calmDown;
      private boolean isRunning;
      private final Predicate<ItemStack> items;
-@@ -56,12 +_,21 @@
+     private final boolean canScare;
+     private final double stopDistance;
++    // Leaf start - configurable goal update interval
++    private final int leaf$internal;
++    private int leaf$counter;
++    // Leaf end - configurable goal update interval
+ 
+     public TemptGoal(PathfinderMob mob, double speedModifier, Predicate<ItemStack> items, boolean canScare) {
+         this((Mob)mob, speedModifier, items, canScare, 2.5);
+@@ -46,22 +_,43 @@
+         this.stopDistance = stopDistance;
+         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+         this.targetingConditions = TEMPT_TARGETING.copy().selector((target, level) -> this.shouldFollow(target));
++        // Leaf start - configurable goal update interval
++        this.leaf$internal = Math.max(1, reducedTickDelay(gr1mly4memes.slime.SlimeConfig.chanceTempt));
++        this.leaf$counter = this.mob.random.nextInt(this.leaf$internal);
++        // Leaf end - configurable goal update interval
+     }
+ 
+     @Override
+     public boolean canUse() {
++        // Leaf start - configurable goal update interval
++        this.leaf$counter++;
++        if (this.leaf$counter < this.leaf$internal) {
++            return false;
++        } else {
++            this.leaf$counter = this.mob.random.nextInt(this.leaf$internal);
++        }
++        // Leaf end - configurable goal update interval
+         if (this.calmDown > 0) {
+             this.calmDown--;
+             return false;
          } else {
              this.player = getServerLevel(this.mob)
                  .getNearestPlayer(this.targetingConditions.range(this.mob.getAttributeValue(Attributes.TEMPT_RANGE)), this.mob);

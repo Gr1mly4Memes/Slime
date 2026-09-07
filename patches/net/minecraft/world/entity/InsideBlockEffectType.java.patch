@@ -1,12 +1,18 @@
 --- a/net/minecraft/world/entity/InsideBlockEffectType.java
 +++ b/net/minecraft/world/entity/InsideBlockEffectType.java
-@@ -6,22 +_,35 @@
+@@ -6,22 +_,40 @@
  public enum InsideBlockEffectType {
      FREEZE(entity -> {
          entity.setIsInPowderSnow(true);
 -        if (entity.canFreeze()) {
+-            entity.setTicksFrozen(Math.min(entity.getTicksRequiredToFreeze(), entity.getTicksFrozen() + 1));
 +        if (entity.canFreeze() && !entity.freezeLocked) { // Paper - Freeze Tick Lock API
-             entity.setTicksFrozen(Math.min(entity.getTicksRequiredToFreeze(), entity.getTicksFrozen() + 1));
++            // Leaf start - only update frozen ticks if changed
++            int newFrozenTicks = Math.min(entity.getTicksRequiredToFreeze(), entity.getTicksFrozen() + 1);
++            if (newFrozenTicks != entity.getTicksFrozen()) {
++                entity.setTicksFrozen(newFrozenTicks);
++            }
++            // Leaf end - only update frozen ticks if changed
          }
      }),
      CLEAR_FREEZE(Entity::clearFreeze),

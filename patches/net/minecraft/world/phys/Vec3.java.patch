@@ -1,0 +1,91 @@
+--- a/net/minecraft/world/phys/Vec3.java
++++ b/net/minecraft/world/phys/Vec3.java
+@@ -80,10 +_,16 @@
+         return new Vec3(vec.x - this.x, vec.y - this.y, vec.z - this.z);
+     }
+ 
++    // Leaf start - Optimize normalize - check lengthSqr first to avoid sqrt when not needed
+     public Vec3 normalize() {
+-        double dist = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+-        return dist < 1.0E-5F ? ZERO : new Vec3(this.x / dist, this.y / dist, this.z / dist);
++        double distSqr = this.lengthSqr();
++        if (distSqr < 1.0E-10F) { // (1.0E-5)^2
++            return ZERO;
++        }
++        double dist = Math.sqrt(distSqr);
++        return new Vec3(this.x / dist, this.y / dist, this.z / dist);
+     }
++    // Leaf end
+ 
+     public double dot(Vec3 vec) {
+         return this.x * vec.x + this.y * vec.y + this.z * vec.z;
+@@ -121,26 +_,32 @@
+         return this.distanceToSqr(pos.x(), pos.y(), pos.z()) < distance * distance;
+     }
+ 
++    // Leaf start - Optimize distanceTo - Use Math#hypot instead of Math#sqrt
+     public double distanceTo(Vec3 vec) {
+         double xd = vec.x - this.x;
+         double yd = vec.y - this.y;
+         double zd = vec.z - this.z;
+-        return Math.sqrt(xd * xd + yd * yd + zd * zd);
++        return Math.hypot(xd, Math.hypot(yd, zd));
+     }
++    // Leaf end
+ 
++    // Leaf start - Optimize distanceToSqr - Use Math.fma
+     public double distanceToSqr(Vec3 vec) {
+         double xd = vec.x - this.x;
+         double yd = vec.y - this.y;
+         double zd = vec.z - this.z;
+-        return xd * xd + yd * yd + zd * zd;
++        return Math.fma(xd, xd, Math.fma(yd, yd, zd * zd));
+     }
++    // Leaf end
+ 
++    // Leaf start - Optimize distanceToSqr - Use Math.fma
+     public double distanceToSqr(double x, double y, double z) {
+         double xd = x - this.x;
+         double yd = y - this.y;
+         double zd = z - this.z;
+-        return xd * xd + yd * yd + zd * zd;
++        return Math.fma(xd, xd, Math.fma(yd, yd, zd * zd));
+     }
++    // Leaf end
+ 
+     public boolean closerThan(Vec3 vec, double distanceXZ, double distanceY) {
+         double dx = vec.x() - this.x;
+@@ -177,21 +_,29 @@
+         return this.add((random.nextFloat() - 0.5F) * offset, 0.0, (random.nextFloat() - 0.5F) * offset);
+     }
+ 
++    // Leaf start - Optimize length - Use Math.hypot instead of Math.sqrt
+     public double length() {
+-        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
++        return Math.hypot(this.x, Math.hypot(this.y, this.z));
+     }
++    // Leaf end
+ 
++    // Leaf start - Optimize lengthSqr - Use Math.fma
+     public double lengthSqr() {
+-        return this.x * this.x + this.y * this.y + this.z * this.z;
++        return Math.fma(this.x, this.x, Math.fma(this.y, this.y, this.z * this.z));
+     }
++    // Leaf end
+ 
++    // Leaf start - Optimize horizontalDistance - Use Math.hypot instead of Math.sqrt
+     public double horizontalDistance() {
+-        return Math.sqrt(this.x * this.x + this.z * this.z);
++        return Math.hypot(this.x, this.z);
+     }
++    // Leaf end
+ 
++    // Leaf start - Optimize horizontalDistanceSqr - Use Math.fma
+     public double horizontalDistanceSqr() {
+-        return this.x * this.x + this.z * this.z;
++        return Math.fma(this.x, this.x, this.z * this.z);
+     }
++    // Leaf end
+ 
+     @Override
+     public boolean equals(Object o) {

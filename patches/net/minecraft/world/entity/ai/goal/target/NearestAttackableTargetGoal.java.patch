@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal.java
+@@ -35,7 +_,9 @@
+     ) {
+         super(mob, mustSee, mustReach);
+         this.targetType = targetType;
+-        this.randomInterval = reducedTickDelay(randomInterval);
++        // Leaf start - configurable goal update interval
++        this.randomInterval = gr1mly4memes.slime.SlimeConfig.chanceTarget > 0 && randomInterval <= 10 ? reducedTickDelay(gr1mly4memes.slime.SlimeConfig.chanceTarget) : reducedTickDelay(randomInterval);
++        // Leaf end - configurable goal update interval
+         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
+         this.targetConditions = TargetingConditions.forCombat().range(this.getFollowDistance()).selector(selector);
+     }
 @@ -72,7 +_,7 @@
  
      @Override

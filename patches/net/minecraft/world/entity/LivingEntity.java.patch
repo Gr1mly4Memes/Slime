@@ -625,6 +625,17 @@
      }
  
      public Collection<MobEffectInstance> getActiveEffects() {
+@@ -997,7 +_,9 @@
+     }
+ 
+     public boolean hasEffect(Holder<MobEffect> effect) {
+-        return this.activeEffects.containsKey(effect);
++        // Leaf start - Optimize map lookups with isEmpty check
++        return !this.activeEffects.isEmpty() && this.activeEffects.containsKey(effect);
++        // Leaf end - Optimize map lookups with isEmpty check
+     }
+ 
+     public @Nullable MobEffectInstance getEffect(Holder<MobEffect> effect) {
 @@ -1010,30 +_,89 @@
      }
  
@@ -1868,6 +1879,15 @@
          this.setSharedFlag(7, true);
          this.setSharedFlag(7, false);
      }
+@@ -2584,7 +_,7 @@
+     private Vec3 updateFallFlyingMovement(Vec3 movement) {
+         Vec3 lookAngle = this.getLookAngle();
+         float leanAngle = this.getXRot() * (float) (Math.PI / 180.0);
+-        double lookHorLength = Math.sqrt(lookAngle.x * lookAngle.x + lookAngle.z * lookAngle.z);
++        double lookHorLength = Math.hypot(lookAngle.x, lookAngle.z); // Leaf - Use Math.hypot instead of Math.sqrt
+         double moveHorLength = movement.horizontalDistance();
+         double gravity = this.getEffectiveGravity();
+         double liftForce = Mth.square(Math.cos(leanAngle));
 @@ -2614,6 +_,7 @@
              float dmg = (float)(diff * 10.0 - 3.0);
              if (dmg > 0.0F) {
@@ -2061,15 +2081,22 @@
              }
          } else {
              this.noJumpDelay = 0;
-@@ -3124,7 +_,7 @@
+@@ -3124,8 +_,13 @@
          profiler.pop();
          if (this.level() instanceof ServerLevel serverLevel) {
              profiler.push("freezing");
 -            if (!this.isInPowderSnow || !this.canFreeze()) {
+-                this.setTicksFrozen(Math.max(0, this.getTicksFrozen() - 2));
 +            if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API
-                 this.setTicksFrozen(Math.max(0, this.getTicksFrozen() - 2));
++                // Leaf start - only update frozen ticks if changed
++                int newFrozenTicks = Math.max(0, this.getTicksFrozen() - 2);
++                if (newFrozenTicks != this.getTicksFrozen()) {
++                    this.setTicksFrozen(newFrozenTicks);
++                }
++                // Leaf end - only update frozen ticks if changed
              }
  
+             this.removeFrost();
 @@ -3145,9 +_,70 @@
  
          this.pushEntities();

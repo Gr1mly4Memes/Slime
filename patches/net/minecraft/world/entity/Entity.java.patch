@@ -809,7 +809,7 @@
                  if (delta.equals(Vec3.ZERO)) {
                      return;
                  }
-@@ -736,6 +_,13 @@
+@@ -736,14 +_,28 @@
                  this.stuckSpeedMultiplier = Vec3.ZERO;
                  this.setDeltaMovement(Vec3.ZERO);
              }
@@ -823,6 +823,23 @@
  
              delta = this.maybeBackOffFromEdge(delta, moverType);
              Vec3 movement = this.collide(delta);
+             double movementLength = movement.lengthSqr();
+             if (movementLength > 1.0E-7 || delta.lengthSqr() - movementLength < 1.0E-7) {
+                 if (this.fallDistance != 0.0 && movementLength >= 1.0) {
+-                    double checkDistance = Math.min(movement.length(), 8.0);
+-                    Vec3 checkTo = this.position().add(movement.normalize().scale(checkDistance));
++                    // Leaf start - optimize movement vector normalization
++                    Vec3 checkTo;
++                    if (movementLength > 64.0) {
++                        double scale = 8.0 / Math.sqrt(movementLength);
++                        checkTo = this.position().add(movement.x * scale, movement.y * scale, movement.z * scale);
++                    } else {
++                        checkTo = this.position().add(movement.x, movement.y, movement.z);
++                    }
++                    // Leaf end - optimize movement vector normalization
+                     BlockHitResult hitResult = this.level()
+                         .clip(new ClipContext(this.position(), checkTo, ClipContext.Block.FALLDAMAGE_RESETTING, ClipContext.Fluid.WATER, this));
+                     if (hitResult.getType() != HitResult.Type.MISS) {
 @@ -785,8 +_,30 @@
                  profiler.pop();
              } else {
@@ -1060,6 +1077,15 @@
                              state.getFluidState().entityInside(this.level(), blockIntersection, this, effectCollector);
                          }
  
+@@ -1425,7 +_,7 @@
+             1.0F,
+             (float)Math.sqrt(deltaMovement.x * deltaMovement.x * 0.2F + deltaMovement.y * deltaMovement.y + deltaMovement.z * deltaMovement.z * 0.2F)
+                 * volumeModifier
+-        );
++        ); // Cannot use Math.hypot here due to weighted calculation
+         this.playSwimSound(speed);
+     }
+ 
 @@ -1435,20 +_,20 @@
          return !aboveState.is(BlockTags.INSIDE_STEP_SOUND_BLOCKS) && !aboveState.is(BlockTags.COMBINATION_STEP_SOUND_BLOCKS) ? affectingPos : abovePos;
      }
@@ -1153,6 +1179,15 @@
      }
  
      protected void doWaterSplashEffect() {
+@@ -1663,7 +_,7 @@
+         Vec3 movement = entity.getDeltaMovement();
+         float speed = Math.min(
+             1.0F, (float)Math.sqrt(movement.x * movement.x * 0.2F + movement.y * movement.y + movement.z * movement.z * 0.2F) * volumeModifier
+-        );
++        ); // Cannot use Math.hypot here due to weighted calculation
+         if (speed < 0.25F) {
+             this.playSound(this.getSwimSplashSound(), speed, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
+         } else {
 @@ -1700,12 +_,13 @@
      }
  
@@ -1201,7 +1236,62 @@
      }
  
      public void snapTo(Vec3 pos) {
-@@ -1865,6 +_,11 @@
+@@ -1834,30 +_,39 @@
+         return new Vec3(this.xOld, this.yOld, this.zOld);
+     }
+ 
+-    public float distanceTo(Entity entity) {
+-        float xd = (float)(this.getX() - entity.getX());
+-        float yd = (float)(this.getY() - entity.getY());
+-        float zd = (float)(this.getZ() - entity.getZ());
+-        return Mth.sqrt(xd * xd + yd * yd + zd * zd);
++    // Leaf start - Optimize distanceTo - Avoid casting
++    public final float distanceTo(Entity entity) {
++        final double dx = this.getX() - entity.getX();
++        final double dy = this.getY() - entity.getY();
++        final double dz = this.getZ() - entity.getZ();
++        // Leaf - Use Math#hypot instead of Mojang's Mth#sqrt
++        return (float) Math.hypot(dx, Math.hypot(dy, dz));
+     }
++    // Leaf end - Optimize distanceTo - inlining
+ 
+-    public double distanceToSqr(double x2, double y2, double z2) {
+-        double xd = this.getX() - x2;
+-        double yd = this.getY() - y2;
+-        double zd = this.getZ() - z2;
+-        return xd * xd + yd * yd + zd * zd;
++    // Leaf start - Optimize distanceToSqr - inlining
++    public final double distanceToSqr(final double x2, final double y2, final double z2) {
++        final double dx = this.getX() - x2;
++        final double dy = this.getY() - y2;
++        final double dz = this.getZ() - z2;
++        // Leaf - Use FMA for distanceToSqr (1.2x to 4x faster)
++        return Math.fma(dx, dx, Math.fma(dy, dy, dz * dz));
+     }
++    // Leaf end - Optimize distanceToSqr
+ 
+     public double distanceToSqr(Entity entity) {
+         return this.distanceToSqr(entity.position());
+     }
+ 
+-    public double distanceToSqr(Vec3 pos) {
+-        double xd = this.getX() - pos.x;
+-        double yd = this.getY() - pos.y;
+-        double zd = this.getZ() - pos.z;
+-        return xd * xd + yd * yd + zd * zd;
++    // Leaf start - Optimize distanceToSqr - inlining
++    public final double distanceToSqr(Vec3 pos) {
++        final double dx = this.getX() - pos.x;
++        final double dy = this.getY() - pos.y;
++        final double dz = this.getZ() - pos.z;
++        // Leaf - Use FMA for distanceToSqr (1.2x to 4x faster)
++        return Math.fma(dx, dx, Math.fma(dy, dy, dz * dz));
+     }
++    // Leaf end - Optimize distanceToSqr
+ 
+     public void playerTouch(Player player) {
+     }
+@@ -1865,11 +_,16 @@
      public void push(Entity entity) {
          if (!this.isPassengerOfSameVehicle(entity)) {
              if (!entity.noPhysics && !this.noPhysics) {
@@ -1213,6 +1303,12 @@
                  double xa = entity.getX() - this.getX();
                  double za = entity.getZ() - this.getZ();
                  double dd = Mth.absMax(xa, za);
+                 if (dd >= 0.01F) {
+-                    dd = Math.sqrt(dd);
++                    dd = Math.sqrt(dd); // Cannot use Math.hypot here as it operates on absMax
+                     xa /= dd;
+                     za /= dd;
+                     double pow = 1.0 / dd;
 @@ -1900,8 +_,24 @@
      }
  
@@ -2565,6 +2661,15 @@
              this.position(),
              this.getRotationVector(),
              level,
+@@ -3634,7 +_,7 @@
+         double xd = pos.x - from.x;
+         double yd = pos.y - from.y;
+         double zd = pos.z - from.z;
+-        double sd = Math.sqrt(xd * xd + zd * zd);
++        double sd = Math.hypot(xd, zd); // Leaf - Use Math.hypot instead of Math.sqrt
+         this.setXRot(Mth.wrapDegrees((float)(-(Mth.atan2(yd, sd) * 180.0F / (float)Math.PI))));
+         this.setYRot(Mth.wrapDegrees((float)(Mth.atan2(zd, xd) * 180.0F / (float)Math.PI) - 90.0F));
+         this.setYHeadRot(this.getYRot());
 @@ -3646,6 +_,12 @@
          return Mth.lerp(partial, this.yRotO, this.yRot);
      }

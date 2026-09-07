@@ -17,6 +17,27 @@
          AABB aabb, Vec3 from, double[] scaleReference, @Nullable Direction direction, double dx, double dy, double dz
      ) {
          return getDirection(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ, from, scaleReference, direction, dx, dy, dz);
+@@ -418,14 +_,18 @@
+         double dx = Math.max(Math.max(this.minX - point.x, point.x - this.maxX), 0.0);
+         double dy = Math.max(Math.max(this.minY - point.y, point.y - this.maxY), 0.0);
+         double dz = Math.max(Math.max(this.minZ - point.z, point.z - this.maxZ), 0.0);
+-        return Mth.lengthSquared(dx, dy, dz);
++        // Leaf start - use Math.fma for distanceToSqr
++        return Math.fma(dx, dx, Math.fma(dy, dy, dz * dz));
++        // Leaf end
+     }
+ 
+     public double distanceToSqr(AABB boundingBox) {
+         double dx = Math.max(Math.max(this.minX - boundingBox.maxX, boundingBox.minX - this.maxX), 0.0);
+         double dy = Math.max(Math.max(this.minY - boundingBox.maxY, boundingBox.minY - this.maxY), 0.0);
+         double dz = Math.max(Math.max(this.minZ - boundingBox.maxZ, boundingBox.minZ - this.maxZ), 0.0);
+-        return Mth.lengthSquared(dx, dy, dz);
++        // Leaf start - use Math.fma for distanceToSqr
++        return Math.fma(dx, dx, Math.fma(dy, dy, dz * dz));
++        // Leaf end
+     }
+ 
+     @Override
 @@ -464,6 +_,14 @@
          );
      }

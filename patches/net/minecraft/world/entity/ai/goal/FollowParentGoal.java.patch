@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/entity/ai/goal/FollowParentGoal.java
++++ b/net/minecraft/world/entity/ai/goal/FollowParentGoal.java
+@@ -12,14 +_,30 @@
+     private @Nullable Animal parent;
+     private final double speedModifier;
+     private int timeToRecalcPath;
++    // Leaf start - configurable goal update interval
++    private final int leaf$internal;
++    private int leaf$counter;
++    // Leaf end - configurable goal update interval
+ 
+     public FollowParentGoal(Animal animal, double speedModifier) {
+         this.animal = animal;
+         this.speedModifier = speedModifier;
++        // Leaf start - configurable goal update interval
++        this.leaf$internal = Math.max(1, reducedTickDelay(gr1mly4memes.slime.SlimeConfig.chanceFollowParent));
++        this.leaf$counter = this.animal.random.nextInt(this.leaf$internal);
++        // Leaf end - configurable goal update interval
+     }
+ 
+     @Override
+     public boolean canUse() {
++        // Leaf start - configurable goal update interval
++        this.leaf$counter++;
++        if (this.leaf$counter < this.leaf$internal) {
++            return false;
++        } else {
++            this.leaf$counter = this.animal.random.nextInt(this.leaf$internal);
++        }
++        // Leaf end - configurable goal update interval
+         if (this.animal.getAge() >= 0) {
+             return false;
+         }

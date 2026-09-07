@@ -66,6 +66,26 @@
      public CommandSourceStack withRotation(Vec2 rotation) {
          return this.rotation.equals(rotation)
              ? this
+@@ -335,16 +_,18 @@
+         return this.facing(anchor.apply(entity));
+     }
+ 
++    // Leaf start - Optimize facing - Use Math.hypot for horizontal distance
+     public CommandSourceStack facing(Vec3 pos) {
+         Vec3 from = this.anchor.apply(this);
+         double xd = pos.x - from.x;
+         double yd = pos.y - from.y;
+         double zd = pos.z - from.z;
+-        double sd = Math.sqrt(xd * xd + zd * zd);
++        double sd = Math.hypot(xd, zd);
+         float xRot = Mth.wrapDegrees((float)(-(Mth.atan2(yd, sd) * 180.0F / (float)Math.PI)));
+         float yRot = Mth.wrapDegrees((float)(Mth.atan2(zd, xd) * 180.0F / (float)Math.PI) - 90.0F);
+         return this.withRotation(new Vec2(xRot, yRot));
+     }
++    // Leaf end
+ 
+     public CommandSourceStack withSigningContext(CommandSigningContext signingContext, TaskChainer chatMessageChainer) {
+         return signingContext == this.signingContext && chatMessageChainer == this.chatMessageChainer
 @@ -380,6 +_,45 @@
          return this.permissions;
      }

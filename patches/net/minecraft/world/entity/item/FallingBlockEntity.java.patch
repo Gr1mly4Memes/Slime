@@ -182,7 +182,7 @@
      }
  
      public void setHurtsEntities(float damagePerDistance, int damageMax) {
-@@ -365,7 +_,7 @@
+@@ -365,7 +_,14 @@
          ResourceKey<Level> oldDimension = this.level().dimension();
          boolean fromOrToEnd = (oldDimension == Level.END || newDimension == Level.END) && oldDimension != newDimension;
          Entity newEntity = super.teleport(transition);
@@ -190,4 +190,11 @@
 +        this.forceTickAfterTeleportToDuplicate = newEntity != null && fromOrToEnd && io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.allowUnsafeEndPortalTeleportation; // Paper
          return newEntity;
      }
++
++    // Leaf start - Dont save entity
++    @Override
++    public boolean canSaveToDisk() {
++        return !gr1mly4memes.slime.SlimeConfig.dontSaveFallingBlock;
++    }
++    // Leaf end - Dont save entity
  }

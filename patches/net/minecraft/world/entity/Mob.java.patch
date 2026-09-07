@@ -485,6 +485,19 @@
              this.goalSelector.tick();
              profiler.pop();
          }
+@@ -738,7 +_,11 @@
+         this.navigation.tick();
+         profiler.pop();
+         profiler.push("mob tick");
+-        this.customServerAiStep((ServerLevel)this.level());
++        // Leaf start - Skip AI for non-aware mob
++        if (!gr1mly4memes.slime.SlimeConfig.skipAIForNonAwareMob || this.aware) {
++            this.customServerAiStep((ServerLevel)this.level());
++        }
++        // Leaf end - Skip AI for non-aware mob
+         profiler.pop();
+         profiler.push("controls");
+         profiler.push("move");
 @@ -883,15 +_,76 @@
              public boolean stillValid(Player player) {
                  return player.getVehicle() == Mob.this || player.isWithinEntityInteractionRange(Mob.this, 4.0);

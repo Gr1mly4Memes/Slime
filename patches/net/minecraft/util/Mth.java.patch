@@ -1,0 +1,21 @@
+--- a/net/minecraft/util/Mth.java
++++ b/net/minecraft/util/Mth.java
+@@ -175,6 +_,18 @@
+         return (input % mod + mod) % mod;
+     }
+ 
++    // Slime start - faster floating-point positive modulo
++    public static float positiveModuloForPositiveIntegerDenominator(float input, float mod) {
++        var modulo = input % mod;
++        return modulo < 0 ? modulo + mod : modulo;
++    }
++
++    public static double positiveModuloForPositiveIntegerDenominator(double input, double mod) {
++        var modulo = input % mod;
++        return modulo < 0 ? modulo + mod : modulo;
++    }
++    // Slime end
++
+     public static boolean isMultipleOf(int dividend, int divisor) {
+         return dividend % divisor == 0;
+     }

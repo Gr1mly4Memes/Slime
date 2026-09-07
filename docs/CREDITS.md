@@ -12,3 +12,4 @@ Here is the list of projects that Slime takes code and patches from:
 - [Nitro](https://github.com/Gr1mly4Memes/Nitro) My own Purpur Fork btw
 - [DivineMC](https://github.com/BX-Team/DivineMC)
 - [SparkleyPaper](https://github.com/SparklyPower/SparklyPaper)
+- [Leaf](https://github.com/Winds-Studio/Leaf)

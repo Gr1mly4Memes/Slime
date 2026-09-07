@@ -1,0 +1,26 @@
+--- a/net/minecraft/server/commands/ExecuteCommand.java
++++ b/net/minecraft/server/commands/ExecuteCommand.java
+@@ -983,6 +_,11 @@
+         return context -> {
+             CommandSourceStack source = context.getSource();
+             Entity entity = source.getEntity();
++            // Leaf start - Skip inactive entity for execute
++            if (gr1mly4memes.slime.SlimeConfig.skipInactiveEntityForExecute && entity != null && !entity.isRemoved() && !entity.isEffectiveAi()) {
++                return List.of();
++            }
++            // Leaf end - Skip inactive entity for execute
+             return entity == null ? List.of() : unpacker.apply(entity).filter(e -> !e.isRemoved()).map(e -> List.of(source.withEntity(e))).orElse(List.of());
+         };
+     }
+@@ -991,6 +_,11 @@
+         return context -> {
+             CommandSourceStack source = context.getSource();
+             Entity entity = source.getEntity();
++            // Leaf start - Skip inactive entity for execute
++            if (gr1mly4memes.slime.SlimeConfig.skipInactiveEntityForExecute && entity != null && !entity.isRemoved() && !entity.isEffectiveAi()) {
++                return List.of();
++            }
++            // Leaf end - Skip inactive entity for execute
+             return entity == null ? List.of() : unpacker.apply(entity).filter(e -> !e.isRemoved()).map(source::withEntity).toList();
+         };
+     }

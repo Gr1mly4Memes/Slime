@@ -232,6 +232,40 @@
                  && belowState.isCollisionShapeFullBlock(level, below)
                  && carried.canSurvive(level, pos)
                  && level.getEntities(this.enderman, AABB.unitCubeFromLowerCorner(Vec3.atLowerCornerOf(pos))).isEmpty();
+@@ -487,6 +_,10 @@
+         private final TargetingConditions startAggroTargetConditions;
+         private final TargetingConditions continueAggroTargetConditions = TargetingConditions.forCombat().ignoreLineOfSight();
+         private final TargetingConditions.Selector isAngerInducing;
++        // Leaf start - configurable goal update interval
++        private final int leaf$internal;
++        private int leaf$counter;
++        // Leaf end - configurable goal update interval
+ 
+         public EndermanLookForPlayerGoal(EnderMan enderman, TargetingConditions.@Nullable Selector isAngryAt) {
+             super(enderman, Player.class, 10, false, false, isAngryAt);
+@@ -494,10 +_,22 @@
+             this.isAngerInducing = (target, level) -> (enderman.isBeingStaredBy((Player)target) || enderman.isAngryAt(target, level))
+                 && !enderman.hasIndirectPassenger(target);
+             this.startAggroTargetConditions = TargetingConditions.forCombat().range(this.getFollowDistance()).selector(this.isAngerInducing);
++            // Leaf start - configurable goal update interval
++            this.leaf$internal = Math.max(1, reducedTickDelay(gr1mly4memes.slime.SlimeConfig.chanceEndermanLookForPlayer));
++            this.leaf$counter = this.enderman.random.nextInt(this.leaf$internal);
++            // Leaf end - configurable goal update interval
+         }
+ 
+         @Override
+         public boolean canUse() {
++            // Leaf start - configurable goal update interval
++            this.leaf$counter++;
++            if (this.leaf$counter < this.leaf$internal) {
++                return false;
++            } else {
++                this.leaf$counter = this.enderman.random.nextInt(this.leaf$internal);
++            }
++            // Leaf end - configurable goal update interval
+             this.pendingTarget = getServerLevel(this.enderman).getNearestPlayer(this.startAggroTargetConditions.range(this.getFollowDistance()), this.enderman);
+             return this.pendingTarget != null;
+         }
 @@ -554,7 +_,7 @@
              } else {
                  if (this.target != null && !this.enderman.isPassenger()) {
