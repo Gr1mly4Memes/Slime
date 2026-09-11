@@ -1,5 +1,14 @@
 --- a/net/minecraft/core/HolderSet.java
 +++ b/net/minecraft/core/HolderSet.java
+@@ -41,7 +_,7 @@
+     static <T> HolderSet.Named<T> emptyNamed(HolderOwner<T> owner, TagKey<T> key) {
+         return new HolderSet.Named<T>(owner, key) {
+             @Override
+-            public List<Holder<T>> contents() {
++            protected List<Holder<T>> contents() {
+                 throw new UnsupportedOperationException("Tag " + this.key() + " can't be dereferenced during construction");
+             }
+         };
 @@ -166,6 +_,7 @@
          private final HolderOwner<T> owner;
          private final TagKey<T> key;
@@ -19,6 +28,15 @@
          }
  
          public TagKey<T> key() {
+@@ -181,7 +_,7 @@
+         }
+ 
+         @Override
+-        public List<Holder<T>> contents() {
++        protected List<Holder<T>> contents() {
+             if (this.contents == null) {
+                 throw new IllegalStateException("Trying to access unbound tag '" + this.key + "' from registry " + this.owner);
+             } else {
 @@ -218,5 +_,25 @@
          public boolean canSerializeIn(HolderOwner<T> context) {
              return this.owner.canSerializeIn(context);
