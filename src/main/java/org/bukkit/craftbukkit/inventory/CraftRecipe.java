@@ -70,6 +70,14 @@ public interface CraftRecipe extends Recipe {
             return RecipeChoice.empty(); // Paper - null breaks API contracts
         }
 
+        // Slime start - convert NeoForge custom ingredients without empty Bukkit choices
+        if (ingredient.isCustom()) {
+            net.minecraft.core.Holder<net.minecraft.world.item.Item> example = ingredient.items().findFirst().orElseThrow();
+            Predicate<org.bukkit.inventory.ItemStack> predicate = bukkitStack -> ingredient.test(CraftItemStack.asNMSCopy(bukkitStack));
+            return RecipeChoice.predicateChoice(predicate, CraftItemStack.asBukkitCopy(example.value().getDefaultInstance()));
+        }
+        // Slime end
+
         if (ingredient.stackPredicate != null) {
             net.minecraft.world.item.ItemStack stack = ingredient.itemStacks().iterator().next();
             Predicate<org.bukkit.inventory.ItemStack> predicate = bukkitStack -> ingredient.stackPredicate.test(CraftItemStack.asNMSCopy(bukkitStack));
