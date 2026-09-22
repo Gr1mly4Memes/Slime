@@ -12,6 +12,8 @@ public class TPSCalculator {
     public Long lastTickNanos;
     public Long currentTickNanos;
     private double allMissedTicks = 0;
+    /** Cached {@code floor(allMissedTicks)}, refreshed once per tick by {@link #doTick()}. */
+    private volatile int missedTicksThisTick = 0;
 
     /**
      * Fixed-size ring buffer of recent TPS samples.
@@ -44,6 +46,10 @@ public class TPSCalculator {
         addToHistory(getTPS());
         clearMissedTicks();
         missedTick();
+        // Freeze the value the rest of the tick will observe. Lag compensation reads this once per
+        // living entity, block entity and item entity per tick, so it must not recompute a
+        // Math.floor over a double on every one of those calls.
+        missedTicksThisTick = floorMissedTicks();
     }
 
     private void addToHistory(double tps) {
@@ -111,12 +117,26 @@ public class TPSCalculator {
         return allMissedTicks;
     }
 
+    /**
+     * Whole ticks the server fell behind, as observed for the current tick.
+     *
+     * <p>Constant for the duration of a tick: it is recomputed once in {@link #doTick()} rather than
+     * on every call.
+     */
     public int applicableMissedTicks() {
-        return (int) Math.floor(allMissedTicks);
+        return missedTicksThisTick;
     }
 
+    /**
+     * Drop the whole ticks already compensated for, keeping the fractional remainder so lag
+     * compensation does not drift.
+     */
     public void clearMissedTicks() {
-        allMissedTicks -= applicableMissedTicks();
+        allMissedTicks -= floorMissedTicks();
+    }
+
+    private int floorMissedTicks() {
+        return (int) Math.floor(allMissedTicks);
     }
 
     public void resetMissedTicks() {

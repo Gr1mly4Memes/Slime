@@ -224,10 +224,43 @@ but now closes its streams. Verification also short-circuits on `file.length()` 
 **every** `CraftEntity` creation. Now memoised in a `ClassValue`, which is lock-free on read and —
 unlike a static `HashMap` cache — does not pin mod/plugin classloaders for the life of the server.
 
+### 2.4a ✅ Missed-tick count now computed once per tick
+
+`applicableMissedTicks()` did `(int) Math.floor(allMissedTicks)` on every call, and lag compensation
+calls it **once per living entity, per block entity and per item entity per tick** — plus a second
+time inside the `ItemEntity` branch, and once per iteration of the two acceleration loops.
+
+The value is constant for the whole tick (`allMissedTicks` only changes in `doTick()`), so it is now
+cached in an `int` refreshed once per tick, and hoisted into a local in the `LevelChunk`,
+`LivingEntity` and `ItemEntity` patches. `clearMissedTicks()` still uses the live value so the
+fractional remainder is preserved.
+
 ### 2.5 ✅ Modded tree types now actually resolve
 
 `treeTypeByGrowerName` was read by the `TreeGrower` patch but never populated, so every modded tree
 fell through to `TreeType.CUSTOM`. `addEnumTreeType()` now fills it.
+
+### 2.5a ⚠️ Recommended — `potion-effect-acceleration` does nothing
+
+`SlimeConfig.potionEffectAcceleration` is a real, documented config option, and
+`patches/.../world/entity/LivingEntity.java.patch` adds the matching `lagCompensation()` helper —
+but **nothing ever calls it**. Every other acceleration option is wired:
+
+| Option | Hook |
+|---|---|
+| `block-entity-acceleration` | `LevelChunk` patch, called |
+| `block-breaking-acceleration` | `BlockBehaviour` patch, called |
+| `eating-acceleration` | `Item` patch, called |
+| `fluid-acceleration` | `LavaFluid` / `WaterFluid` patches, called |
+| `pickup-acceleration` | `ItemEntity` patch, called |
+| `portal-acceleration` | `PortalProcessor` patch, called |
+| **`potion-effect-acceleration`** | **`LivingEntity` patch, never called** |
+
+I did **not** wire it up, because unlike the others it re-runs `tickEffects()` on every living
+entity on every lagging tick — that fires effect expiry, particle and attribute-recalc side effects
+N extra times, which is a gameplay-visible change rather than a pure timing fix. Either hook it into
+`LivingEntity` where `tickEffects()` is normally invoked (accepting the extra work), or drop the
+option and the dead helper so the config stops advertising something it does not do.
 
 ### 2.6 ⚠️ Recommended — declare `slime.debug` handling consistently
 

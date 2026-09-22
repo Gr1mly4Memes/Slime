@@ -236,7 +236,9 @@
 +    private void lagCompensation() {
 +        if (!gr1mly4memes.slime.SlimeConfig.lagCompensationEnabled || !gr1mly4memes.slime.SlimeConfig.potionEffectAcceleration) return;
 +        if (this.level().isClientSide()) return;
-+        for (int i = 0; i < ((ServerLevel) this.level()).tpsCalculator.applicableMissedTicks(); i++) {
++        // Slime - hoist: applicableMissedTicks() is constant for the whole tick.
++        final int missedTicks = ((ServerLevel) this.level()).tpsCalculator.applicableMissedTicks();
++        for (int i = 0; i < missedTicks; i++) {
 +            tickEffects();
 +        }
 +    }

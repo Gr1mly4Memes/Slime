@@ -96,12 +96,15 @@
 +
 +        if (pickupDelay == 0) return;
 +
-+        if (pickupDelay - ((ServerLevel) this.level()).tpsCalculator.applicableMissedTicks() <= 0) {
++        // Slime - read once: applicableMissedTicks() is constant for the whole tick. The previous
++        // version evaluated (and re-cast the level for) it in both the test and the assignment.
++        final int missedTicks = ((ServerLevel) this.level()).tpsCalculator.applicableMissedTicks();
++        if (pickupDelay - missedTicks <= 0) {
 +            pickupDelay = 0;
 +            return;
 +        }
 +
-+        pickupDelay = pickupDelay - ((ServerLevel) this.level()).tpsCalculator.applicableMissedTicks();
++        pickupDelay = pickupDelay - missedTicks;
 +    }
 +    // Slime end - Lag compensation
 +

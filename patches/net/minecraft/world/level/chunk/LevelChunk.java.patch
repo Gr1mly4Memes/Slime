@@ -520,7 +520,10 @@
 +            if (!gr1mly4memes.slime.SlimeConfig.blockEntityAcceleration) return;
 +            if (LevelChunk.this.level.isClientSide()) return;
 +
-+            for (int i = 0; i < ((ServerLevel) this.blockEntity.getLevel()).tpsCalculator.applicableMissedTicks(); i++) {
++            // Slime - hoist: applicableMissedTicks() is constant for the whole tick, so read it once
++            // instead of re-evaluating (and re-casting the level) on every loop iteration.
++            final int missedTicks = ((ServerLevel) this.blockEntity.getLevel()).tpsCalculator.applicableMissedTicks();
++            for (int i = 0; i < missedTicks; i++) {
 +                original.run();
 +            }
 +        }
