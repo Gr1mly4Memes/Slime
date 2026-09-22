@@ -123,7 +123,45 @@ cancellation path calls `player.drop(...)`, which fires another `ItemTossEvent` 
 cancels every drop would recurse until the stack overflowed. Now guarded with `instanceof` plus a
 `ThreadLocal` re-entrancy flag.
 
-### 1.9 ⚠️ Recommended — `MinecraftServer.globalEntityCache` can leak entities
+### 1.9 ✅ Removed: three event dispatchers that would double-fire Bukkit events
+
+`gr1mly4memes/slime/eventhandler/` (`EventDispatcherRegistry`, `PlayerEventDispatcher`,
+`ItemEventDispatcher`) was **never referenced anywhere** — `EventDispatcherRegistry.init()` had no
+caller, so none of the listeners was ever registered on the NeoForge bus.
+
+That looked like a bug, and the obvious "fix" (call `init()`) would have been a serious one, because
+CraftBukkit **already** fires all three events from the Minecraft patches:
+
+| Dispatcher | Event it fires | Already fired by |
+|---|---|---|
+| `PlayerEventDispatcher.onItemTossEvent` | `PlayerDropItemEvent` | `patches/.../world/entity/LivingEntity.java.patch` |
+| `ItemEventDispatcher.onItemExpireEvent` | `ItemDespawnEvent` | `patches/.../world/entity/item/ItemEntity.java.patch` (two places) |
+| `PlayerEventDispatcher.onEnterSleepEvent` | `PlayerBedEnterEvent` | CraftBukkit's own bed path |
+
+Registering them would have fired `PlayerDropItemEvent` twice for every item drop — a classic
+source of double-counting in protection, anti-dupe and logging plugins.
+
+Rather than leave a trap for the next person to "fix", the three classes were deleted. If you want
+them back, the git history is intact; the takeaway is that they need deduplication, not
+registration.
+
+### 1.10 ✅ `BukkitPermissionsHandler` was never registered
+
+The class existed but nothing registered it, so NeoForge mod permission nodes always resolved
+through their own default resolver and never saw the server's permission plugin. It is now
+registered under `slime:permission` (`SlimePermissionBridge`, called from the `CraftServer`
+constructor). This is **opt-in** — NeoForge's `permissionHandler` config still defaults to
+`neoforge:default_handler`; set `permissionHandler="slime:permission"` to route mod permissions
+through Bukkit/LuckPerms. Its identifier also still said `"youer"`.
+
+### 1.11 ✅ `CraftFakePlayer` was never wired up
+
+`CraftFakePlayer` (safe `isOp()`, no-op `setOp()` so modded fake players are never written to
+`ops.json`) was dead. Registered in `EntityClassLookup` for
+`net.neoforged.neoforge.common.util.FakePlayer`, ahead of the `ServerPlayer` entry — the lookup
+walks the concrete class first, so ordering matters and is now commented.
+
+### 1.12 ⚠️ Recommended — `MinecraftServer.globalEntityCache` can leak entities
 
 `patches/net/minecraft/server/MinecraftServer.java.patch` adds a `ConcurrentHashMap<UUID, Entity>`
 populated from `ServerLevel` (`addEntityToGlobalCache`) and drained in exactly one place
@@ -231,7 +269,8 @@ If that is empty, delete both lines — a small build-speed and independence win
 | `Action.install()` | The null-version check ran *after* filesystem writes; `System.exit(0)` (success!) → `System.exit(1)`; `unmute()` moved into a `finally` so a failing install task can't silence the rest of the run |
 | `Action.run()` | Unconditional "Loading …" println is now debug-only; the `URLClassLoader` is closed in a `finally` |
 | `Action.initInstallerLib()` | The installertools version **and** its SHA-256 were hardcoded in Java, silently diverging from `installertools_version` in `gradle.properties`. Now resolved from the generated manifest, with the old constant as fallback |
-| Dead code | Removed `SlimeConfig.createWorldSections` (declared, assigned at shutdown, never read), and `NeoForgeInjectBukkit`'s `environment0`, `spawnCategoryMap`, `CategoryspawnMap`, `profession`, `addEnumMaterialsInBlockEntityType()`, `addEnumParticle()` — none were referenced anywhere |
+| Dead code | Removed `SlimeConfig.createWorldSections` (declared, assigned at shutdown, never read), `NeoForgeInjectBukkit`'s `environment0`, `spawnCategoryMap`, `CategoryspawnMap`, `profession`, `addEnumMaterialsInBlockEntityType()`, `addEnumParticle()`; `gr1mly4memes...CallbackExecutor` (unreferenced, and its `ArrayDeque` is not thread-safe despite implementing `Executor`); `SlimeBlockSnapshot` (unreferenced). See §1.9 for the event dispatchers |
+| `BukkitPermissionsHandler` | `getPermission`/`getOfflinePermission` did an unchecked `(T) (Object)` cast; now `node.getType().typeToken().cast(...)`, which is checked |
 
 ---
 

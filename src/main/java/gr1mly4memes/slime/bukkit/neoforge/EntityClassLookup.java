@@ -96,6 +96,12 @@ public class EntityClassLookup {
 
     private static final Map<Class<? extends Entity>, BiFunction<CraftServer, Entity, CraftEntity>> ENTITY_LOOKUP_MAP = new HashMap<>();
 
+    /** Sentinel for "no factory on the class hierarchy": {@link ClassValue} may not cache nulls. */
+    private static final BiFunction<CraftServer, Entity, CraftEntity> UNKNOWN =
+            (server, entity) -> {
+                throw new AssertionError("Unknown entity " + entity.getClass());
+            };
+
     /**
      * Resolved factory per concrete entity class.
      *
@@ -104,12 +110,6 @@ public class EntityClassLookup {
      * lookup to the entity class - so a mod/plugin classloader can still be garbage collected
      * instead of being pinned for the lifetime of the server.
      */
-    /** Sentinel for "no factory on the class hierarchy": {@link ClassValue} may not cache nulls. */
-    private static final BiFunction<CraftServer, Entity, CraftEntity> UNKNOWN =
-            (server, entity) -> {
-                throw new AssertionError("Unknown entity " + entity.getClass());
-            };
-
     private static final ClassValue<BiFunction<CraftServer, Entity, CraftEntity>> RESOLVED =
             new ClassValue<>() {
                 @Override
@@ -128,6 +128,10 @@ public class EntityClassLookup {
 
     static {
         registerEntity(net.minecraft.world.entity.player.Player.class, (server, entity) -> new CraftHumanEntity(server, (net.minecraft.world.entity.player.Player) entity));
+        // Slime - must precede ServerPlayer: FakePlayer extends ServerPlayer, and the lookup walks
+        // the concrete class first. CraftFakePlayer reports op status safely and makes setOp() a
+        // no-op so modded fake players are never written into ops.json.
+        registerEntity(net.neoforged.neoforge.common.util.FakePlayer.class, (server, entity) -> new CraftFakePlayer(server, (net.neoforged.neoforge.common.util.FakePlayer) entity));
         registerEntity(ServerPlayer.class, (server, entity) -> new CraftPlayer(server, (ServerPlayer) entity));
         registerEntity(ElderGuardian.class, (server, entity) -> new CraftElderGuardian(server, (ElderGuardian) entity));
         registerEntity(WitherSkeleton.class, (server, entity) -> new CraftWitherSkeleton(server, (WitherSkeleton) entity));

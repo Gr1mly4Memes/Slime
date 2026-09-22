@@ -1045,7 +1045,7 @@
          if (biome.shouldFreeze(this, belowPos)) {
 +            this.callEvent(true);
              this.setBlockAndUpdate(belowPos, Blocks.ICE.defaultBlockState());
-+            org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this, belowPos, this.youer$defaultBlockState,  Block.UPDATE_ALL, null); // CraftBukkit
++            org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this, belowPos, this.slime$defaultBlockState,  Block.UPDATE_ALL, null); // CraftBukkit
          }
  
          if (this.isRaining()) {
@@ -1089,7 +1089,7 @@
                  } else {
 +                    this.callEvent(true);
                      this.setBlockAndUpdate(topPos, Blocks.SNOW.defaultBlockState());
-+                    CraftEventFactory.handleBlockFormEvent(this, topPos, this.youer$defaultBlockState,  Block.UPDATE_ALL, null); // CraftBukkit
++                    CraftEventFactory.handleBlockFormEvent(this, topPos, this.slime$defaultBlockState,  Block.UPDATE_ALL, null); // CraftBukkit
                  }
              }
  

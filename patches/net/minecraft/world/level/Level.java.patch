@@ -1237,9 +1237,9 @@
 +    public void callEvent(boolean call) {
 +        callEvent.set(call);
 +    }
-+    public BlockState youer$defaultBlockState;
++    public BlockState slime$defaultBlockState;
      public boolean setBlockAndUpdate(BlockPos pos, BlockState blockState) {
-+        youer$defaultBlockState = blockState;
++        slime$defaultBlockState = blockState;
 +        if (callEvent.getAndSet(false)) return false;
          return this.setBlock(pos, blockState, 3);
      }

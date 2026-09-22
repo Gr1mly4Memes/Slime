@@ -436,6 +436,9 @@ public final class CraftServer implements Server {
         }
 
         NeoForgeInjectBukkit.init();
+        // Slime - makes the Bukkit-backed permission handler selectable via
+        // permissionHandler="slime:permission" in the NeoForge server config.
+        gr1mly4memes.slime.neoforge.SlimePermissionBridge.register();
 
         initConfig(); // Slime
 
