@@ -161,6 +161,17 @@ through Bukkit/LuckPerms. Its identifier also still said `"youer"`.
 `net.neoforged.neoforge.common.util.FakePlayer`, ahead of the `ServerPlayer` entry — the lookup
 walks the concrete class first, so ordering matters and is now commented.
 
+### 1.11a ✅ Launcher `main` was package-private
+
+`slimelauncher/.../Main.java` declared `static void main(String[])` with no access modifier, while
+the server jar's manifest points `Main-Class` at it. The JVM launcher resolves the entry point with
+`Class#getMethod("main", String[].class)`, which only finds **public** methods, so
+`java -jar slime-26.2-server.jar` would fail with *"Main method not found"* before anything ran
+(JLS 12.1.4 requires `public static void main(String[])`).
+
+Made `public`. This is safe either way: `public static void main` is always valid, so if some
+launcher path was tolerating the package-private form, nothing changes.
+
 ### 1.12 ⚠️ Recommended — `MinecraftServer.globalEntityCache` can leak entities
 
 `patches/net/minecraft/server/MinecraftServer.java.patch` adds a `ConcurrentHashMap<UUID, Entity>`

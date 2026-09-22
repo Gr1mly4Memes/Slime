@@ -34,8 +34,16 @@ public class Main {
         return (Main.class.getPackage().getImplementationVersion() != null) ? Main.class.getPackage().getImplementationVersion() : MCVERSION;
     }
 
+    /**
+     * Entry point declared in the server jar's {@code Main-Class} manifest attribute.
+     *
+     * <p>Must be {@code public}: the JVM launcher looks the method up with
+     * {@code Class#getMethod("main", String[].class)}, which only finds public methods, so a
+     * package-private {@code main} makes {@code java -jar slime-...jar} fail with "Main method not
+     * found" before any of this runs.
+     */
     @SneakyThrows
-    static void main(String[] args) {
+    public static void main(String[] args) {
         mainArgs.addAll(List.of(args));
         DataParser.parseVersions();
         DataParser.parseLaunchArgs();
@@ -45,7 +53,7 @@ public class Main {
             System.setProperty("log4j2.configurationFile", "log4j2_slime.xml");
         }
         System.out.println(" ");
-        System.out.println(("Deployment environment..."));
+        System.out.println("Deployment environment...");
         DefaultLibraries.run();
         var action = new Action();
         long endTime = System.currentTimeMillis();
