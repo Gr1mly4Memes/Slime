@@ -437,7 +437,7 @@ public final class CraftServer implements Server {
 
         NeoForgeInjectBukkit.init();
 
-        initConfig(); // Youer
+        initConfig(); // Slime
 
         this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
         this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");
@@ -459,7 +459,7 @@ public final class CraftServer implements Server {
         //this.spark = new io.papermc.paper.SparksFly(this); // Paper - spark // Slime remove sparks fly due to loading problems
     }
 
-    // Youer start
+    // Slime start
     public void initConfig() {
         this.configuration = YamlConfiguration.loadConfiguration(this.getConfigFile());
         this.configuration.options().copyDefaults(true);
@@ -505,7 +505,7 @@ public final class CraftServer implements Server {
 
         this.saveCommandsConfig();
     }
-    // Youer end
+    // Slime end
 
     public boolean getCommandBlockOverride(String command) {
         return this.overrideAllCommandBlockCommands || this.commandsConfiguration.getStringList("command-block-overrides").contains(command);

@@ -6,8 +6,8 @@ import org.bukkit.craftbukkit.entity.CraftAbstractSkeleton;
 import org.bukkit.entity.Skeleton;
 import org.jetbrains.annotations.NotNull;
 
-public class YouerModsSkeleton extends CraftAbstractSkeleton {
-    public YouerModsSkeleton(CraftServer server, AbstractSkeleton entity) {
+public class SlimeModsSkeleton extends CraftAbstractSkeleton {
+    public SlimeModsSkeleton(CraftServer server, AbstractSkeleton entity) {
         super(server, entity);
     }
 
@@ -17,6 +17,6 @@ public class YouerModsSkeleton extends CraftAbstractSkeleton {
 
     @Override
     public String toString() {
-        return "YouerModsSkeleton{" + getType() + '}';
+        return "SlimeModsSkeleton{" + getType() + '}';
     }
 }

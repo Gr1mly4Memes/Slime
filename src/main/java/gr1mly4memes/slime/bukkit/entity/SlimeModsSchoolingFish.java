@@ -4,9 +4,9 @@ import net.minecraft.world.entity.animal.fish.AbstractFish;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftFish;
 
-public class YouerModsSchoolingFish extends CraftFish {
+public class SlimeModsSchoolingFish extends CraftFish {
 
-    public YouerModsSchoolingFish(CraftServer server, AbstractFish entity) {
+    public SlimeModsSchoolingFish(CraftServer server, AbstractFish entity) {
         super(server, entity);
     }
 }

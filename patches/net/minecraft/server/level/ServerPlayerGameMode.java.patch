@@ -364,7 +364,7 @@
 +        this.interactItemStack = itemStack.copy();
 +
 +        if (bukkitevent.useInteractedBlock() == Event.Result.DENY) {
-+            callUseItemOn(state); // Youer
++            callUseItemOn(state); // Slime
 +            return (bukkitevent.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
 +        } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
              MenuProvider menuProvider = state.getMenuProvider(level, pos);

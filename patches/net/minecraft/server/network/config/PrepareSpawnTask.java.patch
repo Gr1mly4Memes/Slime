@@ -17,7 +17,7 @@
 +    private final com.mojang.authlib.GameProfile profile;
 +    private final net.minecraft.server.network.ServerConfigurationPacketListenerImpl listener;
 +    private boolean newPlayer;
-+    private @Nullable CompoundTag cachedPlayerData; // Youer - cache player data to avoid double I/O
++    private @Nullable CompoundTag cachedPlayerData; // Slime - cache player data to avoid double I/O
 +
 +    public PrepareSpawnTask(MinecraftServer server, final com.mojang.authlib.GameProfile profile, final net.minecraft.server.network.ServerConfigurationPacketListenerImpl listener) {
 +        this.profile = profile;
@@ -40,7 +40,7 @@
 +            Optional<CompoundTag> loadedTag = this.server
 +                    .getPlayerList()
 +                    .loadPlayerData(this.nameAndId);
-+            this.cachedPlayerData = loadedTag.orElse(null); // Youer - cache to avoid double I/O
++            this.cachedPlayerData = loadedTag.orElse(null); // Slime - cache to avoid double I/O
 +            Optional<ValueInput> loadedData = loadedTag
 +                    .map(tag -> TagValueInput.create(reporter, this.server.registryAccess(), tag));
 +            // Paper start - move logic in Entity to here, to use bukkit supplied world UUID & reset to main world spawn if no valid world is found
@@ -209,7 +209,7 @@
 -                    .getPlayerList()
 -                    .loadPlayerData(PrepareSpawnTask.this.nameAndId)
 -                    .map(tag -> TagValueInput.create(reporter, PrepareSpawnTask.this.server.registryAccess(), tag));
-+                // Youer start - use cached player data to avoid double file I/O
++                // Slime start - use cached player data to avoid double file I/O
 +                Optional<ValueInput> input;
 +                if (PrepareSpawnTask.this.cachedPlayerData != null) {
 +                    input = Optional.of(PrepareSpawnTask.this.cachedPlayerData)
@@ -240,7 +240,7 @@
 +                            // CraftBukkit end
 +                            .map(tag -> TagValueInput.create(reporter, PrepareSpawnTask.this.server.registryAccess(), tag));
 +                }
-+                // Youer end - use cached player data to avoid double file I/O
++                // Slime end - use cached player data to avoid double file I/O
                  input.ifPresent(player::load);
 +                net.neoforged.neoforge.event.EventHooks.firePlayerLoadingEvent(player, PrepareSpawnTask.this.server.getPlayerList(), player.getStringUUID());
 +                // CraftBukkit start - Better rename detection

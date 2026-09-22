@@ -5,7 +5,7 @@
      public static final MenuType<GrindstoneMenu> GRINDSTONE = register("grindstone", GrindstoneMenu::new);
      public static final MenuType<HopperMenu> HOPPER = register("hopper", HopperMenu::new);
 -    public static final MenuType<LecternMenu> LECTERN = register("lectern", (containerId, inventory) -> new LecternMenu(containerId));
-+    public static final MenuType<LecternMenu> LECTERN = register("lectern", (containerId, inventory) -> new LecternMenu(containerId).player(inventory)); // Youer // CraftBukkit
++    public static final MenuType<LecternMenu> LECTERN = register("lectern", (containerId, inventory) -> new LecternMenu(containerId).player(inventory)); // Slime // CraftBukkit
      public static final MenuType<LoomMenu> LOOM = register("loom", LoomMenu::new);
      public static final MenuType<MerchantMenu> MERCHANT = register("merchant", MerchantMenu::new);
      public static final MenuType<ShulkerBoxMenu> SHULKER_BOX = register("shulker_box", ShulkerBoxMenu::new);

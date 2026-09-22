@@ -28,7 +28,6 @@ public final class SlimeConfig {
     private static File configFile;
     public static YamlConfiguration config;
     private static int configVersion;
-    public static boolean createWorldSections = true;
 
     public static void init(final File file) {
         SlimeConfig.configFile = file;

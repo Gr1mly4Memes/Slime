@@ -39,7 +39,7 @@
          this.addDataSlots(lecternData);
      }
  
-+    // Youer start
++    // Slime start
 +    public LecternMenu player(Inventory playerinventory) {
 +        player = (org.bukkit.entity.Player) playerinventory.player.getBukkitEntity(); // CraftBukkit
 +        return this;
@@ -60,7 +60,7 @@
 +        this.addDataSlots(pLecternData);
 +        player = (org.bukkit.entity.Player) playerinventory.player.getBukkitEntity(); // CraftBukkit
 +    }
-+    // Youer end
++    // Slime end
 +
      @Override
      public boolean clickMenuButton(Player player, int buttonId) {

@@ -6,7 +6,6 @@ import gr1mly4memes.slime.config.ConfigConvert;
 import gr1mly4memes.slime.config.ConfigVerify;
 import gr1mly4memes.slime.config.GlobalConfig;
 import gr1mly4memes.slime.config.RemovedConfig;
-import org.bukkit.Bukkit;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -71,7 +70,7 @@ public class GlobalConfigManager {
 
                         verifiedConfigs.put(verifiedConfig.path.substring("settings.".length()), verifiedConfig);
                     } catch (Exception e) {
-                        Bukkit.getLogger().log(Level.SEVERE, "Failure to load leaves config", e);
+                        SlimeLogger.LOGGER.severe("Failure to load Slime config", e);
                     }
                 }
             }

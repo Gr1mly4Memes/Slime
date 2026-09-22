@@ -1636,7 +1636,7 @@
          return this.spawnAtLocation(level, itemStack, 0.0F);
      }
  
-+    // Youer start
++    // Slime start
 +    public java.util.function.@Nullable Consumer<? super ItemEntity> delayedAddConsumer = null;
      public @Nullable ItemEntity spawnAtLocation(ServerLevel level, ItemStack itemStack, Vec3 offset) {
 +        // Paper start - Restore vanilla drops behavior

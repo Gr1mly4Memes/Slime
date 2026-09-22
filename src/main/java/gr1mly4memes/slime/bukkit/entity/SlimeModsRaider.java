@@ -6,9 +6,9 @@ import org.bukkit.craftbukkit.entity.CraftRaider;
 import org.bukkit.entity.EntityCategory;
 import org.jetbrains.annotations.NotNull;
 
-public class YouerModsRaider extends CraftRaider {
+public class SlimeModsRaider extends CraftRaider {
 
-    public YouerModsRaider(CraftServer server, Raider entity) {
+    public SlimeModsRaider(CraftServer server, Raider entity) {
         super(server, entity);
     }
 
@@ -19,7 +19,7 @@ public class YouerModsRaider extends CraftRaider {
 
     @Override
     public String toString() {
-        return "YouerModsRaider{" + getType() + '}';
+        return "SlimeModsRaider{" + getType() + '}';
     }
 
     @Override

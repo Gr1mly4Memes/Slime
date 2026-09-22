@@ -36,7 +36,7 @@ public final class SlimeCommand extends Command {
     public SlimeCommand(final String name) {
         super(name);
         this.description = "Slime related commands";
-        this.usageMessage = "/nitor [" + String.join(" | ", SUBCOMMANDS.keySet()) + "]";
+        this.usageMessage = "/slime [" + String.join(" | ", SUBCOMMANDS.keySet()) + "]";
         final List<String> permissions = new ArrayList<>();
         permissions.add("bukkit.command.slime");
         permissions.addAll(SUBCOMMANDS.keySet().stream().map(s -> BASE_PERM + s).toList());

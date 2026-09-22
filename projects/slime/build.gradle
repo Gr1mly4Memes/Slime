@@ -615,7 +615,44 @@ def installerDeps = {
 
 dependencies installerDeps
 
-task slimeJar(type: Jar, dependsOn: [slimeJar0, downloadMinecraftJar, project(':slimelauncher').tasks.jar]) {
+// Slime start - precompute a "path|sha256|size" manifest of every bundled library.
+// Without it the launcher has to open and hash every single jar entry on every boot, which costs
+// minutes on a large modpack-sized library set and made the launcher re-extract everything.
+def generateLibrariesManifest = tasks.register('generateLibrariesManifest') {
+    def manifestFile = layout.buildDirectory.file("librariesManifest/libraries.txt")
+    inputs.files(configurations.libraries, configurations.installer)
+    outputs.file(manifestFile)
+    doLast {
+        def entries = new LinkedHashMap<String, String>()
+        for (def configuration : [configurations.libraries, configurations.installer]) {
+            for (def artifact : configuration.resolvedConfiguration.resolvedArtifacts) {
+                def id = artifact.moduleVersion.id
+                def libFile = artifact.file
+                if (!libFile.isFile()) {
+                    continue
+                }
+                def md = java.security.MessageDigest.getInstance("SHA-256")
+                libFile.withInputStream { is ->
+                    def buffer = new byte[65536]
+                    int read
+                    while ((read = is.read(buffer)) != -1) {
+                        md.update(buffer, 0, read)
+                    }
+                }
+                def hash = md.digest().collect { String.format('%02x', it & 0xff) }.join()
+                def path = id.group.replace('.', '/') + '/' + id.name + '/' + id.version + '/' + libFile.name
+                entries.put(path, path + '|' + hash + '|' + libFile.length())
+            }
+        }
+        def out = manifestFile.get().asFile
+        out.parentFile.mkdirs()
+        out.setText(entries.values().join('\n') + '\n', 'UTF-8')
+        logger.lifecycle("Generated ${entries.size()} library manifest entries")
+    }
+}
+// Slime end
+
+task slimeJar(type: Jar, dependsOn: [slimeJar0, downloadMinecraftJar, generateLibrariesManifest, project(':slimelauncher').tasks.jar]) {
     archiveClassifier = 'server'
     archiveExtension = 'jar'
     archiveBaseName = 'slime'
@@ -661,6 +698,13 @@ task slimeJar(type: Jar, dependsOn: [slimeJar0, downloadMinecraftJar, project(':
             into("META-INF/libraries/${moduleVersion.id.group.replace('.', '/')}/${moduleVersion.id.name}/${moduleVersion.id.version}/")
         }
     }
+
+    // Slime start - bundled library manifest read by the launcher
+    from(generateLibrariesManifest.map { it.outputs.files.singleFile }) {
+        into "META-INF"
+        rename { 'libraries.txt' }
+    }
+    // Slime end
 
     from(rootProject.file('server_files/version.txt')) {
         filter(ReplaceTokens, tokens: [VERSION: gradleutils.gitInfo.abbreviatedId])

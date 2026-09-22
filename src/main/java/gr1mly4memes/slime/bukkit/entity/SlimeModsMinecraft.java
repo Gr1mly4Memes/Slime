@@ -4,14 +4,14 @@ import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftMinecart;
 
-public class YouerModsMinecraft extends CraftMinecart {
+public class SlimeModsMinecraft extends CraftMinecart {
 
-    public YouerModsMinecraft(CraftServer server, AbstractMinecart entity) {
+    public SlimeModsMinecraft(CraftServer server, AbstractMinecart entity) {
         super(server, entity);
     }
 
     @Override
     public String toString() {
-        return "YouerModsMinecraft{" + getType() + '}';
+        return "SlimeModsMinecraft{" + getType() + '}';
     }
 }

@@ -870,7 +870,6 @@
 +        // Paper end - rewrite chunk system
 +        // Paper start - Improved watchdog support - move final shutdown items here
 +        Util.shutdownExecutors();
-+        gr1mly4memes.slime.SlimeConfig.createWorldSections = false; // Slime
 +        net.neoforged.neoforge.server.ServerLifecycleHooks.handleServerStopped(this);
 +        this.onServerExit();
 +        // Paper end - Improved watchdog support - move final shutdown items here

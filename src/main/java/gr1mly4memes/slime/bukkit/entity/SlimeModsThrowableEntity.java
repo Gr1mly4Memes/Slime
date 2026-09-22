@@ -4,8 +4,8 @@ import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftProjectile;
 
-public class YouerModsThrowableEntity extends CraftProjectile {
-    public YouerModsThrowableEntity(CraftServer server, ThrowableProjectile entity) {
+public class SlimeModsThrowableEntity extends CraftProjectile {
+    public SlimeModsThrowableEntity(CraftServer server, ThrowableProjectile entity) {
         super(server, entity);
     }
 
@@ -16,6 +16,6 @@ public class YouerModsThrowableEntity extends CraftProjectile {
 
     @Override
     public String toString() {
-        return "YouerModsThrowableEntity{" + getType() + '}';
+        return "SlimeModsThrowableEntity{" + getType() + '}';
     }
 }

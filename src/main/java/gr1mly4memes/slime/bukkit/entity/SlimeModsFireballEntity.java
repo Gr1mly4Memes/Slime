@@ -4,14 +4,14 @@ import net.minecraft.world.entity.projectile.hurtingprojectile.Fireball;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftFireball;
 
-public class YouerModsFireballEntity extends CraftFireball {
+public class SlimeModsFireballEntity extends CraftFireball {
 
-    public YouerModsFireballEntity(CraftServer server, Fireball entity) {
+    public SlimeModsFireballEntity(CraftServer server, Fireball entity) {
         super(server, entity);
     }
 
     @Override
     public String toString() {
-        return "YouerModsFireballEntity{" + getType() + '}';
+        return "SlimeModsFireballEntity{" + getType() + '}';
     }
 }

@@ -4,14 +4,14 @@ import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftAnimals;
 
-public class YouerModsAnimals extends CraftAnimals {
+public class SlimeModsAnimals extends CraftAnimals {
 
-    public YouerModsAnimals(CraftServer server, Animal entity) {
+    public SlimeModsAnimals(CraftServer server, Animal entity) {
         super(server, entity);
     }
 
     @Override
     public String toString() {
-        return "YouerModsAnimals{" + getType() + '}';
+        return "SlimeModsAnimals{" + getType() + '}';
     }
 }

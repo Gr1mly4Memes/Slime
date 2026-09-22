@@ -14,8 +14,12 @@ import java.util.function.Consumer;
 public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static ExceptionHandler INSTANCE;
-    private final Map<Class<? extends Throwable>, Consumer<Throwable>> exceptionHandlers = new HashMap<>();
+    // Volatile: uncaughtException() is called from arbitrary threads, so the instance must be
+    // safely published rather than relying on a plain static field.
+    private static volatile ExceptionHandler INSTANCE;
+    // Populated once in the constructor and only read afterwards; wrapped unmodifiable so the
+    // map contents are guaranteed visible to every thread that reads it.
+    private final Map<Class<? extends Throwable>, Consumer<Throwable>> exceptionHandlers;
 
     // ========== Thread stack sampler (full sampling every 100ms, ring buffer) ==========
     private static final int SAMPLE_SIZE = 30;
@@ -29,13 +33,13 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
         synchronized (ExceptionHandler.class) {
             if (samplerStarted) return;
             samplerStarted = true;
-            SAMPLE_RING[sampleIndex.getAndIncrement() % SAMPLE_SIZE] = ManagementFactory.getThreadMXBean().dumpAllThreads(false, false);
+            SAMPLE_RING[Math.floorMod(sampleIndex.getAndIncrement(), SAMPLE_SIZE)] = ManagementFactory.getThreadMXBean().dumpAllThreads(false, false);
             Thread sampler = new Thread(() -> {
                 ThreadMXBean mx = ManagementFactory.getThreadMXBean();
                 try {
                     for (int i = 0; i < SAMPLE_SIZE; i++) {
                         Thread.sleep(SAMPLE_INTERVAL_MS);
-                        int idx = sampleIndex.getAndIncrement() % SAMPLE_SIZE;
+                        int idx = Math.floorMod(sampleIndex.getAndIncrement(), SAMPLE_SIZE);
                         SAMPLE_RING[idx] = mx.dumpAllThreads(false, false);
                     }
                 } catch (InterruptedException ignored) {
@@ -51,13 +55,16 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
     }
 
     public ExceptionHandler() {
-        exceptionHandlers.put(OutOfMemoryError.class, this::handleOutOfMemoryError);
-        exceptionHandlers.put(ClassNotFoundException.class, this::handleClassNotFoundException);
-        exceptionHandlers.put(NoClassDefFoundError.class, this::handleNoClassDefFoundError);
-        exceptionHandlers.put(BindException.class, this::handleBindException);
-        exceptionHandlers.put(NullPointerException.class, this::handleNullPointerException);
-        exceptionHandlers.put(SQLException.class, this::handleSQLException);
-        exceptionHandlers.put(ConcurrentModificationException.class, this::handleConcurrentModificationException);
+        Map<Class<? extends Throwable>, Consumer<Throwable>> handlers = new HashMap<>();
+        handlers.put(OutOfMemoryError.class, this::handleOutOfMemoryError);
+        handlers.put(ClassNotFoundException.class, this::handleClassNotFoundException);
+        handlers.put(NoClassDefFoundError.class, this::handleNoClassDefFoundError);
+        handlers.put(BindException.class, this::handleBindException);
+        handlers.put(NullPointerException.class, this::handleNullPointerException);
+        handlers.put(SQLException.class, this::handleSQLException);
+        handlers.put(ConcurrentModificationException.class, this::handleConcurrentModificationException);
+        // Freeze before publishing INSTANCE below so readers never observe a partially built map.
+        exceptionHandlers = java.util.Collections.unmodifiableMap(handlers);
         // Wrap custom handlers of existing threads so our CME detection can also trigger
         Thread.setDefaultUncaughtExceptionHandler(this);
         INSTANCE = this;
@@ -94,7 +101,7 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
         if (cme != null) {
             // If CME is present, use the CME handler and print full exception info
             LOGGER.error("========== Detected exception (Caused by: ConcurrentModificationException) ==========");
-            LOGGER.error("Outer exception: " + e.getClass().getName() + ": " + e.getMessage());
+            LOGGER.error("Outer exception: {}: {}", e.getClass().getName(), e.getMessage());
             handleConcurrentModificationException(cme);
         }
         // Still try to match an exact handler
@@ -103,13 +110,13 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
             if (cme == null) handler.accept(e);
         } else if (cme == null) {
             LOGGER.error("========== Unhandled exception ==========");
-            LOGGER.error("Exception type: " + e.getClass().getName());
-            LOGGER.error("Exception message: " + e.getMessage());
-            LOGGER.error("Thread: " + t.getName() + " (ID: " + t.getId() + ")");
+            LOGGER.error("Exception type: {}", e.getClass().getName());
+            LOGGER.error("Exception message: {}", e.getMessage());
+            LOGGER.error("Thread: {} (ID: {})", t.getName(), t.getId());
             LOGGER.error("-------- Full cause chain (Caused by) --------");
             printCauseChain(e);
             LOGGER.error("-------- Full stack trace --------");
-            e.printStackTrace();
+            LOGGER.error("Unhandled exception stack trace:", e);
             LOGGER.error("-------- Relevant code locations (in call order) --------");
             printAllRelevantFrames(e);
             LOGGER.error("========================================");
@@ -136,18 +143,18 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
             ensureSamplerStarted();
             ThreadInfo[] snapshot = ManagementFactory.getThreadMXBean().dumpAllThreads(false, false);
             LOGGER.error("========== [Manual call] Detected CME ==========");
-            LOGGER.error("Outer exception: " + e.getClass().getName() + ": " + e.getMessage());
+            LOGGER.error("Outer exception: {}: {}", e.getClass().getName(), e.getMessage());
             INSTANCE.printCMEAnalysis(cme, snapshot);
         }
     }
 
     private void printCMEAnalysis(Throwable cme, ThreadInfo[] snapshot) {
-        LOGGER.error("Exception message: " + cme.getMessage());
-        LOGGER.error("Thread: " + Thread.currentThread().getName() + " (ID: " + Thread.currentThread().getId() + ")");
+        LOGGER.error("Exception message: {}", cme.getMessage());
+        LOGGER.error("Thread: {} (ID: {})", Thread.currentThread().getName(), Thread.currentThread().getId());
         LOGGER.error("-------- Full cause chain (Caused by) --------");
         printCauseChain(cme);
         LOGGER.error("-------- Full stack trace --------");
-        cme.printStackTrace(System.out);
+        LOGGER.error("ConcurrentModificationException stack trace:", cme);
         LOGGER.error("-------- Relevant code locations (all levels) --------");
         printAllRelevantFrames(cme);
         LOGGER.error("-------- Recent thread samples (last 3s, every 100ms) --------");
@@ -188,7 +195,7 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
             if (level > 0) {
                 LOGGER.error("  ↓ Caused by (level " + level + "):");
             }
-            LOGGER.error("    " + cause.getClass().getName() + ": " + cause.getMessage());
+            LOGGER.error("    {}: {}", cause.getClass().getName(), cause.getMessage());
             printRelevantFrames(cause, "      ");
             cause = cause.getCause();
             level++;
@@ -293,7 +300,7 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
     private void handleNullPointerException(Throwable e) {
         LOGGER.error("Encountered a NullPointerException, likely related to an improperly initialized object.");
         LOGGER.error("Full exception details:");
-        e.printStackTrace();
+        LOGGER.error("NullPointerException stack trace:", e);
         printJarOrClassInfo(e);
     }
 
@@ -301,8 +308,8 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
         SQLException sqlException = (SQLException) e;
         LOGGER.error("An error occurred while connecting to the database.");
         LOGGER.error("SQL error code: {}", sqlException.getErrorCode());
-        LOGGER.error("SQL message: " + sqlException.getMessage());
-        sqlException.printStackTrace();
+        LOGGER.error("SQL message: {}", sqlException.getMessage());
+        LOGGER.error("SQLException stack trace:", sqlException);
         printJarOrClassInfo(e);
     }
 
@@ -354,7 +361,7 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
                 if (!hasWriteOp && !hasUserCode) continue;
 
                 String tag = hasWriteOp ? " <-- contains collection write" : "";
-               LOGGER.error("\n  [~" + (i * SAMPLE_INTERVAL_MS) + "ms ago] Thread: {} (State: {}){}", info.getThreadName(), info.getThreadState(), tag);
+               LOGGER.error("\n  [~{}ms ago] Thread: {} (State: {}){}", i * SAMPLE_INTERVAL_MS, info.getThreadName(), info.getThreadState(), tag);
                 for (StackTraceElement ste : info.getStackTrace()) {
                     if (isInternalJavaClass(ste.getClassName())) continue;
                     LOGGER.error("    at {}.{}({}:{})", ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber());
@@ -392,7 +399,7 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
                     methodSuffix = " <-- collection write";
                 }
 
-               LOGGER.error("  -> {}.{}({}:{}){}", cn, ste.getMethodName(), ste.getFileName(), ste.getLineNumber(), methodSuffix);
+                LOGGER.error("  -> {}.{}({}:{}){}", cn, ste.getMethodName(), ste.getFileName(), ste.getLineNumber(), methodSuffix);
             }
         }
     }

@@ -29,14 +29,13 @@ jobs:
       - name: Setup with Gradle
         run: ./gradlew :neoforge:setup
 
-      - name: Gen package infos
-        run: ./gradlew generatePackageInfos
-
+      # NB: `generatePackageInfos` lives in neoforge.formatting-conventions, which is not applied
+      # to any project here, so that task does not exist and cannot be run.
       - name: Gen patches and ATs
         run: ./gradlew :neoforge:genPatches :neoforge:generateAccessTransformers :neoforge:generateFinalizeSpawnTargets
 
       - name: Run datagen with Gradle
-        run: ./gradlew :neoforge:runData :tests:runData
+        run: ./gradlew :neoforge:runData
 
       - name: Check no local changes are present
         run: |

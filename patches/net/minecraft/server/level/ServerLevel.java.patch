@@ -1503,7 +1503,7 @@
 -        this.entityManager.addNewEntity(player);
 +        this.moonrise$getEntityLookup().addNewEntity(player); // Paper - rewrite chunk system
 +        player.onAddedToLevel();
-+        this.server.addEntityToGlobalCache(player); // Youer - global entity cache
++        this.server.addEntityToGlobalCache(player); // Slime - global entity cache
      }
  
      private boolean addEntity(Entity entity) {
@@ -1539,7 +1539,7 @@
 +            // CraftBukkit end
 +            if (this.moonrise$getEntityLookup().addNewEntity(entity)) {
 +                entity.onAddedToLevel();
-+                this.server.addEntityToGlobalCache(entity); // Youer - global entity cache
++                this.server.addEntityToGlobalCache(entity); // Slime - global entity cache
 +                return true;
 +            } else {
 +                return false;
@@ -1885,12 +1885,12 @@
              return entity;
          }
  
-+        // Youer start - use global entity cache
++        // Slime start - use global entity cache
 +        Entity cached = this.server.getEntityFromGlobalCache(uuid);
 +        if (cached != null && !cached.isRemoved()) {
 +            return cached;
 +        }
-+        // Youer end - use global entity cache
++        // Slime end - use global entity cache
 +
          for (ServerLevel otherLevel : this.getServer().getAllLevels()) {
              if (otherLevel != this) {
@@ -2307,7 +2307,7 @@
 +            }
 +            // Spigot end
              ServerLevel.this.getChunkSource().removeEntity(entity);
-+            ServerLevel.this.server.removeEntityFromGlobalCache(entity); // Youer - global entity cache
++            ServerLevel.this.server.removeEntityFromGlobalCache(entity); // Slime - global entity cache
              if (entity instanceof ServerPlayer player) {
                  ServerLevel.this.players.remove(player);
                  ServerLevel.this.getWaypointManager().removePlayer(player);

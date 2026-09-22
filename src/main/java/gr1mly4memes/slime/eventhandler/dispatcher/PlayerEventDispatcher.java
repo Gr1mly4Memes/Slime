@@ -32,6 +32,13 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 
 public class PlayerEventDispatcher {
 
+    /**
+     * Guards against re-entrancy: returning a dropped stack to the inventory calls
+     * {@code player.drop(...)}, which fires another {@link ItemTossEvent} and would recurse
+     * until the stack overflows if a plugin cancels every drop.
+     */
+    private static final ThreadLocal<Boolean> RESTORING_DROP = ThreadLocal.withInitial(() -> Boolean.FALSE);
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onEnterSleepEvent(CanPlayerSleepEvent event) {
         var serverPlayer = event.getEntity();
@@ -45,7 +52,12 @@ public class PlayerEventDispatcher {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
     public void onItemTossEvent(ItemTossEvent event) {
-        ServerPlayer player = (ServerPlayer) event.getPlayer();
+        // Guard the cast: a modded FakePlayer (or any non-ServerPlayer implementation) used to
+        // throw a ClassCastException from inside the NeoForge event bus, which kills the toss
+        // and often the whole tick.
+        if (!(event.getPlayer() instanceof ServerPlayer player)) {
+            return;
+        }
         ItemEntity itemEntity = event.getEntity();
 
         if (player.level() instanceof ServerLevel serverLevel) {
@@ -58,13 +70,25 @@ public class PlayerEventDispatcher {
         PlayerDropItemEvent bukkitEvent = new PlayerDropItemEvent(bPlayer, bItem);
         Bukkit.getPluginManager().callEvent(bukkitEvent);
 
-        if (bukkitEvent.isCancelled()) {
-            event.setCanceled(true);
-            ItemStack stack = itemEntity.getItem();
+        if (!bukkitEvent.isCancelled()) {
+            return;
+        }
+
+        event.setCanceled(true);
+        ItemStack stack = itemEntity.getItem();
+        if (RESTORING_DROP.get()) {
+            // Already restoring a cancelled drop: give the stack back without re-entering the event.
+            player.getInventory().add(stack);
+            return;
+        }
+        RESTORING_DROP.set(Boolean.TRUE);
+        try {
             if (!player.getInventory().add(stack)) {
                 player.drop(stack, false, false, false, null);
             }
-            player.containerMenu.broadcastChanges();
+        } finally {
+            RESTORING_DROP.remove();
         }
+        player.containerMenu.broadcastChanges();
     }
 }

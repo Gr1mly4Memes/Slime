@@ -368,7 +368,7 @@
 +            remove$leaveMessage = net.kyori.adventure.text.Component.translatable("multiplayer.player.left", net.kyori.adventure.text.format.NamedTextColor.YELLOW, io.papermc.paper.configuration.GlobalConfiguration.get().messages.useDisplayNameInQuitMessage ? player.getBukkitEntity().displayName() : io.papermc.paper.adventure.PaperAdventure.asAdventure(player.getDisplayName()));
 +        }
 +        org.bukkit.event.player.PlayerQuitEvent playerQuitEvent = new org.bukkit.event.player.PlayerQuitEvent(player.getBukkitEntity(), remove$leaveMessage, player.quitReason); // Paper - Adventure & Add API for quit reason
-+        remove$leaveMessage = null; // Youer
++        remove$leaveMessage = null; // Slime
 +        this.cserver.getPluginManager().callEvent(playerQuitEvent);
 +        player.getBukkitEntity().disconnect();
 +

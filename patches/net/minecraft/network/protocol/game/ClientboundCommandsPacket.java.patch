@@ -21,7 +21,7 @@
          private static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void serializeCap(
              FriendlyByteBuf output, ArgumentTypeInfo<A, T> info, ArgumentTypeInfo.Template<A> argumentType
          ) {
-+            // Youer start
++            // Slime start
 +            Identifier key = BuiltInRegistries.COMMAND_ARGUMENT_TYPE.getKey(info);
 +            if ((!GlobalConfiguration.get().proxies.velocity.enabled && !SpigotConfig.bungee) || ((key != null) && (key.getNamespace().equals("minecraft") || key.getNamespace().equals("brigadier")))) {
 +                output.writeVarInt(BuiltInRegistries.COMMAND_ARGUMENT_TYPE.getId(info));
@@ -35,7 +35,7 @@
 +            info.serializeToNetwork((T) argumentType, payload);
 +            output.writeVarInt(payload.readableBytes());
 +            output.writeBytes(payload);
-+            // Youer end
++            // Slime end
          }
      }
  

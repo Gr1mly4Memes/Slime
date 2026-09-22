@@ -349,7 +349,7 @@
          }
      }
  
-+    // Youer start
++    // Slime start
 +    public boolean callEvent = true;
 +    public java.util.function.@Nullable Consumer<org.bukkit.entity.Item> entityOperation = null;
 +    public void paperDrop(boolean callEvent, java.util.function.@Nullable Consumer<org.bukkit.entity.Item> entityOperation) {
@@ -404,11 +404,11 @@
 +                                // Fallback
 +                                player.getInventory().addItem(drop.getItemStack());
 +                            }
-+                            paperDrop(true, null); // Youer
++                            paperDrop(true, null); // Slime
 +                            return null;
 +                        }
 +                    }
-+                    paperDrop(true, null); // Youer
++                    paperDrop(true, null); // Slime
 +                    // CraftBukkit end
 +                    this.level().addFreshEntity(entity);
 +                }
@@ -797,7 +797,7 @@
              return false;
          }
      }
-+    // Youer end
++    // Slime end
  
      protected void onEffectAdded(MobEffectInstance effect, @Nullable Entity source) {
          if (!this.level().isClientSide()) {
@@ -805,7 +805,7 @@
          }
      }
  
-+    // Youer start
++    // Slime start
 +    private EntityRegainHealthEvent.RegainReason heal$regainReason = EntityRegainHealthEvent.RegainReason.CUSTOM;
 +    public void pushHealReason(EntityRegainHealthEvent.RegainReason regainReason) {
 +        this.heal$regainReason = regainReason;
@@ -907,7 +907,7 @@
 +                if (attackDamage.doubleValue() == 0.0D) {
 +                    // One punch!
 +                    damage = Float.MAX_VALUE;
-+                    this.damageContainers.peek().setNewDamage(damage); // Youer
++                    this.damageContainers.peek().setNewDamage(damage); // Slime
 +                }
 +            }
 +        }
@@ -1062,7 +1062,7 @@
 +
 +                var damageContainer = this.damageContainers.empty() ? new net.neoforged.neoforge.common.damagesource.DamageContainer(source, damage) : this.damageContainers.peek();
 +                var ev = net.neoforged.neoforge.common.CommonHooks.onDamageBlock(this, damageContainer, damageBlocked, !blocksAttacks.bypassedBy().map(t -> t.contains(source.typeHolder())).orElse(false));
-+                // Youer start
++                // Slime start
 +                float bukkit = -(float) bukkitEntityDamageEvent.getDamage(EntityDamageEvent.DamageModifier.BLOCKING);
 +                if (ev.getBlockedDamage() == ev.getOriginalBlockedDamage()) {
 +                    if (bukkit > 0.0F) {
@@ -1072,7 +1072,7 @@
 +                        ev.setBlocked(false);
 +                    }
 +                }
-+                // Youer end
++                // Slime end
 +                if (!ev.getBlocked()) return 0.0F;
 +                damageBlocked = ev.getBlockedDamage();
 +                damageContainer.setBlockedDamage(ev);
@@ -1624,10 +1624,10 @@
 -            dmg = Math.max(dmg - this.getAbsorptionAmount(), 0.0F);
 -            this.setAbsorptionAmount(this.getAbsorptionAmount() - (originalDamage - dmg));
 -            float absorbedDamage = originalDamage - dmg;
-+            // Youer start
++            // Slime start
 +            float armorAbsorb = this.getDamageAfterArmorAbsorb(source, this.damageContainers.peek().getNewDamage());
 +            armorAbsorb = applyBukkitDamageModifier(EntityDamageEvent.DamageModifier.ARMOR, armorAbsorb);
-+            // Youer end
++            // Slime end
 +            // Neo (ImplNote): Keep this in-sync with the equivalent patches in Player#actuallyHurt.
 +            // Neo: Primary damage pipeline hooks. Compute the armor and enchantment reductions against the "original" damage, and then fire LivingDamageEvent.Pre
 +            this.damageContainers.peek().setReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ARMOR, this.damageContainers.peek().getNewDamage() - armorAbsorb);

@@ -2800,13 +2800,13 @@ public enum Material implements Keyed, Translatable, net.kyori.adventure.transla
         this(id, MaterialData.class);
     }
 
-    // Youer start - constructor used to set if the Material is a block or not
+    // Slime start - constructor used to set if the Material is a block or not
     private Material(final int id, boolean isForgeBlock, boolean isForgeItem) {
         this(id);
         this.isModBlock = isForgeBlock;
         this.isModItem = isForgeItem;
     }
-    // Youer end
+    // Slime end
 
     private Material(final int id, final Class<?> data) {
         this.id = id;

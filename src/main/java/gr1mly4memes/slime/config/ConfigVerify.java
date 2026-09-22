@@ -70,11 +70,13 @@ public interface ConfigVerify<E> extends ConfigConvert<E> {
             Type genericSuperclass = getClass().getGenericSuperclass();
             Type[] typeArguments = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
             this.enumClass = (Class<E>) typeArguments[0];
-            this.enumValues = new ArrayList<>() {{
-                for (E e : enumClass.getEnumConstants()) {
-                    add(e.name().toLowerCase(Locale.ROOT));
-                }
-            }};
+            // Plain loop: the previous double-brace initialiser created an anonymous inner class
+            // per verifier and kept an implicit reference to the enclosing instance.
+            List<String> values = new ArrayList<>(enumClass.getEnumConstants().length);
+            for (E e : enumClass.getEnumConstants()) {
+                values.add(e.name().toLowerCase(Locale.ROOT));
+            }
+            this.enumValues = List.copyOf(values);
         }
 
         @Override

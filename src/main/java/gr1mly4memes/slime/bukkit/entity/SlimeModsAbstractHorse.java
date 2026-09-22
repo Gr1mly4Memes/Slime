@@ -1,26 +1,21 @@
 package gr1mly4memes.slime.bukkit.entity;
 
-import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftChestedHorse;
+import org.bukkit.craftbukkit.entity.CraftAbstractHorse;
 import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.Horse;
 import org.jetbrains.annotations.NotNull;
 
-public class YouerModsChestHorse extends CraftChestedHorse {
+public class SlimeModsAbstractHorse extends CraftAbstractHorse {
 
-    public YouerModsChestHorse(CraftServer server, AbstractChestedHorse entity) {
+    public SlimeModsAbstractHorse(CraftServer server, AbstractHorse entity) {
         super(server, entity);
     }
 
     @Override
     public String toString() {
-        return "YouerModsChestHorse{" + getType() + '}';
-    }
-
-    @Override
-    public AbstractChestedHorse getHandle() {
-        return (AbstractChestedHorse) entity;
+        return "SlimeModsAbstractHorse{" + getType() + '}';
     }
 
     @Override

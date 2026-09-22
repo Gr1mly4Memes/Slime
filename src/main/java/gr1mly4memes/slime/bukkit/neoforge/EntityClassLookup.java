@@ -96,6 +96,36 @@ public class EntityClassLookup {
 
     private static final Map<Class<? extends Entity>, BiFunction<CraftServer, Entity, CraftEntity>> ENTITY_LOOKUP_MAP = new HashMap<>();
 
+    /**
+     * Resolved factory per concrete entity class.
+     *
+     * <p>{@link ClassValue} is used rather than a static {@code HashMap} cache for two reasons:
+     * it is lock-free on the (very hot) read path, and it holds no strong reference from the
+     * lookup to the entity class - so a mod/plugin classloader can still be garbage collected
+     * instead of being pinned for the lifetime of the server.
+     */
+    /** Sentinel for "no factory on the class hierarchy": {@link ClassValue} may not cache nulls. */
+    private static final BiFunction<CraftServer, Entity, CraftEntity> UNKNOWN =
+            (server, entity) -> {
+                throw new AssertionError("Unknown entity " + entity.getClass());
+            };
+
+    private static final ClassValue<BiFunction<CraftServer, Entity, CraftEntity>> RESOLVED =
+            new ClassValue<>() {
+                @Override
+                protected BiFunction<CraftServer, Entity, CraftEntity> computeValue(Class<?> type) {
+                    Class<?> current = type;
+                    while (current != null) {
+                        BiFunction<CraftServer, Entity, CraftEntity> factory = ENTITY_LOOKUP_MAP.get(current);
+                        if (factory != null) {
+                            return factory;
+                        }
+                        current = current.getSuperclass();
+                    }
+                    return UNKNOWN;
+                }
+            };
+
     static {
         registerEntity(net.minecraft.world.entity.player.Player.class, (server, entity) -> new CraftHumanEntity(server, (net.minecraft.world.entity.player.Player) entity));
         registerEntity(ServerPlayer.class, (server, entity) -> new CraftPlayer(server, (ServerPlayer) entity));
@@ -232,20 +262,20 @@ public class EntityClassLookup {
         registerEntity(OminousItemSpawner.class, (server, entity) -> new CraftOminousItemSpawner(server, (OminousItemSpawner) entity));
         registerEntity(Armadillo.class, (server, entity) -> new CraftArmadillo(server, (Armadillo) entity));
         registerEntity(BreezeWindCharge.class, (server, entity) -> new CraftBreezeWindCharge(server, (BreezeWindCharge) entity));
-        registerEntity(AbstractMinecartContainer.class, (server, entity) -> new YouerModsMinecartContainer(server, (AbstractMinecartContainer) entity));
+        registerEntity(AbstractMinecartContainer.class, (server, entity) -> new SlimeModsMinecartContainer(server, (AbstractMinecartContainer) entity));
         registerEntity(AbstractFish.class, (server, entity) -> new CraftFish(server, (AbstractFish) entity));
         registerEntity(LivingEntity.class, (server, entity) -> new CraftLivingEntity(server, (LivingEntity) entity));
-        registerEntity(Projectile.class, (server, entity) -> new YouerModsProjectileEntity(server, (Projectile) entity));
-        registerEntity(VehicleEntity.class, (server, entity) -> new YouerModsVehicle(server, (VehicleEntity) entity));
-        registerEntity(AbstractWindCharge.class, (server, entity) -> new YouerModsWindCharge(server, (AbstractWindCharge) entity));
-        registerEntity(ThrowableItemProjectile.class, (server, entity) -> new YouerModsThrowableProjectile(server, (ThrowableItemProjectile) entity));
+        registerEntity(Projectile.class, (server, entity) -> new SlimeModsProjectileEntity(server, (Projectile) entity));
+        registerEntity(VehicleEntity.class, (server, entity) -> new SlimeModsVehicle(server, (VehicleEntity) entity));
+        registerEntity(AbstractWindCharge.class, (server, entity) -> new SlimeModsWindCharge(server, (AbstractWindCharge) entity));
+        registerEntity(ThrowableItemProjectile.class, (server, entity) -> new SlimeModsThrowableProjectile(server, (ThrowableItemProjectile) entity));
         registerEntity(HangingEntity.class, (server, entity) -> new CraftHanging(server, (HangingEntity) entity));
         registerEntity(Display.class, (server, entity) -> new CraftDisplay(server, (Display) entity));
         registerEntity(AgeableMob.class, (server, entity) -> new CraftAgeable(server, (AgeableMob) entity));
         registerEntity(PathfinderMob.class, (server, entity) -> new CraftCreature(server, (PathfinderMob) entity));
         registerEntity(Monster.class, (server, entity) -> new CraftMonster(server, (Monster) entity));
-        registerEntity(Mob.class, (server, entity) -> new YouerModsMob(server, (Mob) entity));
-        registerEntity(Entity.class, (server, entity) -> new YouerModsEntity(server, entity));
+        registerEntity(Mob.class, (server, entity) -> new SlimeModsMob(server, (Mob) entity));
+        registerEntity(Entity.class, (server, entity) -> new SlimeModsEntity(server, entity));
     }
 
     private static void registerEntity(Class<? extends Entity> clazz, BiFunction<CraftServer, Entity, CraftEntity> factory) {
@@ -263,17 +293,14 @@ public class EntityClassLookup {
             }
         }
 
-        Class<?> entityClass = entity.getClass();
-
-        while (entityClass != null) {
-            BiFunction<CraftServer, Entity, CraftEntity> factory = ENTITY_LOOKUP_MAP.get(entityClass);
-            if (factory != null) {
-                return factory.apply(server, entity);
-            }
-            entityClass = entityClass.getSuperclass();
+        // Cached: the superclass walk below used to run (with a map lookup per level) for every
+        // single Bukkit entity creation.
+        BiFunction<CraftServer, Entity, CraftEntity> factory = RESOLVED.get(entity.getClass());
+        if (factory != UNKNOWN) {
+            return factory.apply(server, entity);
         }
 
-        throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
+        throw new AssertionError("Unknown entity " + entity.getClass());
     }
 }
 

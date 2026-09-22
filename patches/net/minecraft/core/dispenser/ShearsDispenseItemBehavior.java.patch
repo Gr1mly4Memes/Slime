@@ -47,7 +47,7 @@
      }
  
 -    private static boolean tryShearEntity(ServerLevel level, BlockPos pos, ItemStack tool) {
-+    // Youer TODO - paper patches
++    // Slime TODO - paper patches
 +    private static boolean tryShearEntity(ServerLevel level, BlockPos pos, ItemStack tool, org.bukkit.block.Block bukkitBlock, CraftItemStack craftItem) { // CraftBukkit - add args
          for (Entity entity : level.getEntitiesOfClass(Entity.class, new AABB(pos), EntitySelector.NO_SPECTATORS)) {
              if (entity.shearOffAllLeashConnections(null)) {
