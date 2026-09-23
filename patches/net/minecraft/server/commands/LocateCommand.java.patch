@@ -1,0 +1,44 @@
+--- a/net/minecraft/server/commands/LocateCommand.java
++++ b/net/minecraft/server/commands/LocateCommand.java
+@@ -95,13 +_,13 @@
+     private static int locateStructure(CommandSourceStack source, ResourceOrTagKeyArgument.Result<Structure> resourceOrTag) throws CommandSyntaxException {
+         Registry<Structure> registry = source.getLevel().registryAccess().lookupOrThrow(Registries.STRUCTURE);
+         HolderSet<Structure> target = (HolderSet<Structure>)getHolders(resourceOrTag, registry)
+-            .orElseThrow(() -> ERROR_STRUCTURE_INVALID.create(resourceOrTag.asPrintable()));
++                .orElseThrow(() -> ERROR_STRUCTURE_INVALID.create(resourceOrTag.asPrintable()));
+         BlockPos sourcePos = BlockPos.containing(source.getPosition());
+         ServerLevel serverLevel = source.getLevel();
+         Stopwatch stopwatch = Stopwatch.createStarted(Util.TICKER);
+         Pair<BlockPos, Holder<Structure>> nearest = serverLevel.getChunkSource()
+-            .getGenerator()
+-            .findNearestMapStructure(serverLevel, target, sourcePos, 100, false);
++                .getGenerator()
++                .findNearestMapStructure(serverLevel, target, sourcePos, 100, false);
+         stopwatch.stop();
+         if (nearest == null) {
+             throw ERROR_STRUCTURE_NOT_FOUND.create(resourceOrTag.asPrintable());
+@@ -127,7 +_,7 @@
+         ServerLevel serverLevel = source.getLevel();
+         Stopwatch stopwatch = Stopwatch.createStarted(Util.TICKER);
+         Optional<Pair<Holder<PoiType>, BlockPos>> closestWithType = serverLevel.getPoiManager()
+-            .findClosestWithType(resourceOrTag, sourcePos, 256, PoiManager.Occupancy.ANY);
++                .findClosestWithType(resourceOrTag, sourcePos, POI_SEARCH_RADIUS, PoiManager.Occupancy.ANY);
+         stopwatch.stop();
+         if (closestWithType.isEmpty()) {
+             throw ERROR_POI_NOT_FOUND.create(resourceOrTag.asPrintable());
+@@ -184,13 +_,13 @@
+                     .withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.coordinates.tooltip")))
+             );
+         source.sendSuccess(() -> Component.translatable(successMessageKey, foundName, coordinates, distance), false);
+-        LOGGER.info("Locating element {} took {} ms", foundName, taskDuration.toMillis());
++        LOGGER.info("Locating element {} on Thread:{} took {} ms", foundName, Thread.currentThread().getName(), taskDuration.toMillis()); // DivineMC - Log thread name
+         return distance;
+     }
+ 
+     private static float dist(int x1, int z1, int x2, int z2) {
+         int dx = x2 - x1;
+         int dz = z2 - z1;
+-        return Mth.sqrt(dx * dx + dz * dz);
++        return (float) Math.hypot(dx, dz); // Paper - Fix MC-177381
+     }
+ }

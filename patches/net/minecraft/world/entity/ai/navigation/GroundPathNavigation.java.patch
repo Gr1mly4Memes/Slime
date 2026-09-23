@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/entity/ai/navigation/GroundPathNavigation.java
++++ b/net/minecraft/world/entity/ai/navigation/GroundPathNavigation.java
+@@ -8,6 +_,7 @@
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.level.Level;
++import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.chunk.LevelChunk;
+ import net.minecraft.world.level.pathfinder.Node;
+@@ -41,7 +_,7 @@
+     }
+ 
+     @Override
+-    public Path createPath(BlockPos pos, int reachRange) {
++    public Path createPath(BlockPos pos, @org.jspecify.annotations.Nullable Entity entity, int reachRange) { // Paper - EntityPathfindEvent
+         LevelChunk chunk = this.level.getChunkSource().getChunkNow(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
+         if (chunk == null) {
+             return null;
+@@ -51,7 +_,7 @@
+             pos = this.findSurfacePosition(chunk, pos, reachRange);
+         }
+ 
+-        return super.createPath(pos, reachRange);
++        return super.createPath(pos, entity, reachRange); // Paper - EntityPathfindEvent
+     }
+ 
+     private BlockPos findSurfacePosition(LevelChunk chunk, BlockPos pos, int reachRange) {
+@@ -90,7 +_,7 @@
+ 
+     @Override
+     public Path createPath(Entity target, int reachRange) {
+-        return this.createPath(target.blockPosition(), reachRange);
++        return this.createPath(target.blockPosition(), target, reachRange); // Paper - EntityPathfindEvent
+     }
+ 
+     private int getSurfaceY() {

@@ -1,0 +1,53 @@
+--- a/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
++++ b/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
+@@ -353,15 +_,40 @@
+ 
+     @Override
+     public CompletableFuture<ChunkAccess> buildTerrain(
++            final ChunkAccess chunk,
++            final Blender blender,
++            final RandomState randomState,
++            final StructureManager structureManager,
++            final BiomeManager biomeManager,
++            final @Nullable WorldGenRegion carverBiomeRegion,
++            final Set<Holder<Biome>> possibleBiomes
++    ) {
++        // Paper start - Bukkit chunk generator callbacks
++        return this.buildTerrain(chunk, blender, randomState, structureManager, biomeManager, carverBiomeRegion, possibleBiomes, null);
++    }
++
++    public CompletableFuture<ChunkAccess> buildTerrain(
+         ChunkAccess chunk,
+         Blender blender,
+         RandomState randomState,
+         StructureManager structureManager,
+         BiomeManager biomeManager,
+         @Nullable WorldGenRegion carverBiomeRegion,
+-        Set<Holder<Biome>> possibleBiomes
++        Set<Holder<Biome>> possibleBiomes,
++        final org.bukkit.craftbukkit.generator.@Nullable CustomChunkGenerator customGenerator
+     ) {
++        // Paper end - Bukkit chunk generator callbacks
+         NoiseSettings noiseSettings = this.settings.value().noiseSettings().clampToHeightAccessor(chunk.getHeightAccessorForGeneration());
++        // Paper start - Bukkit chunk generator callbacks
++        if (customGenerator != null && (noiseSettings.height() <= 0 || SharedConstants.debugVoidTerrain(chunk.getPos()))) {
++            return CompletableFuture.supplyAsync(() -> {
++                customGenerator.fillFromNoise(chunk);
++                customGenerator.buildSurface(chunk);
++                customGenerator.applyCarvers(chunk);
++                return chunk;
++            }, io.papermc.paper.FeatureHooks.getWorldgenExecutor());
++        }
++        // Paper end - Bukkit chunk generator callbacks
+         return noiseSettings.height() > 0 && !SharedConstants.debugVoidTerrain(chunk.getPos()) ? CompletableFuture.supplyAsync(() -> {
+             ProfilerFiller profiler = Profiler.get();
+ 
+@@ -397,7 +_,7 @@
+ 
+                 return chunk;
+             }
+-        }, Util.backgroundExecutor().forName("buildTerrain")) : CompletableFuture.completedFuture(chunk);
++        }, Runnable::run) : CompletableFuture.completedFuture(chunk); // Paper - rewrite chunk system
+     }
+ 
+     private void doFill(NoiseChunk noiseChunk, ChunkAccess chunk) {

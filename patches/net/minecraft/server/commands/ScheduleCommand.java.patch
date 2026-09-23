@@ -1,0 +1,19 @@
+--- a/net/minecraft/server/commands/ScheduleCommand.java
++++ b/net/minecraft/server/commands/ScheduleCommand.java
+@@ -2,6 +_,7 @@
+ 
+ import com.mojang.brigadier.CommandDispatcher;
+ import com.mojang.brigadier.arguments.IntegerArgumentType;
++import com.mojang.brigadier.arguments.StringArgumentType;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+@@ -102,7 +_,7 @@
+ 
+         long tickTime = source.getLevel().getGameTime() + time;
+         Identifier callbackId = callback.getFirst();
+-        TimerQueue<MinecraftServer> queue = source.getServer().getScheduledEvents();
++        TimerQueue<MinecraftServer> queue = source.getLevel().scheduledEvents; // CraftBukkit - SPIGOT-6667: Use world specific function timer
+         Optional<CommandFunction<CommandSourceStack>> function = callback.getSecond().left();
+         if (function.isPresent()) {
+             if (function.get() instanceof MacroFunction) {

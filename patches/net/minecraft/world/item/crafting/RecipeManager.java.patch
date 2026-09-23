@@ -1,0 +1,126 @@
+--- a/net/minecraft/world/item/crafting/RecipeManager.java
++++ b/net/minecraft/world/item/crafting/RecipeManager.java
+@@ -1,21 +_,35 @@
+ package net.minecraft.world.item.crafting;
+ 
++import com.google.common.annotations.VisibleForTesting;
++import com.google.gson.JsonObject;
++import com.google.gson.JsonParseException;
+ import com.mojang.logging.LogUtils;
++import com.mojang.serialization.JsonOps;
+ import it.unimi.dsi.fastutil.objects.Object2IntMap;
+ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+ import java.util.ArrayList;
+ import java.util.Collection;
++import java.util.Collections;
+ import java.util.IdentityHashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Optional;
+ import java.util.OptionalInt;
++import java.util.SortedMap;
++import java.util.TreeMap;
+ import java.util.function.Consumer;
+ import java.util.stream.Collectors;
+ import net.minecraft.core.HolderLookup;
+ import net.minecraft.core.registries.Registries;
++import net.minecraft.resources.FileToIdConverter;
++import net.minecraft.resources.Identifier;
+ import net.minecraft.resources.ResourceKey;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.packs.resources.ResourceManager;
++import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
++import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
++import net.minecraft.util.profiling.ProfilerFiller;
+ import net.minecraft.world.flag.FeatureFlagSet;
+ import net.minecraft.world.item.crafting.display.RecipeDisplay;
+ import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
+@@ -52,6 +_,7 @@
+     private List<RecipeManager.ServerDisplayInfo> allDisplays = List.of();
+     private Map<ResourceKey<Recipe<?>>, List<RecipeManager.ServerDisplayInfo>> recipeToDisplay = Map.of();
+     private final Collection<RecipeHolder<?>> learnableRecipes;
++    private Object2IntMap<ResourceKey<net.minecraft.world.item.crafting.Recipe<?>>> recipePriorities = it.unimi.dsi.fastutil.objects.Object2IntMaps.emptyMap(); // Neo: recipe priorities set from RecipePriorityManager.
+ 
+     public RecipeManager(HolderLookup.Provider registries) {
+         HolderLookup.RegistryLookup<Recipe<?>> recipeRegistries = registries.lookupOrThrow(Registries.RECIPE);
+@@ -59,7 +_,27 @@
+         this.learnableRecipes = this.recipes.values().stream().filter(r -> !r.value().isSpecial()).collect(Collectors.toUnmodifiableList());
+     }
+ 
++    // CraftBukkit start
++    public void addRecipe(RecipeHolder<?> holder) {
++        org.spigotmc.AsyncCatcher.catchOp("Recipe Add"); // Spigot
++        this.recipes.addRecipe(holder);
++        this.finalizeRecipeLoading();
++    }
++
++    private FeatureFlagSet enabledFlags;
++
++    public void finalizeRecipeLoading() {
++        if (this.enabledFlags != null) {
++            this.finalizeRecipeLoading(this.enabledFlags);
++
++            net.minecraft.server.MinecraftServer.getServer().getPlayerList().reloadResources();
++        }
++    }
++
+     public void finalizeRecipeLoading(FeatureFlagSet enabledFlags) {
++        this.enabledFlags = enabledFlags;
++        // CraftBukkit end
++        this.recipes.order(this.recipePriorities); // Neo: order recipes by priority.
+         List<SelectableRecipe.SingleInputEntry<StonecutterRecipe>> stonecutterRecipes = new ArrayList<>();
+         List<RecipeManager.IngredientCollector> propertySetCollectors = RECIPE_PROPERTY_SETS.entrySet()
+             .stream()
+@@ -116,7 +_,10 @@
+     }
+ 
+     public <I extends RecipeInput, T extends Recipe<I>> Optional<RecipeHolder<T>> getRecipeFor(RecipeType<T> type, I input, Level level) {
+-        return this.recipes.getRecipesFor(type, input, level).findFirst();
++        // CraftBukkit start
++        List<RecipeHolder<T>> list = this.recipes.getRecipesForList(type, input, level); // DivineMC - Carpet-Fixes: Remove streams to be faster
++        return (list.isEmpty()) ? Optional.empty() : Optional.of(list.getLast()); // CraftBukkit - SPIGOT-4638: last recipe gets priority
++        // CraftBukkit end
+     }
+ 
+     public Optional<RecipeHolder<?>> byKey(ResourceKey<Recipe<?>> recipeId) {
+@@ -166,6 +_,22 @@
+         }
+     }
+ 
++    // CraftBukkit start
++    public boolean removeRecipe(ResourceKey<Recipe<?>> id) {
++        boolean removed = this.recipes.removeRecipe(id);
++        if (removed) {
++            this.finalizeRecipeLoading();
++        }
++
++        return removed;
++    }
++
++    public void clearRecipes() {
++        this.recipes = RecipeMap.createEmpty();
++        this.finalizeRecipeLoading();
++    }
++    // CraftBukkit end
++
+     public static <I extends RecipeInput, T extends Recipe<I>> RecipeManager.CachedCheck<I, T> createCheck(RecipeType<T> type) {
+         return new RecipeManager.CachedCheck<I, T>() {
+             private @Nullable ResourceKey<Recipe<?>> lastRecipe;
+@@ -222,6 +_,16 @@
+         return recipe -> recipe.getType() == type && recipe instanceof SingleItemRecipe singleItemRecipe
+             ? Optional.of(singleItemRecipe.input())
+             : Optional.empty();
++    }
++
++    // Neo: expose recipe map
++    public RecipeMap recipeMap() {
++        return this.recipes;
++    }
++
++    // Neo: set recipe priority map
++    public void setPriorityMap(Object2IntMap<ResourceKey<net.minecraft.world.item.crafting.Recipe<?>>> recipePriorities) {
++        this.recipePriorities = recipePriorities;
+     }
+ 
+     public interface CachedCheck<I extends RecipeInput, T extends Recipe<I>> {

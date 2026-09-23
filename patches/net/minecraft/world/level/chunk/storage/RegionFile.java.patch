@@ -1,0 +1,348 @@
+--- a/net/minecraft/world/level/chunk/storage/RegionFile.java
++++ b/net/minecraft/world/level/chunk/storage/RegionFile.java
+@@ -22,8 +_,9 @@
+ import org.jspecify.annotations.Nullable;
+ import org.slf4j.Logger;
+ 
+-public class RegionFile implements AutoCloseable {
++public class RegionFile implements AutoCloseable, ca.spottedleaf.moonrise.patches.chunk_system.storage.ChunkSystemRegionFile { // Paper - rewrite chunk system
+     private static final Logger LOGGER = LogUtils.getLogger();
++    public static final int MAX_CHUNK_SIZE = 500 * 1024 * 1024; // Paper - don't write garbage data to disk if writing serialization fails
+     private static final int SECTOR_BYTES = 4096;
+     @VisibleForTesting
+     protected static final int SECTOR_INTS = 1024;
+@@ -45,14 +_,30 @@
+     @VisibleForTesting
+     protected final RegionBitmap usedSectors = new RegionBitmap();
+ 
+-    public RegionFile(RegionStorageInfo info, Path path, Path externalFileDir, boolean sync) throws IOException {
++    // Paper start - rewrite chunk system
++    @Override
++    public final ca.spottedleaf.moonrise.patches.chunk_system.io.MoonriseRegionFileIO.RegionDataController.WriteData moonrise$startWrite(final net.minecraft.nbt.CompoundTag data, final ChunkPos pos) throws IOException {
++        final RegionFile.ChunkBuffer buffer = ((RegionFile) (Object) this).new ChunkBuffer(pos);
++        ((ca.spottedleaf.moonrise.patches.chunk_system.storage.ChunkSystemChunkBuffer) buffer).moonrise$setWriteOnClose(false);
++
++        final DataOutputStream out = new DataOutputStream(this.version.wrap(buffer));
++
++        return new ca.spottedleaf.moonrise.patches.chunk_system.io.MoonriseRegionFileIO.RegionDataController.WriteData(
++            data, ca.spottedleaf.moonrise.patches.chunk_system.io.MoonriseRegionFileIO.RegionDataController.WriteData.WriteResult.WRITE,
++            out, ((ca.spottedleaf.moonrise.patches.chunk_system.storage.ChunkSystemChunkBuffer) buffer)::moonrise$write
++        );
++    }
++    // Paper end - rewrite chunk system
++
++    public RegionFile(final RegionStorageInfo info, final Path path, final Path externalFileDir, final boolean sync) throws IOException {
+         this(info, path, externalFileDir, RegionFileVersion.getSelected(), sync);
+     }
+ 
+-    public RegionFile(RegionStorageInfo info, Path path, Path externalFileDir, RegionFileVersion version, boolean sync) throws IOException {
++    public RegionFile(final RegionStorageInfo info, final Path path, final Path externalFileDir, final RegionFileVersion version, final boolean sync) throws IOException {
+         this.info = info;
+         this.path = path;
+         this.version = version;
++        this.initOversizedState(); // Paper
+         if (!Files.isDirectory(externalFileDir)) {
+             throw new IllegalArgumentException("Expected directory, got " + externalFileDir.toAbsolutePath());
+         }
+@@ -83,6 +_,14 @@
+                 if (offset != 0) {
+                     int sectorNumber = getSectorNumber(offset);
+                     int numSectors = getNumSectors(offset);
++                    // Spigot start
++                    if (numSectors == 255) {
++                        // We're maxed out, so we need to read the proper length from the section
++                        ByteBuffer realLen = ByteBuffer.allocate(4);
++                        this.file.read(realLen, sectorNumber * 4096);
++                        numSectors = (realLen.getInt(0) + 4) / 4096 + 1;
++                    }
++                    // Spigot end
+                     if (sectorNumber < 2) {
+                         LOGGER.warn("Region file {} has invalid sector at index: {}; sector {} overlaps with header", path, i, sectorNumber);
+                         this.offsets.put(i, 0);
+@@ -104,12 +_,36 @@
+         return this.path;
+     }
+ 
+-    private Path getExternalChunkPath(ChunkPos pos) {
+-        String externalFileName = "c." + pos.x() + "." + pos.z() + ".mcc";
++    private Path getExternalChunkPath(final ChunkPos pos) {
++        String externalFileName = "c." + pos.x() + "." + pos.z() + ".mcc"; // Paper - diff on change
+         return this.externalFileDir.resolve(externalFileName);
+     }
+ 
+-    public synchronized @Nullable DataInputStream getChunkDataInputStream(ChunkPos pos) throws IOException {
++    // Paper start
++    private static @Nullable ChunkPos getOversizedChunkPair(Path file) {
++        String fileName = file.getFileName().toString();
++
++        if (!fileName.startsWith("c.") || !fileName.endsWith(".mcc")) {
++            return null;
++        }
++
++        String[] split = fileName.split("\\.");
++
++        if (split.length != 4) {
++            return null;
++        }
++
++        try {
++            int x = Integer.parseInt(split[1]);
++            int z = Integer.parseInt(split[2]);
++
++            return new ChunkPos(x, z);
++        } catch (NumberFormatException ex) {
++            return null;
++        }
++    }
++
++    public synchronized @Nullable DataInputStream getChunkDataInputStream(final ChunkPos pos) throws IOException {
+         int offset = this.getOffset(pos);
+         if (offset == 0) {
+             return null;
+@@ -117,6 +_,13 @@
+ 
+         int sectorNumber = getSectorNumber(offset);
+         int numSectors = getNumSectors(offset);
++        // Spigot start
++        if (numSectors == 255) {
++            ByteBuffer realLen = ByteBuffer.allocate(4);
++            this.file.read(realLen, sectorNumber * 4096);
++            numSectors = (realLen.getInt(0) + 4) / 4096 + 1;
++        }
++        // Spigot end
+         int sectorsLength = numSectors * 4096;
+         ByteBuffer buffer = ByteBuffer.allocate(sectorsLength);
+         this.file.read(buffer, sectorNumber * 4096);
+@@ -156,15 +_,15 @@
+         return (int)(Util.getEpochMillis() / 1000L);
+     }
+ 
+-    private static boolean isExternalStreamChunk(byte version) {
+-        return (version & 128) != 0;
+-    }
+-
+-    private static byte getExternalChunkVersion(byte version) {
+-        return (byte)(version & -129);
+-    }
+-
+-    private @Nullable DataInputStream createChunkInputStream(ChunkPos pos, byte versionId, InputStream chunkStream) throws IOException {
++    private static boolean isExternalStreamChunk(final byte version) {
++        return (version & EXTERNAL_STREAM_FLAG) != 0;
++    }
++
++    private static byte getExternalChunkVersion(final byte version) {
++        return (byte)(version & ~EXTERNAL_STREAM_FLAG);
++    }
++
++    private @Nullable DataInputStream createChunkInputStream(final ChunkPos pos, final byte versionId, final InputStream chunkStream) throws IOException {
+         RegionFileVersion version = RegionFileVersion.fromId(versionId);
+         if (version == RegionFileVersion.VERSION_CUSTOM) {
+             String type = new DataInputStream(chunkStream).readUTF();
+@@ -184,7 +_,16 @@
+         }
+     }
+ 
+-    private @Nullable DataInputStream createExternalChunkInputStream(ChunkPos pos, byte versionId) throws IOException {
++    private @Nullable DataInputStream createExternalChunkInputStream(final ChunkPos pos, final byte versionId) throws IOException {
++        // Paper start - rewrite chunk system
++        final DataInputStream is = this.createExternalChunkInputStream0(pos, versionId);
++        if (is == null) {
++            return is;
++        }
++        return new ca.spottedleaf.moonrise.patches.chunk_system.util.stream.ExternalChunkStreamMarker(is);
++    }
++    private @Nullable DataInputStream createExternalChunkInputStream0(final ChunkPos pos, final byte versionId) throws IOException {
++        // Paper end - rewrite chunk system
+         Path externalFile = this.getExternalChunkPath(pos);
+         if (!Files.isRegularFile(externalFile)) {
+             LOGGER.error("External chunk path {} is not file", externalFile);
+@@ -194,27 +_,27 @@
+         }
+     }
+ 
+-    private static ByteArrayInputStream createStream(ByteBuffer buffer, int length) {
++    private static ByteArrayInputStream createStream(final ByteBuffer buffer, final int length) {
+         return new ByteArrayInputStream(buffer.array(), buffer.position(), length);
+     }
+ 
+-    private int packSectorOffset(int index, int size) {
++    private int packSectorOffset(final int index, final int size) {
+         return index << 8 | size;
+     }
+ 
+-    private static int getNumSectors(int offset) {
++    private static int getNumSectors(final int offset) {
+         return offset & 0xFF;
+     }
+ 
+-    private static int getSectorNumber(int offset) {
++    private static int getSectorNumber(final int offset) {
+         return offset >> 8 & 16777215;
+     }
+ 
+-    private static int sizeToSectors(int size) {
++    private static int sizeToSectors(final int size) {
+         return (size + 4096 - 1) / 4096;
+     }
+ 
+-    public boolean doesChunkExist(ChunkPos pos) {
++    public boolean doesChunkExist(final ChunkPos pos) {
+         int offset = this.getOffset(pos);
+         if (offset == 0) {
+             return false;
+@@ -258,6 +_,7 @@
+ 
+             return true;
+         } catch (IOException e) {
++            com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(e); // Paper - ServerExceptionEvent
+             return false;
+         }
+     }
+@@ -315,19 +_,29 @@
+     }
+ 
+     private ByteBuffer createExternalStub() {
++        // Paper start - add version param
++        return this.createExternalStub(this.version);
++    }
++    private ByteBuffer createExternalStub(RegionFileVersion version) {
++        // Paper end - add version param
+         ByteBuffer stub = ByteBuffer.allocate(5);
+         stub.putInt(1);
+-        stub.put((byte)(this.version.getId() | 128));
++        stub.put((byte)(version.getId() | EXTERNAL_STREAM_FLAG)); // Paper - add version param
+         stub.flip();
+         return stub;
+     }
+ 
+-    private RegionFile.CommitOp writeToExternalFile(Path path, ByteBuffer data) throws IOException {
++    private RegionFile.CommitOp writeToExternalFile(final Path path, final ByteBuffer data) throws IOException {
+         Path tmpPath = Files.createTempFile(this.externalFileDir, "tmp", null);
+ 
+         try (FileChannel extFile = FileChannel.open(tmpPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+             data.position(5);
+             extFile.write(data);
++            // Paper start - ServerExceptionEvent
++        } catch (Throwable throwable) {
++            com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(throwable);
++            throw throwable;
++            // Paper end - ServerExceptionEvent
+         }
+ 
+         return () -> Files.move(tmpPath, path, StandardCopyOption.REPLACE_EXISTING);
+@@ -373,10 +_,29 @@
+         }
+     }
+ 
+-    private class ChunkBuffer extends ByteArrayOutputStream {
++    private class ChunkBuffer extends ByteArrayOutputStream implements ca.spottedleaf.moonrise.patches.chunk_system.storage.ChunkSystemChunkBuffer { // Paper - rewrite chunk system
+         private final ChunkPos pos;
+ 
+-        public ChunkBuffer(ChunkPos pos) {
++        // Paper start - rewrite chunk system
++        private boolean writeOnClose = true;
++
++        @Override
++        public final boolean moonrise$getWriteOnClose() {
++            return this.writeOnClose;
++        }
++
++        @Override
++        public final void moonrise$setWriteOnClose(final boolean value) {
++            this.writeOnClose = value;
++        }
++
++        @Override
++        public final void moonrise$write(final RegionFile regionFile) throws IOException {
++            regionFile.write(this.pos, ByteBuffer.wrap(this.buf, 0, this.count));
++        }
++        // Paper end - rewrite chunk system
++
++        public ChunkBuffer(final ChunkPos pos) {
+             super(8096);
+             super.write(0);
+             super.write(0);
+@@ -392,11 +_,82 @@
+             int streamLength = this.count - 5 + 1;
+             JvmProfiler.INSTANCE.onRegionFileWrite(RegionFile.this.info, this.pos, RegionFile.this.version, streamLength);
+             result.putInt(0, streamLength);
+-            RegionFile.this.write(this.pos, result);
++            if (this.writeOnClose) { RegionFile.this.write(this.pos, result); } // Paper - rewrite chunk system
+         }
+     }
+ 
+     private interface CommitOp {
+         void run() throws IOException;
+     }
++
++    // Paper start
++    private final byte[] oversized = new byte[1024];
++    private int oversizedCount;
++
++    private synchronized void initOversizedState() throws IOException {
++        Path metaFile = getOversizedMetaFile();
++        if (Files.exists(metaFile)) {
++            final byte[] read = Files.readAllBytes(metaFile);
++            System.arraycopy(read, 0, oversized, 0, oversized.length);
++            for (byte temp : oversized) {
++                oversizedCount += temp;
++            }
++        }
++    }
++
++    private static int getChunkIndex(int x, int z) {
++        return (x & 31) + (z & 31) * 32;
++    }
++
++    synchronized boolean isOversized(int x, int z) {
++        return this.oversized[getChunkIndex(x, z)] == 1;
++    }
++
++    synchronized void setOversized(int x, int z, boolean oversized) throws IOException {
++        final int offset = getChunkIndex(x, z);
++        boolean previous = this.oversized[offset] == 1;
++        this.oversized[offset] = (byte) (oversized ? 1 : 0);
++        if (!previous && oversized) {
++            oversizedCount++;
++        } else if (!oversized && previous) {
++            oversizedCount--;
++        }
++        if (previous && !oversized) {
++            Path oversizedFile = getOversizedFile(x, z);
++            if (Files.exists(oversizedFile)) {
++                Files.delete(oversizedFile);
++            }
++        }
++        if (oversizedCount > 0) {
++            if (previous != oversized) {
++                writeOversizedMeta();
++            }
++        } else if (previous) {
++            Path oversizedMetaFile = getOversizedMetaFile();
++            if (Files.exists(oversizedMetaFile)) {
++                Files.delete(oversizedMetaFile);
++            }
++        }
++    }
++
++    private void writeOversizedMeta() throws IOException {
++        Files.write(this.getOversizedMetaFile(), this.oversized);
++    }
++
++    private Path getOversizedMetaFile() {
++        return this.path.getParent().resolve(this.path.getFileName().toString().replaceAll("\\.mca$", "") + ".oversized.nbt");
++    }
++
++    private Path getOversizedFile(int x, int z) {
++        return this.path.getParent().resolve(this.path.getFileName().toString().replaceAll("\\.mca$", "") + "_oversized_" + x + "_" + z + ".nbt");
++    }
++
++    synchronized net.minecraft.nbt.CompoundTag getOversizedData(int x, int z) throws IOException {
++        Path file = getOversizedFile(x, z);
++        try (DataInputStream out = new DataInputStream(new java.io.BufferedInputStream(new java.util.zip.InflaterInputStream(Files.newInputStream(file))))) {
++            return net.minecraft.nbt.NbtIo.read((java.io.DataInput) out);
++        }
++
++    }
++    // Paper end
+ }

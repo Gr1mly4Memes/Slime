@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/level/block/CoralBlock.java
++++ b/net/minecraft/world/level/block/CoralBlock.java
+@@ -1,7 +_,9 @@
+ package net.minecraft.world.level.block;
+ 
++import com.mojang.serialization.MapCodec;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
++import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.tags.FluidTags;
+ import net.minecraft.util.RandomSource;
+@@ -25,6 +_,11 @@
+     @Override
+     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+         if (!this.scanForWater(level, pos)) {
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(level, pos, this.deadBlock.defaultBlockState()).isCancelled()) {
++                return;
++            }
++            // CraftBukkit end
+             level.setBlock(pos, this.deadBlock.defaultBlockState(), 2);
+         }
+     }
+@@ -48,6 +_,7 @@
+     }
+ 
+     protected boolean scanForWater(BlockGetter level, BlockPos blockPos) {
++        if (!((net.minecraft.world.level.LevelAccessor) level).getMinecraftWorld().purpurConfig.coralDieOutsideWater) return true; // Purpur - Config to not let coral die
+         for (Direction direction : Direction.values()) {
+             FluidState fluidState = level.getFluidState(blockPos.relative(direction));
+             if (fluidState.is(FluidTags.WATER)) {

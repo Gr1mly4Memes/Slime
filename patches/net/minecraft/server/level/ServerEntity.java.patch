@@ -1,0 +1,157 @@
+--- a/net/minecraft/server/level/ServerEntity.java
++++ b/net/minecraft/server/level/ServerEntity.java
+@@ -72,12 +_,14 @@
+     private Vec3 lastSentMovement;
+     private int tickCount;
+     private int teleportDelay;
+-    private List<Entity> lastPassengers = Collections.emptyList();
++    private List<Entity> lastPassengers = com.google.common.collect.ImmutableList.of(); // Paper - optimize passenger checks
+     private boolean wasRiding;
+     private boolean wasOnGround;
+     private @Nullable List<SynchedEntityData.DataValue<?>> trackedDataValues;
++    private final Set<net.minecraft.server.network.ServerPlayerConnection> trackedPlayers; // Paper
+ 
+-    public ServerEntity(ServerLevel level, Entity entity, UpdateInterval updateInterval, boolean trackDelta, ServerEntity.Synchronizer synchronizer) {
++    public ServerEntity(ServerLevel level, Entity entity, UpdateInterval updateInterval, boolean trackDelta, ServerEntity.Synchronizer synchronizer, Set<net.minecraft.server.network.ServerPlayerConnection> trackedPlayers) {
++        this.trackedPlayers = trackedPlayers; // Paper
+         this.level = level;
+         this.synchronizer = synchronizer;
+         this.entity = entity;
+@@ -93,7 +_,19 @@
+         this.trackedDataValues = entity.getEntityData().getNonDefaultValues();
+     }
+ 
++    // Paper start - fix desync when a player is added to the tracker
++    private boolean forceStateResync;
++    public void onPlayerAdd() {
++        this.forceStateResync = true;
++    }
++    // Paper end - fix desync when a player is added to the tracker
++
+     public void sendChanges() {
++        // Paper start - optimise collisions
++        if (((ca.spottedleaf.moonrise.patches.chunk_system.entity.ChunkSystemEntity)this.entity).moonrise$isHardColliding()) {
++            this.teleportDelay = 9999;
++        }
++        // Paper end - optimise collisions
+         this.entity.updateDataBeforeSync();
+         List<Entity> passengers = this.entity.getPassengers();
+         if (!passengers.equals(this.lastPassengers)) {
+@@ -103,9 +_,9 @@
+ 
+         if (this.entity instanceof ItemFrame frame && this.tickCount % 10 == 0) {
+             ItemStack itemStack = frame.getItem();
+-            if (itemStack.getItem() instanceof MapItem) {
++            if (true) {
+                 MapId id = itemStack.get(DataComponents.MAP_ID);
+-                MapItemSavedData data = MapItem.getSavedData(id, this.level);
++                MapItemSavedData data = MapItem.getSavedData(itemStack, this.level);
+                 if (data != null) {
+                     for (ServerPlayer player : this.level.players()) {
+                         data.tickCarriedBy(player, itemStack, frame);
+@@ -203,10 +_,30 @@
+             }
+ 
+             this.entity.needsSync = false;
++            this.forceStateResync = false; // Paper - fix desync when a player is added to the tracker
+         }
+ 
+         this.tickCount++;
+         if (this.entity.syncVelocity) {
++            // CraftBukkit start - Create PlayerVelocity event
++            boolean cancelled = false;
++
++            if (this.entity instanceof ServerPlayer) {
++                org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.entity.getBukkitEntity();
++                org.bukkit.util.Vector velocity = player.getVelocity();
++
++                org.bukkit.event.player.PlayerVelocityEvent event = new org.bukkit.event.player.PlayerVelocityEvent(player, velocity.clone());
++                if (!event.callEvent()) {
++                    cancelled = true;
++                } else if (!velocity.equals(event.getVelocity())) {
++                    player.setVelocity(event.getVelocity());
++                }
++            }
++
++            if (cancelled) {
++                return;
++            }
++            // CraftBukkit end
+             this.entity.syncVelocity = false;
+             this.synchronizer.sendToTrackingPlayersAndSelf(new ClientboundSetEntityMotionPacket(this.entity));
+         }
+@@ -291,6 +_,7 @@
+     public void removePairing(ServerPlayer player) {
+         this.entity.stopSeenByPlayer(player);
+         player.connection.send(new ClientboundRemoveEntitiesPacket(this.entity.getId()));
++        net.neoforged.neoforge.event.EventHooks.onStopEntityTracking(this.entity, player);
+     }
+ 
+     public void addPairing(ServerPlayer player) {
+@@ -298,22 +_,32 @@
+         this.sendPairingData(player, packets::add);
+         player.connection.send(new ClientboundBundlePacket(packets));
+         this.entity.startSeenByPlayer(player);
++        net.neoforged.neoforge.event.EventHooks.onStartEntityTracking(this.entity, player);
+     }
+ 
+-    public void sendPairingData(ServerPlayer player, Consumer<Packet<ClientGamePacketListener>> broadcast) {
++    public void sendPairingData(ServerPlayer player, Consumer<Packet<? super ClientGamePacketListener>> broadcast) {
+         this.entity.updateDataBeforeSync();
+         if (this.entity.isRemoved()) {
+-            LOGGER.warn("Fetching packet for removed entity {}", this.entity);
++            // CraftBukkit start - Remove useless error spam, just return
++            // ServerEntity.LOGGER.warn("Fetching packet for removed entity {}", this.entity);
++            return;
++            // CraftBukkit end
+         }
+ 
+         Packet<ClientGamePacketListener> packet = this.entity.getAddEntityPacket(this);
+         broadcast.accept(packet);
++        this.entity.sendPairingData(player, payload -> broadcast.accept(payload.toVanillaClientbound()));
+         if (this.trackedDataValues != null) {
+             broadcast.accept(new ClientboundSetEntityDataPacket(this.entity.getId(), this.trackedDataValues));
+         }
+ 
+         if (this.entity instanceof LivingEntity livingEntity) {
+             Collection<AttributeInstance> attributes = livingEntity.getAttributes().getSyncableAttributes();
++            // CraftBukkit start - If sending own attributes send scaled health instead of current maximum health
++            if (this.entity.getId() == player.getId()) {
++                ((ServerPlayer) this.entity).getBukkitEntity().injectScaledMaxHealth(attributes, false);
++            }
++            // CraftBukkit end
+             if (!attributes.isEmpty()) {
+                 broadcast.accept(new ClientboundUpdateAttributesPacket(this.entity.getId(), attributes));
+             }
+@@ -330,8 +_,9 @@
+             }
+ 
+             if (!slots.isEmpty()) {
+-                broadcast.accept(new ClientboundSetEquipmentPacket(this.entity.getId(), slots));
++                broadcast.accept(new ClientboundSetEquipmentPacket(this.entity.getId(), slots, true)); // Paper - data sanitization
+             }
++            ((LivingEntity) this.entity).detectEquipmentUpdates(); // CraftBukkit - SPIGOT-3789: sync again immediately after sending
+         }
+ 
+         if (!this.entity.getPassengers().isEmpty()) {
+@@ -345,6 +_,8 @@
+         if (this.entity instanceof Leashable leashable && leashable.isLeashed()) {
+             broadcast.accept(new ClientboundSetEntityLinkPacket(this.entity, leashable.getLeashHolder()));
+         }
++
++        net.neoforged.neoforge.attachment.AttachmentSync.syncInitialEntityAttachments(this.entity, player, broadcast);
+     }
+ 
+     public Vec3 getPositionBase() {
+@@ -378,6 +_,11 @@
+         if (this.entity instanceof LivingEntity livingEntity) {
+             Set<AttributeInstance> attributes = livingEntity.getAttributes().getAttributesToSync();
+             if (!attributes.isEmpty()) {
++                // CraftBukkit start - Send scaled max health
++                if (this.entity instanceof ServerPlayer) {
++                    ((ServerPlayer) this.entity).getBukkitEntity().injectScaledMaxHealth(attributes, false);
++                }
++                // CraftBukkit end
+                 this.synchronizer.sendToTrackingPlayersAndSelf(new ClientboundUpdateAttributesPacket(this.entity.getId(), attributes));
+             }
+ 

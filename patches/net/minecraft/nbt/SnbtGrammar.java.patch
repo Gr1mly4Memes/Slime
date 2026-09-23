@@ -1,0 +1,14 @@
+--- a/net/minecraft/nbt/SnbtGrammar.java
++++ b/net/minecraft/nbt/SnbtGrammar.java
+@@ -660,9 +_,11 @@
+             listLiteral,
+             Term.sequence(
+                 StringReaderTerms.character('['),
++                Scope.increaseDepth(), // Paper - track depth
+                 Term.alternative(
+                     Term.sequence(rules.named(arrayPrefix), StringReaderTerms.character(';'), rules.named(intArrayEntries)), rules.named(listEntries)
+                 ),
++                Scope.decreaseDepth(), // Paper - track depth
+                 StringReaderTerms.character(']')
+             ),
+             state -> {
