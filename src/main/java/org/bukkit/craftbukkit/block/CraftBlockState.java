@@ -1,6 +1,10 @@
 package org.bukkit.craftbukkit.block;
 
 import com.google.common.base.Preconditions;
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.Objects;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import org.bukkit.Chunk;
@@ -17,11 +21,6 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
-
-import javax.annotation.Nullable;
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Objects;
 
 public class CraftBlockState implements BlockState {
 

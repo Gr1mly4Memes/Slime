@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.tag;
 
+import java.util.Objects;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
@@ -7,8 +8,6 @@ import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
-
-import java.util.Objects;
 
 public abstract class CraftTag<N, B extends Keyed> implements Tag<B> {
 

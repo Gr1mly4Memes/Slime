@@ -1,6 +1,13 @@
 package org.bukkit.generator;
 
-import org.bukkit.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import org.bukkit.Bukkit;
+import org.bukkit.HeightMap;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -8,10 +15,6 @@ import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 /**
  * A chunk generator is responsible for the initial shaping of an entire
@@ -274,7 +277,7 @@ public abstract class ChunkGenerator {
      * This method should <b>never</b> modify a ChunkData after it has
      * been returned.
      * <p>
-     * This method <b>must</b> return a ChunkData returned by {@link ChunkGenerator#createChunkData(World)}
+     * This method <b>must</b> return a ChunkData returned by {@link ChunkGenerator#createChunkData(org.bukkit.World)}
      *
      * @param world The world this chunk will be used for
      * @param random The random generator to use

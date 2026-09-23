@@ -2,11 +2,6 @@ package org.bukkit.plugin.java;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
-import org.bukkit.plugin.InvalidPluginException;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,11 +13,21 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSigner;
 import java.security.CodeSource;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.logging.Level;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.SimplePluginManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
@@ -45,6 +50,7 @@ public final class PluginClassLoader extends URLClassLoader implements io.paperm
     private java.util.logging.Logger logger; // Paper - add field
     private io.papermc.paper.plugin.provider.classloader.PluginClassLoaderGroup classLoaderGroup; // Paper
     public io.papermc.paper.plugin.provider.entrypoint.DependencyContext dependencyContext; // Paper
+
     private boolean closed = false; // Pufferfish
 
     static {
@@ -205,6 +211,7 @@ public final class PluginClassLoader extends URLClassLoader implements io.paperm
     }
 
     public boolean _airplane_hasClass(@NotNull String name) { return this.classes.containsKey(name); } // Pufferfish
+
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         if (name.startsWith("org.bukkit.") || name.startsWith("net.minecraft.")) {

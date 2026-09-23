@@ -2,6 +2,8 @@ package org.bukkit;
 
 import io.papermc.paper.entity.EntitySerializationFlag;
 import io.papermc.paper.registry.RegistryKey;
+import java.util.List;
+import java.util.Map;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.advancement.Advancement;
@@ -17,9 +19,6 @@ import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * This interface provides value conversions that may be specific to a
@@ -258,7 +257,7 @@ public interface UnsafeValues {
     /**
      * Just don't use it.
      */
-    @NotNull String getMainLevelName();
+    @org.jetbrains.annotations.NotNull String getMainLevelName();
 
     /**
      * Returns the server's protocol version.

@@ -10,4 +10,6 @@
 
 command-block-overrides: []
 ignore-vanilla-permissions: false
-aliases: []
+aliases:
+    icanhasbukkit:
+      - "version $1-"

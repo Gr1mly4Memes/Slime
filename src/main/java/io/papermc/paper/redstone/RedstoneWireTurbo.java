@@ -2,19 +2,18 @@ package io.papermc.paper.redstone;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 
 public final class RedstoneWireTurbo {
     /*
@@ -78,7 +77,7 @@ public final class RedstoneWireTurbo {
      */
 
     /* Reference to BlockRedstoneWire object, which uses this accelerator */
-    private final RedStoneWireBlock wire;
+    private final RedstoneWireBlock wire;
 
     /*
      * Implementation:
@@ -111,7 +110,7 @@ public final class RedstoneWireTurbo {
     private List<UpdateNode> updateQueue1 = Lists.newArrayList();
     private List<UpdateNode> updateQueue2 = Lists.newArrayList();
 
-    public RedstoneWireTurbo(RedStoneWireBlock wire) {
+    public RedstoneWireTurbo(RedstoneWireBlock wire) {
         this.wire = wire;
     }
 
@@ -823,7 +822,7 @@ public final class RedstoneWireTurbo {
      */
     private BlockState calculateCurrentChanges(final Level worldIn, final UpdateNode upd) {
         BlockState state = upd.currentState;
-        final int i = state.getValue(RedStoneWireBlock.POWER);
+        final int i = state.getValue(RedstoneWireBlock.POWER);
         int j = 0;
         j = getMaxCurrentStrength(upd, j);
         int l = 0;
@@ -900,7 +899,7 @@ public final class RedstoneWireTurbo {
             // need to be known by some nearby non-redstone-wire block.
             BlockPos pos = new BlockPos(upd.self.getX(), upd.self.getY(), upd.self.getZ());
             if (wire.canSurvive(null, worldIn, pos)) {
-                state = state.setValue(RedStoneWireBlock.POWER, Integer.valueOf(j));
+                state = state.setValue(RedstoneWireBlock.POWER, Integer.valueOf(j));
                 // [Space Walker] suppress shape updates and emit those manually to
                 // bypass the new neighbor update stack.
                 if (worldIn.setBlock(upd.self, state, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS))
@@ -944,7 +943,7 @@ public final class RedstoneWireTurbo {
      */
     private static int getMaxCurrentStrength(final UpdateNode upd, final int strength) {
         if (upd.type != UpdateNode.Type.REDSTONE) return strength;
-        final int i = upd.currentState.getValue(RedStoneWireBlock.POWER);
+        final int i = upd.currentState.getValue(RedstoneWireBlock.POWER);
         return i > strength ? i : strength;
     }
 }

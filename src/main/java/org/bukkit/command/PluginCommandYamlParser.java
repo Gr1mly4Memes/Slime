@@ -1,13 +1,13 @@
 package org.bukkit.command;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-
+import com.mohistmc.youer.api.ColorAPI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 public class PluginCommandYamlParser {
 
@@ -68,7 +68,7 @@ public class PluginCommandYamlParser {
             }
 
             if (permissionMessage != null) {
-                newCmd.permissionMessage(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(permissionMessage.toString())); // Paper
+                newCmd.permissionMessage(ColorAPI.adventure(permissionMessage.toString())); // Paper
             }
 
             pluginCmds.add(newCmd);

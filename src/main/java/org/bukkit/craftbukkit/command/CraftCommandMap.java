@@ -1,10 +1,9 @@
 package org.bukkit.craftbukkit.command;
 
+import java.util.Map;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.SimpleCommandMap;
-
-import java.util.Map;
 
 public class CraftCommandMap extends SimpleCommandMap {
 

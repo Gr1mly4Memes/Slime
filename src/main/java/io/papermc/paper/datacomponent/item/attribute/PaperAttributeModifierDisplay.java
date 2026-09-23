@@ -26,21 +26,21 @@ public sealed interface PaperAttributeModifierDisplay permits PaperAttributeModi
     ItemAttributeModifiers.Display internal();
 
     record Default(
-            ItemAttributeModifiers.Display internal
+        ItemAttributeModifiers.Display internal
     ) implements AttributeModifierDisplay.Default, PaperAttributeModifierDisplay {
 
         public static final PaperAttributeModifierDisplay.Default INSTANCE = new PaperAttributeModifierDisplay.Default(ItemAttributeModifiers.Display.attributeModifiers());
     }
 
     record Hidden(
-            ItemAttributeModifiers.Display internal
+        ItemAttributeModifiers.Display internal
     ) implements AttributeModifierDisplay.Hidden, PaperAttributeModifierDisplay {
 
         public static final PaperAttributeModifierDisplay.Hidden INSTANCE = new PaperAttributeModifierDisplay.Hidden(ItemAttributeModifiers.Display.hidden());
     }
 
     record OverrideText(
-            ItemAttributeModifiers.Display.OverrideText internal
+        ItemAttributeModifiers.Display.OverrideText internal
     ) implements AttributeModifierDisplay.OverrideText, PaperAttributeModifierDisplay {
 
         @Override

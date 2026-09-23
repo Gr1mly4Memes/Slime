@@ -2,7 +2,27 @@ package org.bukkit.craftbukkit.inventory;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.BeaconMenu;
+import net.minecraft.world.inventory.BlastFurnaceMenu;
+import net.minecraft.world.inventory.BrewingStandMenu;
+import net.minecraft.world.inventory.CartographyTableMenu;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.CrafterMenu;
+import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.inventory.DispenserMenu;
+import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.inventory.FurnaceMenu;
+import net.minecraft.world.inventory.GrindstoneMenu;
+import net.minecraft.world.inventory.HopperMenu;
+import net.minecraft.world.inventory.LecternMenu;
+import net.minecraft.world.inventory.LoomMenu;
+import net.minecraft.world.inventory.MerchantMenu;
+import net.minecraft.world.inventory.ShulkerBoxMenu;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.SmokerMenu;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -30,7 +50,7 @@ public class CraftContainer extends AbstractContainerMenu {
         this(new CraftAbstractInventoryView() {
 
             private final String originalTitle = inventory instanceof CraftInventoryCustom ? ((CraftInventoryCustom) inventory).getTitle() : inventory.getType().getDefaultTitle(); // Paper
-            private String title = this.originalTitle;
+            private String title;
 
             @Override
             public Inventory getTopInventory() {
@@ -61,7 +81,10 @@ public class CraftContainer extends AbstractContainerMenu {
 
             @Override
             public String getTitle() {
-                return this.title;
+                if (title == null) {
+                    this.title = originalTitle;
+                }
+                return title;
             }
 
             @Override

@@ -1,13 +1,12 @@
 package org.bukkit.event.player;
 
 import com.google.common.base.Preconditions;
+import java.util.Collection;
 import org.bukkit.Warning;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
 
 /**
  * Called when a player attempts to tab-complete a chat message.
@@ -15,7 +14,7 @@ import java.util.Collection;
  * @deprecated This event is no longer fired due to client changes
  */
 @Deprecated(since = "1.13")
-@Warning(reason = "This event is no longer fired due to client changes")
+@Warning(reason = "This event is no longer fired due to client changes", value = true, propagate = false)
 public class PlayerChatTabCompleteEvent extends PlayerEvent {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();

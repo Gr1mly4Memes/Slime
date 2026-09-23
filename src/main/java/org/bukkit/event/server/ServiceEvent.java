@@ -1,6 +1,7 @@
 package org.bukkit.event.server;
 
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**

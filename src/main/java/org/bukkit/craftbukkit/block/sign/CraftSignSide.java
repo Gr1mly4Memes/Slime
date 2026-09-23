@@ -1,19 +1,21 @@
 package org.bukkit.craftbukkit.block.sign;
 
+import com.mohistmc.youer.api.ColorAPI;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.minecraft.world.level.block.entity.SignText;
+import net.minecraft.world.level.block.entity.SignTextSlot;
 import org.bukkit.DyeColor;
+import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class CraftSignSide implements SignSide {
 
     // Lazily initialized only if requested:
     private List<Component> originalLines = null; // ArrayList for RandomAccess
-    private List<Component> lines = null; // ArrayList for RandomAccess
+    private List<net.kyori.adventure.text.Component> lines = null; // ArrayList for RandomAccess
     private SignText signText;
 
     public CraftSignSide(SignText signText) {
@@ -21,19 +23,19 @@ public class CraftSignSide implements SignSide {
     }
 
     @Override
-    public @NotNull List<Component> lines() {
+    public java.util.@NotNull List<net.kyori.adventure.text.Component> lines() {
         this.loadLines();
         return this.lines;
     }
 
     @Override
-    public @NotNull Component line(final int index) throws IndexOutOfBoundsException {
+    public net.kyori.adventure.text.@NotNull Component line(final int index) throws IndexOutOfBoundsException {
         this.loadLines();
         return this.lines.get(index);
     }
 
     @Override
-    public void line(final int index, final @NotNull Component line) throws IndexOutOfBoundsException {
+    public void line(final int index, final net.kyori.adventure.text.@NotNull Component line) throws IndexOutOfBoundsException {
         com.google.common.base.Preconditions.checkArgument(line != null, "Line cannot be null");
         this.loadLines();
         this.lines.set(index, line);
@@ -65,7 +67,7 @@ public class CraftSignSide implements SignSide {
     @Override
     public void setLine(int index, @NotNull String line) throws IndexOutOfBoundsException {
         this.loadLines();
-        this.lines.set(index, net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(line));
+        this.lines.set(index, ColorAPI.adventure(line));
     }
 
     @Override
@@ -75,7 +77,7 @@ public class CraftSignSide implements SignSide {
 
     @Override
     public void setGlowingText(boolean glowing) {
-        this.signText = this.signText.setHasGlowingText(glowing);
+        this.signText = this.signText.withGlowingText(glowing);
     }
 
     @Nullable
@@ -86,21 +88,37 @@ public class CraftSignSide implements SignSide {
 
     @Override
     public void setColor(@NotNull DyeColor color) {
-        this.signText = this.signText.setColor(net.minecraft.world.item.DyeColor.byId(color.getWoolData()));
+        this.signText = this.signText.withColor(net.minecraft.world.item.DyeColor.byId(color.getWoolData()));
     }
 
     public SignText applyLegacyStringToSignSide() {
         if (this.lines != null) {
+            SignText.Mutable signTextMutable = this.signText.asMutable();
             for (int i = 0; i < this.lines.size(); ++i) {
-                Component component = this.lines.get(i);
-                Component origComp = this.originalLines.get(i);
+                net.kyori.adventure.text.Component component = this.lines.get(i);
+                net.kyori.adventure.text.Component origComp = this.originalLines.get(i);
                 if (component.equals(origComp)) {
                     continue; // The line contents are still the same, skip.
                 }
-                this.signText = this.signText.setMessage(i, io.papermc.paper.adventure.PaperAdventure.asVanilla(component));
+                signTextMutable.setLine(i, io.papermc.paper.adventure.PaperAdventure.asVanilla(component));
             }
+            this.signText = signTextMutable.asImmutable();
         }
 
         return this.signText;
+    }
+
+    public static Side fromVanilla(SignTextSlot slot) {
+        return switch (slot) {
+            case FRONT -> Side.FRONT;
+            case BACK -> Side.BACK;
+        };
+    }
+
+    public static SignTextSlot toVanilla(Side side) {
+        return switch (side) {
+            case FRONT -> SignTextSlot.FRONT;
+            case BACK -> SignTextSlot.BACK;
+        };
     }
 }

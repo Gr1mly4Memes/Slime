@@ -1,6 +1,12 @@
 package org.bukkit.craftbukkit.structure;
 
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
@@ -26,7 +32,11 @@ import org.bukkit.block.structure.Mirror;
 import org.bukkit.block.structure.StructureRotation;
 import org.bukkit.craftbukkit.CraftRegionAccessor;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.util.*;
+import org.bukkit.craftbukkit.util.CraftBlockVector;
+import org.bukkit.craftbukkit.util.CraftLocation;
+import org.bukkit.craftbukkit.util.CraftStructureTransformer;
+import org.bukkit.craftbukkit.util.RandomSourceWrapper;
+import org.bukkit.craftbukkit.util.TransformerLevelAccessor;
 import org.bukkit.entity.Entity;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.structure.Palette;
@@ -35,9 +45,6 @@ import org.bukkit.util.BlockTransformer;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.EntityTransformer;
 import org.slf4j.Logger;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class CraftStructure implements Structure {
 

@@ -1,12 +1,11 @@
 package io.papermc.paper.command.brigadier;
 
 import com.mojang.brigadier.Message;
+import java.util.Optional;
+import java.util.ServiceLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Optional;
-import java.util.ServiceLoader;
 
 /**
  * A component serializer for converting between {@link Message} and {@link Component}.

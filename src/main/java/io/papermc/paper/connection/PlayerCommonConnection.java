@@ -1,11 +1,11 @@
 package io.papermc.paper.connection;
 
+import java.util.Map;
+
 import com.destroystokyo.paper.ClientOption;
 import org.bukkit.ServerLinks;
 import org.bukkit.plugin.messaging.PluginMessageRecipient;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Map;
 
 /**
  * Represents a connection that has properties shared between the GAME and CONFIG stage.

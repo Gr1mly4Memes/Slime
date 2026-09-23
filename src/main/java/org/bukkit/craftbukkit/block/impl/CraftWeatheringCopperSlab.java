@@ -23,12 +23,12 @@ public class CraftWeatheringCopperSlab extends CraftBlockData implements Slab {
     }
 
     @Override
-    public Type getType() {
-        return this.get(TYPE, Type.class);
+    public Slab.Type getType() {
+        return this.get(TYPE, Slab.Type.class);
     }
 
     @Override
-    public void setType(final Type type) {
+    public void setType(final Slab.Type type) {
         Preconditions.checkArgument(type != null, "type cannot be null!");
         this.set(TYPE, type);
     }

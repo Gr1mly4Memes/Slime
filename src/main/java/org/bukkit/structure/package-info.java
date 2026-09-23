@@ -1,5 +1,5 @@
 /**
- * Classes related to creating or using {@link Structure
+ * Classes related to creating or using {@link org.bukkit.structure.Structure
  * structures} without creating {@link org.bukkit.block.Structure Structure
  * blocks} in the world.
  */

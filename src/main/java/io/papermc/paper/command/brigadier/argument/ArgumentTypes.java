@@ -5,18 +5,30 @@ import io.papermc.paper.command.brigadier.argument.predicate.BlockInWorldPredica
 import io.papermc.paper.command.brigadier.argument.predicate.ItemStackPredicate;
 import io.papermc.paper.command.brigadier.argument.range.DoubleRangeProvider;
 import io.papermc.paper.command.brigadier.argument.range.IntegerRangeProvider;
-import io.papermc.paper.command.brigadier.argument.resolvers.*;
+import io.papermc.paper.command.brigadier.argument.resolvers.AngleResolver;
+import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
+import io.papermc.paper.command.brigadier.argument.resolvers.ColumnBlockPositionResolver;
+import io.papermc.paper.command.brigadier.argument.resolvers.ColumnFinePositionResolver;
+import io.papermc.paper.command.brigadier.argument.resolvers.FinePositionResolver;
+import io.papermc.paper.command.brigadier.argument.resolvers.PlayerProfileListResolver;
+import io.papermc.paper.command.brigadier.argument.resolvers.RotationResolver;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.EntitySelectorArgumentResolver;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.entity.LookAnchor;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
+import java.util.Set;
+import java.util.UUID;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.*;
+import org.bukkit.Axis;
+import org.bukkit.GameMode;
+import org.bukkit.HeightMap;
+import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.structure.Mirror;
 import org.bukkit.block.structure.StructureRotation;
@@ -24,8 +36,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.UUID;
 
 import static io.papermc.paper.command.brigadier.argument.VanillaArgumentProvider.provider;
 
@@ -183,7 +193,7 @@ public final class ArgumentTypes {
      * An argument used to resolve a set of axes.
      *
      * @return a set of axes.
-     * @see Axis
+     * @see org.bukkit.Axis
      */
     @ApiStatus.Experimental
     public static ArgumentType<AxisSet> axes() {

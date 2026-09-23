@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.util;
 
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
 import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
 

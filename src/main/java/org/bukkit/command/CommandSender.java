@@ -1,5 +1,7 @@
 package org.bukkit.command;
 
+import java.util.Objects;
+import java.util.UUID;
 import net.kyori.adventure.chat.ChatType;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
@@ -8,16 +10,13 @@ import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-import java.util.UUID;
-
 public interface CommandSender extends net.kyori.adventure.audience.Audience, Permissible { // Paper
 
     /**
      * Sends this sender a message
      *
      * @param message Message to be displayed
-     * @see #sendMessage(Component)
+     * @see #sendMessage(net.kyori.adventure.text.Component)
      * @see #sendPlainMessage(String)
      * @see #sendRichMessage(String)
      */
@@ -28,7 +27,7 @@ public interface CommandSender extends net.kyori.adventure.audience.Audience, Pe
      * Sends this sender multiple messages
      *
      * @param messages An array of messages to be displayed
-     * @see #sendMessage(Component)
+     * @see #sendMessage(net.kyori.adventure.text.Component)
      * @see #sendPlainMessage(String)
      * @see #sendRichMessage(String)
      */
@@ -40,7 +39,7 @@ public interface CommandSender extends net.kyori.adventure.audience.Audience, Pe
      *
      * @param message Message to be displayed
      * @param sender The sender of this message
-     * @see #sendMessage(Component)
+     * @see #sendMessage(net.kyori.adventure.text.Component)
      * @deprecated sender UUID is ignored
      */
     @Deprecated // Paper
@@ -51,7 +50,7 @@ public interface CommandSender extends net.kyori.adventure.audience.Audience, Pe
      *
      * @param messages An array of messages to be displayed
      * @param sender The sender of this message
-     * @see #sendMessage(Component)
+     * @see #sendMessage(net.kyori.adventure.text.Component)
      * @deprecated sender UUID is ignored
      */
     @Deprecated // Paper
@@ -80,7 +79,7 @@ public interface CommandSender extends net.kyori.adventure.audience.Audience, Pe
          * Sends this sender a chat component.
          *
          * @param component the components to send
-         * @deprecated use {@code sendMessage} methods that accept {@link Component}
+         * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
          */
         @Deprecated // Paper
         public void sendMessage(@NotNull net.md_5.bungee.api.chat.BaseComponent component) {
@@ -91,7 +90,7 @@ public interface CommandSender extends net.kyori.adventure.audience.Audience, Pe
          * Sends an array of components as a single message to the sender.
          *
          * @param components the components to send
-         * @deprecated use {@code sendMessage} methods that accept {@link Component}
+         * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
          */
         @Deprecated // Paper
         public void sendMessage(@NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
@@ -103,7 +102,7 @@ public interface CommandSender extends net.kyori.adventure.audience.Audience, Pe
          *
          * @param component the components to send
          * @param sender the sender of the message
-         * @deprecated use {@code sendMessage} methods that accept {@link Component}
+         * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
          */
         @Deprecated // Paper
         public void sendMessage(@Nullable UUID sender, @NotNull net.md_5.bungee.api.chat.BaseComponent component) {
@@ -115,7 +114,7 @@ public interface CommandSender extends net.kyori.adventure.audience.Audience, Pe
          *
          * @param components the components to send
          * @param sender the sender of the message
-         * @deprecated use {@code sendMessage} methods that accept {@link Component}
+         * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
          */
         @Deprecated // Paper
         public void sendMessage(@Nullable UUID sender, @NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
@@ -133,10 +132,10 @@ public interface CommandSender extends net.kyori.adventure.audience.Audience, Pe
      *
      * @return Name of the sender
      */
-    public @NotNull Component name();
+    public net.kyori.adventure.text.@NotNull Component name();
 
     @Override
-    default void sendMessage(final @NotNull Component message) {
+    default void sendMessage(final net.kyori.adventure.text.@NotNull Component message) {
         this.sendMessage(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(message));
     }
 
@@ -181,7 +180,7 @@ public interface CommandSender extends net.kyori.adventure.audience.Audience, Pe
      * @param message plain message
      */
     default void sendPlainMessage(final @NotNull String message) {
-        this.sendMessage(Component.text(message));
+        this.sendMessage(net.kyori.adventure.text.Component.text(message));
     }
 
     /**

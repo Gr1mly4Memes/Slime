@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.UUID;
 import net.minecraft.Optionull;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -11,8 +12,6 @@ import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Horse;
 import org.bukkit.inventory.AbstractHorseInventory;
-
-import java.util.UUID;
 
 public abstract class CraftAbstractHorse extends CraftAnimals implements AbstractHorse {
 

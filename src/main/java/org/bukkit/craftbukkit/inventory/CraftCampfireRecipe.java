@@ -27,7 +27,7 @@ public class CraftCampfireRecipe extends CampfireRecipe implements CraftRecipe {
 
     @Override
     public void addToRecipeManager() {
-        CampfireCookingRecipe recipe = new CampfireCookingRecipe(
+        CampfireCookingRecipe recipe = new net.minecraft.world.item.crafting.CampfireCookingRecipe(
             new net.minecraft.world.item.crafting.Recipe.CommonInfo(true),
             new net.minecraft.world.item.crafting.AbstractCookingRecipe.CookingBookInfo(CraftRecipe.getCategory(this.getCategory()), this.getGroup()),
             CraftRecipe.toIngredient(this.getInputChoice(), true),

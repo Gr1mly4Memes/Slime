@@ -1,5 +1,8 @@
 package org.bukkit.entity;
 
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import io.papermc.paper.datacomponent.DataComponentView;
 import io.papermc.paper.entity.LookAnchor;
 import io.papermc.paper.entity.RemovalReason;
@@ -7,7 +10,15 @@ import io.papermc.paper.math.Angle;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.util.TriState;
-import org.bukkit.*;
+import org.bukkit.Chunk; // Paper
+import org.bukkit.EntityEffect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Nameable;
+import org.bukkit.Server;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
@@ -25,10 +36,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Represents a base entity in the world
@@ -330,7 +337,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @return {@code List<Entity>} List of entities nearby
      */
     @NotNull
-    public List<Entity> getNearbyEntities(double x, double y, double z);
+    public List<org.bukkit.entity.Entity> getNearbyEntities(double x, double y, double z);
 
     /**
      * Returns the network protocol ID for this entity. This is
@@ -577,7 +584,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @param passenger The new passenger.
      * @return false if it could not be done for whatever reason
      * @deprecated entities may have multiple passengers, use
-     * {@link #addPassenger(Entity)}
+     * {@link #addPassenger(org.bukkit.entity.Entity)}
      */
     @Deprecated(since = "1.11.2")
     public boolean setPassenger(@NotNull Entity passenger);
@@ -796,7 +803,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * Sets whether or not this entity is visible by default.
      *
      * If this entity is not visible by default, then
-     * {@link Player#showEntity(org.bukkit.plugin.Plugin, Entity)}
+     * {@link Player#showEntity(org.bukkit.plugin.Plugin, org.bukkit.entity.Entity)}
      * will need to be called before the entity is visible to a given player.
      *
      * @param visible default visibility status
@@ -807,7 +814,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * Gets whether or not this entity is visible by default.
      *
      * If this entity is not visible by default, then
-     * {@link Player#showEntity(org.bukkit.plugin.Plugin, Entity)}
+     * {@link Player#showEntity(org.bukkit.plugin.Plugin, org.bukkit.entity.Entity)}
      * will need to be called before the entity is visible to a given player.
      *
      * @return default visibility status
@@ -1116,8 +1123,8 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
 
     @NotNull
     @Override
-    default HoverEvent<HoverEvent.ShowEntity> asHoverEvent(final @NotNull java.util.function.UnaryOperator<HoverEvent.ShowEntity> op) {
-        return HoverEvent.showEntity(op.apply(HoverEvent.ShowEntity.showEntity(this.getType().getKey(), this.getUniqueId(), this.customName())));
+    default net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowEntity> asHoverEvent(final @NotNull java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowEntity> op) {
+        return net.kyori.adventure.text.event.HoverEvent.showEntity(op.apply(net.kyori.adventure.text.event.HoverEvent.ShowEntity.showEntity(this.getType().getKey(), this.getUniqueId(), this.customName())));
     }
 
     /**
@@ -1149,9 +1156,9 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     }
 
     /**
-     * {@return the {@link CreatureSpawnEvent.SpawnReason} that initially spawned this entity or null if not yet spawned}
+     * {@return the {@link org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason} that initially spawned this entity or null if not yet spawned}
      */
-    CreatureSpawnEvent.@Nullable SpawnReason getEntitySpawnReason();
+    org.bukkit.event.entity.CreatureSpawnEvent.@Nullable SpawnReason getEntitySpawnReason();
 
     /**
      * Check if entity is underwater
@@ -1322,7 +1329,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     /**
      * Returns the task scheduler for this entity. The entity scheduler can be used to schedule tasks
      * that are guaranteed to always execute on the tick thread that owns the entity.
-     * <p><b>If you do not need/want to make your plugin run on Folia, use {@link Server#getScheduler()} instead.</b></p>
+     * <p><b>If you do not need/want to make your plugin run on Folia, use {@link org.bukkit.Server#getScheduler()} instead.</b></p>
      * @return the task scheduler for this entity.
      * @see io.papermc.paper.threadedregions.scheduler.EntityScheduler
      */

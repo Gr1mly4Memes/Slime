@@ -1,8 +1,7 @@
 package io.papermc.paper.connection;
 
-import org.bukkit.NamespacedKey;
-
 import java.util.concurrent.CompletableFuture;
+import org.bukkit.NamespacedKey;
 
 public interface ReadablePlayerCookieConnection extends PlayerConnection {
 

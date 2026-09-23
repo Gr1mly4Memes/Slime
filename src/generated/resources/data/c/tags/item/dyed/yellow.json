@@ -11,6 +11,10 @@
     "minecraft:yellow_stained_glass",
     "minecraft:yellow_stained_glass_pane",
     "minecraft:yellow_terracotta",
-    "minecraft:yellow_wool"
+    "minecraft:yellow_wool",
+    "minecraft:yellow_concrete_slab",
+    "minecraft:yellow_concrete_stairs",
+    "minecraft:yellow_wool_slab",
+    "minecraft:yellow_wool_stairs"
   ]
 }

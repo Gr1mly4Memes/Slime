@@ -5,14 +5,42 @@ import com.google.common.base.Preconditions;
 import io.papermc.paper.connection.PlayerGameConnection;
 import io.papermc.paper.entity.LookAnchor;
 import io.papermc.paper.entity.PlayerGiveResult;
+import io.papermc.paper.entity.PlayerPostEffects;
 import io.papermc.paper.math.Angle;
 import io.papermc.paper.math.Position;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.object.ObjectContents;
 import net.kyori.adventure.text.object.ObjectContentsLike;
 import net.kyori.adventure.text.object.PlayerHeadObjectContents;
 import org.apache.commons.lang3.ArrayUtils;
-import org.bukkit.*;
+import org.bukkit.BanEntry;
+import org.bukkit.DyeColor;
+import org.bukkit.Effect;
+import org.bukkit.GameMode;
+import org.bukkit.Input;
+import org.bukkit.Instrument;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Note;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Particle;
+import org.bukkit.Server;
+import org.bukkit.ServerLinks;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.WeatherType;
+import org.bukkit.WorldBorder;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.ban.IpBanList;
@@ -37,15 +65,9 @@ import org.bukkit.plugin.messaging.PluginMessageRecipient;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Represents a player, connected or not
@@ -77,14 +99,14 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @return the display name
      */
-    Component displayName();
+    net.kyori.adventure.text.Component displayName();
 
     /**
      * Sets the "friendly" name to display of this player.
      *
      * @param displayName the display name to set
      */
-    void displayName(final @Nullable Component displayName);
+    void displayName(final net.kyori.adventure.text.@Nullable Component displayName);
     // Paper end
 
     /**
@@ -114,7 +136,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * places defined by plugins.
      *
      * @param name The new display name.
-     * @deprecated in favour of {@link #displayName(Component)}
+     * @deprecated in favour of {@link #displayName(net.kyori.adventure.text.Component)}
      */
     @Deprecated // Paper
     public void setDisplayName(@Nullable String name);
@@ -127,28 +149,28 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param name new player list name
      */
-    void playerListName(@Nullable Component name);
+    void playerListName(net.kyori.adventure.text.@Nullable Component name);
 
     /**
      * Gets the name that is shown on the in-game player list.
      *
      * @return the player list name
      */
-    Component playerListName();
+    net.kyori.adventure.text.Component playerListName();
 
     /**
      * Gets the currently displayed player list header for this player.
      *
      * @return player list header or null
      */
-    @Nullable Component playerListHeader();
+    net.kyori.adventure.text.@Nullable Component playerListHeader();
 
     /**
      * Gets the currently displayed player list footer for this player.
      *
      * @return player list footer or null
      */
-    @Nullable Component playerListFooter();
+    net.kyori.adventure.text.@Nullable Component playerListFooter();
     // Paper end
     /**
      * Gets the name that is shown on the player list.
@@ -165,7 +187,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * If the value is null, the name will be identical to {@link #getName()}.
      *
      * @param name new player list name
-     * @deprecated in favour of {@link #playerListName(Component)}
+     * @deprecated in favour of {@link #playerListName(net.kyori.adventure.text.Component)}
      */
     @Deprecated // Paper
     public void setPlayerListName(@Nullable String name);
@@ -209,7 +231,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Sets the currently displayed player list header for this player.
      *
      * @param header player list header, null for empty
-     * @deprecated in favour of {@link #sendPlayerListHeader(Component)}
+     * @deprecated in favour of {@link #sendPlayerListHeader(net.kyori.adventure.text.Component)}
      */
     @Deprecated // Paper
     public void setPlayerListHeader(@Nullable String header);
@@ -218,7 +240,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Sets the currently displayed player list footer for this player.
      *
      * @param footer player list footer, null for empty
-     * @deprecated in favour of {@link #sendPlayerListFooter(Component)}
+     * @deprecated in favour of {@link #sendPlayerListFooter(net.kyori.adventure.text.Component)}
      */
     @Deprecated // Paper
     public void setPlayerListFooter(@Nullable String footer);
@@ -229,7 +251,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param header player list header, null for empty
      * @param footer player list footer, null for empty
-     * @deprecated in favour of {@link #sendPlayerListHeaderAndFooter(Component, Component)}
+     * @deprecated in favour of {@link #sendPlayerListHeaderAndFooter(net.kyori.adventure.text.Component, net.kyori.adventure.text.Component)}
      */
     @Deprecated // Paper
     public void setPlayerListHeaderFooter(@Nullable String header, @Nullable String footer);
@@ -316,7 +338,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Kicks player with custom kick message.
      *
      * @param message kick message
-     * @deprecated in favour of {@link #kick(Component)}
+     * @deprecated in favour of {@link #kick(net.kyori.adventure.text.Component)}
      */
     @Deprecated // Paper
     public void kickPlayer(@Nullable String message);
@@ -324,7 +346,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
     /**
      * Kicks the player with the default kick message.
      *
-     * @see #kick(Component)
+     * @see #kick(net.kyori.adventure.text.Component)
      */
     default void kick() {
         class Holder {
@@ -338,7 +360,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param message kick message
      */
-    default void kick(final @Nullable Component message) {
+    default void kick(final net.kyori.adventure.text.@Nullable Component message) {
         this.kick(message, org.bukkit.event.player.PlayerKickEvent.Cause.PLUGIN);
     }
 
@@ -348,7 +370,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param message kick message
      * @param cause kick cause
      */
-    void kick(final @Nullable Component message, org.bukkit.event.player.PlayerKickEvent.Cause cause);
+    void kick(final net.kyori.adventure.text.@Nullable Component message, org.bukkit.event.player.PlayerKickEvent.Cause cause);
 
     /**
      * Adds this user to the {@link ProfileBanList}. If a previous ban exists, this will
@@ -1090,7 +1112,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * a certain location. This will not actually change the world in any way.
      * This method will use a sign at the location's block or a faked sign
      * sent via
-     * {@link #sendBlockChange(Location, Material, byte)}.
+     * {@link #sendBlockChange(org.bukkit.Location, org.bukkit.Material, byte)}.
      * <p>
      * If the client does not have a sign at the given location it will
      * display an error message to the user.
@@ -1100,11 +1122,11 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @throws IllegalArgumentException if location is null
      * @throws IllegalArgumentException if lines is non-null and has a length less than 4
      * @deprecated Use {@link #sendBlockUpdate(Location, TileState)} by creating a new virtual
-     * {@link Sign} block state via {@link BlockData#createBlockState()}
+     * {@link org.bukkit.block.Sign} block state via {@link BlockData#createBlockState()}
      * (constructed e.g. via {@link Material#createBlockData()})
      */
     @Deprecated
-    default void sendSignChange(Location loc, @Nullable List<? extends Component> lines) throws IllegalArgumentException {
+    default void sendSignChange(Location loc, java.util.@Nullable List<? extends net.kyori.adventure.text.Component> lines) {
         this.sendSignChange(loc, lines, DyeColor.BLACK);
     }
 
@@ -1113,24 +1135,24 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * a certain location. This will not actually change the world in any way.
      * This method will use a sign at the location's block or a faked sign
      * sent via
-     * {@link #sendBlockChange(Location, Material, byte)}.
+     * {@link #sendBlockChange(org.bukkit.Location, org.bukkit.Material, byte)}.
      * <p>
      * If the client does not have a sign at the given location it will
      * display an error message to the user.
      *
      * @param loc the location of the sign
      * @param lines the new text on the sign or null to clear it
-     * @param dyeColor the color of the sign
+     * @param color the color of the sign
      * @throws IllegalArgumentException if location is null
-     * @throws IllegalArgumentException if dyeColor is null
+     * @throws IllegalArgumentException if color is null
      * @throws IllegalArgumentException if lines is non-null and has a length less than 4
      * @deprecated Use {@link #sendBlockUpdate(Location, TileState)} by creating a new virtual
-     * {@link Sign} block state via {@link BlockData#createBlockState()}
+     * {@link org.bukkit.block.Sign} block state via {@link BlockData#createBlockState()}
      * (constructed e.g. via {@link Material#createBlockData()})
      */
     @Deprecated
-    default void sendSignChange(Location loc, @Nullable List<? extends Component> lines, DyeColor dyeColor) throws IllegalArgumentException {
-        this.sendSignChange(loc, lines, dyeColor, false);
+    default void sendSignChange(Location loc, java.util.@Nullable List<? extends net.kyori.adventure.text.Component> lines, DyeColor color) {
+        this.sendSignChange(loc, lines, color, false);
     }
 
     /**
@@ -1138,7 +1160,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * a certain location. This will not actually change the world in any way.
      * This method will use a sign at the location's block or a faked sign
      * sent via
-     * {@link #sendBlockChange(Location, Material, byte)}.
+     * {@link #sendBlockChange(org.bukkit.Location, org.bukkit.Material, byte)}.
      * <p>
      * If the client does not have a sign at the given location it will
      * display an error message to the user.
@@ -1150,11 +1172,11 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @throws IllegalArgumentException if dyeColor is null
      * @throws IllegalArgumentException if lines is non-null and has a length less than 4
      * @deprecated Use {@link #sendBlockUpdate(Location, TileState)} by creating a new virtual
-     * {@link Sign} block state via {@link BlockData#createBlockState()}
+     * {@link org.bukkit.block.Sign} block state via {@link BlockData#createBlockState()}
      * (constructed e.g. via {@link Material#createBlockData()})
      */
     @Deprecated
-    default void sendSignChange(Location loc, @Nullable List<? extends Component> lines, boolean hasGlowingText) throws IllegalArgumentException {
+    default void sendSignChange(Location loc, java.util.@Nullable List<? extends net.kyori.adventure.text.Component> lines, boolean hasGlowingText) {
         this.sendSignChange(loc, lines, DyeColor.BLACK, hasGlowingText);
     }
 
@@ -1163,25 +1185,24 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * a certain location. This will not actually change the world in any way.
      * This method will use a sign at the location's block or a faked sign
      * sent via
-     * {@link #sendBlockChange(Location, Material, byte)}.
+     * {@link #sendBlockChange(org.bukkit.Location, org.bukkit.Material, byte)}.
      * <p>
      * If the client does not have a sign at the given location it will
      * display an error message to the user.
      *
      * @param loc the location of the sign
      * @param lines the new text on the sign or null to clear it
-     * @param dyeColor the color of the sign
+     * @param color the color of the sign
      * @param hasGlowingText whether the text of the sign should glow as if dyed with a glowing ink sac
      * @throws IllegalArgumentException if location is null
-     * @throws IllegalArgumentException if dyeColor is null
+     * @throws IllegalArgumentException if color is null
      * @throws IllegalArgumentException if lines is non-null and has a length less than 4
      * @deprecated Use {@link #sendBlockUpdate(Location, TileState)} by creating a new virtual
-     * {@link Sign} block state via {@link BlockData#createBlockState()}
+     * {@link org.bukkit.block.Sign} block state via {@link BlockData#createBlockState()}
      * (constructed e.g. via {@link Material#createBlockData()})
      */
     @Deprecated
-    void sendSignChange(Location loc, @Nullable List<? extends Component> lines, DyeColor dyeColor, boolean hasGlowingText)
-        throws IllegalArgumentException;
+    void sendSignChange(Location loc, java.util.@Nullable List<? extends net.kyori.adventure.text.Component> lines, DyeColor color, boolean hasGlowingText);
     // Paper end
 
     /**
@@ -1189,84 +1210,88 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * a certain location. This will not actually change the world in any way.
      * This method will use a sign at the location's block or a faked sign
      * sent via
-     * {@link #sendBlockChange(Location, BlockData)}.
+     * {@link #sendBlockChange(org.bukkit.Location, org.bukkit.block.data.BlockData)}.
      * <p>
      * If the client does not have a sign at the given location it will
      * display an error message to the user.
      * <p>
      * To change all attributes of a sign, including the back Side, use
-     * {@link #sendBlockUpdate(Location, TileState)}.
+     * {@link #sendBlockUpdate(org.bukkit.Location, org.bukkit.block.TileState)}.
      *
      * @param loc the location of the sign
      * @param lines the new text on the sign or null to clear it
      * @throws IllegalArgumentException if location is null
      * @throws IllegalArgumentException if lines is non-null and has a length less than 4
      * @deprecated Use {@link #sendBlockUpdate(Location, TileState)} by creating a new virtual
-     * {@link Sign} block state via {@link BlockData#createBlockState()}
+     * {@link org.bukkit.block.Sign} block state via {@link BlockData#createBlockState()}
      * (constructed e.g. via {@link Material#createBlockData()})
      */
     @Deprecated // Paper
-    public void sendSignChange(Location loc, @Nullable String @Nullable [] lines) throws IllegalArgumentException;
+    default void sendSignChange(Location loc, @Nullable String @Nullable [] lines) {
+        this.sendSignChange(loc, lines, DyeColor.BLACK);
+    }
 
     /**
      * Send a sign change. This fakes a sign change packet for a user at
      * a certain location. This will not actually change the world in any way.
      * This method will use a sign at the location's block or a faked sign
      * sent via
-     * {@link #sendBlockChange(Location, BlockData)}.
+     * {@link #sendBlockChange(org.bukkit.Location, org.bukkit.block.data.BlockData)}.
      * <p>
      * If the client does not have a sign at the given location it will
      * display an error message to the user.
      * <p>
      * To change all attributes of a sign, including the back Side, use
-     * {@link #sendBlockUpdate(Location, TileState)}.
+     * {@link #sendBlockUpdate(org.bukkit.Location, org.bukkit.block.TileState)}.
      *
      * @param loc the location of the sign
      * @param lines the new text on the sign or null to clear it
-     * @param dyeColor the color of the sign
+     * @param color the color of the sign
      * @throws IllegalArgumentException if location is null
-     * @throws IllegalArgumentException if dyeColor is null
+     * @throws IllegalArgumentException if color is null
      * @throws IllegalArgumentException if lines is non-null and has a length less than 4
      * @deprecated Use {@link #sendBlockUpdate(Location, TileState)} by creating a new virtual
-     * {@link Sign} block state via {@link BlockData#createBlockState()}
+     * {@link org.bukkit.block.Sign} block state via {@link BlockData#createBlockState()}
      * (constructed e.g. via {@link Material#createBlockData()})
      */
     @Deprecated // Paper
-    public void sendSignChange(Location loc, @Nullable String @Nullable [] lines, DyeColor dyeColor) throws IllegalArgumentException;
+    default void sendSignChange(Location loc, @Nullable String @Nullable [] lines, DyeColor color) {
+        this.sendSignChange(loc, lines, color, false);
+    }
 
     /**
      * Send a sign change. This fakes a sign change packet for a user at
      * a certain location. This will not actually change the world in any way.
      * This method will use a sign at the location's block or a faked sign
      * sent via
-     * {@link #sendBlockChange(Location, BlockData)}.
+     * {@link #sendBlockChange(org.bukkit.Location, org.bukkit.block.data.BlockData)}.
      * <p>
      * If the client does not have a sign at the given location it will
      * display an error message to the user.
      * <p>
      * To change all attributes of a sign, including the back Side, use
-     * {@link #sendBlockUpdate(Location, TileState)}.
+     * {@link #sendBlockUpdate(org.bukkit.Location, org.bukkit.block.TileState)}.
      *
      * @param loc the location of the sign
      * @param lines the new text on the sign or null to clear it
-     * @param dyeColor the color of the sign
+     * @param color the color of the sign
      * @param hasGlowingText if the sign's text should be glowing
      * @throws IllegalArgumentException if location is null
-     * @throws IllegalArgumentException if dyeColor is null
+     * @throws IllegalArgumentException if color is null
      * @throws IllegalArgumentException if lines is non-null and has a length less than 4
      * @deprecated Use {@link #sendBlockUpdate(Location, TileState)} by creating a new virtual
-     * {@link Sign} block state via {@link BlockData#createBlockState()}
+     * {@link org.bukkit.block.Sign} block state via {@link BlockData#createBlockState()}
      * (constructed e.g. via {@link Material#createBlockData()})
      */
     @Deprecated // Paper
-    public void sendSignChange(Location loc, @Nullable String @Nullable [] lines, DyeColor dyeColor, boolean hasGlowingText) throws IllegalArgumentException;
+    public void sendSignChange(Location loc, @Nullable String @Nullable [] lines, DyeColor color, boolean hasGlowingText);
 
     /**
      * Send a TileState change. This fakes a TileState change for a user at
      * the given location. This will not actually change the world in any way.
      * This method will use a TileState at the location's block or a faked TileState
      * sent via
-     * {@link #sendBlockChange(Location, BlockData)}.
+     * {@link #sendBlockChange(org.bukkit.Location, org.bukkit.block.data.BlockData)}.
      * <p>
      * If the client does not have an appropriate tile at the given location it
      * may display an error message to the user.
@@ -1362,7 +1387,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      */
     // For reference, Bukkit defines this as nullable, while they impl isn't, we'll follow API.
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerFull(@Nullable String reason) {
+    public default org.bukkit.@Nullable BanEntry banPlayerFull(@Nullable String reason) {
         return this.banPlayerFull(reason, null, null);
     }
 
@@ -1375,7 +1400,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @deprecated use {@link #ban(String, Date, String)} and {@link #banIp(String, Date, String, boolean)}
      */
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerFull(@Nullable String reason, @Nullable String source) {
+    public default org.bukkit.@Nullable BanEntry banPlayerFull(@Nullable String reason, @Nullable String source) {
         return this.banPlayerFull(reason, null, source);
     }
 
@@ -1388,7 +1413,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @deprecated use {@link #ban(String, Date, String)} and {@link #banIp(String, Date, String, boolean)}
      */
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerFull(@Nullable String reason, @Nullable Date expires) {
+    public default org.bukkit.@Nullable BanEntry banPlayerFull(@Nullable String reason, java.util.@Nullable Date expires) {
         return this.banPlayerFull(reason, expires, null);
     }
 
@@ -1402,14 +1427,14 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @deprecated use {@link #ban(String, Date, String)} and {@link #banIp(String, Date, String, boolean)}
      */
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerFull(@Nullable String reason, @Nullable Date expires, @Nullable String source) {
+    public default org.bukkit.@Nullable BanEntry banPlayerFull(@Nullable String reason, java.util.@Nullable Date expires, @Nullable String source) {
         this.banPlayer(reason, expires, source);
         return this.banPlayerIP(reason, expires, source, true);
     }
 
     /**
      * Permanently Bans the IP address currently used by the player.
-     * Does not ban the Profile, use {@link #banPlayerFull(String, Date, String)}
+     * Does not ban the Profile, use {@link #banPlayerFull(String, java.util.Date, String)}
      *
      * @param reason Reason for ban
      * @param kickPlayer Whether or not to kick the player afterwards
@@ -1417,13 +1442,13 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @deprecated use {@link #ban(String, Date, String)} and {@link #banIp(String, Date, String, boolean)}
      */
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerIP(@Nullable String reason, boolean kickPlayer) {
+    public default org.bukkit.@Nullable BanEntry banPlayerIP(@Nullable String reason, boolean kickPlayer) {
         return this.banPlayerIP(reason, null, null, kickPlayer);
     }
 
     /**
      * Permanently Bans the IP address currently used by the player.
-     * Does not ban the Profile, use {@link #banPlayerFull(String, Date, String)}
+     * Does not ban the Profile, use {@link #banPlayerFull(String, java.util.Date, String)}
      * @param reason Reason for ban
      * @param source Source of ban, or null for default
      * @param kickPlayer Whether or not to kick the player afterwards
@@ -1431,13 +1456,13 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @deprecated use {@link #ban(String, Date, String)} and {@link #banIp(String, Date, String, boolean)}
      */
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerIP(@Nullable String reason, @Nullable String source, boolean kickPlayer) {
+    public default org.bukkit.@Nullable BanEntry banPlayerIP(@Nullable String reason, @Nullable String source, boolean kickPlayer) {
         return this.banPlayerIP(reason, null, source, kickPlayer);
     }
 
     /**
      * Bans the IP address currently used by the player.
-     * Does not ban the Profile, use {@link #banPlayerFull(String, Date, String)}
+     * Does not ban the Profile, use {@link #banPlayerFull(String, java.util.Date, String)}
      * @param reason Reason for Ban
      * @param expires When to expire the ban
      * @param kickPlayer Whether or not to kick the player afterwards
@@ -1445,52 +1470,52 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @deprecated use {@link #ban(String, Date, String)} and {@link #banIp(String, Date, String, boolean)}
      */
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerIP(@Nullable String reason, @Nullable Date expires, boolean kickPlayer) {
+    public default org.bukkit.@Nullable BanEntry banPlayerIP(@Nullable String reason, java.util.@Nullable Date expires, boolean kickPlayer) {
         return this.banPlayerIP(reason, expires, null, kickPlayer);
     }
 
     /**
      * Permanently Bans the IP address currently used by the player.
-     * Does not ban the Profile, use {@link #banPlayerFull(String, Date, String)}
+     * Does not ban the Profile, use {@link #banPlayerFull(String, java.util.Date, String)}
      *
      * @param reason Reason for ban
      * @return Ban Entry
      * @deprecated use {@link #ban(String, Date, String)} and {@link #banIp(String, Date, String, boolean)}
      */
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerIP(@Nullable String reason) {
+    public default org.bukkit.@Nullable BanEntry banPlayerIP(@Nullable String reason) {
         return this.banPlayerIP(reason, null, null);
     }
 
     /**
      * Permanently Bans the IP address currently used by the player.
-     * Does not ban the Profile, use {@link #banPlayerFull(String, Date, String)}
+     * Does not ban the Profile, use {@link #banPlayerFull(String, java.util.Date, String)}
      * @param reason Reason for ban
      * @param source Source of ban, or null for default
      * @return Ban Entry
      * @deprecated use {@link #ban(String, Date, String)} and {@link #banIp(String, Date, String, boolean)}
      */
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerIP(@Nullable String reason, @Nullable String source) {
+    public default org.bukkit.@Nullable BanEntry banPlayerIP(@Nullable String reason, @Nullable String source) {
         return this.banPlayerIP(reason, null, source);
     }
 
     /**
      * Bans the IP address currently used by the player.
-     * Does not ban the Profile, use {@link #banPlayerFull(String, Date, String)}
+     * Does not ban the Profile, use {@link #banPlayerFull(String, java.util.Date, String)}
      * @param reason Reason for Ban
      * @param expires When to expire the ban
      * @return Ban Entry
      * @deprecated use {@link #ban(String, Date, String)} and {@link #banIp(String, Date, String, boolean)}
      */
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerIP(@Nullable String reason, @Nullable Date expires) {
+    public default org.bukkit.@Nullable BanEntry banPlayerIP(@Nullable String reason, java.util.@Nullable Date expires) {
         return this.banPlayerIP(reason, expires, null);
     }
 
     /**
      * Bans the IP address currently used by the player.
-     * Does not ban the Profile, use {@link #banPlayerFull(String, Date, String)}
+     * Does not ban the Profile, use {@link #banPlayerFull(String, java.util.Date, String)}
      * @param reason Reason for Ban
      * @param expires When to expire the ban
      * @param source Source of the ban or null for default
@@ -1498,13 +1523,13 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @deprecated use {@link #ban(String, Date, String)} and {@link #banIp(String, Date, String, boolean)}
      */
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerIP(@Nullable String reason, @Nullable Date expires, @Nullable String source) {
+    public default org.bukkit.@Nullable BanEntry banPlayerIP(@Nullable String reason, java.util.@Nullable Date expires, @Nullable String source) {
         return this.banPlayerIP(reason, expires, source, true);
     }
 
     /**
      * Bans the IP address currently used by the player.
-     * Does not ban the Profile, use {@link #banPlayerFull(String, Date, String)}
+     * Does not ban the Profile, use {@link #banPlayerFull(String, java.util.Date, String)}
      * @param reason Reason for Ban
      * @param expires When to expire the ban
      * @param source Source of the ban or null for default
@@ -1513,8 +1538,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @deprecated use {@link #ban(String, Date, String)} and {@link #banIp(String, Date, String, boolean)}
      */
     @Deprecated(since = "1.20.4")
-    public default @Nullable BanEntry banPlayerIP(@Nullable String reason, @Nullable Date expires, @Nullable String source, boolean kickPlayer) {
-        BanEntry banEntry = org.bukkit.Bukkit.getServer().getBanList(org.bukkit.BanList.Type.IP).addBan(getAddress().getAddress().getHostAddress(), reason, expires, source);
+    public default org.bukkit.@Nullable BanEntry banPlayerIP(@Nullable String reason, java.util.@Nullable Date expires, @Nullable String source, boolean kickPlayer) {
+        org.bukkit.BanEntry banEntry = org.bukkit.Bukkit.getServer().getBanList(org.bukkit.BanList.Type.IP).addBan(getAddress().getAddress().getHostAddress(), reason, expires, source);
         if (kickPlayer && isOnline()) {
             this.getPlayer().kickPlayer(reason);
         }
@@ -1528,7 +1553,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Use Section symbols for legacy color codes to send formatting.
      *
      * @param message The message to send
-     * @deprecated use {@link #sendActionBar(Component)}
+     * @deprecated use {@link #sendActionBar(net.kyori.adventure.text.Component)}
      */
     @Deprecated
     public void sendActionBar(String message);
@@ -1540,7 +1565,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param alternateChar Alternate symbol such as '&amp;'
      * @param message The message to send
-     * @deprecated use {@link #sendActionBar(Component)}
+     * @deprecated use {@link #sendActionBar(net.kyori.adventure.text.Component)}
      */
     @Deprecated
     public void sendActionBar(char alternateChar, String message);
@@ -1549,7 +1574,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Sends an Action Bar message to the client.
      *
      * @param message The components to send
-     * @deprecated use {@link #sendActionBar(Component)}
+     * @deprecated use {@link #sendActionBar(net.kyori.adventure.text.Component)}
      */
     @Deprecated
     public void sendActionBar(net.md_5.bungee.api.chat.BaseComponent... message);
@@ -1558,7 +1583,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Sends the component to the player
      *
      * @param component the components to send
-     * @deprecated use {@code sendMessage} methods that accept {@link Component}
+     * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
      */
     @Override
     @Deprecated
@@ -1570,7 +1595,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Sends an array of components as a single message to the player
      *
      * @param components the components to send
-     * @deprecated use {@code sendMessage} methods that accept {@link Component}
+     * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
      */
     @Override
     @Deprecated
@@ -1595,7 +1620,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param header content for the top of the player list
      * @param footer content for the bottom of the player list
-     * @deprecated in favour of {@link #sendPlayerListHeaderAndFooter(Component, Component)}
+     * @deprecated in favour of {@link #sendPlayerListHeaderAndFooter(net.kyori.adventure.text.Component, net.kyori.adventure.text.Component)}
      */
     @Deprecated
     public void setPlayerListHeaderFooter(net.md_5.bungee.api.chat.BaseComponent @Nullable [] header, net.md_5.bungee.api.chat.BaseComponent @Nullable [] footer);
@@ -1605,7 +1630,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param header content for the top of the player list
      * @param footer content for the bottom of the player list
-     * @deprecated in favour of {@link #sendPlayerListHeaderAndFooter(Component, Component)}
+     * @deprecated in favour of {@link #sendPlayerListHeaderAndFooter(net.kyori.adventure.text.Component, net.kyori.adventure.text.Component)}
      */
     @Deprecated
     public void setPlayerListHeaderFooter(net.md_5.bungee.api.chat.@Nullable BaseComponent header, net.md_5.bungee.api.chat.@Nullable BaseComponent footer);
@@ -2243,7 +2268,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @throws IllegalArgumentException Thrown if the URL is null.
      * @throws IllegalArgumentException Thrown if the URL is too long.
      * @deprecated Minecraft no longer uses textures packs. Instead you
-     *     should use {@link #setResourcePack(UUID, String, byte[], Component, boolean)}.
+     *     should use {@link #setResourcePack(UUID, String, byte[], net.kyori.adventure.text.Component, boolean)}.
      */
     @Deprecated(since = "1.7.2")
     default void setTexturePack(String url) {
@@ -2419,7 +2444,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *     long.
      * @see #sendResourcePacks(net.kyori.adventure.resource.ResourcePackRequest)
      */
-    default void setResourcePack(final String url, final byte @Nullable [] hash, final @Nullable Component prompt) {
+    default void setResourcePack(final String url, final byte @Nullable [] hash, final net.kyori.adventure.text.@Nullable Component prompt) {
         this.setResourcePack(url, hash, prompt, false);
     }
     // Paper end
@@ -2564,7 +2589,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *     long.
      * @see #sendResourcePacks(net.kyori.adventure.resource.ResourcePackRequest)
      */
-    default void setResourcePack(final String url, final byte @Nullable [] hash, final @Nullable Component prompt, final boolean force) {
+    default void setResourcePack(final String url, final byte @Nullable [] hash, final net.kyori.adventure.text.@Nullable Component prompt, final boolean force) {
         this.setResourcePack(UUID.nameUUIDFromBytes(url.getBytes(java.nio.charset.StandardCharsets.UTF_8)), url, hash, prompt, force);
     }
     // Paper end
@@ -2663,7 +2688,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *     long.
      * @see #sendResourcePacks(net.kyori.adventure.resource.ResourcePackRequest)
      */
-    void setResourcePack(UUID uuid, String url, byte @Nullable [] hash, @Nullable Component prompt, boolean force);
+    void setResourcePack(UUID uuid, String url, byte @Nullable [] hash, net.kyori.adventure.text.@Nullable Component prompt, boolean force);
     // Paper end
 
     // Paper start - more resource pack API
@@ -2765,7 +2790,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @throws IllegalArgumentException Thrown if the URL is too long. The
      *     length restriction is an implementation specific arbitrary value.
      */
-    default void setResourcePack(final String url, final String hash, final boolean required, final @Nullable Component resourcePackPrompt) {
+    default void setResourcePack(final String url, final String hash, final boolean required, final net.kyori.adventure.text.@Nullable Component resourcePackPrompt) {
         this.setResourcePack(UUID.nameUUIDFromBytes(url.getBytes(java.nio.charset.StandardCharsets.UTF_8)), url, hash, resourcePackPrompt, required);
     }
 
@@ -2801,7 +2826,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @throws IllegalArgumentException Thrown if the URL is too long. The
      *     length restriction is an implementation specific arbitrary value.
      */
-    default void setResourcePack(final UUID uuid, final String url, final String hash, final @Nullable Component resourcePackPrompt, final boolean required) {
+    default void setResourcePack(final UUID uuid, final String url, final String hash, final net.kyori.adventure.text.@Nullable Component resourcePackPrompt, final boolean required) {
         this.sendResourcePacks(net.kyori.adventure.resource.ResourcePackRequest.resourcePackRequest()
             .required(required)
             .replace(true)
@@ -2815,7 +2840,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @return the most recent status or null
      */
-    PlayerResourcePackStatusEvent.@Nullable Status getResourcePackStatus();
+    org.bukkit.event.player.PlayerResourcePackStatusEvent.@Nullable Status getResourcePackStatus();
 
     /**
      * Gets the most recent pack hash from the player.
@@ -2831,12 +2856,12 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
 
     /**
      * Gets if the last resource pack status from the player
-     * was {@link PlayerResourcePackStatusEvent.Status#SUCCESSFULLY_LOADED}.
+     * was {@link org.bukkit.event.player.PlayerResourcePackStatusEvent.Status#SUCCESSFULLY_LOADED}.
      *
      * @return true if last status was successfully loaded
      */
     default boolean hasResourcePack() {
-        return this.getResourcePackStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED;
+        return this.getResourcePackStatus() == org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED;
     }
     // Paper end - more resource pack API
 
@@ -3214,11 +3239,10 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param offsetX the maximum random offset on the X axis
      * @param offsetY the maximum random offset on the Y axis
      * @param offsetZ the maximum random offset on the Z axis
-     * @param extra the extra data for this particle, depends on the
-     *              particle used (normally speed)
+     * @param speed the speed of the particle on both axes
      */
-    default void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra) {
-        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra);
+    default void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double speed) {
+        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, speed);
     }
 
     /**
@@ -3235,11 +3259,10 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param offsetX the maximum random offset on the X axis
      * @param offsetY the maximum random offset on the Y axis
      * @param offsetZ the maximum random offset on the Z axis
-     * @param extra the extra data for this particle, depends on the
-     *              particle used (normally speed)
+     * @param speed the speed of the particle on both axes
      */
-    default void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra) {
-        this.spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra, null);
+    default void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double speed) {
+        this.spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, speed, null);
     }
 
     /**
@@ -3255,13 +3278,12 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param offsetX the maximum random offset on the X axis
      * @param offsetY the maximum random offset on the Y axis
      * @param offsetZ the maximum random offset on the Z axis
-     * @param extra the extra data for this particle, depends on the
-     *              particle used (normally speed)
+     * @param speed the speed of the particle on both axes
      * @param data the data to use for the particle or null,
      *             the type of this depends on {@link Particle#getDataType()}
      */
-    default <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, @Nullable T data) {
-        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra, data);
+    default <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double speed, @Nullable T data) {
+        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, speed, data);
     }
 
     /**
@@ -3279,13 +3301,12 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param offsetX the maximum random offset on the X axis
      * @param offsetY the maximum random offset on the Y axis
      * @param offsetZ the maximum random offset on the Z axis
-     * @param extra the extra data for this particle, depends on the
-     *              particle used (normally speed)
+     * @param speed the speed of the particle on both axes
      * @param data the data to use for the particle or null,
      *             the type of this depends on {@link Particle#getDataType()}
      */
-    default <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, @Nullable T data) {
-        this.spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra, data, false);
+    default <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double speed, @Nullable T data) {
+        this.spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, speed, data, false);
     }
 
     /**
@@ -3301,16 +3322,15 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param offsetX the maximum random offset on the X axis
      * @param offsetY the maximum random offset on the Y axis
      * @param offsetZ the maximum random offset on the Z axis
-     * @param extra the extra data for this particle, depends on the
-     *              particle used (normally speed)
+     * @param speed the speed of the particle on both axes
      * @param data the data to use for the particle or null,
      *             the type of this depends on {@link Particle#getDataType()}
      * @param force whether to send the particle to the player in an extended
      *              range and encourage their client to render it regardless of
      *              settings
      */
-    default <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, @Nullable T data, boolean force) {
-        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra, data, force);
+    default <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double speed, @Nullable T data, boolean force) {
+        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, speed, data, force);
     }
 
     /**
@@ -3328,15 +3348,44 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param offsetX the maximum random offset on the X axis
      * @param offsetY the maximum random offset on the Y axis
      * @param offsetZ the maximum random offset on the Z axis
-     * @param extra the extra data for this particle, depends on the
-     *              particle used (normally speed)
+     * @param speed the speed of the particle on both axes
      * @param data the data to use for the particle or null,
      *             the type of this depends on {@link Particle#getDataType()}
      * @param force whether to send the particle to the player in an extended
      *              range and encourage their client to render it regardless of
      *              settings
      */
-    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, @Nullable T data, boolean force);
+    default <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double speed, @Nullable T data, boolean force) {
+        this.spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, speed, speed, speed, data, force, Particle.RandomizationType.DEFAULT);
+    }
+
+    /**
+     * Spawns the particle (the number of times specified by count)
+     * at the target location. The position of each particle will be
+     * randomized positively and negatively by the offset parameters
+     * on each axis.
+     *
+     * @param <T> type of particle data (see {@link Particle#getDataType()}
+     * @param particle the particle to spawn
+     * @param x the position on the x axis to spawn at
+     * @param y the position on the y axis to spawn at
+     * @param z the position on the z axis to spawn at
+     * @param count the number of particles
+     * @param offsetX the maximum random offset on the X axis
+     * @param offsetY the maximum random offset on the Y axis
+     * @param offsetZ the maximum random offset on the Z axis
+     * @param speedX the speed of the particle on the X axis
+     * @param speedY the speed of the particle on the Y axis
+     * @param speedZ the speed of the particle on the Z axis
+     *              particle used (normally speed)
+     * @param data the data to use for the particle or null,
+     *             the type of this depends on {@link Particle#getDataType()}
+     * @param force whether to send the particle to the player in an extended
+     *              range and encourage their client to render it regardless of
+     *              settings
+     * @param randomizationType the type of randomization to use for the particle offsets
+     */
+    <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double speedX, double speedY, double speedZ, @Nullable T data, boolean force, Particle.RandomizationType randomizationType);
 
     /**
      * Return the player's progression on the specified advancement.
@@ -3511,7 +3560,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      */
     @Deprecated
     default void openSign(Sign sign) {
-        this.openSign(sign, Side.FRONT);
+        this.openSign(sign, org.bukkit.block.sign.Side.FRONT);
     }
 
     /**
@@ -3578,7 +3627,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Changes the PlayerProfile for this player. This will cause this player
      * to be re-registered to all clients that can currently see this player.
      * <p>
-     * After executing this method, the player {@link UUID} won't
+     * After executing this method, the player {@link java.util.UUID} won't
      * be swapped, only their name and profile properties.
      *
      * @param profile The new profile to use
@@ -3654,7 +3703,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @deprecated use {@link #addCustomChatCompletions(Collection)}
      */
     @Deprecated(since = "1.20.1")
-    void addAdditionalChatCompletions(Collection<String> completions);
+    void addAdditionalChatCompletions(java.util.Collection<String> completions);
 
     /**
      * Removes custom chat completion suggestions that the client
@@ -3667,7 +3716,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @deprecated use {@link #addCustomChatCompletions(Collection)}
      */
     @Deprecated(since = "1.20.1")
-    void removeAdditionalChatCompletions(Collection<String> completions);
+    void removeAdditionalChatCompletions(java.util.Collection<String> completions);
     // Paper end - custom chat completions API
 
     // Spigot start
@@ -3691,7 +3740,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
         }
 
         /**
-         * Gets all players hidden with {@link #hidePlayer(Player)}.
+         * Gets all players hidden with {@link #hidePlayer(org.bukkit.entity.Player)}.
          *
          * @return a Set with all hidden players
          */
@@ -3716,7 +3765,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
          *
          * @param position the screen position
          * @param component the components to send
-         * @deprecated use {@code sendMessage} methods that accept {@link Component}
+         * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
          */
         @Deprecated // Paper
         public void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent component) {
@@ -3728,7 +3777,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
          *
          * @param position the screen position
          * @param components the components to send
-         * @deprecated use {@code sendMessage} methods that accept {@link Component}
+         * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
          */
         @Deprecated // Paper
         public void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent... components) {
@@ -3741,10 +3790,10 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
          * @param position the screen position
          * @param sender the sender of the message
          * @param component the components to send
-         * @deprecated use {@code sendMessage} methods that accept {@link Component}
+         * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
          */
         @Deprecated // Paper
-        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, @Nullable UUID sender, net.md_5.bungee.api.chat.BaseComponent component) {
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, java.util.@Nullable UUID sender, net.md_5.bungee.api.chat.BaseComponent component) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
@@ -3754,10 +3803,10 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
          * @param position the screen position
          * @param sender the sender of the message
          * @param components the components to send
-         * @deprecated use {@code sendMessage} methods that accept {@link Component}
+         * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
          */
         @Deprecated // Paper
-        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, @Nullable UUID sender, net.md_5.bungee.api.chat.BaseComponent... components) {
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, java.util.@Nullable UUID sender, net.md_5.bungee.api.chat.BaseComponent... components) {
             throw new UnsupportedOperationException("Not supported yet.");
 
         }
@@ -3814,7 +3863,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param playerAnchor What part of the player should face the entity
      * @param entityAnchor What part of the entity the player should face
      */
-    void lookAt(Entity entity, LookAnchor playerAnchor, LookAnchor entityAnchor);
+    void lookAt(org.bukkit.entity.Entity entity, LookAnchor playerAnchor, LookAnchor entityAnchor);
     // Paper end - Teleport API
 
     // Paper start
@@ -4030,7 +4079,14 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      */
     void unsetFixedPose();
 
-    // Purpur start
+    /**
+     * Gets the post-effects that can be applied to this player.
+     *
+     * @return the post-effects
+     */
+    PlayerPostEffects postEffects();
+	
+	// Purpur start
     /**
      * Allows you to get if player uses PurpurClient
      *
@@ -4133,7 +4189,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param message The death message to show the player
      */
-    void sendDeathScreen(Component message);
+    void sendDeathScreen(net.kyori.adventure.text.Component message);
 
     /**
      * Sends a player the death screen with a specified death message,
@@ -4141,10 +4197,10 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param message The death message to show the player
      * @param killer The entity that killed the player
-     * @deprecated Use {@link #sendDeathScreen(Component)} instead, as 1.20 removed the killer ID from the packet.
+     * @deprecated Use {@link #sendDeathScreen(net.kyori.adventure.text.Component)} instead, as 1.20 removed the killer ID from the packet.
      */
     @Deprecated(since = "1.20")
-    default void sendDeathScreen(Component message, @Nullable Entity killer) {
+    default void sendDeathScreen(net.kyori.adventure.text.Component message, @Nullable Entity killer) {
         sendDeathScreen(message);
     }
     // Purpur end

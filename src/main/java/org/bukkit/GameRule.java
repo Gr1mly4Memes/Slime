@@ -3,11 +3,10 @@ package org.bukkit;
 import com.google.common.base.Preconditions;
 import io.papermc.paper.InternalAPIBridge;
 import io.papermc.paper.world.flag.FeatureDependant;
+import java.util.function.UnaryOperator;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.UnaryOperator;
 
 /**
  * GameRules dictate certain behavior within Minecraft itself

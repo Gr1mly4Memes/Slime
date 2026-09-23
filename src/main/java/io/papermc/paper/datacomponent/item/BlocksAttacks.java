@@ -4,22 +4,19 @@ import io.papermc.paper.datacomponent.DataComponentBuilder;
 import io.papermc.paper.datacomponent.item.blocksattacks.DamageReduction;
 import io.papermc.paper.datacomponent.item.blocksattacks.ItemDamageFunction;
 import io.papermc.paper.registry.set.RegistryKeySet;
+import java.util.List;
 import net.kyori.adventure.key.Key;
 import org.bukkit.damage.DamageType;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Holds block attacks to the holding player like Shield.
  *
  * @see io.papermc.paper.datacomponent.DataComponentTypes#BLOCKS_ATTACKS
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface BlocksAttacks {
 

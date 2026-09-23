@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -10,8 +11,6 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -37,20 +36,20 @@ public class CraftPoweredRail extends CraftBlockData implements RedstoneRail {
     }
 
     @Override
-    public Shape getShape() {
-        return this.get(SHAPE, Shape.class);
+    public org.bukkit.block.data.Rail.Shape getShape() {
+        return this.get(SHAPE, org.bukkit.block.data.Rail.Shape.class);
     }
 
     @Override
-    public void setShape(final Shape shape) {
+    public void setShape(final org.bukkit.block.data.Rail.Shape shape) {
         Preconditions.checkArgument(shape != null, "shape cannot be null!");
-        Preconditions.checkArgument(shape != Shape.NORTH_EAST && shape != Shape.NORTH_WEST && shape != Shape.SOUTH_EAST && shape != Shape.SOUTH_WEST, "Invalid rail shape, only straight rail are allowed for this property!");
+        Preconditions.checkArgument(shape != org.bukkit.block.data.Rail.Shape.NORTH_EAST && shape != org.bukkit.block.data.Rail.Shape.NORTH_WEST && shape != org.bukkit.block.data.Rail.Shape.SOUTH_EAST && shape != org.bukkit.block.data.Rail.Shape.SOUTH_WEST, "Invalid rail shape, only straight rail are allowed for this property!");
         this.set(SHAPE, shape);
     }
 
     @Override
-    public Set<Shape> getShapes() {
-        return this.getValues(SHAPE, Shape.class);
+    public Set<org.bukkit.block.data.Rail.Shape> getShapes() {
+        return this.getValues(SHAPE, org.bukkit.block.data.Rail.Shape.class);
     }
 
     @Override

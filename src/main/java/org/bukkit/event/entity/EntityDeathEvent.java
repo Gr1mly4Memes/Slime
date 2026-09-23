@@ -1,5 +1,6 @@
 package org.bukkit.event.entity;
 
+import java.util.List;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
@@ -8,8 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Thrown whenever a LivingEntity dies

@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.block;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import net.minecraft.advancements.predicates.DataComponentMatchers;
 import net.minecraft.advancements.predicates.ItemPredicate;
 import net.minecraft.core.component.DataComponentExactPredicate;
@@ -20,9 +22,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class CraftBeacon extends CraftBlockEntityState<BeaconBlockEntity> implements Beacon {
 

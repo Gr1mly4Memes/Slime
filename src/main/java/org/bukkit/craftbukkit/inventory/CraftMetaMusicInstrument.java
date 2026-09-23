@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.InstrumentComponent;
@@ -8,8 +9,6 @@ import org.bukkit.MusicInstrument;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.CraftMusicInstrument;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
-
-import java.util.Map;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaMusicInstrument extends CraftMetaItem implements MusicInstrumentMeta {
@@ -43,7 +42,7 @@ public class CraftMetaMusicInstrument extends CraftMetaItem implements MusicInst
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         if (this.instrument != null) {

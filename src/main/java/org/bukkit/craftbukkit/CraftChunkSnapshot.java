@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
+import java.util.function.Predicate;
 import net.kyori.adventure.key.Key;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -16,8 +17,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.CraftBiome;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
-
-import java.util.function.Predicate;
 
 /**
  * Represents a static, thread-safe snapshot of chunk of blocks

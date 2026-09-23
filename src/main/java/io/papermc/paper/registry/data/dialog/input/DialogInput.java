@@ -1,13 +1,12 @@
 package io.papermc.paper.registry.data.dialog.input;
 
 import io.papermc.paper.registry.data.dialog.DialogInstancesProvider;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.index.qual.Positive;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Represents an input for dialog.

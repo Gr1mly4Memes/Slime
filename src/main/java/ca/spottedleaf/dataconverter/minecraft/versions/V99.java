@@ -1,6 +1,9 @@
 package ca.spottedleaf.dataconverter.minecraft.versions;
 
 import ca.spottedleaf.converter.datatypes.DataWalker;
+import ca.spottedleaf.converter.types.ListType;
+import ca.spottedleaf.converter.types.MapType;
+import ca.spottedleaf.converter.types.ObjectType;
 import ca.spottedleaf.dataconverter.minecraft.MCVersions;
 import ca.spottedleaf.dataconverter.minecraft.converters.helpers.HelperItemNameV102;
 import ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry;
@@ -8,18 +11,15 @@ import ca.spottedleaf.dataconverter.minecraft.hooks.DataHookEnforceNamespacedID;
 import ca.spottedleaf.dataconverter.minecraft.hooks.DataHookValueTypeEnforceNamespaced;
 import ca.spottedleaf.dataconverter.minecraft.walkers.block_name.DataWalkerBlockNames;
 import ca.spottedleaf.dataconverter.minecraft.walkers.generic.DataWalkerTypePaths;
-import ca.spottedleaf.dataconverter.minecraft.walkers.itemstack.DataWalkerItemLists;
+import ca.spottedleaf.dataconverter.minecraft.walkers.generic.WalkerUtils;
 import ca.spottedleaf.dataconverter.minecraft.walkers.item_name.DataWalkerItemNames;
+import ca.spottedleaf.dataconverter.minecraft.walkers.itemstack.DataWalkerItemLists;
 import ca.spottedleaf.dataconverter.minecraft.walkers.itemstack.DataWalkerItems;
 import ca.spottedleaf.dataconverter.minecraft.walkers.tile_entity.DataWalkerTileEntities;
-import ca.spottedleaf.dataconverter.minecraft.walkers.generic.WalkerUtils;
-import ca.spottedleaf.converter.types.ObjectType;
-import ca.spottedleaf.converter.types.ListType;
-import ca.spottedleaf.converter.types.MapType;
 import com.mojang.logging.LogUtils;
-import org.slf4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
 
 public final class V99 {
 
@@ -440,6 +440,13 @@ public final class V99 {
                 WalkerUtils.convertListPath(MCTypeRegistry.ENTITY, root, "entities", "nbt", fromVersion, toVersion);
                 WalkerUtils.convertListPath(MCTypeRegistry.TILE_ENTITY, root, "blocks", "nbt", fromVersion, toVersion);
                 WalkerUtils.convertList(MCTypeRegistry.BLOCK_STATE, root, "palette", fromVersion, toVersion);
+
+                final ListType palettes = root.getListUnchecked("palettes");
+                if (palettes != null) {
+                    for (int i = 0, len = palettes.size(); i < len; ++i) {
+                        WalkerUtils.convert(MCTypeRegistry.BLOCK_STATE, palettes.getList(i, null), fromVersion, toVersion);
+                    }
+                }
 
                 return null;
             }

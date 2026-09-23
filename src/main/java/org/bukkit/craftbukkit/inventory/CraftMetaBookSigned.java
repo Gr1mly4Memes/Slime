@@ -3,6 +3,13 @@ package org.bukkit.craftbukkit.inventory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import net.kyori.adventure.inventory.Book;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.core.component.DataComponentPatch;
@@ -17,9 +24,6 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.inventory.meta.BookMeta;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaBookSigned extends CraftMetaItem implements BookMeta {
@@ -112,7 +116,7 @@ public class CraftMetaBookSigned extends CraftMetaItem implements BookMeta {
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         List<Filterable<Component>> list = new ArrayList<>();

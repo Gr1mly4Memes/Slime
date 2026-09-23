@@ -9,7 +9,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.spongepowered.configurate.ConfigurateException;
@@ -31,7 +31,7 @@ public final class FeatureSeedsGeneration implements TransformAction {
     public static final String GENERATE_KEY = "generate-random-seeds-for-all";
     public static final String FEATURES_KEY = "features";
 
-    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger();
+    private static final Logger LOGGER = com.mohistmc.youer.util.LogUtils.getClassLogger();
 
     private final Identifier worldKey;
 
@@ -42,10 +42,10 @@ public final class FeatureSeedsGeneration implements TransformAction {
     @Override
     public Object @Nullable [] visitPath(NodePath path, ConfigurationNode value) throws ConfigurateException {
         ConfigurationNode featureNode = value.node(FEATURE_SEEDS_KEY, FEATURES_KEY);
-        final Reference2LongMap<Holder<ConfiguredFeature<?, ?>>> features = Objects.requireNonNullElseGet(featureNode.get(new TypeToken<Reference2LongMap<Holder<ConfiguredFeature<?, ?>>>>() {}), Reference2LongOpenHashMap::new);
+        final Reference2LongMap<Holder<Feature>> features = Objects.requireNonNullElseGet(featureNode.get(new TypeToken<Reference2LongMap<Holder<Feature>>>() {}), Reference2LongOpenHashMap::new);
         final Random random = new SecureRandom();
         AtomicInteger counter = new AtomicInteger(0);
-        MinecraftServer.getServer().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).listElements().forEach(holder -> {
+        MinecraftServer.getServer().registryAccess().lookupOrThrow(Registries.FEATURE).listElements().forEach(holder -> {
             if (features.containsKey(holder)) {
                 return;
             }
@@ -57,7 +57,7 @@ public final class FeatureSeedsGeneration implements TransformAction {
         if (counter.get() > 0) {
             LOGGER.info("Generated {} random feature seeds for {}", counter.get(), this.worldKey);
             featureNode.raw(null);
-            featureNode.set(new TypeToken<Reference2LongMap<Holder<ConfiguredFeature<?, ?>>>>() {}, features);
+            featureNode.set(new TypeToken<Reference2LongMap<Holder<Feature>>>() {}, features);
         }
         return null;
     }

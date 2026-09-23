@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.spawner;
 
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
@@ -16,8 +17,6 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.spawner.Spawner;
 import org.slf4j.Logger;
-
-import java.util.Optional;
 
 /**
  * A common parent interface for both the {@link org.bukkit.craftbukkit.block.CraftCreatureSpawner} and minecart mob spawner.
@@ -57,9 +56,9 @@ public interface PaperSharedSpawnerLogic extends Spawner {
             tagValueOutput.store("Item", net.minecraft.world.item.ItemStack.CODEC, item);
 
             this.setNextSpawnData(
-                new SpawnData(
+                new net.minecraft.world.level.SpawnData(
                     tagValueOutput.buildResult(),
-                    Optional.empty(),
+                    java.util.Optional.empty(),
                     Optional.ofNullable(this.getSpawner().nextSpawnData).flatMap(SpawnData::equipment)
                 )
             );

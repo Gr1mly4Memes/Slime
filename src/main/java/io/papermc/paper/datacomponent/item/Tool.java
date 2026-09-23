@@ -3,28 +3,25 @@ package io.papermc.paper.datacomponent.item;
 import io.papermc.paper.datacomponent.DataComponentBuilder;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.registry.set.RegistryKeySet;
+import java.util.Collection;
+import java.util.List;
 import net.kyori.adventure.util.TriState;
 import org.bukkit.block.BlockType;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Controls the behavior of the item as a tool.
  * @see DataComponentTypes#TOOL
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface Tool {
 
     @Contract(value = "-> new", pure = true)
-    static Builder tool() {
+    static Tool.Builder tool() {
         return ItemComponentTypesBridge.bridge().tool();
     }
 
@@ -45,7 +42,7 @@ public interface Tool {
      * @return A new {@link Rule} instance representing the mining rule.
      */
     static Rule rule(final RegistryKeySet<BlockType> blocks, final @Nullable Float speed, final TriState correctForDrops) {
-        return ItemComponentTypesBridge.bridge().rule(blocks, speed, correctForDrops);
+        return ItemComponentTypesBridge.bridge().toolRule(blocks, speed, correctForDrops);
     }
 
     /**
@@ -70,7 +67,7 @@ public interface Tool {
      * @return rules
      */
     @Contract(pure = true)
-    @Unmodifiable List<Rule> rules();
+    @Unmodifiable List<Tool.Rule> rules();
 
     /**
      * Whether this tool can destroy blocks in creative mode.

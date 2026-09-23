@@ -4,6 +4,7 @@ import io.papermc.paper.registry.RegistryBuilder;
 import io.papermc.paper.registry.RegistryBuilderFactory;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.holder.RegistryHolder;
+import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.JukeboxSong;
 import org.bukkit.Sound;
@@ -11,8 +12,6 @@ import org.checkerframework.checker.index.qual.Positive;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Range;
-
-import java.util.function.Consumer;
 
 /**
  * A data-centric version-specific registry entry for the {@link JukeboxSong} type.

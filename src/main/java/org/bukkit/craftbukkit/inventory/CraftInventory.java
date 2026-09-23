@@ -1,12 +1,28 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.MerchantContainer;
 import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.level.block.ComposterBlock;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
+import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
+import net.minecraft.world.level.block.entity.CrafterBlockEntity;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.block.entity.DropperBlockEntity;
+import net.minecraft.world.level.block.entity.Hopper;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.level.block.entity.LecternBlockEntity;
+import net.minecraft.world.level.block.entity.ShelfBlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.world.level.block.entity.SmokerBlockEntity;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.util.CraftLegacy;
@@ -15,10 +31,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
 
 public class CraftInventory implements Inventory {
     protected final Container inventory;
@@ -39,7 +51,7 @@ public class CraftInventory implements Inventory {
     @Override
     public ItemStack getItem(int index) {
         net.minecraft.world.item.ItemStack item = this.getInventory().getItem(index);
-        return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
+        return item.isEmpty() ? null : CraftItemStack.asBukkitMirror(item);
     }
 
     protected ItemStack[] asCraftMirror(List<net.minecraft.world.item.ItemStack> mcItems) {
@@ -48,7 +60,7 @@ public class CraftInventory implements Inventory {
 
         for (int i = 0; i < size; i++) {
             net.minecraft.world.item.ItemStack mcItem = mcItems.get(i);
-            items[i] = (mcItem.isEmpty()) ? null : CraftItemStack.asCraftMirror(mcItem);
+            items[i] = (mcItem.isEmpty()) ? null : CraftItemStack.asBukkitMirror(mcItem);
         }
 
         return items;
@@ -251,10 +263,7 @@ public class CraftInventory implements Inventory {
 
     private int firstPartial(ItemStack item) {
         ItemStack[] inventory = this.getStorageContents();
-        ItemStack filteredItem = CraftItemStack.asCraftCopy(item);
-        if (item == null) {
-            return -1;
-        }
+        ItemStack filteredItem = item.clone();
         for (int i = 0; i < inventory.length; i++) {
             ItemStack cItem = inventory[i];
             if (cItem != null && cItem.getAmount() < this.getMaxItemStack(cItem) && cItem.isSimilar(filteredItem)) {
@@ -295,7 +304,7 @@ public class CraftInventory implements Inventory {
                         // More than a single stack!
                         int maxAmount = this.getMaxItemStack(item);
                         if (item.getAmount() > maxAmount) {
-                            CraftItemStack stack = CraftItemStack.asCraftCopy(item);
+                            ItemStack stack = item.clone();
                             stack.setAmount(maxAmount);
                             this.setItem(firstFree, stack);
                             item.setAmount(item.getAmount() - maxAmount);

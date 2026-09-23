@@ -1,15 +1,14 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
+import java.util.Map;
+import java.util.Objects;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.FireworkExplosion;
 import org.bukkit.FireworkEffect;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
-
-import java.util.Map;
-import java.util.Objects;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaCharge extends CraftMetaItem implements FireworkEffectMeta {
@@ -59,7 +58,7 @@ public class CraftMetaCharge extends CraftMetaItem implements FireworkEffectMeta
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         if (this.hasEffect()) {

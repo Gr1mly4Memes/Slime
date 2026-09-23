@@ -6,8 +6,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
+
+import javax.annotation.Nullable;
 
 public final class PaperLegacyStatusClient implements StatusClient {
 

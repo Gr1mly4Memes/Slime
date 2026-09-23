@@ -89,7 +89,7 @@ public abstract class CraftBoat extends CraftVehicle implements Boat, io.papermc
 
     @Override
     public Status getStatus() {
-        final AbstractBoat handle = this.getHandle();
+        final net.minecraft.world.entity.vehicle.boat.AbstractBoat handle = this.getHandle();
         AbstractBoat.Status status = this.getHandle().status;
         if (status == null) {
             if (!handle.valid) {
@@ -142,7 +142,7 @@ public abstract class CraftBoat extends CraftVehicle implements Boat, io.papermc
         throw new EnumConstantNotPresentException(Type.class, boatType.toString());
     }
 
-    public static Status boatStatusFromNms(AbstractBoat.Status enumStatus) { // Paper - remap fixes
+    public static Status boatStatusFromNms(net.minecraft.world.entity.vehicle.boat.AbstractBoat.Status enumStatus) { // Paper - remap fixes
         return switch (enumStatus) {
             default -> throw new EnumConstantNotPresentException(Status.class, enumStatus.name());
             case IN_AIR -> Status.IN_AIR;

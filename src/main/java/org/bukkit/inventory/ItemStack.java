@@ -1,15 +1,20 @@
 package org.bukkit.inventory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multimap;
 import io.papermc.paper.InternalAPIBridge;
 import io.papermc.paper.datacomponent.DataComponentHolder;
 import io.papermc.paper.registry.RegistryKey;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import net.kyori.adventure.text.Component;
-import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.block.data.BlockData;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Translatable;
+import org.bukkit.UndefinedNullability;
+import org.bukkit.Utility;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.Damageable;
@@ -18,14 +23,12 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
 // Purpur start - ItemStack convenience methods
+import com.google.common.collect.Multimap;
+import java.util.Collection;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.data.BlockData;
 // Purpur end - ItemStack convenience methods
 
 /**
@@ -275,7 +278,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      * Sets the MaterialData for this stack of items
      *
      * @param data New MaterialData for this item
-     * @deprecated cast to {@link org.bukkit.inventory.meta.BlockDataMeta} and use {@link org.bukkit.inventory.meta.BlockDataMeta#setBlockData(BlockData)}
+     * @deprecated cast to {@link org.bukkit.inventory.meta.BlockDataMeta} and use {@link org.bukkit.inventory.meta.BlockDataMeta#setBlockData(org.bukkit.block.data.BlockData)}
      */
     @Deprecated(forRemoval = true, since = "1.13")
     public void setData(@Nullable MaterialData data) {
@@ -406,7 +409,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      * Adds the specified enchantments to this item stack.
      * <p>
      * This method is the same as calling {@link
-     * #addEnchantment(Enchantment, int)} for each
+     * #addEnchantment(org.bukkit.enchantments.Enchantment, int)} for each
      * element of the map.
      *
      * @param enchantments Enchantments to add
@@ -450,7 +453,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      * Adds the specified enchantments to this item stack in an unsafe manner.
      * <p>
      * This method is the same as calling {@link
-     * #addUnsafeEnchantment(Enchantment, int)} for
+     * #addUnsafeEnchantment(org.bukkit.enchantments.Enchantment, int)} for
      * each element of the map.
      *
      * @param enchantments Enchantments to add
@@ -514,7 +517,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
     public static ItemStack deserialize(@NotNull Map<String, Object> args) {
         // Parse internally, if schema_version is not defined, assume legacy and fall through to unsafe legacy deserialization logic
         if (args.containsKey("schema_version")) {
-            return Bukkit.getUnsafe().deserializeStack(args);
+            return org.bukkit.Bukkit.getUnsafe().deserializeStack(args);
         }
 
         int version = (args.containsKey("v")) ? ((Number) args.get("v")).intValue() : -1;
@@ -593,7 +596,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
     /**
      * Edits the {@link ItemMeta} of this stack.
      * <p>
-     * The {@link Consumer} must only interact
+     * The {@link java.util.function.Consumer} must only interact
      * with this stack's {@link ItemMeta} through the provided {@link ItemMeta} instance.
      * Calling this method or any other meta-related method of the {@link ItemStack} class
      * (such as {@link #getItemMeta()}, {@link #addItemFlags(ItemFlag...)}, {@link #lore()}, etc.)
@@ -603,14 +606,14 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      * @param consumer the meta consumer
      * @return {@code true} if the edit was successful, {@code false} otherwise
      */
-    public boolean editMeta(final @NotNull Consumer<? super ItemMeta> consumer) {
+    public boolean editMeta(final @NotNull java.util.function.Consumer<? super ItemMeta> consumer) {
         return editMeta(ItemMeta.class, consumer);
     }
 
     /**
      * Edits the {@link ItemMeta} of this stack if the meta is of the specified type.
      * <p>
-     * The {@link Consumer} must only interact
+     * The {@link java.util.function.Consumer} must only interact
      * with this stack's {@link ItemMeta} through the provided {@link ItemMeta} instance.
      * Calling this method or any other meta-related method of the {@link ItemStack} class
      * (such as {@link #getItemMeta()}, {@link #addItemFlags(ItemFlag...)}, {@link #lore()}, etc.)
@@ -622,7 +625,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      * @param <M> the meta type
      * @return {@code true} if the edit was successful, {@code false} otherwise
      */
-    public <M extends ItemMeta> boolean editMeta(final @NotNull Class<M> metaClass, final @NotNull Consumer<@NotNull ? super M> consumer) {
+    public <M extends ItemMeta> boolean editMeta(final @NotNull Class<M> metaClass, final @NotNull java.util.function.Consumer<@NotNull ? super M> consumer) {
         final @Nullable ItemMeta meta = this.getItemMeta();
         if (metaClass.isInstance(meta)) {
             consumer.accept((M) meta);
@@ -671,7 +674,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
     @NotNull
     @Deprecated(forRemoval = true) // Paper
     public String getTranslationKey() {
-        return this.craftDelegate.getTranslationKey();
+        return this.translationKey();
     }
 
     // Paper start
@@ -683,7 +686,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      * <p>Enchantment tables use levels in the range {@code [1, 30]}.</p>
      *
      * @param levels levels to use for enchanting
-     * @param allowTreasure whether to allow enchantments where {@link Enchantment#isTreasure()} returns true
+     * @param allowTreasure whether to allow enchantments where {@link org.bukkit.enchantments.Enchantment#isTreasure()} returns true
      * @param random {@link java.util.Random} instance to use for enchanting
      * @return enchanted copy of the provided ItemStack
      * @throws IllegalArgumentException on bad arguments
@@ -720,7 +723,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
     @NotNull
     @Override
     public net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowItem> asHoverEvent(final @NotNull java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowItem> op) {
-        return Bukkit.getServer().getItemFactory().asHoverEvent(this, op);
+        return org.bukkit.Bukkit.getServer().getItemFactory().asHoverEvent(this, op);
     }
 
     /**
@@ -730,7 +733,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      * When used in chat, make sure to follow the ItemStack rules regarding amount, type, and other properties.
      * @return display name of the {@link ItemStack}
      */
-    public @NotNull Component displayName() {
+    public net.kyori.adventure.text.@NotNull Component displayName() {
         return Bukkit.getServer().getItemFactory().displayName(this);
     }
 
@@ -785,7 +788,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
     }
 
     /**
-     * The current version byte of the item array format used in {@link #serializeItemsAsBytes(Collection)}
+     * The current version byte of the item array format used in {@link #serializeItemsAsBytes(java.util.Collection)}
      * and {@link #deserializeItemsFromBytes(byte[])} respectively.
      */
     private static final byte ARRAY_SERIALIZATION_VERSION = 1;
@@ -799,7 +802,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      * @return bytes representing the items in NBT
      * @see #serializeAsBytes()
      */
-    public static byte @NotNull [] serializeItemsAsBytes(@NotNull Collection<ItemStack> items) {
+    public static byte @NotNull [] serializeItemsAsBytes(java.util.@NotNull Collection<ItemStack> items) {
         try (final java.io.ByteArrayOutputStream outputStream = new java.io.ByteArrayOutputStream()) {
             final java.io.DataOutput output = new java.io.DataOutputStream(outputStream);
             output.writeByte(ARRAY_SERIALIZATION_VERSION);
@@ -862,7 +865,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
                 }
 
                 final byte[] itemBytes = new byte[length];
-                input.read(itemBytes);
+                input.readFully(itemBytes);
                 items[i] = ItemStack.deserializeBytes(itemBytes);
             }
             return items;
@@ -878,7 +881,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      *
      * @return Display name of Item
      * @deprecated {@link ItemStack} implements {@link net.kyori.adventure.translation.Translatable}; use that and
-     * {@link Component#translatable(net.kyori.adventure.translation.Translatable)} instead.
+     * {@link net.kyori.adventure.text.Component#translatable(net.kyori.adventure.translation.Translatable)} instead.
      */
     @Nullable
     @Deprecated
@@ -982,7 +985,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      * If the item has lore, returns it, else it will return null
      * @return The lore, or null
      */
-    public @Nullable java.util.List<Component> lore() {
+    public @Nullable java.util.List<net.kyori.adventure.text.Component> lore() {
         if (!this.hasItemMeta()) {
             return null;
         }
@@ -1016,7 +1019,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      *
      * @param lore the lore that will be set
      */
-    public void lore(@Nullable java.util.List<? extends Component> lore) {
+    public void lore(@Nullable java.util.List<? extends net.kyori.adventure.text.Component> lore) {
         ItemMeta itemMeta = getItemMeta();
         if (itemMeta == null) {
             throw new IllegalStateException("Cannot set lore on " + getType());
@@ -1168,7 +1171,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
      * @param player a player for player-specific tooltip lines
      * @return an immutable list of components (can be empty)
      */
-    public java.util.@NotNull @org.jetbrains.annotations.Unmodifiable List<Component> computeTooltipLines(final @NotNull io.papermc.paper.inventory.tooltip.TooltipContext tooltipContext, final org.bukkit.entity.@Nullable Player player) {
+    public java.util.@NotNull @org.jetbrains.annotations.Unmodifiable List<net.kyori.adventure.text.Component> computeTooltipLines(final @NotNull io.papermc.paper.inventory.tooltip.TooltipContext tooltipContext, final org.bukkit.entity.@Nullable Player player) {
         return this.craftDelegate.computeTooltipLines(tooltipContext, player);
     }
     // Paper end - expose itemstack tooltip lines

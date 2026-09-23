@@ -4,7 +4,11 @@ import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.map.*;
+import org.bukkit.map.MapCanvas;
+import org.bukkit.map.MapCursor;
+import org.bukkit.map.MapCursorCollection;
+import org.bukkit.map.MapRenderer;
+import org.bukkit.map.MapView;
 
 public class CraftMapRenderer extends MapRenderer {
 

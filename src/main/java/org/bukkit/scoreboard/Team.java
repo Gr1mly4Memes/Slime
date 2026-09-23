@@ -1,12 +1,11 @@
 package org.bukkit.scoreboard;
 
+import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 /**
  * A team on a scoreboard that has a common display theme and other
@@ -234,7 +233,7 @@ public interface Team extends net.kyori.adventure.audience.ForwardingAudience { 
      *
      * @return the current name tag visibility for the team
      * @throws IllegalArgumentException if this team has been unregistered
-     * @deprecated see {@link #getOption(Option)}
+     * @deprecated see {@link #getOption(Team.Option)}
      */
     @Deprecated(since = "1.9")
     @NotNull
@@ -245,7 +244,7 @@ public interface Team extends net.kyori.adventure.audience.ForwardingAudience { 
      *
      * @param visibility The nameTagVisibility to set
      * @throws IllegalArgumentException if this team has been unregistered
-     * @deprecated see {@link #setOption(Option, OptionStatus)}
+     * @deprecated see {@link #setOption(Team.Option, Team.OptionStatus)}
      */
     @Deprecated(since = "1.9")
     void setNameTagVisibility(@NotNull NameTagVisibility visibility);

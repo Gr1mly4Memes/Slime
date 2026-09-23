@@ -1,11 +1,10 @@
 package org.bukkit.command;
 
 import com.google.common.base.Preconditions;
+import java.util.List;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Represents a {@link Command} belonging to a plugin
@@ -128,7 +127,7 @@ public final class PluginCommand extends Command implements PluginIdentifiableCo
      */
     @NotNull
     @Override
-    public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws CommandException, IllegalArgumentException {
+    public java.util.List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws CommandException, IllegalArgumentException {
         Preconditions.checkArgument(sender != null, "Sender cannot be null");
         Preconditions.checkArgument(args != null, "Arguments cannot be null");
         Preconditions.checkArgument(alias != null, "Alias cannot be null");

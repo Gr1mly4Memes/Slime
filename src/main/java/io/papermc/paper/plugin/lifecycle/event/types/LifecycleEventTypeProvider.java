@@ -2,10 +2,9 @@ package io.papermc.paper.plugin.lifecycle.event.types;
 
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEvent;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventOwner;
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.Optional;
 import java.util.ServiceLoader;
+import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 interface LifecycleEventTypeProvider {

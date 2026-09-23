@@ -20,12 +20,12 @@ public class CraftTallSeagrass extends CraftBlockData implements Bisected {
     }
 
     @Override
-    public Half getHalf() {
-        return this.get(HALF, Half.class);
+    public Bisected.Half getHalf() {
+        return this.get(HALF, Bisected.Half.class);
     }
 
     @Override
-    public void setHalf(final Half half) {
+    public void setHalf(final Bisected.Half half) {
         Preconditions.checkArgument(half != null, "half cannot be null!");
         this.set(HALF, half);
     }

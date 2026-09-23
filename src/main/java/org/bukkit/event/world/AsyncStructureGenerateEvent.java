@@ -1,6 +1,9 @@
 package org.bukkit.event.world;
 
 import com.google.common.base.Preconditions;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;
@@ -12,10 +15,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This event will sometimes fire synchronously, depending on how it was

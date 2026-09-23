@@ -1,16 +1,22 @@
 package org.bukkit.metadata;
 
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator; // Paper
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
 
 /**
  * @deprecated This system is extremely misleading and does not cleanup values for metadatable entities that have been
  * removed. It is recommended that when wanting persistent metadata, you use {@link org.bukkit.persistence.PersistentDataContainer}.
  * <p>
- * If you want temporary values on an entity, use the entity lifecycle events and a {@link Map} of your own. (See {@link com.destroystokyo.paper.event.entity.EntityAddToWorldEvent} and {@link com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent})
+ * If you want temporary values on an entity, use the entity lifecycle events and a {@link java.util.Map} of your own. (See {@link com.destroystokyo.paper.event.entity.EntityAddToWorldEvent} and {@link com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent})
  */
 @Deprecated
 public abstract class MetadataStoreBase<T> {
@@ -97,7 +103,7 @@ public abstract class MetadataStoreBase<T> {
      * @param owningPlugin the plugin attempting to remove a metadata item.
      * @throws IllegalArgumentException If plugin is null
      * @see MetadataStore#removeMetadata(Object, String,
-     *     Plugin)
+     *     org.bukkit.plugin.Plugin)
      */
     public void removeMetadata(@NotNull T subject, @NotNull String metadataKey, @NotNull Plugin owningPlugin) { // Paper
         Preconditions.checkArgument(owningPlugin != null, "Plugin cannot be null");
@@ -121,7 +127,7 @@ public abstract class MetadataStoreBase<T> {
      *
      * @param owningPlugin the plugin requesting the invalidation.
      * @throws IllegalArgumentException If plugin is null
-     * @see MetadataStore#invalidateAll(Plugin)
+     * @see MetadataStore#invalidateAll(org.bukkit.plugin.Plugin)
      */
     public void invalidateAll(@NotNull Plugin owningPlugin) { // Paper
         Preconditions.checkArgument(owningPlugin != null, "Plugin cannot be null");

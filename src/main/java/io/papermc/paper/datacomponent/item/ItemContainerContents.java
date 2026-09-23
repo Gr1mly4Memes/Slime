@@ -1,19 +1,16 @@
 package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
+import java.util.List;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Holds the contents of an item container.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#CONTAINER
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface ItemContainerContents {
 
@@ -23,7 +20,7 @@ public interface ItemContainerContents {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder containerContents() {
+    static ItemContainerContents.Builder containerContents() {
         return ItemComponentTypesBridge.bridge().itemContainerContents();
     }
 

@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.inventory;
 import com.google.common.base.Preconditions;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import org.bukkit.GameMode;
@@ -17,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class CraftInventoryView<T extends AbstractContainerMenu, I extends Inventory> extends CraftAbstractInventoryView {
     protected final T container;
-    private final CraftHumanEntity player;
+    private CraftHumanEntity player;
     private final I viewing;
     private final String originalTitle;
     private String title;
@@ -47,6 +48,11 @@ public class CraftInventoryView<T extends AbstractContainerMenu, I extends Inven
     }
 
     @Override
+    public void setPlayer(HumanEntity player) {
+        this.player = (CraftHumanEntity) player;
+    }
+
+    @Override
     public InventoryType getType() {
         InventoryType type = this.viewing.getType();
         if (type == InventoryType.CRAFTING && this.player.getGameMode() == GameMode.CREATIVE) {
@@ -61,7 +67,7 @@ public class CraftInventoryView<T extends AbstractContainerMenu, I extends Inven
         if (slot >= 0) {
             this.container.getSlot(slot).set(stack);
         } else {
-            this.player.getHandle().drop(stack, false);
+            this.player.getHandle().drop(stack, false, Prediction.PREDICTED);
         }
     }
 
@@ -70,7 +76,7 @@ public class CraftInventoryView<T extends AbstractContainerMenu, I extends Inven
         if (slot < 0) {
             return null;
         }
-        return CraftItemStack.asCraftMirror(this.container.getSlot(slot).getItem());
+        return CraftItemStack.asBukkitMirror(this.container.getSlot(slot).getItem());
     }
 
     @Override

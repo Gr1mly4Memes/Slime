@@ -1,13 +1,12 @@
 package org.bukkit.event.entity;
 
+import java.util.Collections;
+import java.util.List;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Called when an entity is about to be replaced by another entity.

@@ -1,13 +1,12 @@
 package org.bukkit.craftbukkit.util;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import org.bukkit.entity.Player;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import org.bukkit.entity.Player;
 
 public class LazyPlayerSet extends LazyHashSet<Player> {
 

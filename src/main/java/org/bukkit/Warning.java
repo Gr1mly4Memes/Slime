@@ -1,15 +1,14 @@
 package org.bukkit;
 
 import com.google.common.collect.ImmutableMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Locale;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This designates the warning state for a specific item.
@@ -24,7 +23,7 @@ public @interface Warning {
     /**
      * This represents the states that server verbose for warnings may be.
      */
-    public enum WarningState {
+    enum WarningState {
 
         /**
          * Indicates all warnings should be printed for deprecated items.
@@ -101,14 +100,23 @@ public @interface Warning {
      * This sets if the deprecation warnings when registering events gets
      * printed when the setting is in the default state.
      *
-     * @return false normally, or true to encourage warning printout
+     * @return {@code false} normally, or {@code true} to encourage warning printout
      */
     boolean value() default false;
 
     /**
      * This can provide detailed information on why the event is deprecated.
      *
-     * @return The reason an event is deprecated
+     * @return the reason an event is deprecated
      */
     String reason() default "";
+
+    /**
+     * This indicate if the deprecation warnings should propagate to sub events or not.
+     * The default is {@code true} only to maintains compatibility but it's recommended
+     * to use {@code false} for more explicit behavior.
+     *
+     * @return whether to propagate the deprecation warnings
+     */
+    boolean propagate() default true;
 }

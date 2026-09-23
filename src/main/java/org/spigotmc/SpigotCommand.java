@@ -1,12 +1,11 @@
 package org.spigotmc;
 
+import java.io.File;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-
-import java.io.File;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -37,7 +36,7 @@ public class SpigotCommand extends Command {
         );
 
         MinecraftServer console = MinecraftServer.getServer();
-        SpigotConfig.init((File) console.options.valueOf("spigot-settings"));
+        org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings"));
         for (ServerLevel world : console.getAllLevels()) {
             world.spigotConfig.init();
         }

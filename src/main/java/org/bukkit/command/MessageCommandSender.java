@@ -6,11 +6,12 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.UUID;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * For when all you care about is just messaging
@@ -47,7 +48,7 @@ public interface MessageCommandSender extends CommandSender {
 
     // Paper start
     @Override
-    default net.kyori.adventure.text.@NotNull Component name() {
+    default net.kyori.adventure.text.@org.jetbrains.annotations.NotNull Component name() {
         throw new UnsupportedOperationException();
     }
     // Paper end

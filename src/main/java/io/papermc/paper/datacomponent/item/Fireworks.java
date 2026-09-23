@@ -1,20 +1,17 @@
 package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
+import java.util.List;
 import org.bukkit.FireworkEffect;
 import org.checkerframework.common.value.qual.IntRange;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Stores all explosions crafted into a Firework Rocket, as well as flight duration.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#FIREWORKS
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface Fireworks {
 
@@ -24,7 +21,7 @@ public interface Fireworks {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder fireworks() {
+    static Fireworks.Builder fireworks() {
         return ItemComponentTypesBridge.bridge().fireworks();
     }
 

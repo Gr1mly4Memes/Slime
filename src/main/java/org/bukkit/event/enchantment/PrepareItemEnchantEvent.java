@@ -29,7 +29,7 @@ public class PrepareItemEnchantEvent extends InventoryEvent implements Cancellab
     private boolean cancelled;
 
     @ApiStatus.Internal
-    public PrepareItemEnchantEvent(@NotNull final Player enchanter, @NotNull EnchantmentView view, @NotNull final Block table, @NotNull final ItemStack item, @Nullable final EnchantmentOffer @NotNull [] offers, final int bonus) { // Paper - offers can contain null values
+    public PrepareItemEnchantEvent(@NotNull final Player enchanter, @NotNull EnchantmentView view, @NotNull final Block table, @NotNull final ItemStack item, @org.jetbrains.annotations.Nullable final EnchantmentOffer @NotNull [] offers, final int bonus) { // Paper - offers can contain null values
         super(view);
         this.enchanter = enchanter;
         this.table = table;

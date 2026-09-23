@@ -93,15 +93,15 @@ public final class PaperSkinParts implements SkinParts {
 
     private static String toString(final SkinParts parts, final String name) {
         return new StringJoiner(", ", name + "[", "]")
-                .add("raw=" + parts.getRaw())
-                .add("cape=" + parts.hasCapeEnabled())
-                .add("jacket=" + parts.hasJacketEnabled())
-                .add("leftSleeve=" + parts.hasLeftSleeveEnabled())
-                .add("rightSleeve=" + parts.hasRightSleeveEnabled())
-                .add("leftPants=" + parts.hasLeftPantsEnabled())
-                .add("rightPants=" + parts.hasRightPantsEnabled())
-                .add("hats=" + parts.hasHatsEnabled())
-                .toString();
+            .add("raw=" + parts.getRaw())
+            .add("cape=" + parts.hasCapeEnabled())
+            .add("jacket=" + parts.hasJacketEnabled())
+            .add("leftSleeve=" + parts.hasLeftSleeveEnabled())
+            .add("rightSleeve=" + parts.hasRightSleeveEnabled())
+            .add("leftPants=" + parts.hasLeftPantsEnabled())
+            .add("rightPants=" + parts.hasRightPantsEnabled())
+            .add("hats=" + parts.hasHatsEnabled())
+            .toString();
     }
 
     public static final class Mutable implements SkinParts.Mutable {

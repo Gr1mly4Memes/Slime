@@ -1,12 +1,11 @@
 package org.bukkit.boss;
 
+import java.util.Collection;
 import org.bukkit.Location;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * Represents a dragon battle state for a world with an end environment.
@@ -172,18 +171,18 @@ public interface DragonBattle {
     void spawnNewGateway(@NotNull io.papermc.paper.math.Position position);
 
     /**
-     * Gets the {@link EnderCrystal}s being used to respawn the dragon. If no respawn
+     * Gets the {@link org.bukkit.entity.EnderCrystal}s being used to respawn the dragon. If no respawn
      * is ongoing, the list will be empty.
      *
      * @return the respawn crystals
      */
-    java.util.@NotNull @org.jetbrains.annotations.Unmodifiable List<EnderCrystal> getRespawnCrystals();
+    java.util.@NotNull @org.jetbrains.annotations.Unmodifiable List<org.bukkit.entity.EnderCrystal> getRespawnCrystals();
 
     /**
-     * Gets the {@link EnderCrystal}s on top of the pillars that heal the dragon.
+     * Gets the {@link org.bukkit.entity.EnderCrystal}s on top of the pillars that heal the dragon.
      *
      * @return the healing crystals
      */
-    java.util.@NotNull @org.jetbrains.annotations.Unmodifiable List<EnderCrystal> getHealingCrystals();
+    java.util.@NotNull @org.jetbrains.annotations.Unmodifiable List<org.bukkit.entity.EnderCrystal> getHealingCrystals();
     // Paper end
 }

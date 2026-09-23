@@ -4,18 +4,16 @@ import io.papermc.paper.datacomponent.DataComponentBuilder;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * Holds the trims applied to an item.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#TRIM
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface ItemArmorTrim  {
 
     @Contract(value = "_ -> new", pure = true)
-    static Builder itemArmorTrim(final ArmorTrim armorTrim) {
+    static ItemArmorTrim.Builder itemArmorTrim(final ArmorTrim armorTrim) {
         return ItemComponentTypesBridge.bridge().itemArmorTrim(armorTrim);
     }
 

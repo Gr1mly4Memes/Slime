@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.block;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.bukkit.Bukkit;
@@ -8,12 +9,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Furnace;
 import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.FurnaceInventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
-
-import java.util.Map;
 
 public abstract class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends CraftContainer<T> implements Furnace {
 
@@ -90,7 +91,6 @@ public abstract class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends
     @Override
     public abstract CraftFurnace<T> copy(Location location);
 
-    // Paper start - cook speed multiplier API
     @Override
     public double getCookSpeedMultiplier() {
         return this.getSnapshot().cookSpeedMultiplier;
@@ -102,7 +102,7 @@ public abstract class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends
         com.google.common.base.Preconditions.checkArgument(multiplier <= 200, "Furnace speed multiplier cannot more than 200");
         T snapshot = this.getSnapshot();
         snapshot.cookSpeedMultiplier = multiplier;
-        snapshot.cookingTotalTime = AbstractFurnaceBlockEntity.getTotalCookTime(this.isPlaced() ? this.world.getHandle() : null, snapshot, snapshot.recipeType, snapshot.cookSpeedMultiplier); // Update the snapshot's current total cook time to scale with the newly set multiplier
+        snapshot.cookingTotalTime = AbstractFurnaceBlockEntity.getTotalCookTime(this.isPlaced() ? this.world.getHandle() : null, snapshot); // Update the snapshot's current total cook time to scale with the newly set multiplier
     }
 
     @Override
@@ -128,7 +128,7 @@ public abstract class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends
     }
 
     @Override
-    public void setRecipesUsed(Map<org.bukkit.inventory.CookingRecipe<?>, Integer> recipesUsed) {
+    public void setRecipesUsed(java.util.Map<org.bukkit.inventory.CookingRecipe<?>, Integer> recipesUsed) {
         this.getSnapshot().recipesUsed.clear();
         recipesUsed.forEach((recipe, integer) -> {
             if (integer != null) {
@@ -136,5 +136,4 @@ public abstract class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends
             }
         });
     }
-    // Paper end
 }

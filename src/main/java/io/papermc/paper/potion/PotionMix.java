@@ -1,20 +1,22 @@
 package io.papermc.paper.potion;
 
+import java.util.Objects;
+import java.util.function.Predicate;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemType;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Objects;
-import java.util.function.Predicate;
-
 /**
  * Represents a potion mix made in a Brewing Stand.
+ *
+ * @deprecated fully replaced by {@link org.bukkit.inventory.BrewingRecipe}
  */
 @NullMarked
+@Deprecated(since = "26.3", forRemoval = true)
 public final class PotionMix implements Keyed {
 
     private final NamespacedKey key;

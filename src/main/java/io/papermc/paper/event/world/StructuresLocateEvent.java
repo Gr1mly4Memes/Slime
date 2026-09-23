@@ -1,6 +1,8 @@
 package io.papermc.paper.event.world;
 
 import io.papermc.paper.math.Position;
+import java.util.Collections;
+import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.Cancellable;
@@ -12,9 +14,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Called <b>before</b> a set of configured structures is located.

@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.WeatheringCopperDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,8 +14,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -51,23 +50,23 @@ public class CraftWeatheringCopperDoor extends CraftBlockData implements Door {
     }
 
     @Override
-    public Half getHalf() {
-        return this.get(HALF, Half.class);
+    public org.bukkit.block.data.Bisected.Half getHalf() {
+        return this.get(HALF, org.bukkit.block.data.Bisected.Half.class);
     }
 
     @Override
-    public void setHalf(final Half half) {
+    public void setHalf(final org.bukkit.block.data.Bisected.Half half) {
         Preconditions.checkArgument(half != null, "half cannot be null!");
         this.set(HALF, half);
     }
 
     @Override
-    public Hinge getHinge() {
-        return this.get(HINGE, Hinge.class);
+    public Door.Hinge getHinge() {
+        return this.get(HINGE, Door.Hinge.class);
     }
 
     @Override
-    public void setHinge(final Hinge hinge) {
+    public void setHinge(final Door.Hinge hinge) {
         Preconditions.checkArgument(hinge != null, "hinge cannot be null!");
         this.set(HINGE, hinge);
     }

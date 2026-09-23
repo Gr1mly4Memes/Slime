@@ -1,11 +1,10 @@
 package io.papermc.paper.world.flag;
 
+import java.util.Set;
 import org.bukkit.FeatureFlag;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 /**
  * Implemented by types in built-in registries that are controlled by {@link FeatureFlag FeatureFlags}.

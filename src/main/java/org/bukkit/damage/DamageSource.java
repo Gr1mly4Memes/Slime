@@ -110,10 +110,10 @@ public interface DamageSource {
     public Pointers getDamageContext();
 
     /**
-     * Create a new {@link Builder}.
+     * Create a new {@link DamageSource.Builder}.
      *
      * @param damageType the {@link DamageType} to use
-     * @return a {@link Builder}
+     * @return a {@link DamageSource.Builder}
      */
     @NotNull
     public static Builder builder(@NotNull DamageType damageType) {
@@ -157,7 +157,7 @@ public interface DamageSource {
         public Builder withDamageLocation(@NotNull Location location);
 
         /**
-         * Configures a builder for the {@link Pointers} used for plugin-provided damage context.
+         * Configures a builder for the {@link net.kyori.adventure.pointer.Pointers} used for plugin-provided damage context.
          *
          * @param consumer a consumer
          * @return this instance. Allows for chained method calls

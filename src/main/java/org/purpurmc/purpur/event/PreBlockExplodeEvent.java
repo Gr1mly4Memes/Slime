@@ -7,9 +7,8 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.NullMarked;
-
 import java.util.Collections;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Called before a block's explosion is processed

@@ -593,19 +593,27 @@ public class Metrics {
             boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
             // Only start Metrics, if it's enabled in the config
             if (config.getBoolean("enabled", true)) {
-                Metrics metrics = new Metrics("Slime", serverUUID, logFailedRequests, Bukkit.getLogger()); // Purpur - Purpur config files // Slime - rebrand
+                Metrics metrics = new Metrics("Paper", serverUUID, logFailedRequests, Bukkit.getLogger());
 
-                metrics.addCustomChart(new SimplePie("minecraft_version", () -> {
+                metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
                     String minecraftVersion = Bukkit.getVersion();
                     minecraftVersion = minecraftVersion.substring(minecraftVersion.indexOf("MC: ") + 4, minecraftVersion.length() - 1);
                     return minecraftVersion;
                 }));
 
-                metrics.addCustomChart(new SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
-                metrics.addCustomChart(new SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() ? "bungee" : "offline"))); // Purpur - Purpur config files
-                metrics.addCustomChart(new SimplePie("slime_version", () -> (org.bukkit.craftbukkit.Main.class.getPackage().getImplementationVersion() != null) ? org.bukkit.craftbukkit.Main.class.getPackage().getImplementationVersion() : "unknown")); // Purpur - Purpur config files
+                metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
+                metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
+                final String paperVersion;
+                final String implVersion = org.bukkit.craftbukkit.Main.class.getPackage().getImplementationVersion();
+                if (implVersion != null) {
+                    final String buildOrHash = implVersion.substring(implVersion.lastIndexOf('-') + 1);
+                    paperVersion = "git-Paper-%s-%s".formatted(Bukkit.getServer().getMinecraftVersion(), buildOrHash);
+                } else {
+                    paperVersion = "unknown";
+                }
+                metrics.addCustomChart(new Metrics.SimplePie("paper_version", () -> paperVersion));
 
-                metrics.addCustomChart(new DrilldownPie("java_version", () -> {
+                metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
                     Map<String, Map<String, Integer>> map = new HashMap<>();
                     String javaVersion = System.getProperty("java.version");
                     Map<String, Integer> entry = new HashMap<>();
@@ -636,7 +644,7 @@ public class Metrics {
                     return map;
                 }));
 
-                metrics.addCustomChart(new DrilldownPie("legacy_plugins", () -> {
+                metrics.addCustomChart(new Metrics.DrilldownPie("legacy_plugins", () -> {
                     Map<String, Map<String, Integer>> map = new HashMap<>();
 
                     // count legacy plugins

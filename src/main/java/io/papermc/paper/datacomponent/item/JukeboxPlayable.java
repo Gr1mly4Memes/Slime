@@ -4,18 +4,16 @@ import io.papermc.paper.datacomponent.DataComponentBuilder;
 import org.bukkit.JukeboxSong;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * Holds the jukebox song for an item.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#JUKEBOX_PLAYABLE
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface JukeboxPlayable  {
 
     @Contract(value = "_ -> new", pure = true)
-    static Builder jukeboxPlayable(final JukeboxSong song) {
+    static JukeboxPlayable.Builder jukeboxPlayable(final JukeboxSong song) {
         return ItemComponentTypesBridge.bridge().jukeboxPlayable(song);
     }
 

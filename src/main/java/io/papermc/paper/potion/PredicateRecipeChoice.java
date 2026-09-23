@@ -1,11 +1,10 @@
 package io.papermc.paper.potion;
 
+import java.util.function.Predicate;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.function.Predicate;
 
 @ApiStatus.Internal
 @NullMarked

@@ -1,13 +1,12 @@
 package io.papermc.paper.util;
 
-import net.kyori.adventure.util.Ticks;
-import org.jspecify.annotations.NullMarked;
-
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalUnit;
 import java.util.Objects;
+import net.kyori.adventure.util.Ticks;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A TemporalUnit that represents the target length of one server tick. This is defined

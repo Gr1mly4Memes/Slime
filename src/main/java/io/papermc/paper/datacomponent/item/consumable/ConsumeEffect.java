@@ -1,19 +1,16 @@
 package io.papermc.paper.datacomponent.item.consumable;
 
 import io.papermc.paper.registry.set.RegistryKeySet;
+import java.util.List;
 import net.kyori.adventure.key.Key;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Effect that occurs when consuming an item.
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface ConsumeEffect {
 
@@ -22,10 +19,23 @@ public interface ConsumeEffect {
      *
      * @param diameter diameter of random teleportation
      * @return the effect instance
+     * @see #teleportRandomlyEffect(float, boolean)
      */
     @Contract(value = "_ -> new", pure = true)
     static TeleportRandomly teleportRandomlyEffect(final float diameter) {
-        return ConsumableTypesBridge.bridge().teleportRandomlyEffect(diameter);
+        return teleportRandomlyEffect(diameter, true);
+    }
+
+    /**
+     * Creates a consume effect that randomly teleports the entity on consumption.
+     *
+     * @param diameter diameter of random teleportation
+     * @param directionalParticles show a particle trail in the direction of the teleportation
+     * @return the effect instance
+     */
+    @Contract(value = "_, _ -> new", pure = true)
+    static TeleportRandomly teleportRandomlyEffect(final float diameter, final boolean directionalParticles) {
+        return ConsumableTypesBridge.bridge().teleportRandomlyEffect(diameter, directionalParticles);
     }
 
     /**
@@ -84,6 +94,13 @@ public interface ConsumeEffect {
          * @return teleportation diameter
          */
         float diameter();
+
+        /**
+         * Checks whether to show a particle trail in the direction of the teleportation.
+         *
+         * @return {@code true} if the particle trail should be shown
+         */
+        boolean directionalParticles();
     }
 
     /**

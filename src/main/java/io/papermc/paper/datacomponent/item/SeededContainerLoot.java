@@ -4,13 +4,11 @@ import io.papermc.paper.datacomponent.DataComponentBuilder;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * Holds the loot table and seed for a container.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#CONTAINER_LOOT
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface SeededContainerLoot {
 
@@ -20,7 +18,7 @@ public interface SeededContainerLoot {
     }
 
     @Contract(value = "_ -> new", pure = true)
-    static Builder seededContainerLoot(final Key lootTableKey) {
+    static SeededContainerLoot.Builder seededContainerLoot(final Key lootTableKey) {
         return ItemComponentTypesBridge.bridge().seededContainerLoot(lootTableKey);
     }
 

@@ -1,17 +1,54 @@
 package org.bukkit.entity;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.youer.api.ServerAPI;
 import io.papermc.paper.InternalAPIBridge;
-import org.bukkit.*;
-import org.bukkit.entity.boat.*;
-import org.bukkit.entity.minecart.*;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntitySpawnReason;
+import org.bukkit.Keyed;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Translatable;
+import org.bukkit.World;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.entity.boat.AcaciaBoat;
+import org.bukkit.entity.boat.AcaciaChestBoat;
+import org.bukkit.entity.boat.BambooChestRaft;
+import org.bukkit.entity.boat.BambooRaft;
+import org.bukkit.entity.boat.BirchBoat;
+import org.bukkit.entity.boat.BirchChestBoat;
+import org.bukkit.entity.boat.CherryBoat;
+import org.bukkit.entity.boat.CherryChestBoat;
+import org.bukkit.entity.boat.DarkOakBoat;
+import org.bukkit.entity.boat.DarkOakChestBoat;
+import org.bukkit.entity.boat.JungleBoat;
+import org.bukkit.entity.boat.JungleChestBoat;
+import org.bukkit.entity.boat.MangroveBoat;
+import org.bukkit.entity.boat.MangroveChestBoat;
+import org.bukkit.entity.boat.OakBoat;
+import org.bukkit.entity.boat.OakChestBoat;
+import org.bukkit.entity.boat.PaleOakBoat;
+import org.bukkit.entity.boat.PaleOakChestBoat;
+import org.bukkit.entity.boat.PoplarBoat;
+import org.bukkit.entity.boat.PoplarChestBoat;
+import org.bukkit.entity.boat.SpruceBoat;
+import org.bukkit.entity.boat.SpruceChestBoat;
+import org.bukkit.entity.minecart.CommandMinecart;
+import org.bukkit.entity.minecart.ExplosiveMinecart;
+import org.bukkit.entity.minecart.HopperMinecart;
+import org.bukkit.entity.minecart.PoweredMinecart;
+import org.bukkit.entity.minecart.RideableMinecart;
+import org.bukkit.entity.minecart.SpawnerMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum EntityType implements Keyed, Translatable, net.kyori.adventure.translation.Translatable, io.papermc.paper.world.flag.FeatureDependant { // Paper - translatable
 
@@ -49,6 +86,7 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
     COW("cow", Cow.class, 92),
     CREAKING("creaking", Creaking.class, -1),
     CREEPER("creeper", Creeper.class, 50),
+    CUSHION("cushion", Cushion.class, -1),
     DARK_OAK_BOAT("dark_oak_boat", DarkOakBoat.class, -1),
     DARK_OAK_CHEST_BOAT("dark_oak_chest_boat", DarkOakChestBoat.class, -1),
     DOLPHIN("dolphin", Dolphin.class, -1),
@@ -124,6 +162,8 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
     PILLAGER("pillager", Pillager.class, -1),
     PLAYER("player", Player.class, -1, false),
     POLAR_BEAR("polar_bear", PolarBear.class, 102),
+    POPLAR_BOAT("poplar_boat", PoplarBoat.class, -1),
+    POPLAR_CHEST_BOAT("poplar_chest_boat", PoplarChestBoat.class, -1),
     PUFFERFISH("pufferfish", PufferFish.class, -1),
     RABBIT("rabbit", Rabbit.class, 101),
     RAVAGER("ravager", Ravager.class, -1),
@@ -184,7 +224,9 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
     private final Class<? extends Entity> clazz;
     private final short typeId;
     private final boolean independent, living;
-    private final NamespacedKey key;
+    private NamespacedKey key;
+    private net.minecraft.world.entity.EntityType<?> handleType;
+    private Function<Location, ? extends net.minecraft.world.entity.Entity> factory;
 
     private static final Map<String, EntityType> NAME_MAP = new HashMap<String, EntityType>();
     private static final Map<Short, EntityType> ID_MAP = new HashMap<Short, EntityType>();
@@ -349,4 +391,25 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
         return InternalAPIBridge.get().getDefaultEntityAttributes(this.key);
     }
     // Paper end
+
+    public void hookForgeEntity(Identifier location, net.minecraft.world.entity.EntityType<?> entityType) {
+        this.key = CraftNamespacedKey.fromMinecraft(location);
+        this.handleType = entityType;
+        NAME_MAP.put(name.toLowerCase(), this);
+        ID_MAP.put(typeId, this);
+        ServerAPI.entityTypeMap.put(entityType, name);
+        ServerAPI.entityTypeMap0.put(entityType, this);
+        this.factory = bukkitLoc -> {
+            if (bukkitLoc != null && bukkitLoc.getWorld() != null) {
+                ServerLevel serverLevel = ((CraftWorld) bukkitLoc.getWorld()).getHandle();
+                net.minecraft.world.entity.Entity entity = handleType.create(serverLevel, EntitySpawnReason.COMMAND);
+                if (entity != null) {
+                    entity.absSnapTo(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), bukkitLoc.getYaw(), bukkitLoc.getPitch());
+                }
+                return entity;
+            } else {
+                return null;
+            }
+        };
+    }
 }

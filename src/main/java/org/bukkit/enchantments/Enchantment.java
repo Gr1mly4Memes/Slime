@@ -2,6 +2,7 @@ package org.bukkit.enchantments;
 
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
+import java.util.Locale;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
 import org.bukkit.Keyed;
@@ -13,8 +14,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
 
 /**
  * The various type of enchantments that may be added to armour or weapons
@@ -273,7 +272,7 @@ public abstract class Enchantment implements Keyed, Translatable, net.kyori.adve
      * @deprecated enchantment groupings are now managed by tags, not categories
      */
     @NotNull
-    @Deprecated(since = "1.20.5", forRemoval = true) @Contract("-> fail") // Paper
+    @Deprecated(since = "1.20.5", forRemoval = true) @org.jetbrains.annotations.Contract("-> fail") // Paper
     public abstract EnchantmentTarget getItemTarget();
 
     /**
@@ -456,7 +455,7 @@ public abstract class Enchantment implements Keyed, Translatable, net.kyori.adve
      *
      * @return the registry key set.
      */
-    @ApiStatus.Experimental
+    @org.jetbrains.annotations.ApiStatus.Experimental
     public abstract io.papermc.paper.registry.set.@NotNull RegistryKeySet<org.bukkit.inventory.ItemType> getSupportedItems();
 
     /**
@@ -469,7 +468,7 @@ public abstract class Enchantment implements Keyed, Translatable, net.kyori.adve
      *
      * @return the registry key set.
      */
-    @ApiStatus.Experimental
+    @org.jetbrains.annotations.ApiStatus.Experimental
     public abstract io.papermc.paper.registry.set.@Nullable RegistryKeySet<org.bukkit.inventory.ItemType> getPrimaryItems();
 
     /**
@@ -524,7 +523,7 @@ public abstract class Enchantment implements Keyed, Translatable, net.kyori.adve
      *
      * @param name Name to fetch
      * @return Resulting Enchantment, or null if not found
-     * @deprecated enchantments are badly named, use {@link #getByKey(NamespacedKey)}.
+     * @deprecated enchantments are badly named, use {@link #getByKey(org.bukkit.NamespacedKey)}.
      */
     @Deprecated(since = "1.13")
     @Contract("null -> null")

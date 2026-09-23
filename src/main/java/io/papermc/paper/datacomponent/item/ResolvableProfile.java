@@ -3,6 +3,10 @@ package io.papermc.paper.datacomponent.item;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import io.papermc.paper.datacomponent.DataComponentBuilder;
+import java.util.Collection;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.object.PlayerHeadObjectContents;
 import org.bukkit.profile.PlayerTextures;
@@ -10,20 +14,13 @@ import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 /**
  * Holds player profile data that can be resolved to a {@link PlayerProfile}.
  *
  * @see io.papermc.paper.datacomponent.DataComponentTypes#PROFILE
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface ResolvableProfile extends PlayerHeadObjectContents.SkinSource {
 
@@ -33,7 +30,7 @@ public interface ResolvableProfile extends PlayerHeadObjectContents.SkinSource {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder resolvableProfile() {
+    static ResolvableProfile.Builder resolvableProfile() {
         return ItemComponentTypesBridge.bridge().resolvableProfile();
     }
 

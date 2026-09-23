@@ -1,5 +1,7 @@
 package io.papermc.paper.event.entity;
 
+import java.util.Collections;
+import java.util.Map;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityEvent;
@@ -9,9 +11,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * Called whenever a change to an entity's equipment has been detected. This event is called after effects from

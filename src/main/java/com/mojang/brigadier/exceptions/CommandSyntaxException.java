@@ -4,9 +4,6 @@
 package com.mojang.brigadier.exceptions;
 
 import com.mojang.brigadier.Message;
-import com.mojang.brigadier.exceptions.BuiltInExceptionProvider;
-import com.mojang.brigadier.exceptions.BuiltInExceptions;
-import com.mojang.brigadier.exceptions.CommandExceptionType;
 
 public class CommandSyntaxException extends Exception implements net.kyori.adventure.util.ComponentMessageThrowable { // Paper - Brigadier API
     public static final int CONTEXT_AMOUNT = 10;

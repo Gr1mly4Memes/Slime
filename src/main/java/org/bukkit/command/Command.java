@@ -2,6 +2,11 @@ package org.bukkit.command;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.mohistmc.youer.api.ColorAPI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRules;
 import org.bukkit.Location;
@@ -13,11 +18,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Represents a Command, which executes various tasks upon user input
@@ -33,11 +33,6 @@ public abstract class Command {
     protected String usageMessage;
     private String permission;
     private net.kyori.adventure.text.Component permissionMessage; // Paper
-    /**
-     * @deprecated Timings will be removed in the future
-     */
-    @Deprecated(forRemoval = true)
-    public co.aikar.timings.Timing timings; // Paper
     /**
      * @deprecated Timings will be removed in the future
      */
@@ -404,7 +399,7 @@ public abstract class Command {
     @Deprecated(since = "1.20.4")
     @NotNull
     public Command setPermissionMessage(@Nullable String permissionMessage) {
-        this.permissionMessage = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserializeOrNull(permissionMessage); // Paper
+        this.permissionMessage = ColorAPI.adventureOrNull(permissionMessage); // Paper
         return this;
     }
 
@@ -459,7 +454,7 @@ public abstract class Command {
 
     public static void broadcastCommandMessage(@NotNull CommandSender source, @NotNull String message, boolean sendToSource) {
         // Paper start
-        broadcastCommandMessage(source, net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(message), sendToSource);
+        broadcastCommandMessage(source, ColorAPI.adventure(message), sendToSource);
     }
 
     public static void broadcastCommandMessage(@NotNull CommandSender source, net.kyori.adventure.text.@NotNull Component message) {

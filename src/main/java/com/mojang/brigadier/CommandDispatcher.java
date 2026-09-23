@@ -15,7 +15,16 @@ import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -535,14 +544,10 @@ public class CommandDispatcher<S> {
         int i = 0;
         for (final CommandNode<S> node : parent.getChildren()) {
             CompletableFuture<Suggestions> future = Suggestions.empty();
-            // Paper start - Don't suggest if the requirement isn't met
-            if (parent != this.root || node.canUse(context.getSource())) {
             try {
-                future = node.listSuggestions(context.build(truncatedInput), new SuggestionsBuilder(truncatedInput, truncatedInputLowerCase, start)); // CraftBukkit
+                if (node.canUse(nodeBeforeCursor.context.getSource())) future = node.listSuggestions(nodeBeforeCursor.context.build(truncatedInput), new SuggestionsBuilder(truncatedInput, truncatedInputLowerCase, start)); // Paper - Don't suggest if the requirement isn't met
             } catch (final CommandSyntaxException ignored) {
             }
-            }
-            // Paper end - Don't suggest if the requirement isn't met
             futures[i++] = future;
         }
 

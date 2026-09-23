@@ -5,18 +5,17 @@ import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.keys.ItemTypeKeys;
 import io.papermc.paper.registry.set.RegistryKeySet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import org.bukkit.Material;
 import org.bukkit.Registry;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
 /**
- * This class extends {@link MaterialChoice} to maintain
+ * This class extends {@link org.bukkit.inventory.RecipeChoice.MaterialChoice} to maintain
  * compatibility when instances are returned from recipes.
  */
 @NullMarked

@@ -1,13 +1,36 @@
 package org.bukkit.craftbukkit;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.particles.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiFunction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ColorParticleOption;
+import net.minecraft.core.particles.DustColorTransitionOptions;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.GeyserBaseParticleOptions;
+import net.minecraft.core.particles.GeyserParticleOptions;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.PowerParticleOption;
+import net.minecraft.core.particles.SculkChargeParticleOptions;
+import net.minecraft.core.particles.ShriekParticleOption;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.particles.SpellParticleOption;
+import net.minecraft.core.particles.TrailParticleOption;
+import net.minecraft.core.particles.VibrationParticleOption;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.gameevent.BlockPositionSource;
 import net.minecraft.world.level.gameevent.EntityPositionSource;
 import net.minecraft.world.level.gameevent.PositionSource;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.Keyed;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Registry;
+import org.bukkit.Vibration;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -18,10 +41,6 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiFunction;
 
 public abstract class CraftParticle<D> implements Keyed {
 
@@ -234,7 +253,6 @@ public abstract class CraftParticle<D> implements Keyed {
             add("instant_effect", spellFunction);
             add("geyser", geyser);
             add("geyser_plume", geyser);
-            add("geyser", geyser);
             add("geyser_base", geyserBase);
             add("geyser_poof", geyserBase);
         }

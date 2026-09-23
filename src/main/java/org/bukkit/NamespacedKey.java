@@ -1,17 +1,16 @@
 package org.bukkit;
 
 import com.google.common.base.Preconditions;
-import net.kyori.adventure.key.Key;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.OptionalInt;
 import java.util.UUID;
+import net.kyori.adventure.key.Key;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a String based key which consists of two components - a namespace

@@ -1,16 +1,20 @@
 package org.bukkit.craftbukkit.configuration;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.craftbukkit.CraftRegistry;
-
-import java.util.*;
 
 /**
  * Utilities related to the serialization and deserialization of {@link ConfigurationSerializable}s.

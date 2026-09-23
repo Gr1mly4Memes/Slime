@@ -2,7 +2,11 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -13,20 +17,15 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @NullMarked
 @GeneratedClass
-public class CraftRedStoneWire extends CraftBlockData implements RedstoneWire {
-    private static final IntegerProperty POWER = RedStoneWireBlock.POWER;
+public class CraftRedstoneWire extends CraftBlockData implements RedstoneWire {
+    private static final IntegerProperty POWER = RedstoneWireBlock.POWER;
 
-    private static final Map<BlockFace, EnumProperty<RedstoneSide>> PROPERTY_BY_DIRECTION = RedStoneWireBlock.PROPERTY_BY_DIRECTION.entrySet().stream()
-            .collect(Collectors.toMap(entry -> CraftBlock.notchToBlockFace(entry.getKey()), entry -> entry.getValue()));
+    private static final Map<BlockFace, EnumProperty<RedstoneSide>> PROPERTY_BY_DIRECTION = RedstoneWireBlock.PROPERTY_BY_DIRECTION.entrySet().stream()
+        .collect(Collectors.toMap(entry -> CraftBlock.notchToBlockFace(entry.getKey()), entry -> entry.getValue()));
 
-    public CraftRedStoneWire(BlockState state) {
+    public CraftRedstoneWire(BlockState state) {
         super(state);
     }
 
@@ -46,15 +45,15 @@ public class CraftRedStoneWire extends CraftBlockData implements RedstoneWire {
     }
 
     @Override
-    public Connection getFace(final BlockFace blockFace) {
+    public RedstoneWire.Connection getFace(final BlockFace blockFace) {
         Preconditions.checkArgument(blockFace != null, "blockFace cannot be null!");
         EnumProperty<RedstoneSide> property = PROPERTY_BY_DIRECTION.get(blockFace);
         Preconditions.checkArgument(property != null, "Invalid blockFace, only %s are allowed!", PROPERTY_BY_DIRECTION.keySet().stream().map(Enum::name).collect(Collectors.joining(", ")));
-        return this.get(property, Connection.class);
+        return this.get(property, RedstoneWire.Connection.class);
     }
 
     @Override
-    public void setFace(final BlockFace blockFace, final Connection connection) {
+    public void setFace(final BlockFace blockFace, final RedstoneWire.Connection connection) {
         Preconditions.checkArgument(blockFace != null, "blockFace cannot be null!");
         Preconditions.checkArgument(connection != null, "connection cannot be null!");
         EnumProperty<RedstoneSide> property = PROPERTY_BY_DIRECTION.get(blockFace);

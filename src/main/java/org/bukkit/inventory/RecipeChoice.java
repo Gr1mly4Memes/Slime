@@ -6,6 +6,12 @@ import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.set.RegistryKeySet;
 import io.papermc.paper.registry.set.RegistrySet;
 import io.papermc.paper.registry.tag.TagKey;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -13,9 +19,6 @@ import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * Represents a potential item match within a recipe. All choices within a
@@ -68,6 +71,53 @@ public interface RecipeChoice extends Predicate<ItemStack>, Cloneable {
     }
 
     /**
+     * Creates a choice that will be valid only if one of the stacks is
+     * exactly matched (aside from stack size).
+     *
+     * @param first  an ItemStack to match against.
+     *               Cannot be null or empty/air.
+     * @param others additional ItemStacks to match against.
+     * @return a new ExactChoice
+     */
+    @Contract(value = "_, _ -> new", pure = true)
+    static ExactChoice exactChoice(ItemStack first, ItemStack... others) {
+        List<ItemStack> stacks = new ArrayList<>(others.length + 1);
+        stacks.add(first);
+        Collections.addAll(stacks, others);
+        return new ExactChoice(stacks);
+    }
+
+    /**
+     * Creates a choice that will be valid only if one of the stacks is
+     * exactly matched (aside from stack size).
+     *
+     * @param stacks the ItemStacks to match against.
+     *               Cannot be empty or contain empty/air stacks.
+     * @return a new ExactChoice
+     */
+    @Contract(value = "_ -> new", pure = true)
+    static ExactChoice exactChoice(List<ItemStack> stacks) {
+        return new ExactChoice(stacks);
+    }
+
+    /**
+     * Creates a recipe choice that will be valid only if an item matches the
+     * given predicate.
+     * <p>
+     * <b>Note:</b> Mutating the {@link ItemStack} within the predicate is not
+     * supported.
+     *
+     * @param stackPredicate the predicate to match against.
+     * @param exampleStack   an example {@link ItemStack} to be shown in the
+     *                       recipe book. Cannot be empty or air.
+     * @return a new PredicateChoice
+     */
+    @Contract(value = "_, _ -> new", pure = true)
+    static PredicateChoice predicateChoice(Predicate<? super ItemStack> stackPredicate, ItemStack exampleStack) {
+        return new PredicateRecipeChoiceImpl(stackPredicate, exampleStack);
+    }
+
+    /**
      * Gets a single item stack representative of this stack choice.
      *
      * @return a single representative item
@@ -82,7 +132,7 @@ public interface RecipeChoice extends Predicate<ItemStack>, Cloneable {
     boolean test(ItemStack itemStack);
 
     // Paper start - check valid ingredients
-    @ApiStatus.Internal
+    @org.jetbrains.annotations.ApiStatus.Internal
     default RecipeChoice validate(final boolean allowEmptyRecipes) {
         return this;
     }
@@ -115,7 +165,7 @@ public interface RecipeChoice extends Predicate<ItemStack>, Cloneable {
          * @param choices the tag
          */
         public MaterialChoice(Tag<Material> choices) {
-            this(new ArrayList<>(Objects.requireNonNull(choices, "Cannot create a material choice with null tag").getValues())); // Paper - delegate to list ctor to make sure all checks are called
+            this(new ArrayList<>(java.util.Objects.requireNonNull(choices, "Cannot create a material choice with null tag").getValues())); // Paper - delegate to list ctor to make sure all checks are called
         }
 
         public MaterialChoice(List<Material> choices) {
@@ -224,7 +274,6 @@ public interface RecipeChoice extends Predicate<ItemStack>, Cloneable {
     final class ExactChoice implements RecipeChoice {
 
         private List<ItemStack> choices;
-        private Predicate<ItemStack> predicate; // Purpur - Add predicate to recipe's ExactChoice ingredient
 
         /**
          * @deprecated Use {@link RecipeChoice#exactChoice(ItemStack, ItemStack...)} instead
@@ -285,7 +334,6 @@ public interface RecipeChoice extends Predicate<ItemStack>, Cloneable {
 
         @Override
         public boolean test(ItemStack t) {
-            if (predicate != null) return predicate.test(t); // Purpur - Add predicate to recipe's ExactChoice ingredient
             for (ItemStack match : choices) {
                 if (t.isSimilar(match)) {
                     return true;
@@ -294,17 +342,6 @@ public interface RecipeChoice extends Predicate<ItemStack>, Cloneable {
 
             return false;
         }
-
-        // Purpur start - Add predicate to recipe's ExactChoice ingredient
-        @org.jetbrains.annotations.Nullable
-        public Predicate<ItemStack> getPredicate() {
-            return predicate;
-        }
-
-        public void setPredicate(@org.jetbrains.annotations.Nullable Predicate<ItemStack> predicate) {
-            this.predicate = predicate;
-        }
-        // Purpur end - Add predicate to recipe's ExactChoice ingredient
 
         @Override
         public int hashCode() {
@@ -345,53 +382,6 @@ public interface RecipeChoice extends Predicate<ItemStack>, Cloneable {
             return this;
         }
         // Paper end - check valid ingredients
-    }
-
-    /**
-     * Creates a choice that will be valid only if one of the stacks is
-     * exactly matched (aside from stack size).
-     *
-     * @param first an ItemStack to match against.
-     *              Cannot be null or empty/air.
-     * @param others additional ItemStacks to match against.
-     * @return a new ExactChoice
-     */
-    @Contract(value = "_, _ -> new", pure = true)
-    static ExactChoice exactChoice(ItemStack first, ItemStack... others) {
-        List<ItemStack> stacks = new ArrayList<>(others.length + 1);
-        stacks.add(first);
-        Collections.addAll(stacks, others);
-        return new ExactChoice(stacks);
-    }
-
-    /**
-     * Creates a choice that will be valid only if one of the stacks is
-     * exactly matched (aside from stack size).
-     *
-     * @param stacks the ItemStacks to match against.
-     *               Cannot be empty or contain empty/air stacks.
-     * @return a new ExactChoice
-     */
-    @Contract(value = "_ -> new", pure = true)
-    static ExactChoice exactChoice(List<ItemStack> stacks) {
-        return new ExactChoice(stacks);
-    }
-
-    /**
-     * Creates a recipe choice that will be valid only if an item matches the
-     * given predicate.
-     * <p>
-     * <b>Note:</b> Mutating the {@link ItemStack} within the predicate is not
-     * supported.
-     *
-     * @param stackPredicate the predicate to match against.
-     * @param exampleStack an example {@link ItemStack} to be shown in the
-     *                     recipe book. Cannot be empty or air.
-     * @return a new PredicateChoice
-     */
-    @Contract(value = "_, _ -> new", pure = true)
-    static PredicateChoice predicateChoice(Predicate<? super ItemStack> stackPredicate, ItemStack exampleStack) {
-        return new PredicateRecipeChoiceImpl(stackPredicate, exampleStack);
     }
 
     /**

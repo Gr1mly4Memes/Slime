@@ -2,17 +2,27 @@ package ca.spottedleaf.moonrise.patches.chunk_system.scheduling;
 
 import ca.spottedleaf.moonrise.common.util.CoordinateUtils;
 import ca.spottedleaf.moonrise.patches.chunk_system.level.ChunkSystemServerLevel;
-import it.unimi.dsi.fastutil.longs.*;
-import it.unimi.dsi.fastutil.objects.*;
-import net.minecraft.server.level.ChunkHolder;
-import net.minecraft.server.level.ServerLevel;
-import org.jspecify.annotations.Nullable;
-
+import it.unimi.dsi.fastutil.longs.AbstractLongSortedSet;
+import it.unimi.dsi.fastutil.longs.Long2ObjectFunction;
+import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.LongBidirectionalIterator;
+import it.unimi.dsi.fastutil.longs.LongComparator;
+import it.unimi.dsi.fastutil.longs.LongSortedSet;
+import it.unimi.dsi.fastutil.objects.AbstractObjectCollection;
+import it.unimi.dsi.fastutil.objects.AbstractObjectSortedSet;
+import it.unimi.dsi.fastutil.objects.ObjectBidirectionalIterator;
+import it.unimi.dsi.fastutil.objects.ObjectCollection;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.LongFunction;
+import it.unimi.dsi.fastutil.objects.ObjectSortedSet;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ServerLevel;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A delegating Long2ObjectLinkedOpenHashMap that exposes loaded chunk holders
@@ -193,7 +203,7 @@ public final class MoonriseChunkHolderMap extends Long2ObjectLinkedOpenHashMap<C
 
     @Override
     public FastSortedEntrySet<ChunkHolder> long2ObjectEntrySet() {
-        class Set extends AbstractObjectSortedSet<Entry<ChunkHolder>> implements FastSortedEntrySet<ChunkHolder> {
+        class Set extends AbstractObjectSortedSet<Long2ObjectMap.Entry<ChunkHolder>> implements FastSortedEntrySet<ChunkHolder> {
 
             @Override
             public ObjectBidirectionalIterator<Entry<ChunkHolder>> fastIterator() {

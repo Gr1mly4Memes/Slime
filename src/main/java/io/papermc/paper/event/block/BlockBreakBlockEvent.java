@@ -1,13 +1,12 @@
 package io.papermc.paper.event.block;
 
+import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockExpEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Called when a block forces another block to break and drop items.

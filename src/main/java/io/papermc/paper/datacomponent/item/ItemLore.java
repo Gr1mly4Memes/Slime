@@ -1,20 +1,17 @@
 package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Additional lines to include in an item's tooltip.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#LORE
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface ItemLore {
 
@@ -24,7 +21,7 @@ public interface ItemLore {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder lore() {
+    static ItemLore.Builder lore() {
         return ItemComponentTypesBridge.bridge().lore();
     }
 

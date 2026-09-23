@@ -2,6 +2,9 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
 import com.mojang.authlib.GameProfile;
+import com.mojang.datafixers.util.Either;
+import java.util.Map;
+import java.util.Objects;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
@@ -10,6 +13,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Util;
+import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.item.component.ResolvableProfile;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -21,9 +25,6 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.profile.PlayerProfile;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
-import java.util.Objects;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
@@ -102,7 +103,7 @@ public class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         if (this.hasOwner()) {
@@ -184,7 +185,7 @@ public class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
             this.setProfile(null);
         } else {
             // Attempt to fetch an already resolved player profile in case the player is currently online.
-            net.minecraft.server.level.ServerPlayer player = MinecraftServer.getServer().getPlayerList().getPlayerByName(name);
+            net.minecraft.server.level.ServerPlayer player = net.minecraft.server.MinecraftServer.getServer().getPlayerList().getPlayerByName(name);
             this.setProfile(
                 player != null
                     ? ResolvableProfile.createResolved(player.getGameProfile())

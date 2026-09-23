@@ -1,9 +1,5 @@
 package io.papermc.paper.util;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -11,6 +7,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.jar.Manifest;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @hidden

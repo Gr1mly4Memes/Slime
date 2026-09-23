@@ -21,11 +21,11 @@ public final class PaperConsole extends SimpleTerminalConsole {
     @Override
     protected LineReader buildReader(LineReaderBuilder builder) {
         builder
-                .appName("Purpur") // Purpur - Rebrand
+                .appName("Youer")
                 .variable(LineReader.HISTORY_FILE, PaperCacheDir.moveFromServerRootAndGet(".console_history", "console_history"))
                 .completer(new ConsoleCommandCompleter(this.server))
                 .option(LineReader.Option.COMPLETE_IN_WORD, true);
-        if (GlobalConfiguration.get().console.enableBrigadierHighlighting) {
+        if (io.papermc.paper.configuration.GlobalConfiguration.get().console.enableBrigadierHighlighting) {
             builder.highlighter(new io.papermc.paper.console.BrigadierCommandHighlighter(this.server));
         }
         if (GlobalConfiguration.get().console.enableBrigadierCompletions) {

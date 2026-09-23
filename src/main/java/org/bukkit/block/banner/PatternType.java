@@ -3,6 +3,7 @@ package org.bukkit.block.banner;
 import com.google.common.base.Preconditions;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
+import java.util.Locale;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
 import org.bukkit.Keyed;
@@ -12,8 +13,6 @@ import org.bukkit.util.OldEnum;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
 
 public interface PatternType extends OldEnum<PatternType>, Keyed {
 
@@ -112,8 +111,8 @@ public interface PatternType extends OldEnum<PatternType>, Keyed {
      */
     @Deprecated(since = "1.20.5", forRemoval = true)
     @Override
-    default @NotNull Key key() {
-        return Keyed.super.key();
+    default net.kyori.adventure.key.@org.jetbrains.annotations.NotNull Key key() {
+        return org.bukkit.Keyed.super.key();
     }
 
     /**

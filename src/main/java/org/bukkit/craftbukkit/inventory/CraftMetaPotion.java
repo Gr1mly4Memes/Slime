@@ -4,6 +4,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
@@ -21,8 +27,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
@@ -122,7 +126,7 @@ public class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         if (this.isPotionEmpty()) {

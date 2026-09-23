@@ -1,13 +1,13 @@
 package io.papermc.paper.registry.keys.tags;
 
+import static net.kyori.adventure.key.Key.key;
+
 import io.papermc.paper.annotation.GeneratedClass;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.tag.TagKey;
 import net.kyori.adventure.key.Key;
 import org.bukkit.MusicInstrument;
 import org.jspecify.annotations.NullMarked;
-
-import static net.kyori.adventure.key.Key.key;
 
 /**
  * Vanilla tag keys for {@link RegistryKey#INSTRUMENT}.

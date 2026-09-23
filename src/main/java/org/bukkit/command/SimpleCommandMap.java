@@ -1,6 +1,14 @@
 package org.bukkit.command;
 
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -10,8 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
 
 public class SimpleCommandMap implements CommandMap {
     protected final Map<String, Command> knownCommands;
@@ -28,7 +34,6 @@ public class SimpleCommandMap implements CommandMap {
         final ReloadCommand reload = new ReloadCommand("reload");
         this.knownCommands.put("bukkit:reload", reload);
         this.knownCommands.put("bukkit:rl", reload);
-        register("bukkit", new co.aikar.timings.TimingsCommand("timings"));
     }
 
     public void setFallbackCommands() {
@@ -60,7 +65,6 @@ public class SimpleCommandMap implements CommandMap {
      */
     @Override
     public boolean register(@NotNull String label, @NotNull String fallbackPrefix, @NotNull Command command) {
-        command.timings = co.aikar.timings.TimingsManager.getCommandTiming(fallbackPrefix, command); // Paper
         label = label.toLowerCase(Locale.ROOT).trim();
         fallbackPrefix = fallbackPrefix.toLowerCase(Locale.ROOT).trim();
         boolean registered = register(label, command, false, fallbackPrefix);
@@ -154,13 +158,6 @@ public class SimpleCommandMap implements CommandMap {
         sentCommandLabel = event.getLabel();
         parsedArgs = event.getArgs();
         // Purpur end - ExecuteCommandEvent
-
-        // Paper start - Plugins do weird things to workaround normal registration
-        if (target.timings == null) {
-            target.timings = co.aikar.timings.TimingsManager.getCommandTiming(null, target);
-        }
-        // Paper end
-
         try {
             //try (co.aikar.timings.Timing ignored = target.timings.startTiming()) { // Paper - use try with resources // Purpur - Remove Timings
             // Note: we don't return the result of target.execute as thats success / failure, we return handled (true) or not handled (false)

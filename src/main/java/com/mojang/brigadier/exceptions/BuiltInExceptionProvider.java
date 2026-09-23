@@ -1,62 +1,60 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 package com.mojang.brigadier.exceptions;
 
-import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+public interface BuiltInExceptionProvider {
+    Dynamic2CommandExceptionType doubleTooLow();
 
-public interface BuiltInExceptionProvider
-{
-    com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType doubleTooLow();
-    
-    com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType doubleTooHigh();
-    
-    com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType floatTooLow();
-    
-    com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType floatTooHigh();
-    
-    com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType integerTooLow();
-    
-    com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType integerTooHigh();
-    
-    com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType longTooLow();
-    
+    Dynamic2CommandExceptionType doubleTooHigh();
+
+    Dynamic2CommandExceptionType floatTooLow();
+
+    Dynamic2CommandExceptionType floatTooHigh();
+
+    Dynamic2CommandExceptionType integerTooLow();
+
+    Dynamic2CommandExceptionType integerTooHigh();
+
+    Dynamic2CommandExceptionType longTooLow();
+
     Dynamic2CommandExceptionType longTooHigh();
-    
-    com.mojang.brigadier.exceptions.DynamicCommandExceptionType literalIncorrect();
-    
-    com.mojang.brigadier.exceptions.SimpleCommandExceptionType readerExpectedStartOfQuote();
-    
-    com.mojang.brigadier.exceptions.SimpleCommandExceptionType readerExpectedEndOfQuote();
-    
-    com.mojang.brigadier.exceptions.DynamicCommandExceptionType readerInvalidEscape();
-    
-    com.mojang.brigadier.exceptions.DynamicCommandExceptionType readerInvalidBool();
-    
-    com.mojang.brigadier.exceptions.DynamicCommandExceptionType readerInvalidInt();
-    
-    com.mojang.brigadier.exceptions.SimpleCommandExceptionType readerExpectedInt();
-    
-    com.mojang.brigadier.exceptions.DynamicCommandExceptionType readerInvalidLong();
-    
-    com.mojang.brigadier.exceptions.SimpleCommandExceptionType readerExpectedLong();
-    
-    com.mojang.brigadier.exceptions.DynamicCommandExceptionType readerInvalidDouble();
-    
-    com.mojang.brigadier.exceptions.SimpleCommandExceptionType readerExpectedDouble();
-    
-    com.mojang.brigadier.exceptions.DynamicCommandExceptionType readerInvalidFloat();
-    
-    com.mojang.brigadier.exceptions.SimpleCommandExceptionType readerExpectedFloat();
-    
-    com.mojang.brigadier.exceptions.SimpleCommandExceptionType readerExpectedBool();
-    
-    com.mojang.brigadier.exceptions.DynamicCommandExceptionType readerExpectedSymbol();
-    
-    com.mojang.brigadier.exceptions.SimpleCommandExceptionType dispatcherUnknownCommand();
-    
-    com.mojang.brigadier.exceptions.SimpleCommandExceptionType dispatcherUnknownArgument();
-    
+
+    DynamicCommandExceptionType literalIncorrect();
+
+    SimpleCommandExceptionType readerExpectedStartOfQuote();
+
+    SimpleCommandExceptionType readerExpectedEndOfQuote();
+
+    DynamicCommandExceptionType readerInvalidEscape();
+
+    DynamicCommandExceptionType readerInvalidBool();
+
+    DynamicCommandExceptionType readerInvalidInt();
+
+    SimpleCommandExceptionType readerExpectedInt();
+
+    DynamicCommandExceptionType readerInvalidLong();
+
+    SimpleCommandExceptionType readerExpectedLong();
+
+    DynamicCommandExceptionType readerInvalidDouble();
+
+    SimpleCommandExceptionType readerExpectedDouble();
+
+    DynamicCommandExceptionType readerInvalidFloat();
+
+    SimpleCommandExceptionType readerExpectedFloat();
+
+    SimpleCommandExceptionType readerExpectedBool();
+
+    DynamicCommandExceptionType readerExpectedSymbol();
+
+    SimpleCommandExceptionType dispatcherUnknownCommand();
+
+    SimpleCommandExceptionType dispatcherUnknownArgument();
+
     SimpleCommandExceptionType dispatcherExpectedArgumentSeparator();
-    
+
     DynamicCommandExceptionType dispatcherParseException();
 }

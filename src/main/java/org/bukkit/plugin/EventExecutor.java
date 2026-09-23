@@ -2,14 +2,13 @@ package org.bukkit.plugin;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.event.executor.EventExecutorFactory;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 
 /**
  * Interface which defines the class for event call backs to plugins

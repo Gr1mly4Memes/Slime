@@ -1,25 +1,24 @@
 package org.bukkit.craftbukkit;
 
+import java.util.HashMap;
 import net.minecraft.world.level.block.SoundType;
 import org.bukkit.Sound;
 import org.bukkit.SoundGroup;
 
-import java.util.HashMap;
-
 public class CraftSoundGroup implements SoundGroup {
 
-    private final SoundType handle;
+    private final net.minecraft.world.level.block.SoundType handle;
     private static final HashMap<SoundType, CraftSoundGroup> SOUND_GROUPS = new HashMap<>();
 
     public static SoundGroup getSoundGroup(SoundType soundEffectType) {
         return CraftSoundGroup.SOUND_GROUPS.computeIfAbsent(soundEffectType, CraftSoundGroup::new);
     }
 
-    private CraftSoundGroup(SoundType soundEffectType) {
+    private CraftSoundGroup(net.minecraft.world.level.block.SoundType soundEffectType) {
         this.handle = soundEffectType;
     }
 
-    public SoundType getHandle() {
+    public net.minecraft.world.level.block.SoundType getHandle() {
         return this.handle;
     }
 

@@ -125,7 +125,7 @@ public interface Spawner extends BaseSpawner {
 
     /**
      * Sets the {@link EntityType} to {@link EntityType#ITEM} and sets the data to the given
-     * {@link ItemStack ItemStack}.
+     * {@link org.bukkit.inventory.ItemStack ItemStack}.
      * <p>
      * {@link #setSpawnCount(int)} does not dictate the amount of items in the stack spawned, but rather how many
      * stacks should be spawned.

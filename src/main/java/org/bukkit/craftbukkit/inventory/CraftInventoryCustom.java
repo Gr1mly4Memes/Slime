@@ -1,6 +1,10 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.youer.api.ColorAPI;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -11,10 +15,6 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 public class CraftInventoryCustom extends CraftInventory {
 
     public CraftInventoryCustom(InventoryHolder owner, InventoryType type, Container delegate) {
@@ -22,10 +22,6 @@ public class CraftInventoryCustom extends CraftInventory {
     }
 
     public CraftInventoryCustom(InventoryHolder owner, InventoryType type) {
-        super(new MinecraftInventory(owner, type));
-    }
-
-    public CraftInventoryCustom(InventoryHolder owner, NonNullList<ItemStack> type) {
         super(new MinecraftInventory(owner, type));
     }
 
@@ -47,6 +43,10 @@ public class CraftInventoryCustom extends CraftInventory {
 
     public CraftInventoryCustom(InventoryHolder owner, int size, String title) {
         super(new MinecraftInventory(owner, size, title));
+    }
+
+    public CraftInventoryCustom(InventoryHolder owner, NonNullList<ItemStack> items) {
+        super(new MinecraftInventory(owner, items));
     }
 
     public String getTitle() {
@@ -93,16 +93,6 @@ public class CraftInventoryCustom extends CraftInventory {
             this.type = type;
         }
 
-        public MinecraftInventory(InventoryHolder owner, NonNullList<ItemStack> items) {
-            Preconditions.checkArgument(items != null, "items cannot be null");
-            this.items = items;
-            this.title = "Chest";
-            this.adventure$title = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(this.title);
-            this.viewers = new ArrayList<>();
-            this.owner = owner;
-            this.type = InventoryType.CHEST;
-        }
-
         public MinecraftInventory(InventoryHolder owner, int size) {
             this(owner, size, "Chest");
         }
@@ -111,7 +101,7 @@ public class CraftInventoryCustom extends CraftInventory {
             Preconditions.checkArgument(title != null, "title cannot be null");
             this.items = NonNullList.withSize(size, ItemStack.EMPTY);
             this.title = title;
-            this.adventure$title = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(title);
+            this.adventure$title = ColorAPI.adventure(title);
             this.viewers = new ArrayList<>();
             this.owner = owner;
             this.type = InventoryType.CHEST;
@@ -122,6 +112,15 @@ public class CraftInventoryCustom extends CraftInventory {
             this.items = NonNullList.withSize(size, ItemStack.EMPTY);
             this.title = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(title);
             this.adventure$title = title;
+            this.viewers = new ArrayList<>();
+            this.owner = owner;
+            this.type = InventoryType.CHEST;
+        }
+
+        public MinecraftInventory(InventoryHolder owner, NonNullList<ItemStack> items) {
+            this.items = items;
+            this.title = "Chest";
+            this.adventure$title = ColorAPI.adventure(title);
             this.viewers = new ArrayList<>();
             this.owner = owner;
             this.type = InventoryType.CHEST;
@@ -146,7 +145,7 @@ public class CraftInventoryCustom extends CraftInventory {
                 this.setItem(slot, ItemStack.EMPTY);
                 result = stack;
             } else {
-                result = CraftItemStack.copyNMSStack(stack, amount);
+                result = stack.copyWithCount(amount);
                 stack.shrink(amount);
             }
             this.setChanged();
@@ -162,7 +161,7 @@ public class CraftInventoryCustom extends CraftInventory {
                 this.setItem(slot, null);
                 result = stack;
             } else {
-                result = CraftItemStack.copyNMSStack(stack, 1);
+                result = stack.copyWithCount(1);
                 stack.shrink(1);
             }
             return result;

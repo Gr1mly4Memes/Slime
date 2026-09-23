@@ -274,52 +274,52 @@ public interface ItemFactory {
     net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull ItemStack itemStack);
 
     /**
-     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link Entity} for displaying.
+     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity} for displaying.
      * Uses the display name of the entity, if present.
      *
      * @param entity Entity to create the HoverEvent for
-     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link Entity}
-     * @deprecated use {@link Entity#asHoverEvent()}
+     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity}
+     * @deprecated use {@link org.bukkit.entity.Entity#asHoverEvent()}
      */
     @NotNull
     @Deprecated
-    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull Entity entity);
+    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull org.bukkit.entity.Entity entity);
 
     /**
-     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link Entity} for displaying.
+     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity} for displaying.
      *
      * @param entity Entity to create the HoverEvent for
      * @param customName a custom name that should be displayed, if not passed entity name will be displayed
-     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link Entity}
-     * @deprecated use {@link Entity#asHoverEvent(java.util.function.UnaryOperator)}
+     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity}
+     * @deprecated use {@link org.bukkit.entity.Entity#asHoverEvent(java.util.function.UnaryOperator)}
      */
     @NotNull
     @Deprecated
-    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull Entity entity, @Nullable String customName);
+    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull org.bukkit.entity.Entity entity, @Nullable String customName);
 
     /**
-     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link Entity} for displaying.
+     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity} for displaying.
      *
      * @param entity Entity to create the HoverEvent for
      * @param customName a custom name that should be displayed, if not passed entity name will be displayed
-     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link Entity}
-     * @deprecated use {@link Entity#asHoverEvent(java.util.function.UnaryOperator)}
+     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity}
+     * @deprecated use {@link org.bukkit.entity.Entity#asHoverEvent(java.util.function.UnaryOperator)}
      */
     @NotNull
     @Deprecated
-    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull Entity entity, @Nullable net.md_5.bungee.api.chat.BaseComponent customName);
+    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull org.bukkit.entity.Entity entity, @Nullable net.md_5.bungee.api.chat.BaseComponent customName);
 
     /**
-     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link Entity} for displaying.
+     * Creates a {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity} for displaying.
      *
      * @param entity Entity to create the HoverEvent for
      * @param customName a custom name that should be displayed, if not passed entity name will be displayed
-     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link Entity}
-     * @deprecated use {@link Entity#asHoverEvent(java.util.function.UnaryOperator)}
+     * @return the {@link net.md_5.bungee.api.chat.hover.content.Content} of that {@link org.bukkit.entity.Entity}
+     * @deprecated use {@link org.bukkit.entity.Entity#asHoverEvent(java.util.function.UnaryOperator)}
      */
     @NotNull
     @Deprecated
-    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull Entity entity, @NotNull net.md_5.bungee.api.chat.BaseComponent[] customName);
+    net.md_5.bungee.api.chat.hover.content.Content hoverContentOf(@NotNull org.bukkit.entity.Entity entity, @NotNull net.md_5.bungee.api.chat.BaseComponent[] customName);
     // Paper end - bungee hover events
 
     // Paper start - enchantWithLevels API
@@ -332,7 +332,7 @@ public interface ItemFactory {
      *
      * @param itemStack ItemStack to enchant
      * @param levels levels to use for enchanting
-     * @param allowTreasure whether to allow enchantments where {@link Enchantment#isTreasure()} returns true
+     * @param allowTreasure whether to allow enchantments where {@link org.bukkit.enchantments.Enchantment#isTreasure()} returns true
      * @param random {@link java.util.Random} instance to use for enchanting
      * @return enchanted copy of the provided ItemStack
      * @throws IllegalArgumentException on bad arguments

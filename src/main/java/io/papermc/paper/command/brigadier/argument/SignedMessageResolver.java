@@ -3,10 +3,9 @@ package io.papermc.paper.command.brigadier.argument;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+import java.util.concurrent.CompletableFuture;
 import net.kyori.adventure.chat.SignedMessage;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A resolver for a {@link SignedMessage}

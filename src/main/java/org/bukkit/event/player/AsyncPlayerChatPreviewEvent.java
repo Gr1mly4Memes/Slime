@@ -1,12 +1,11 @@
 package org.bukkit.event.player;
 
+import java.util.Set;
 import org.bukkit.Warning;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 /**
  * Used to format chat for chat preview. If this event is used, then the result
@@ -16,7 +15,7 @@ import java.util.Set;
  * @deprecated chat previews have been removed
  */
 @Deprecated(since = "1.19.1")
-@Warning
+@Warning(value = true, propagate = false)
 public class AsyncPlayerChatPreviewEvent extends AsyncPlayerChatEvent {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();

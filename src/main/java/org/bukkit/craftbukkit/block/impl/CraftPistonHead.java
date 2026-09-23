@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,8 +13,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.PistonHead;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -56,12 +55,12 @@ public class CraftPistonHead extends CraftBlockData implements PistonHead {
     }
 
     @Override
-    public Type getType() {
-        return this.get(TYPE, Type.class);
+    public org.bukkit.block.data.type.TechnicalPiston.Type getType() {
+        return this.get(TYPE, org.bukkit.block.data.type.TechnicalPiston.Type.class);
     }
 
     @Override
-    public void setType(final Type type) {
+    public void setType(final org.bukkit.block.data.type.TechnicalPiston.Type type) {
         Preconditions.checkArgument(type != null, "type cannot be null!");
         this.set(TYPE, type);
     }

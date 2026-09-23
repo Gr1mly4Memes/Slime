@@ -1,5 +1,7 @@
 package io.papermc.paper.plugin.configuration;
 
+import java.util.List;
+import java.util.Locale;
 import net.kyori.adventure.key.KeyPattern;
 import net.kyori.adventure.key.Namespaced;
 import org.bukkit.permissions.Permission;
@@ -9,9 +11,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
-import java.util.Locale;
 
 /**
  * This class acts as an abstraction for a plugin configuration.

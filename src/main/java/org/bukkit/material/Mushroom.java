@@ -1,12 +1,11 @@
 package org.bukkit.material;
 
 import com.google.common.base.Preconditions;
+import java.util.EnumSet;
+import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.material.types.MushroomBlockTexture;
-
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * Represents a huge mushroom block with certain combinations of faces set to
@@ -100,7 +99,7 @@ public class Mushroom extends MaterialData {
      * @see MushroomBlockTexture#ALL_STEM
      *
      * @deprecated Use
-     * {@link #setBlockTexture(MushroomBlockTexture)}
+     * {@link #setBlockTexture(org.bukkit.material.types.MushroomBlockTexture)}
      * with {@link MushroomBlockTexture#STEM_SIDES } or
      * {@link MushroomBlockTexture#ALL_STEM}
      */

@@ -71,7 +71,7 @@ public class BlockCookEvent extends BlockEvent implements Cancellable {
      * @return the recipe
      */
     @Nullable
-    public CookingRecipe<?> getRecipe() {
+    public org.bukkit.inventory.CookingRecipe<?> getRecipe() {
         return this.recipe;
     }
 

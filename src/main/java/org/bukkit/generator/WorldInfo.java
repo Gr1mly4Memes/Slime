@@ -1,12 +1,11 @@
 package org.bukkit.generator;
 
+import java.util.UUID;
 import io.papermc.paper.world.flag.FeatureFlagSetHolder;
 import org.bukkit.Keyed;
 import org.bukkit.World;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 /**
  * Holds various information of a World

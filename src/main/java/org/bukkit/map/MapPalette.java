@@ -1,12 +1,14 @@
 package org.bukkit.map;
 
 import com.google.common.base.Preconditions;
-import gg.pufferfish.pufferfish.simd.SIMDDetection; // Pufferfish
+import gg.pufferfish.pufferfish.simd.SIMDDetection;
+import gg.pufferfish.pufferfish.simd.VectorMapPalette;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /**
  * Represents the palette that map items use.
@@ -35,7 +37,7 @@ public final class MapPalette {
     }
 
     @NotNull
-    public static final Color[] colors = { // Pufferfish - public access
+    public static final Color[] colors = {
         // Start generate - MapPalette#colors
         new Color(0x00000000, true),
         new Color(0x00000000, true),
@@ -394,15 +396,15 @@ public final class MapPalette {
         temp.getRGB(0, 0, temp.getWidth(), temp.getHeight(), pixels, 0, temp.getWidth());
 
         byte[] result = new byte[temp.getWidth() * temp.getHeight()];
-        // Pufferfish start
-        if (!SIMDDetection.isEnabled) {
-        for (int i = 0; i < pixels.length; i++) {
-            result[i] = matchColor(new Color(pixels[i], true));
-        }
+        // Pufferfish start - Optimize Map Rendering
+        if (SIMDDetection.isEnabled){
+            VectorMapPalette.matchColorVectorized(pixels, result);
         } else {
-            gg.pufferfish.pufferfish.simd.VectorMapPalette.matchColorVectorized(pixels, result);
+            for (int i = 0; i < pixels.length; i++) {
+                result[i] = matchColor(new Color(pixels[i], true));
+            }
         }
-        // Pufferfish end
+        // Pufferfish end - Optimize Map Rendering
         return result;
     }
 

@@ -1,6 +1,9 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.util.RandomSource;
@@ -15,10 +18,6 @@ import org.bukkit.craftbukkit.block.CraftCreatureSpawner;
 import org.bukkit.entity.EntitySnapshot;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.minecart.SpawnerMinecart;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 public class CraftMinecartMobSpawner extends CraftMinecart implements SpawnerMinecart, org.bukkit.craftbukkit.spawner.PaperSharedSpawnerLogic { // Paper - more spawner API
 

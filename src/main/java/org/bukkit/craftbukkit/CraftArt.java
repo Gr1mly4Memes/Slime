@@ -40,7 +40,7 @@ public class CraftArt extends OldEnumHolderable<Art, PaintingVariant> implements
     }
 
     @Override
-    public Component author() {
+    public net.kyori.adventure.text.Component author() {
         return this.getHandle().author().map(PaperAdventure::asAdventure).orElse(null);
     }
 

@@ -1,6 +1,6 @@
 package com.destroystokyo.paper.gui;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class GraphData {
     private long total;

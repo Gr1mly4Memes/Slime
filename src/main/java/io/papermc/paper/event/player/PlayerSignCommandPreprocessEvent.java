@@ -1,13 +1,12 @@
 package io.papermc.paper.event.player;
 
+import java.util.Set;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 /**
  * Called when a {@link Player} clicks a side on a sign that causes a command to run.

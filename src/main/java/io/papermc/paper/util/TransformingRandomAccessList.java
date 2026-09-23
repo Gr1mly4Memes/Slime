@@ -1,11 +1,14 @@
 package io.papermc.paper.util;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.*;
+import java.util.AbstractList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.RandomAccess;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

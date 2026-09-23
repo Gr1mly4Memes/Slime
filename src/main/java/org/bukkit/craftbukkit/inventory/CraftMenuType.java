@@ -1,7 +1,9 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Suppliers;
+import com.mohistmc.youer.api.ColorAPI;
 import io.papermc.paper.registry.HolderableBase;
+import java.util.function.Supplier;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.core.Holder;
@@ -16,8 +18,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.util.function.Supplier;
-
 @NullMarked
 public class CraftMenuType<V extends @NonNull InventoryView, B extends InventoryViewBuilder<V>> extends HolderableBase<net.minecraft.world.inventory.MenuType<?>> implements MenuType.Typed<V, B>, io.papermc.paper.world.flag.PaperFeatureDependent<net.minecraft.world.inventory.MenuType<?>> { // Paper - make FeatureDependant
 
@@ -30,7 +30,7 @@ public class CraftMenuType<V extends @NonNull InventoryView, B extends Inventory
 
     @Override
     public V create(final HumanEntity player, final @Nullable String title) {
-        return this.builder().title(title != null ? LegacyComponentSerializer.legacySection().deserialize(title) : null).build(player);
+        return this.builder().title(title != null ? ColorAPI.adventure(title) : null).build(player);
     }
     @Override
     public V create(final HumanEntity player, final @Nullable Component title) {

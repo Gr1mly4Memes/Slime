@@ -1,5 +1,6 @@
 package org.bukkit.inventory;
 
+import com.mohistmc.youer.api.ColorAPI;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.ApiStatus;
@@ -126,7 +127,7 @@ public interface InventoryView {
          * @return the id of this view
          * @apiNote Internal Use Only
          */
-        @ApiStatus.Internal // Paper
+        @org.jetbrains.annotations.ApiStatus.Internal // Paper
         public int getId() {
             return id;
         }
@@ -154,6 +155,17 @@ public interface InventoryView {
      */
     @NotNull
     public HumanEntity getPlayer();
+
+    /**
+     * Youer Add
+     * Get the player viewing.
+     *
+     * @return the player
+     */
+    @NotNull
+    default void setPlayer(HumanEntity player) {
+
+    }
 
     /**
      * Determine the type of inventory involved in the transaction. This
@@ -283,7 +295,7 @@ public interface InventoryView {
      */
     @NotNull
     default net.kyori.adventure.text.Component title() {
-        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(this.getTitle());
+        return ColorAPI.adventure(this.getTitle());
     }
     // Paper end
 

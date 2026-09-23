@@ -3,13 +3,12 @@ package org.bukkit.entity;
 import com.destroystokyo.paper.SkinParts;
 import io.papermc.paper.InternalAPIBridge;
 import io.papermc.paper.datacomponent.item.ResolvableProfile;
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.MainHand;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Set;
 
 @NullMarked
 public interface Mannequin extends LivingEntity {

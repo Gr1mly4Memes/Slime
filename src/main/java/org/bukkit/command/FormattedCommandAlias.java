@@ -1,20 +1,19 @@
 package org.bukkit.command;
 
+import java.util.ArrayList;
+import java.util.regex.Matcher; // Paper
+import java.util.regex.Pattern; // Paper
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.regex.Matcher; // Paper
-import java.util.regex.Pattern; // Paper
 
 public class FormattedCommandAlias extends Command {
     private final String[] formatStrings;
 
     public FormattedCommandAlias(@NotNull String alias, @NotNull String[] formatStrings) {
         super(alias);
-        timings = co.aikar.timings.TimingsManager.getCommandTiming("minecraft", this); // Spigot
         this.formatStrings = formatStrings;
     }
 
@@ -121,10 +120,6 @@ public class FormattedCommandAlias extends Command {
 
         return formatString.trim(); // Paper - Causes an extra space at the end, breaks with brig commands
     }
-
-    @NotNull
-    @Override // Paper
-    public String getTimingName() {return "Command Forwarder - " + super.getTimingName();} // Paper
 
     private static boolean inRange(int i, int j, int k) {
         return i >= j && i <= k;

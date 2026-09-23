@@ -3,14 +3,13 @@ package io.papermc.paper.registry.data;
 import io.papermc.paper.dialog.Dialog;
 import io.papermc.paper.registry.RegistryBuilderFactory;
 import io.papermc.paper.registry.data.dialog.DialogRegistryEntry;
+import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.function.Consumer;
 import org.bukkit.MusicInstrument;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Optional;
-import java.util.ServiceLoader;
-import java.util.function.Consumer;
 
 /**
  * @hidden

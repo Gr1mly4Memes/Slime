@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  * cause issues. Retrieving {@link Player#getUniqueId()} and {@link Player#getName()} is safe. Prefer using
  * {@link io.papermc.paper.event.player.AsyncPlayerSpawnLocationEvent}.
  */
-@Warning(value = true, reason = "Listening to this event causes the player to be created early. Using the player from this event will result in undefined behavior. Prefer AsyncPlayerSpawnLocationEvent.")
+@Warning(value = true, propagate = false)
 @Deprecated(since = "1.21.9", forRemoval = true)
 public class PlayerSpawnLocationEvent extends PlayerEvent {
 

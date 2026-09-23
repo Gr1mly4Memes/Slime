@@ -20,12 +20,12 @@ public class CraftPotentSulfur extends CraftBlockData implements PotentSulfur {
     }
 
     @Override
-    public State getPotentSulfurState() {
-        return this.get(STATE, State.class);
+    public PotentSulfur.State getPotentSulfurState() {
+        return this.get(STATE, PotentSulfur.State.class);
     }
 
     @Override
-    public void setPotentSulfurState(final State state) {
+    public void setPotentSulfurState(final PotentSulfur.State state) {
         Preconditions.checkArgument(state != null, "state cannot be null!");
         this.set(STATE, state);
     }

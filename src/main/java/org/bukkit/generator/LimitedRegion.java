@@ -1,13 +1,12 @@
 package org.bukkit.generator;
 
+import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.RegionAccessor;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * A limited region is used in world generation for features which are

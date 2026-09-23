@@ -4,6 +4,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Objects;
 import net.minecraft.util.Mth;
 import org.bukkit.Material;
 import org.bukkit.WorldBorder;
@@ -15,10 +18,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Stores data for damage events
@@ -129,11 +128,9 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
         return this.modifiers.containsKey(type);
     }
 
-    // Slime start - Original damage
     public boolean isStillOriginal(EntityDamageEvent.DamageModifier modifier, double last, double current) {
         return Math.abs((current - last) - modifierFunctions.get(modifier).apply(last)) < Mth.EPSILON;
     }
-    // Slime end - Original damage
 
     /**
      * Gets the raw amount of damage caused by the event
@@ -319,8 +316,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
         WORLD_BORDER,
         /**
          * Damage caused when an entity contacts another entity (sulfur cube) or block (cactus, dripstone stalagmite,
-         * berry bush, campfire, magma block). (Stonecutters too if you have the Stonecutter damage Purpur feature
-         * enabled)
+         * berry bush, campfire, magma block).
          * <p>
          * Damage: variable
          */

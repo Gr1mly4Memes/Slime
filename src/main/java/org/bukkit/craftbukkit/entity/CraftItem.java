@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.UUID;
 import net.minecraft.Optionull;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -8,8 +9,6 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.UUID;
 
 public class CraftItem extends CraftEntity implements Item {
 
@@ -27,7 +26,7 @@ public class CraftItem extends CraftEntity implements Item {
 
     @Override
     public ItemStack getItemStack() {
-        return CraftItemStack.asCraftMirror(this.getHandle().getItem());
+        return CraftItemStack.asBukkitMirror(this.getHandle().getItem());
     }
 
     @Override

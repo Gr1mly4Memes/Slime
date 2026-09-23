@@ -1,6 +1,10 @@
 package com.destroystokyo.paper.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import org.bukkit.Location;
@@ -8,11 +12,6 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PaperPathfinder implements com.destroystokyo.paper.entity.Pathfinder {
 
@@ -103,7 +102,7 @@ public class PaperPathfinder implements com.destroystokyo.paper.entity.Pathfinde
         this.entity.getNavigation().pathFinder.nodeEvaluator.setCanFloat(canFloat);
     }
 
-    public class PaperPathResult implements PaperPathfinder.PathResult {
+    public class PaperPathResult implements com.destroystokyo.paper.entity.PaperPathfinder.PathResult {
 
         private final Path path;
 

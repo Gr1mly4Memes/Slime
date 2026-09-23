@@ -1,12 +1,11 @@
 package org.bukkit.block;
 
+import java.util.Collection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.spawner.TrialSpawnerConfiguration;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Collection;
 
 /**
  * Represents a captured state of a trial spawner.

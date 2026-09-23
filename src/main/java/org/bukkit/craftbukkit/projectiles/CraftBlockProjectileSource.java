@@ -13,10 +13,19 @@ import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.entity.*;
+import org.bukkit.entity.AbstractArrow;
+import org.bukkit.entity.Egg;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.LingeringPotion;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
+import org.bukkit.entity.SpectralArrow;
+import org.bukkit.entity.ThrownExpBottle;
+import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.TippedArrow;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.util.Vector;
-
 import java.util.function.Consumer;
 
 public class CraftBlockProjectileSource implements BlockProjectileSource {

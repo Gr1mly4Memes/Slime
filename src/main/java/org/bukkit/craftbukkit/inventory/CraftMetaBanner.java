@@ -4,6 +4,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.papermc.paper.registry.RegistryKey;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
@@ -13,10 +16,6 @@ import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.block.banner.CraftPatternType;
 import org.bukkit.inventory.meta.BannerMeta;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
@@ -70,7 +69,7 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         if (this.patterns.isEmpty()) return;

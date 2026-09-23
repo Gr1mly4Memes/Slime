@@ -1,11 +1,10 @@
 package io.papermc.paper.command.brigadier;
 
+import java.util.Collection;
+import java.util.Collections;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Implementing this interface allows for easily creating "Bukkit-style" {@code String[] args} commands.

@@ -1,5 +1,7 @@
 package org.bukkit.event.server;
 
+import com.mohistmc.youer.api.ColorAPI;
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
@@ -7,8 +9,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 /**
  * Event triggered for server broadcast messages such as from
@@ -37,7 +37,7 @@ public class BroadcastMessageEvent extends ServerEvent implements Cancellable {
     @Deprecated(forRemoval = true)
     public BroadcastMessageEvent(boolean isAsync, @NotNull String message, @NotNull Set<CommandSender> recipients) {
         super(isAsync);
-        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
+        this.message = ColorAPI.adventure(message);
         this.recipients = recipients;
     }
 
@@ -92,7 +92,7 @@ public class BroadcastMessageEvent extends ServerEvent implements Cancellable {
      */
     @Deprecated // Paper
     public void setMessage(@NotNull String message) {
-        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
+        this.message = ColorAPI.adventure(message);
     }
 
     /**

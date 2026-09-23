@@ -1,9 +1,8 @@
 package io.papermc.paper.command.brigadier.argument.predicate;
 
+import java.util.function.Predicate;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.function.Predicate;
 
 /**
  * A predicate for ItemStack.

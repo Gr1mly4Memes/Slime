@@ -1,13 +1,13 @@
 package ca.spottedleaf.moonrise.patches.collisions;
 
 import ca.spottedleaf.moonrise.common.util.WorldUtil;
-import ca.spottedleaf.moonrise.patches.block_counting.BlockCountingChunkSection;
-import ca.spottedleaf.moonrise.patches.chunk_system.entity.ChunkSystemEntity;
 import ca.spottedleaf.moonrise.patches.chunk_system.world.ChunkSystemEntityGetter;
 import ca.spottedleaf.moonrise.patches.collisions.block.CollisionBlockState;
+import ca.spottedleaf.moonrise.patches.chunk_system.entity.ChunkSystemEntity;
 import ca.spottedleaf.moonrise.patches.collisions.shape.CachedShapeData;
 import ca.spottedleaf.moonrise.patches.collisions.shape.CollisionDiscreteVoxelShape;
 import ca.spottedleaf.moonrise.patches.collisions.shape.CollisionVoxelShape;
+import ca.spottedleaf.moonrise.patches.block_counting.BlockCountingChunkSection;
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import net.minecraft.core.BlockPos;
@@ -29,8 +29,16 @@ import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.*;
-
+import net.minecraft.world.phys.shapes.ArrayVoxelShape;
+import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.phys.shapes.OffsetDoubleList;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.SliceShape;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -2038,6 +2046,7 @@ public final class CollisionUtil {
                                         continue;
                                     }
 
+                                    // TODO perform intersection check using moved aabb instead of moved blockCollision so we can avoid the call?
                                     final VoxelShape blockCollisionOffset = blockCollision.move((double)blockX, (double)blockY, (double)blockZ);
 
                                     if (!voxelShapeIntersectNoEmpty(blockCollisionOffset, aabb)) {

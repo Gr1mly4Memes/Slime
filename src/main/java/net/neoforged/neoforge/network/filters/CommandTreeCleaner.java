@@ -89,7 +89,7 @@ class CommandTreeCleaner {
     /**
      * Cleans the command tree starting at the given root node from any argument types that do not match the given predicate.
      * Any {@code ArgumentCommandNode}s that have an unmatched argument type will be stripped from the tree.
-     *
+     * 
      * @return A new command tree, stripped of any unmatched argument types
      */
     public static <S> RootCommandNode<S> cleanArgumentTypes(RootCommandNode<S> root, Predicate<ArgumentType<?>> argumentTypeFilter) {

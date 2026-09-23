@@ -1,12 +1,11 @@
 package io.papermc.paper.registry;
 
 import com.google.common.collect.Sets;
+import java.util.Set;
 import net.kyori.adventure.key.Key;
 import org.intellij.lang.annotations.Subst;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Set;
 
 @NullMarked
 record RegistryKeyImpl<T>(Key key) implements RegistryKey<T> {

@@ -1,9 +1,8 @@
 package io.papermc.paper.block.bed;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.Optional;
 import java.util.ServiceLoader;
+import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 interface BedEnterActionBridge {

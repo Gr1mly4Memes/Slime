@@ -3,6 +3,9 @@ package org.bukkit.craftbukkit.potion;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import io.papermc.paper.registry.RegistryKey;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.alchemy.Potion;
@@ -15,10 +18,6 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.function.Supplier;
 
 public class CraftPotionType implements PotionType.InternalPotionData {
 

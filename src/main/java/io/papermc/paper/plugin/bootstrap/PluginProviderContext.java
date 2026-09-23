@@ -1,11 +1,10 @@
 package io.papermc.paper.plugin.bootstrap;
 
 import io.papermc.paper.plugin.configuration.PluginMeta;
+import java.nio.file.Path;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
-
-import java.nio.file.Path;
 
 /**
  * Represents the context provided to a {@link PluginBootstrap} during both the bootstrapping and plugin

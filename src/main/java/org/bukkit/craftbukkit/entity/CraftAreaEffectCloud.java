@@ -1,6 +1,9 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import net.minecraft.Optionull;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -22,10 +25,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.projectiles.ProjectileSource;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud {
 
@@ -220,7 +219,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
     @Override
     public ProjectileSource getSource() {
         net.minecraft.world.entity.LivingEntity source = this.getHandle().getOwner();
-        return (source == null) ? null : (LivingEntity) source.getBukkitEntity();
+        return (source == null) ? null : source.getBukkitEntity();
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -15,9 +17,6 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-
-import java.util.List;
-import java.util.Optional;
 
 public class CraftArrow extends CraftAbstractArrow implements Arrow {
 

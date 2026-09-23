@@ -2,14 +2,13 @@ package org.bukkit.craftbukkit;
 
 import com.mojang.serialization.DataResult;
 import io.papermc.paper.world.flag.PaperFeatureDependent;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import org.bukkit.GameRule;
 import org.bukkit.NamespacedKey;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 @NullMarked
 public class CraftGameRule<T> extends GameRule<T> implements PaperFeatureDependent<net.minecraft.world.level.gamerules.GameRule<T>> {

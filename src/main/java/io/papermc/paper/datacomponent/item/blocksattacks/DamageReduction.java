@@ -6,7 +6,6 @@ import org.bukkit.damage.DamageType;
 import org.checkerframework.checker.index.qual.Positive;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -15,12 +14,11 @@ import org.jspecify.annotations.Nullable;
  * @see io.papermc.paper.datacomponent.DataComponentTypes#BLOCKS_ATTACKS
  * @see io.papermc.paper.datacomponent.item.BlocksAttacks#damageReductions()
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface DamageReduction {
 
     @Contract(value = "-> new", pure = true)
-    static Builder damageReduction() {
+    static DamageReduction.Builder damageReduction() {
         return BlocksAttacksBridge.bridge().blocksAttacksDamageReduction();
     }
 
@@ -59,16 +57,16 @@ public interface DamageReduction {
     interface Builder extends DataComponentBuilder<DamageReduction> {
 
         @Contract(value = "_ -> this", mutates = "this")
-        Builder type(RegistryKeySet<DamageType> type);
+        DamageReduction.Builder type(RegistryKeySet<DamageType> type);
 
         @Contract(value = "_ -> this", mutates = "this")
-        Builder horizontalBlockingAngle(@Positive float horizontalBlockingAngle);
+        DamageReduction.Builder horizontalBlockingAngle(@Positive float horizontalBlockingAngle);
 
         @Contract(value = "_ -> this", mutates = "this")
-        Builder base(float base);
+        DamageReduction.Builder base(float base);
 
         @Contract(value = "_ -> this", mutates = "this")
-        Builder factor(float factor);
+        DamageReduction.Builder factor(float factor);
     }
 
 }

@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,8 +13,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -48,23 +47,23 @@ public class CraftStair extends CraftBlockData implements Stairs {
     }
 
     @Override
-    public Half getHalf() {
-        return this.get(HALF, Half.class);
+    public org.bukkit.block.data.Bisected.Half getHalf() {
+        return this.get(HALF, org.bukkit.block.data.Bisected.Half.class);
     }
 
     @Override
-    public void setHalf(final Half half) {
+    public void setHalf(final org.bukkit.block.data.Bisected.Half half) {
         Preconditions.checkArgument(half != null, "half cannot be null!");
         this.set(HALF, half);
     }
 
     @Override
-    public Shape getShape() {
-        return this.get(SHAPE, Shape.class);
+    public Stairs.Shape getShape() {
+        return this.get(SHAPE, Stairs.Shape.class);
     }
 
     @Override
-    public void setShape(final Shape shape) {
+    public void setShape(final Stairs.Shape shape) {
         Preconditions.checkArgument(shape != null, "shape cannot be null!");
         this.set(SHAPE, shape);
     }

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 /**
- * A data-centric version-specific registry entry for the {@link Dialog} type.
+ * A data-centric version-specific registry entry for the {@link io.papermc.paper.dialog.Dialog} type.
  */
 @ApiStatus.NonExtendable
 public interface DialogRegistryEntry {
@@ -50,7 +50,7 @@ public interface DialogRegistryEntry {
          * @return a new registry value set builder
          */
         @Contract(value = "-> new", pure = true)
-        RegistryValueSetBuilder<Dialog, Builder> registryValueSet();
+        RegistryValueSetBuilder<Dialog, DialogRegistryEntry.Builder> registryValueSet();
 
         /**
          * Sets the base dialog for this entry.

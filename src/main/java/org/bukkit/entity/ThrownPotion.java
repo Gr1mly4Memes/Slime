@@ -1,13 +1,12 @@
 package org.bukkit.entity;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import java.util.Collection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Collection;
 
 /**
  * Represents a thrown potion bottle

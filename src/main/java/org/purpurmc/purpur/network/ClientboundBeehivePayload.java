@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public record ClientboundBeehivePayload(BlockPos pos, int numOfBees) implements CustomPacketPayload {
     public static final StreamCodec<FriendlyByteBuf, ClientboundBeehivePayload> STREAM_CODEC = CustomPacketPayload.codec(ClientboundBeehivePayload::write, ClientboundBeehivePayload::new);
-    public static final Type<ClientboundBeehivePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath("purpur", "beehive_s2c")); // Slime - fix invalid namespace org/purpurmc/purpur (slash not allowed)
+    public static final Type<ClientboundBeehivePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath("purpur", "beehive_s2c"));
 
     public ClientboundBeehivePayload(FriendlyByteBuf friendlyByteBuf) {
         this(friendlyByteBuf.readBlockPos(),  friendlyByteBuf.readInt());

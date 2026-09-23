@@ -1,14 +1,9 @@
 package io.papermc.paper.datacomponent.item.attribute;
 
-import net.kyori.adventure.text.ComponentLike;
-import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.NullMarked;
-
 import java.util.Optional;
 import java.util.ServiceLoader;
+import net.kyori.adventure.text.ComponentLike;
 
-@NullMarked
-@ApiStatus.Internal
 interface AttributeModifierDisplayBridge {
 
     Optional<AttributeModifierDisplayBridge> BRIDGE = ServiceLoader.load(AttributeModifierDisplayBridge.class, AttributeModifierDisplayBridge.class.getClassLoader()).findFirst();

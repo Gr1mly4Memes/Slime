@@ -213,7 +213,7 @@ public class CraftFishHook extends CraftProjectile implements FishHook {
 
     @Override
     public void setTimeUntilBite(final int ticks) {
-        Preconditions.checkArgument(ticks >= 1, "Cannot set time until bite to less than 1 (%s<1)", ticks);
+        com.google.common.base.Preconditions.checkArgument(ticks >= 1, "Cannot set time until bite to less than 1 (%s<1)", ticks);
         final FishingHook hook = this.getHandle();
 
         // Reset the fish angle hook only when this call "enters" the fish into the lure stage.

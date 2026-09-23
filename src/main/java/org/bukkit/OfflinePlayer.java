@@ -1,5 +1,9 @@
 package org.bukkit;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
+import java.util.UUID;
 import net.kyori.adventure.text.object.PlayerHeadObjectContents;
 import org.bukkit.ban.ProfileBanList;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -10,11 +14,6 @@ import org.bukkit.permissions.ServerOperator;
 import org.bukkit.profile.PlayerProfile;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * Represents a reference to a player identity and the data belonging to a
@@ -117,7 +116,7 @@ public interface OfflinePlayer extends ServerOperator, AnimalTamer, Configuratio
      * @deprecated use {@link #ban(String, Date, String)}
      */
     @Deprecated(since = "1.20.4")
-    public default BanEntry banPlayer(@Nullable String reason, @Nullable Date expires) {
+    public default BanEntry banPlayer(@Nullable String reason, java.util.@Nullable Date expires) {
         return banPlayer(reason, expires, null);
     }
 
@@ -130,7 +129,7 @@ public interface OfflinePlayer extends ServerOperator, AnimalTamer, Configuratio
      * @deprecated use {@link #ban(String, Date, String)}
      */
     @Deprecated(since = "1.20.4")
-    public default BanEntry banPlayer(@Nullable String reason, @Nullable Date expires, @Nullable String source) {
+    public default BanEntry banPlayer(@Nullable String reason, java.util.@Nullable Date expires, @Nullable String source) {
         return banPlayer(reason, expires, source, true);
     }
 
@@ -138,7 +137,7 @@ public interface OfflinePlayer extends ServerOperator, AnimalTamer, Configuratio
      * @deprecated use {@link #ban(String, Date, String)}
      */
     @Deprecated(since = "1.20.4")
-    public default BanEntry banPlayer(@Nullable String reason, @Nullable Date expires, @Nullable String source, boolean kickIfOnline) {
+    public default BanEntry banPlayer(@Nullable String reason, java.util.@Nullable Date expires, @Nullable String source, boolean kickIfOnline) {
         BanEntry banEntry = Bukkit.getServer().getBanList(BanList.Type.NAME).addBan(getName(), reason, expires, source);
         if (kickIfOnline && isOnline()) {
             getPlayer().kickPlayer(reason);
@@ -664,7 +663,7 @@ public interface OfflinePlayer extends ServerOperator, AnimalTamer, Configuratio
      * @param destination
      * @return true if teleportation was successful
      */
-    boolean teleportOffline(Location destination);
+    boolean teleportOffline(org.bukkit.Location destination);
 
     /**
      * Sets OfflinePlayer's location. If player is online, it falls back to the Player#teleport implementation.
@@ -673,7 +672,7 @@ public interface OfflinePlayer extends ServerOperator, AnimalTamer, Configuratio
      * @param cause Teleport cause used if player is online
      * @return true if teleportation was successful
      */
-    boolean teleportOffline(Location destination, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause);
+    boolean teleportOffline(org.bukkit.Location destination, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause);
 
     /**
      * Sets OfflinePlayer's location. If player is online, it falls back to the Player#teleportAsync implementation.

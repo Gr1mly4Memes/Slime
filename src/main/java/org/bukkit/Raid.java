@@ -1,13 +1,12 @@
 package org.bukkit;
 
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Raider;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Represents a raid event.

@@ -1,22 +1,50 @@
 package org.bukkit;
 
 import com.google.common.collect.ImmutableList;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
 import io.papermc.paper.configuration.ServerConfiguration;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Warning.WarningState;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.boss.*;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
+import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityFactory;
+import org.bukkit.entity.EntitySnapshot;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.help.HelpMap;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemCraftResult;
+import org.bukkit.inventory.ItemFactory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MenuType;
+import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.loot.LootTable;
 import org.bukkit.map.MapView;
@@ -35,14 +63,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.logging.Logger;
 
 /**
  * Represents the Bukkit core, for version and Server singleton handling
@@ -432,8 +452,8 @@ public final class Bukkit {
     /**
      * Broadcast a message to all players.
      * <p>
-     * This is the same as calling {@link #broadcast(String,
-     * String)} to {@link Server#BROADCAST_CHANNEL_USERS}
+     * This is the same as calling {@link #broadcast(java.lang.String,
+     * java.lang.String)} to {@link Server#BROADCAST_CHANNEL_USERS}
      *
      * @param message the message
      * @return the number of players
@@ -791,6 +811,16 @@ public final class Bukkit {
     // Paper end
 
     /**
+     * Gets a list of all world name on this server.
+     *
+     * @return a set of worlds
+     */
+    @NotNull
+    public static Set<String> getWorldsByName() {
+        return server.getWorldsByName();
+    }
+
+    /**
      * Creates or loads a world with the given name using the specified
      * options.
      * <p>
@@ -927,8 +957,8 @@ public final class Bukkit {
      * @param structureType the type of structure to find
      * @return a newly created item stack
      *
-     * @see World#locateNearestStructure(Location,
-     *      StructureType, int, boolean)
+     * @see World#locateNearestStructure(org.bukkit.Location,
+     *      org.bukkit.StructureType, int, boolean)
      * @deprecated use {@link #createExplorerMap(World, Location, org.bukkit.generator.structure.StructureType, org.bukkit.map.MapCursor.Type)}
      */
     @Deprecated // Paper
@@ -952,8 +982,8 @@ public final class Bukkit {
      * @param findUnexplored whether to find unexplored structures
      * @return the newly created item stack
      *
-     * @see World#locateNearestStructure(Location,
-     *      StructureType, int, boolean)
+     * @see World#locateNearestStructure(org.bukkit.Location,
+     *      org.bukkit.StructureType, int, boolean)
      * @deprecated use {@link #createExplorerMap(World, Location, org.bukkit.generator.structure.StructureType, org.bukkit.map.MapCursor.Type, int, boolean)}
      */
     @Deprecated // Paper
@@ -975,7 +1005,7 @@ public final class Bukkit {
      * @param mapIcon the map icon to use on the map
      * @return a newly created item stack or null if it can't find a location
      *
-     * @see World#locateNearestStructure(Location,
+     * @see World#locateNearestStructure(org.bukkit.Location,
      *      org.bukkit.generator.structure.StructureType, int, boolean)
      */
     public static @Nullable ItemStack createExplorerMap(@NotNull World world, @NotNull Location location, @NotNull org.bukkit.generator.structure.StructureType structureType, @NotNull org.bukkit.map.MapCursor.Type mapIcon) {
@@ -995,7 +1025,7 @@ public final class Bukkit {
      * @param findUnexplored whether to find unexplored structures
      * @return the newly created item stack or null if it can't find a location
      *
-     * @see World#locateNearestStructure(Location,
+     * @see World#locateNearestStructure(org.bukkit.Location,
      *      org.bukkit.generator.structure.StructureType, int, boolean)
      */
     public static @Nullable ItemStack createExplorerMap(@NotNull World world, @NotNull Location location, @NotNull org.bukkit.generator.structure.StructureType structureType, @NotNull org.bukkit.map.MapCursor.Type mapIcon, int radius, boolean findUnexplored) {
@@ -1049,7 +1079,7 @@ public final class Bukkit {
      * That way, log messages contain contextual information about the source of the message.
      */
     @NotNull
-    @ApiStatus.Internal // Paper - internalize Bukkit#getLogger
+    @org.jetbrains.annotations.ApiStatus.Internal // Paper - internalize Bukkit#getLogger
     public static Logger getLogger() {
         return server.getLogger();
     }
@@ -1347,11 +1377,7 @@ public final class Bukkit {
      * Sets the radius, in blocks, around each worlds spawn point to protect.
      *
      * @param value new spawn radius, or 0 if none
-     * @deprecated has not functioned for a long time as the spawn radius is defined by the server.properties file.
-     * There is no API replacement for this method. It is generally recommended to implement "protection"-like behaviour
-     * via events or third-party plugin APIs.
      */
-    @Deprecated(since = "1.21.4", forRemoval = true)
     public static void setSpawnRadius(int value) {
         server.setSpawnRadius(value);
     }
@@ -1445,12 +1471,12 @@ public final class Bukkit {
      * Broadcast a message to all players.
      * <p>
      * This is the same as calling {@link #broadcast(Component,
-     * String)} with the {@link Server#BROADCAST_CHANNEL_USERS} permission.
+     * java.lang.String)} with the {@link Server#BROADCAST_CHANNEL_USERS} permission.
      *
      * @param message the message
      * @return the number of players
      */
-    public static int broadcast(@NotNull Component message) {
+    public static int broadcast(net.kyori.adventure.text.@NotNull Component message) {
         return server.broadcast(message);
     }
     /**
@@ -1462,7 +1488,7 @@ public final class Bukkit {
      *     permissibles} must have to receive the broadcast
      * @return number of message recipients
      */
-    public static int broadcast(@NotNull Component message, @NotNull String permission) {
+    public static int broadcast(net.kyori.adventure.text.@NotNull Component message, @NotNull String permission) {
         return server.broadcast(message, permission);
     }
     // Paper end
@@ -1493,7 +1519,7 @@ public final class Bukkit {
      *
      * @param name the name the player to retrieve
      * @return an offline player
-     * @see #getOfflinePlayer(UUID)
+     * @see #getOfflinePlayer(java.util.UUID)
      */
     @NotNull
     public static OfflinePlayer getOfflinePlayer(@NotNull String name) {
@@ -1513,7 +1539,7 @@ public final class Bukkit {
      * @param name the name of the player to retrieve
      * @return an offline player if cached, {@code null} otherwise
      * @see #getOfflinePlayer(String)
-     * @see #getOfflinePlayer(UUID)
+     * @see #getOfflinePlayer(java.util.UUID)
      */
     @Nullable
     public static OfflinePlayer getOfflinePlayerIfCached(@NotNull String name) {
@@ -1730,7 +1756,7 @@ public final class Bukkit {
      * @return a command sender
      */
     @NotNull
-    public static CommandSender createCommandSender(final @NotNull Consumer<? super Component> feedback) {
+    public static CommandSender createCommandSender(final @NotNull java.util.function.Consumer<? super Component> feedback) {
         return server.createCommandSender(feedback);
     }
     // Paper end
@@ -1832,7 +1858,7 @@ public final class Bukkit {
      * @see InventoryType#isCreatable()
      */
     @NotNull
-    public static Inventory createInventory(@Nullable InventoryHolder owner, @NotNull InventoryType type, @NotNull Component title) {
+    public static Inventory createInventory(@Nullable InventoryHolder owner, @NotNull InventoryType type, net.kyori.adventure.text.@NotNull Component title) {
         return server.createInventory(owner, type, title);
     }
     // Paper end
@@ -1895,7 +1921,7 @@ public final class Bukkit {
      * @throws IllegalArgumentException if the size is not a multiple of 9
      */
     @NotNull
-    public static Inventory createInventory(@Nullable InventoryHolder owner, int size, @NotNull Component title) throws IllegalArgumentException {
+    public static Inventory createInventory(@Nullable InventoryHolder owner, int size, net.kyori.adventure.text.@NotNull Component title) throws IllegalArgumentException {
         return server.createInventory(owner, size, title);
     }
     // Paper end
@@ -1929,7 +1955,7 @@ public final class Bukkit {
      * {@link MenuType#MERCHANT} and {@link MenuType.Typed#builder()}.
      */
     @Deprecated(since = "1.21.4")
-    public static @NotNull Merchant createMerchant(@Nullable Component title) {
+    public static @NotNull Merchant createMerchant(net.kyori.adventure.text.@Nullable Component title) {
         return server.createMerchant(title);
     }
     // Paper start
@@ -2085,7 +2111,7 @@ public final class Bukkit {
      *
      * @param motd The message to be displayed
      */
-    public static void motd(final @NotNull Component motd) {
+    public static void motd(final net.kyori.adventure.text.@NotNull Component motd) {
         server.motd(motd);
     }
 
@@ -2094,7 +2120,7 @@ public final class Bukkit {
      *
      * @return the shutdown message
      */
-    public static @Nullable Component shutdownMessage() {
+    public static net.kyori.adventure.text.@Nullable Component shutdownMessage() {
         return server.shutdownMessage();
     }
     // Paper end
@@ -2297,7 +2323,7 @@ public final class Bukkit {
     /**
      * Create a ChunkData for use in a generator.
      *
-     * See {@link ChunkGenerator#generateChunkData(World, java.util.Random, int, int, ChunkGenerator.BiomeGrid)}
+     * See {@link ChunkGenerator#generateChunkData(org.bukkit.World, java.util.Random, int, int, org.bukkit.generator.ChunkGenerator.BiomeGrid)}
      *
      * @param world the world to create the ChunkData for
      * @return a new ChunkData for the world
@@ -2810,7 +2836,11 @@ public final class Bukkit {
      * Gets the potion brewer.
      *
      * @return the potion brewer
+     * @deprecated since mojang introduced data driven brewing recipes, this type no longer offers anything that isn't
+     * covered by existing recipe and potion type API
+     * @see org.bukkit.inventory.BrewingRecipe
      */
+    @Deprecated(since = "26.3", forRemoval = true)
     public static @NotNull org.bukkit.potion.PotionBrewer getPotionBrewer() {
         return server.getPotionBrewer();
     }
@@ -3012,27 +3042,6 @@ public final class Bukkit {
     }
     // Purpur end - Lagging threshold
 
-    // Purpur start - Added the ability to add combustible items
-    /**
-     * Add an Item as fuel for furnaces
-     *
-     * @param material The material that will be the fuel
-     * @param burnTime The time (in ticks) this item will burn for
-     */
-    public static void addFuel(@NotNull Material material, int burnTime) {
-        server.addFuel(material, burnTime);
-    }
-
-    /**
-     * Remove an item as fuel for furnaces
-     *
-     * @param material The material that will no longer be a fuel
-     */
-    public static void removeFuel(@NotNull Material material) {
-        server.removeFuel(material);
-    }
-    // Purpur end - Added the ability to add combustible items
-
     // Purpur start - Debug Marker API
     /**
      * Creates debug block highlight on specified block location and show it to all players on the server.
@@ -3102,7 +3111,7 @@ public final class Bukkit {
      * @deprecated until further notice. NOOP since 1.21.10
      */
     @Deprecated
-    public static void sendBlockHighlight(@NotNull Location location, int duration, @NotNull Color color, int transparency) {
+    public static void sendBlockHighlight(@NotNull Location location, int duration, @NotNull org.bukkit.Color color, int transparency) {
         server.sendBlockHighlight(location, duration, color, transparency);
     }
 
@@ -3119,7 +3128,7 @@ public final class Bukkit {
      * @deprecated until further notice. NOOP since 1.21.10
      */
     @Deprecated
-    public static void sendBlockHighlight(@NotNull Location location, int duration, @NotNull String text, @NotNull Color color, int transparency) {
+    public static void sendBlockHighlight(@NotNull Location location, int duration, @NotNull String text, @NotNull org.bukkit.Color color, int transparency) {
         server.sendBlockHighlight(location, duration, text, color, transparency);
     }
 

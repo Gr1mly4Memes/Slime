@@ -1,13 +1,13 @@
 package org.bukkit.craftbukkit.command;
 
-import org.bukkit.ChatColor;
+import com.mohistmc.youer.Youer;
+import com.mohistmc.youer.api.ColorAPI;
+import java.util.UUID;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
 import org.bukkit.craftbukkit.conversations.ConversationTracker;
-
-import java.util.UUID;
 
 /**
  * Represents CLI input from a console
@@ -32,7 +32,7 @@ public class CraftConsoleCommandSender extends ServerCommandSender implements Co
 
     @Override
     public void sendRawMessage(String message) {
-        System.out.println(ChatColor.stripColor(message));
+        Youer.LOGGER.info(ColorAPI.string(message));
     }
 
     @Override

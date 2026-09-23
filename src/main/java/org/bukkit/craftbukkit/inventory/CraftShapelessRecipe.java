@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -9,9 +11,6 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe {
     // TODO: Could eventually use this to add a matches() method or some such
@@ -51,8 +50,7 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
             new net.minecraft.world.item.crafting.Recipe.CommonInfo(true),
             new net.minecraft.world.item.crafting.CraftingRecipe.CraftingBookInfo(CraftRecipe.getCategory(this.getCategory()), this.getGroup()),
             CraftItemStack.asTemplate(this.getResult()),
-            ingredients,
-            true // Pufferfish - Bukkit recipe uses Paper path
+            ingredients
         );
         MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toResourceKey(Registries.RECIPE, this.getKey()), recipe));
     }

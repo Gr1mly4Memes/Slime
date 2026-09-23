@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import io.papermc.paper.util.Holderable;
 import io.papermc.paper.world.flag.PaperFeatureDependent;
+import java.util.Map;
+import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
@@ -19,9 +21,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionEffectTypeCategory;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Map;
-import java.util.function.Supplier;
 
 @NullMarked
 public class CraftPotionEffectType extends PotionEffectType implements Holderable<MobEffect>, io.papermc.paper.world.flag.PaperFeatureDependent<MobEffect> {
@@ -159,7 +158,7 @@ public class CraftPotionEffectType extends PotionEffectType implements Holderabl
 
     @Override
     public PotionEffectType.Category getEffectCategory() {
-        return fromNMS(this.getHandle().getCategory());
+        return fromVanilla(this.getHandle().getCategory());
     }
 
     @Override
@@ -167,8 +166,8 @@ public class CraftPotionEffectType extends PotionEffectType implements Holderabl
         return this.getHandle().getDescriptionId();
     }
 
-    public static PotionEffectType.Category fromNMS(MobEffectCategory mobEffectInfo) {
-        return switch (mobEffectInfo) {
+    public static PotionEffectType.Category fromVanilla(MobEffectCategory category) {
+        return switch (category) {
             case BENEFICIAL -> PotionEffectType.Category.BENEFICIAL;
             case HARMFUL -> PotionEffectType.Category.HARMFUL;
             case NEUTRAL -> PotionEffectType.Category.NEUTRAL;

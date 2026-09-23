@@ -4,9 +4,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import io.papermc.paper.registry.HolderableBase;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -33,12 +39,6 @@ import org.bukkit.inventory.ItemType;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 @NullMarked
 public class CraftBlockType<B extends @NonNull BlockData> extends HolderableBase<Block> implements BlockType.Typed<B>, io.papermc.paper.world.flag.PaperFeatureDependent<Block> { // Paper - feature flag API
@@ -175,7 +175,7 @@ public class CraftBlockType<B extends @NonNull BlockData> extends HolderableBase
 
     @Override
     public boolean isSolid() {
-        return this.getHandle().defaultBlockState().blocksMotion();
+        return this.getHandle().defaultBlockState().is(BlockTags.BLOCKS_MOTION);
     }
 
     @Override

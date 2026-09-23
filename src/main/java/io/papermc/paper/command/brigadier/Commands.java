@@ -11,14 +11,13 @@ import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.registrar.Registrar;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The registrar for custom commands. Supports Brigadier commands and {@link BasicCommand}.

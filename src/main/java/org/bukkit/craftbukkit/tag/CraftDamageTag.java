@@ -1,12 +1,12 @@
 package org.bukkit.craftbukkit.tag;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import org.bukkit.craftbukkit.damage.CraftDamageType;
 import org.bukkit.damage.DamageType;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CraftDamageTag extends CraftTag<net.minecraft.world.damagesource.DamageType, DamageType> {
 

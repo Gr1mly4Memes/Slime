@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.registry.RegistryKey;
+import java.util.Locale;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import org.bukkit.NamespacedKey;
@@ -11,8 +12,6 @@ import org.bukkit.craftbukkit.legacy.FieldRename;
 import org.bukkit.craftbukkit.util.ApiVersion;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
-
-import java.util.Locale;
 
 public class CraftEntityType {
 

@@ -20,18 +20,18 @@ public class CraftBlockEntityInventoryViewBuilder<V extends InventoryView> exten
     private final @Nullable CraftBlockInventoryBuilder builder;
 
     public CraftBlockEntityInventoryViewBuilder(
-            final MenuType<?> handle,
-            final Block block,
-            final @Nullable CraftBlockInventoryBuilder builder
+        final MenuType<?> handle,
+        final Block block,
+        final @Nullable CraftBlockInventoryBuilder builder
     ) {
         this(handle, block, builder, true);
     }
 
     public CraftBlockEntityInventoryViewBuilder(
-            final MenuType<?> handle,
-            final Block block,
-            final @Nullable CraftBlockInventoryBuilder builder,
-            final boolean useFakeBlockEntity
+        final MenuType<?> handle,
+        final Block block,
+        final @Nullable CraftBlockInventoryBuilder builder,
+        final boolean useFakeBlockEntity
     ) {
         super(handle);
         this.useFakeBlockEntity = useFakeBlockEntity;

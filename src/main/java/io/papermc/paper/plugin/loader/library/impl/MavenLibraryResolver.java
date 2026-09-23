@@ -3,6 +3,9 @@ package io.papermc.paper.plugin.loader.library.impl;
 import io.papermc.paper.plugin.loader.library.ClassPathLibrary;
 import io.papermc.paper.plugin.loader.library.LibraryLoadingException;
 import io.papermc.paper.plugin.loader.library.LibraryStore;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -26,10 +29,6 @@ import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The maven library resolver acts as a resolver for yet to be resolved jar libraries that may be pulled from a

@@ -1,19 +1,16 @@
 package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
+import java.util.List;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Holds all projectiles that have been loaded into a Crossbow.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#CHARGED_PROJECTILES
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface ChargedProjectiles {
 
@@ -23,7 +20,7 @@ public interface ChargedProjectiles {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder chargedProjectiles() {
+    static ChargedProjectiles.Builder chargedProjectiles() {
         return ItemComponentTypesBridge.bridge().chargedProjectiles();
     }
 

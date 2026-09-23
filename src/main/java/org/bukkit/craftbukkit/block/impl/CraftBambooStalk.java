@@ -40,12 +40,12 @@ public class CraftBambooStalk extends CraftBlockData implements Bamboo {
     }
 
     @Override
-    public Leaves getLeaves() {
-        return this.get(LEAVES, Leaves.class);
+    public Bamboo.Leaves getLeaves() {
+        return this.get(LEAVES, Bamboo.Leaves.class);
     }
 
     @Override
-    public void setLeaves(final Leaves leaves) {
+    public void setLeaves(final Bamboo.Leaves leaves) {
         Preconditions.checkArgument(leaves != null, "leaves cannot be null!");
         this.set(LEAVES, leaves);
     }

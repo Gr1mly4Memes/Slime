@@ -3,14 +3,13 @@ package io.papermc.paper.tag;
 import io.papermc.paper.plugin.lifecycle.event.registrar.Registrar;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.tag.TagKey;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Registrar for tags before they are flattened. Flattened

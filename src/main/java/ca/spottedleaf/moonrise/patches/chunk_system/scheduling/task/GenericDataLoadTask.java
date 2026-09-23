@@ -1,6 +1,7 @@
 package ca.spottedleaf.moonrise.patches.chunk_system.scheduling.task;
 
 import ca.spottedleaf.concurrentutil.completable.CallbackCompletable;
+import ca.spottedleaf.concurrentutil.completable.Completable;
 import ca.spottedleaf.concurrentutil.executor.Cancellable;
 import ca.spottedleaf.concurrentutil.executor.PrioritisedExecutor;
 import ca.spottedleaf.concurrentutil.util.ConcurrentUtil;

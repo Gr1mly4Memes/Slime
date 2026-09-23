@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.util;
 
+import java.util.Collection;
+import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
@@ -18,9 +20,6 @@ import org.bukkit.event.world.AsyncStructureGenerateEvent.Cause;
 import org.bukkit.util.BlockTransformer;
 import org.bukkit.util.BlockTransformer.TransformationState;
 import org.bukkit.util.EntityTransformer;
-
-import java.util.Collection;
-import java.util.Objects;
 
 public class CraftStructureTransformer {
 

@@ -1,25 +1,22 @@
 package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
+import java.util.List;
 import org.bukkit.Color;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Holds the custom model data.
  *
  * @see io.papermc.paper.datacomponent.DataComponentTypes#CUSTOM_MODEL_DATA
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface CustomModelData {
 
     @Contract(value = "-> new", pure = true)
-    static Builder customModelData() {
+    static CustomModelData.Builder customModelData() {
         return ItemComponentTypesBridge.bridge().customModelData();
     }
 
@@ -69,7 +66,7 @@ public interface CustomModelData {
          * @see #floats()
          */
         @Contract(value = "_ -> this", mutates = "this")
-        Builder addFloat(float f);
+        CustomModelData.Builder addFloat(float f);
 
         /**
          * Adds multiple floats to this custom model data.
@@ -79,7 +76,7 @@ public interface CustomModelData {
          * @see #floats()
          */
         @Contract(value = "_ -> this", mutates = "this")
-        Builder addFloats(List<Float> floats);
+        CustomModelData.Builder addFloats(List<Float> floats);
 
         /**
          * Adds a flag to this custom model data.
@@ -89,7 +86,7 @@ public interface CustomModelData {
          * @see #flags()
          */
         @Contract(value = "_ -> this", mutates = "this")
-        Builder addFlag(boolean flag);
+        CustomModelData.Builder addFlag(boolean flag);
 
         /**
          * Adds multiple flags to this custom model data.
@@ -99,7 +96,7 @@ public interface CustomModelData {
          * @see #flags()
          */
         @Contract(value = "_ -> this", mutates = "this")
-        Builder addFlags(List<Boolean> flags);
+        CustomModelData.Builder addFlags(List<Boolean> flags);
 
         /**
          * Adds a string to this custom model data.
@@ -109,7 +106,7 @@ public interface CustomModelData {
          * @see #strings()
          */
         @Contract(value = "_ -> this", mutates = "this")
-        Builder addString(String string);
+        CustomModelData.Builder addString(String string);
 
         /**
          * Adds multiple strings to this custom model data.
@@ -119,7 +116,7 @@ public interface CustomModelData {
          * @see #strings()
          */
         @Contract(value = "_ -> this", mutates = "this")
-        Builder addStrings(List<String> strings);
+        CustomModelData.Builder addStrings(List<String> strings);
 
         /**
          * Adds a color to this custom model data.
@@ -129,7 +126,7 @@ public interface CustomModelData {
          * @see #colors()
          */
         @Contract(value = "_ -> this", mutates = "this")
-        Builder addColor(Color color);
+        CustomModelData.Builder addColor(Color color);
 
         /**
          * Adds multiple colors to this custom model data.
@@ -139,6 +136,6 @@ public interface CustomModelData {
          * @see #colors()
          */
         @Contract(value = "_ -> this", mutates = "this")
-        Builder addColors(List<Color> colors);
+        CustomModelData.Builder addColors(List<Color> colors);
     }
 }

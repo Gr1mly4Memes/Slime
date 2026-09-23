@@ -96,7 +96,7 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
      * @deprecated use {@link RegistryAccess#getRegistry(RegistryKey)} with {@link RegistryKey#PAINTING_VARIANT}
      */
     @Deprecated(since = "1.21.3") // Paper
-            Registry<Art> ART = legacyRegistryFor(Art.class);
+    Registry<Art> ART = legacyRegistryFor(Art.class);
     /**
      * Attribute.
      *
@@ -110,7 +110,7 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
      * @deprecated use {@link RegistryAccess#getRegistry(RegistryKey)} with {@link RegistryKey#BANNER_PATTERN}
      */
     @Deprecated(since = "1.21") // Paper
-            Registry<PatternType> BANNER_PATTERN = legacyRegistryFor(PatternType.class);
+    Registry<PatternType> BANNER_PATTERN = legacyRegistryFor(PatternType.class);
     /**
      * Server biomes.
      *
@@ -118,7 +118,7 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
      * @deprecated use {@link RegistryAccess#getRegistry(RegistryKey)} with {@link RegistryKey#BIOME}
      */
     @Deprecated(since = "1.21.3") // Paper
-            Registry<Biome> BIOME = legacyRegistryFor(Biome.class);
+    Registry<Biome> BIOME = legacyRegistryFor(Biome.class);
     /**
      * Server block types.
      *
@@ -230,7 +230,7 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
      * @deprecated use {@link RegistryAccess#getRegistry(RegistryKey)} with {@link RegistryKey#STRUCTURE}
      */
     @Deprecated(since = "1.20.6") // Paper
-            Registry<Structure> STRUCTURE = legacyRegistryFor(Structure.class);
+    Registry<Structure> STRUCTURE = legacyRegistryFor(Structure.class);
     /**
      * Server structure types.
      *
@@ -250,7 +250,7 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
      * @deprecated use {@link RegistryAccess#getRegistry(RegistryKey)} with {@link RegistryKey#TRIM_MATERIAL}
      */
     @Deprecated(since = "1.20.6") // Paper
-            Registry<TrimMaterial> TRIM_MATERIAL = legacyRegistryFor(TrimMaterial.class);
+    Registry<TrimMaterial> TRIM_MATERIAL = legacyRegistryFor(TrimMaterial.class);
     /**
      * Trim patterns.
      *

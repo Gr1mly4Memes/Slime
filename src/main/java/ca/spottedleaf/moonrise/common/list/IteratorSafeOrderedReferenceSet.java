@@ -19,7 +19,7 @@ public final class IteratorSafeOrderedReferenceSet<E> {
 
     private final double maxFragFactor;
 
-    private final java.util.concurrent.atomic.AtomicInteger iteratorCount = new java.util.concurrent.atomic.AtomicInteger(); // Pufferfish - async mob spawning
+    private final java.util.concurrent.atomic.AtomicInteger iteratorCount = new java.util.concurrent.atomic.AtomicInteger(); // Pufferfish - Async mob spawning
 
     public IteratorSafeOrderedReferenceSet() {
         this(Object.class);
@@ -99,7 +99,7 @@ public final class IteratorSafeOrderedReferenceSet<E> {
     }
 
     public int createRawIterator() {
-        this.iteratorCount.incrementAndGet(); // Pufferfish - async mob spawning
+        this.iteratorCount.incrementAndGet(); // Pufferfish - Async mob spawning
         if (this.indexMap.isEmpty()) {
             return Integer.MAX_VALUE;
         } else {
@@ -120,7 +120,7 @@ public final class IteratorSafeOrderedReferenceSet<E> {
     }
 
     public void finishRawIterator() {
-        if (this.iteratorCount.decrementAndGet() == 0) { // Pufferfish - async mob spawning
+        if (this.iteratorCount.decrementAndGet() == 0) { // Pufferfish - Async mob spawning
             if (this.getFragFactor() >= this.maxFragFactor) {
                 this.defrag();
             }
@@ -137,7 +137,7 @@ public final class IteratorSafeOrderedReferenceSet<E> {
                 throw new IllegalStateException();
             }
             this.listElements[index] = null;
-            if (this.iteratorCount.get() == 0 && this.getFragFactor() >= this.maxFragFactor) { // Pufferfish - async mob spawning
+            if (this.iteratorCount.get() == 0 && this.getFragFactor() >= this.maxFragFactor) { // Pufferfish - Async mob spawning
                 this.defrag();
             }
             //this.check();
@@ -230,12 +230,12 @@ public final class IteratorSafeOrderedReferenceSet<E> {
         return this.indexMap.size();
     }
 
-    public Iterator<E> iterator() {
+    public IteratorSafeOrderedReferenceSet.Iterator<E> iterator() {
         return this.iterator(0);
     }
 
-    public Iterator<E> iterator(final int flags) {
-        this.iteratorCount.incrementAndGet(); // Pufferfish - async mob spawning
+    public IteratorSafeOrderedReferenceSet.Iterator<E> iterator(final int flags) {
+        this.iteratorCount.incrementAndGet(); // Pufferfish - Async mob spawning
         return new BaseIterator<>(this, true, (flags & ITERATOR_FLAG_SEE_ADDITIONS) != 0 ? Integer.MAX_VALUE : this.listSize);
     }
 
@@ -252,7 +252,7 @@ public final class IteratorSafeOrderedReferenceSet<E> {
 
     }
 
-    private static final class BaseIterator<E> implements Iterator<E> {
+    private static final class BaseIterator<E> implements IteratorSafeOrderedReferenceSet.Iterator<E> {
 
         private final IteratorSafeOrderedReferenceSet<E> set;
         private final boolean canFinish;

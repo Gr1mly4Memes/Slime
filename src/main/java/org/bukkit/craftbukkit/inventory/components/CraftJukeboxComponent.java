@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit.inventory.components;
 
 import com.google.common.base.Preconditions;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -13,9 +15,6 @@ import org.bukkit.craftbukkit.CraftRegistry;
 import org.bukkit.craftbukkit.inventory.SerializableMeta;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.meta.components.JukeboxPlayableComponent;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @SerializableAs("JukeboxPlayable")
 public final class CraftJukeboxComponent implements JukeboxPlayableComponent {

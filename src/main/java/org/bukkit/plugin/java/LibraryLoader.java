@@ -1,6 +1,14 @@
 package org.bukkit.plugin.java;
 
 import io.papermc.paper.plugin.loader.library.impl.MavenLibraryResolver;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -25,15 +33,6 @@ import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 // Paper start
 /**
@@ -90,7 +89,7 @@ public class LibraryLoader {
     }
 
     @Nullable
-    public ClassLoader createLoader(@NotNull PluginDescriptionFile desc, @Nullable List<java.nio.file.Path> paperLibraryPaths) {
+    public ClassLoader createLoader(@NotNull PluginDescriptionFile desc, java.util.@Nullable List<java.nio.file.Path> paperLibraryPaths) {
         if (desc.getLibraries().isEmpty() && paperLibraryPaths == null) {
             // Paper end - plugin loader api
             return null;

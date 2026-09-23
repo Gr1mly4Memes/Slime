@@ -1,6 +1,7 @@
 package org.bukkit.plugin;
 
 import org.jetbrains.annotations.NotNull;
+import java.util.Locale;
 
 /**
  * Represents a base {@link Plugin}

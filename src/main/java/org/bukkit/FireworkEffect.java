@@ -3,12 +3,11 @@ package org.bukkit;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.util.List;
+import java.util.Map;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a single firework effect.
@@ -45,7 +44,7 @@ public final class FireworkEffect implements ConfigurationSerializable {
         /**
          * The name map.
          */
-        public static final net.kyori.adventure.util.Index<String, Type> NAMES = net.kyori.adventure.util.Index.create(Type.class, type -> type.name);
+        public static final net.kyori.adventure.util.Index<String, org.bukkit.FireworkEffect.Type> NAMES = net.kyori.adventure.util.Index.create(Type.class, type -> type.name);
         private final String name;
 
         Type(final String name) {

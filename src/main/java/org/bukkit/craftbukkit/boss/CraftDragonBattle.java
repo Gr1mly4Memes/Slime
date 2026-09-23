@@ -4,6 +4,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import io.papermc.paper.math.Position;
 import io.papermc.paper.util.MCUtil;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
@@ -17,11 +21,6 @@ import org.bukkit.craftbukkit.entity.CraftEnderCrystal;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 public class CraftDragonBattle implements DragonBattle {
 

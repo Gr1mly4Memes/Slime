@@ -1,12 +1,11 @@
 package org.bukkit.entity;
 
+import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
-
-import java.util.List;
 
 /**
  * Represents an arrow.
@@ -29,7 +28,7 @@ public interface AbstractArrow extends Projectile {
      * Sets the knockback strength for an arrow.
      *
      * @param knockbackStrength the knockback strength value
-     * @see #setWeapon(ItemStack)
+     * @see #setWeapon(org.bukkit.inventory.ItemStack)
      * @deprecated moved to being a function of the firing weapon, does nothing here
      */
     @Deprecated(since = "1.21", forRemoval = true)
@@ -144,7 +143,7 @@ public interface AbstractArrow extends Projectile {
      * Sets if this arrow was shot from a crossbow.
      *
      * @param shotFromCrossbow if shot from a crossbow
-     * @see #setWeapon(ItemStack)
+     * @see #setWeapon(org.bukkit.inventory.ItemStack)
      * @deprecated a function of the firing weapon instead, this method does nothing
      */
     @Deprecated(since = "1.21", forRemoval = true)
@@ -289,7 +288,7 @@ public interface AbstractArrow extends Projectile {
      * Set the shooter of this projectile.
      *
      * @param source the {@link org.bukkit.projectiles.ProjectileSource} that shot this projectile
-     * @param resetPickupStatus whether the {@link PickupStatus} should be reset
+     * @param resetPickupStatus whether the {@link org.bukkit.entity.AbstractArrow.PickupStatus} should be reset
      */
     void setShooter(@Nullable org.bukkit.projectiles.ProjectileSource source, boolean resetPickupStatus);
     // Paper end - Fix PickupStatus getting reset

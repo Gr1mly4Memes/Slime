@@ -51,16 +51,11 @@ public final class FeatureHooks {
     }
 
     public static void sendChunkRefreshPackets(final List<ServerPlayer> playersInRange, final LevelChunk chunk) {
-        // Paper start - Anti-Xray
-        final Map<Object, ClientboundLevelChunkWithLightPacket> refreshPackets = new HashMap<>();
+        final ClientboundLevelChunkWithLightPacket refreshPacket = new ClientboundLevelChunkWithLightPacket(chunk, chunk.getLevel().getLightEngine(), null, null);
         for (final ServerPlayer player : playersInRange) {
             if (player.connection == null) continue;
 
-            final Boolean shouldModify = chunk.getLevel().chunkPacketBlockController.shouldModify(player, chunk);
-            player.connection.send(refreshPackets.computeIfAbsent(shouldModify, s -> { // Use connection to prevent creating firing event
-                return new ClientboundLevelChunkWithLightPacket(chunk, chunk.getLevel().getLightEngine(), null, null, (Boolean) s);
-            }));
-            // Paper end - Anti-Xray
+            player.connection.send(refreshPacket);
         }
     }
 
@@ -210,4 +205,5 @@ public final class FeatureHooks {
         }
         // Paper end - add explicit flush method
     }
+
 }

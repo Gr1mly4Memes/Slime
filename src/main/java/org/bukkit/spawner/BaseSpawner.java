@@ -1,5 +1,7 @@
 package org.bukkit.spawner;
 
+import java.util.Collection;
+import java.util.List;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.spawner.SpawnRule;
 import org.bukkit.block.spawner.SpawnerEntry;
@@ -8,9 +10,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Represents a basic entity spawner. <br>

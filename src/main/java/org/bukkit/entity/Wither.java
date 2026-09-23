@@ -14,7 +14,7 @@ public interface Wither extends Monster, Boss, com.destroystokyo.paper.entity.Ra
      * This method will set the target of the {@link Head#CENTER center head} of
      * the wither.
      *
-     * @see #setTarget(Head, LivingEntity)
+     * @see #setTarget(org.bukkit.entity.Wither.Head, org.bukkit.entity.LivingEntity)
      */
     @Override
     void setTarget(@Nullable LivingEntity target);
@@ -112,13 +112,13 @@ public interface Wither extends Monster, Boss, com.destroystokyo.paper.entity.Ra
      *
      * @return UUID of summoner
      */
-    @Nullable java.util.UUID getSummoner();
+    @org.jetbrains.annotations.Nullable java.util.UUID getSummoner();
 
     /**
      * Set the player that summoned this wither
      *
      * @param summoner UUID of summoner
      */
-    void setSummoner(@Nullable java.util.UUID summoner);
+    void setSummoner(@org.jetbrains.annotations.Nullable java.util.UUID summoner);
     // Purpur end
 }

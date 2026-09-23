@@ -4,6 +4,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import io.papermc.paper.adventure.PaperAdventure;
 import io.papermc.paper.world.damagesource.CombatTracker;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import net.kyori.adventure.key.Key;
 import net.minecraft.Optionull;
 import net.minecraft.core.component.DataComponents;
@@ -33,10 +41,15 @@ import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEnder
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownExperienceBottle;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.waypoints.WaypointStyleAsset;
 import net.minecraft.world.waypoints.WaypointStyleAssets;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
@@ -50,7 +63,32 @@ import org.bukkit.craftbukkit.entity.memory.CraftMemoryMapper;
 import org.bukkit.craftbukkit.inventory.CraftEntityEquipment;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.potion.CraftPotionEffectType;
-import org.bukkit.entity.*;
+import org.bukkit.entity.AbstractArrow;
+import org.bukkit.entity.AbstractWindCharge;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.BreezeWindCharge;
+import org.bukkit.entity.DragonFireball;
+import org.bukkit.entity.Egg;
+import org.bukkit.entity.EnderPearl;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityCategory;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.LingeringPotion;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.LlamaSpit;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.ShulkerBullet;
+import org.bukkit.entity.SmallFireball;
+import org.bukkit.entity.Snowball;
+import org.bukkit.entity.SpectralArrow;
+import org.bukkit.entity.ThrownExpBottle;
+import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.TippedArrow;
+import org.bukkit.entity.Trident;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -63,8 +101,6 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jspecify.annotations.NonNull;
-
-import java.util.*;
 
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
@@ -245,7 +281,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         if (!ignoreBlocks) {
             net.minecraft.world.phys.HitResult rayTraceBlocks = getHandle().getRayTrace(maxDistance, net.minecraft.world.level.ClipContext.Fluid.NONE);
             if (rayTraceBlocks != null) {
-                Vec3 eye = getHandle().getEyePosition(1.0F);
+                net.minecraft.world.phys.Vec3 eye = getHandle().getEyePosition(1.0F);
                 if (eye.distanceToSqr(rayTraceBlocks.getLocation()) <= eye.distanceToSqr(rayTrace.getLocation())) {
                     return null;
                 }
@@ -298,7 +334,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public ItemStack getItemInUse() {
         net.minecraft.world.item.ItemStack item = this.getHandle().getUseItem();
-        return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
+        return item.isEmpty() ? null : CraftItemStack.asBukkitMirror(item);
     }
 
     @Override
@@ -432,12 +468,12 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public int getNoDamageTicks() {
-        return this.getHandle().invulnerableTime;
+        return this.getHandle().damageCooldownTime;
     }
 
     @Override
     public void setNoDamageTicks(int ticks) {
-        this.getHandle().invulnerableTime = ticks;
+        this.getHandle().damageCooldownTime = ticks;
     }
 
     @Override
@@ -532,14 +568,14 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             ((ThrowableProjectile) launch).shootFromRotation(this.getHandle(), this.getHandle().getXRot(), this.getHandle().getYRot(), 0.0F, 1.5F, 1.0F); // ItemEnderPearl
         } else if (AbstractArrow.class.isAssignableFrom(projectile)) {
             if (TippedArrow.class.isAssignableFrom(projectile)) {
-                launch = new net.minecraft.world.entity.projectile.arrow.Arrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(Items.ARROW), null);
+                launch = new net.minecraft.world.entity.projectile.arrow.Arrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW), null);
                 ((Arrow) launch.getBukkitEntity()).setBasePotionType(PotionType.WATER);
             } else if (SpectralArrow.class.isAssignableFrom(projectile)) {
-                launch = new net.minecraft.world.entity.projectile.arrow.SpectralArrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(Items.SPECTRAL_ARROW), null);
+                launch = new net.minecraft.world.entity.projectile.arrow.SpectralArrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SPECTRAL_ARROW), null);
             } else if (Trident.class.isAssignableFrom(projectile)) {
-                launch = new ThrownTrident(world, this.getHandle(), new net.minecraft.world.item.ItemStack(Items.TRIDENT));
+                launch = new ThrownTrident(world, this.getHandle(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.TRIDENT));
             } else {
-                launch = new net.minecraft.world.entity.projectile.arrow.Arrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(Items.ARROW), null);
+                launch = new net.minecraft.world.entity.projectile.arrow.Arrow(world, this.getHandle(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW), null);
             }
             ((net.minecraft.world.entity.projectile.arrow.AbstractArrow) launch).shootFromRotation(this.getHandle(), this.getHandle().getXRot(), this.getHandle().getYRot(), 0.0F, Trident.class.isAssignableFrom(projectile) ? net.minecraft.world.item.TridentItem.PROJECTILE_SHOOT_POWER : 3.0F, 1.0F); // ItemBow // Paper - see TridentItem
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
@@ -645,8 +681,8 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             return false;
         }
 
-        Vec3 start = new Vec3(this.getHandle().getX(), this.getHandle().getEyeY(), this.getHandle().getZ());
-        Vec3 end = new Vec3(loc.getX(), loc.getY(), loc.getZ());
+        net.minecraft.world.phys.Vec3 start = new net.minecraft.world.phys.Vec3(this.getHandle().getX(), this.getHandle().getEyeY(), this.getHandle().getZ());
+        net.minecraft.world.phys.Vec3 end = new net.minecraft.world.phys.Vec3(loc.getX(), loc.getY(), loc.getZ());
         if (end.distanceToSqr(start) > Mth.square(128.0)) {
             return false; // Return early if the distance is greater than 128 blocks
         }
@@ -784,14 +820,14 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     public void swingMainHand() {
         Preconditions.checkState(!this.getHandle().generation, "Cannot swing hand during world generation");
 
-        this.getHandle().swing(InteractionHand.MAIN_HAND, true);
+        this.getHandle().swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, true);
     }
 
     @Override
     public void swingOffHand() {
         Preconditions.checkState(!this.getHandle().generation, "Cannot swing hand during world generation");
 
-        this.getHandle().swing(InteractionHand.OFF_HAND, true);
+        this.getHandle().swing(InteractionHand.OFF_HAND, SwingAnimation.DEFAULT, true);
     }
 
     @Override
@@ -941,7 +977,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public ItemStack getActiveItem() {
-        return this.getHandle().getUseItem().asBukkitMirror();
+        return CraftItemStack.asBukkitMirror(this.getHandle().getUseItem());
     }
 
     @Override
@@ -973,7 +1009,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public org.bukkit.inventory.EquipmentSlot getActiveItemHand() {
-        return CraftEquipmentSlot.getHand(this.getHandle().getUsedItemHand());
+        return org.bukkit.craftbukkit.CraftEquipmentSlot.getHand(this.getHandle().getUsedItemHand());
     }
 
     @Override
@@ -1012,7 +1048,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     }
 
     public void broadcastSlotBreak(final org.bukkit.inventory.EquipmentSlot slot) {
-        this.getHandle().level().broadcastEntityEvent(this.getHandle(), net.minecraft.world.entity.LivingEntity.entityEventForEquipmentBreak(CraftEquipmentSlot.getNMS(slot)));
+        this.getHandle().level().broadcastEntityEvent(this.getHandle(), net.minecraft.world.entity.LivingEntity.entityEventForEquipmentBreak(org.bukkit.craftbukkit.CraftEquipmentSlot.getNMS(slot)));
     }
 
     @Override
@@ -1022,7 +1058,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         }
         final net.minecraft.network.protocol.game.ClientboundEntityEventPacket packet = new net.minecraft.network.protocol.game.ClientboundEntityEventPacket(
             this.getHandle(),
-            net.minecraft.world.entity.LivingEntity.entityEventForEquipmentBreak(CraftEquipmentSlot.getNMS(slot))
+            net.minecraft.world.entity.LivingEntity.entityEventForEquipmentBreak(org.bukkit.craftbukkit.CraftEquipmentSlot.getNMS(slot))
         );
         players.forEach(player -> ((CraftPlayer) player).getHandle().connection.send(packet));
     }
@@ -1037,7 +1073,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             nmsStack = craftItemStack.handle;
         } else {
             nmsStack = CraftItemStack.asNMSCopy(stack);
-            stack = CraftItemStack.asCraftMirror(nmsStack); // mirror to capture changes in hurt logic & events
+            stack = CraftItemStack.asBukkitMirror(nmsStack); // mirror to capture changes in hurt logic & events
         }
         this.damageItemStack0(nmsStack, amount, null);
         return stack;
@@ -1045,7 +1081,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public void damageItemStack(final org.bukkit.inventory.EquipmentSlot slot, final int amount) {
-        final net.minecraft.world.entity.EquipmentSlot nmsSlot = CraftEquipmentSlot.getNMS(slot);
+        final net.minecraft.world.entity.EquipmentSlot nmsSlot = org.bukkit.craftbukkit.CraftEquipmentSlot.getNMS(slot);
         this.damageItemStack0(this.getHandle().getItemBySlot(nmsSlot), amount, nmsSlot);
     }
 
@@ -1077,7 +1113,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public boolean canUseEquipmentSlot(org.bukkit.inventory.EquipmentSlot slot) {
-        return this.getHandle().canUseSlot(CraftEquipmentSlot.getNMS(slot));
+        return this.getHandle().canUseSlot(org.bukkit.craftbukkit.CraftEquipmentSlot.getNMS(slot));
     }
 
     @Override

@@ -1,13 +1,12 @@
 package org.bukkit.event.entity;
 
+import java.util.List;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Called when a lingering potion applies its effects. Happens
@@ -34,10 +33,10 @@ public class AreaEffectCloudApplyEvent extends EntityEvent implements Cancellabl
     }
 
     /**
-     * Retrieves a mutable list of the effected entities
+     * Retrieves a mutable list of the affected entities
      * <p>
      * It is important to note that not every entity in this list
-     * is guaranteed to be effected.  The cloud may die during the
+     * is guaranteed to be affected. The cloud may die during the
      * application of its effects due to the depletion of {@link AreaEffectCloud#getDurationOnUse()}
      * or {@link AreaEffectCloud#getRadiusOnUse()}
      *

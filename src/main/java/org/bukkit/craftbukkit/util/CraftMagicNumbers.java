@@ -28,12 +28,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Stream;
@@ -41,9 +39,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.minecraft.SharedConstants;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementTree;
-import net.minecraft.advancements.TreeNodePosition;
 import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -136,10 +132,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     // ========================================================================
-    public static final Map<Block, Material> BLOCK_MATERIAL = new IdentityHashMap<>();
-    public static final Map<Item, Material> ITEM_MATERIAL = new IdentityHashMap<>();
-    // Use HashMap instead of EnumMap: Slime dynamically adds enum constants via Material.addMaterial at runtime,
-    // EnumMap's internal array is sized at construction time and will throw ArrayIndexOutOfBoundsException on new enums
+    public static final Map<Block, Material> BLOCK_MATERIAL = new HashMap<>();
+    public static final Map<Item, Material> ITEM_MATERIAL = new HashMap<>();
     public static final Map<Material, Item> MATERIAL_ITEM = new HashMap<>();
     public static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
 
@@ -333,25 +327,15 @@ public final class CraftMagicNumbers implements UnsafeValues {
             allAdvancements.put(id, holder);
             newEntries.add(new AdvancementEntry(holder, element));
         }
+        if (newEntries.isEmpty()) return List.of();
+
         manager.advancements = allAdvancements.build();
 
         final AdvancementTree tree = manager.tree();
         tree.addAll(newEntries.stream().map(AdvancementEntry::advancement).toList());
+        tree.repositionNodes();
 
-        // recalculate advancement position
-        final Set<AdvancementNode> roots = new HashSet<>();
-        for (final AdvancementEntry entry : newEntries) {
-            final AdvancementNode node = Objects.requireNonNull(tree.get(entry.id()));
-            roots.add(node.root());
-        }
-
-        for (final AdvancementNode root : roots) {
-            if (root.holder().value().display().isPresent()) {
-                TreeNodePosition.run(root);
-            }
-        }
-
-        boolean shouldSave = persist && !newEntries.isEmpty();
+        boolean shouldSave = persist;
         if (shouldSave) {
             shouldSave = DynamicBuiltinPacks.BUKKIT.createIfNeeded(DynamicBuiltinPack.LevelPathAccess.SERVER);
         }
@@ -371,9 +355,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
             deserializedAdvancements.add(entry.advancement().toBukkit());
         }
 
-        if (!deserializedAdvancements.isEmpty()) {
-            MinecraftServer.getServer().getPlayerList().reloadAdvancementData();
-        }
+        MinecraftServer.getServer().getPlayerList().reloadAdvancementData();
         return deserializedAdvancements;
     }
 
@@ -545,7 +527,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         final int currentVersion = this.getDataVersion();
         data = (com.google.gson.JsonObject) MinecraftServer.getServer().getFixerUpper().update(References.ITEM_STACK, new Dynamic<>(com.mojang.serialization.JsonOps.INSTANCE, data), dataVersion, currentVersion).getValue();
         com.mojang.serialization.DynamicOps<com.google.gson.JsonElement> ops = CraftRegistry.getMinecraftRegistry().createSerializationContext(com.mojang.serialization.JsonOps.INSTANCE);
-        return CraftItemStack.asCraftMirror(net.minecraft.world.item.ItemStack.CODEC.parse(ops, data).getOrThrow(IllegalArgumentException::new));
+        return CraftItemStack.asBukkitMirror(net.minecraft.world.item.ItemStack.CODEC.parse(ops, data).getOrThrow(IllegalArgumentException::new));
     }
 
     @Override
@@ -564,32 +546,32 @@ public final class CraftMagicNumbers implements UnsafeValues {
         (serializePassengers ? nmsEntity.getSelfAndPassengers() : Stream.of(nmsEntity)).forEach(e -> {
             // Ensure force flag is not needed
             Preconditions.checkArgument(
-                    (e.getBukkitEntity().isValid() && e.getBukkitEntity().isPersistent()) || forceSerialization,
-                    "Cannot serialize invalid or non-persistent entity %s(%s) without the FORCE flag",
-                    e.getType().toShortString(),
-                    e.getStringUUID()
+                (e.getBukkitEntity().isValid() && e.getBukkitEntity().isPersistent()) || forceSerialization,
+                "Cannot serialize invalid or non-persistent entity %s(%s) without the FORCE flag",
+                e.getType().toShortString(),
+                e.getStringUUID()
             );
 
             if (e instanceof Player) {
                 // Ensure player flag is not needed
                 Preconditions.checkArgument(
-                        allowPlayerSerialization,
-                        "Cannot serialize player(%s) without the PLAYER flag",
-                        e.getStringUUID()
+                    allowPlayerSerialization,
+                    "Cannot serialize player(%s) without the PLAYER flag",
+                    e.getStringUUID()
                 );
             } else {
                 // Ensure misc flag is not needed
                 Preconditions.checkArgument(
-                        nmsEntity.getType().canSerialize() || allowMiscSerialization,
-                        "Cannot serialize misc non-saveable entity %s(%s) without the MISC flag",
-                        e.getType().toShortString(),
-                        e.getStringUUID()
+                    nmsEntity.getType().canSerialize() || allowMiscSerialization,
+                    "Cannot serialize misc non-saveable entity %s(%s) without the MISC flag",
+                    e.getType().toShortString(),
+                    e.getStringUUID()
                 );
             }
         });
 
         try (final ProblemReporter.ScopedCollector problemReporter = new ProblemReporter.ScopedCollector(
-                () -> "serialiseEntity@" + entity.getUniqueId(), LOGGER
+            () -> "serialiseEntity@" + entity.getUniqueId(), LOGGER
         )) {
             final TagValueOutput output = TagValueOutput.createWithContext(problemReporter, nmsEntity.registryAccess());
             if (serializePassengers) {
@@ -633,12 +615,12 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
         final net.minecraft.world.entity.Entity nmsEntity;
         try (final ProblemReporter.ScopedCollector problemReporter = new ProblemReporter.ScopedCollector(
-                () -> "deserialiseEntity", LOGGER
+            () -> "deserialiseEntity", LOGGER
         )) {
             nmsEntity = net.minecraft.world.entity.EntityType.create(
-                    TagValueInput.create(problemReporter, world.registryAccess(), tag),
-                    world,
-                    new EntitySpawnRequest(EntitySpawnReason.LOAD, false)
+                TagValueInput.create(problemReporter, world.registryAccess(), tag),
+                world,
+                new EntitySpawnRequest(EntitySpawnReason.LOAD, false)
             ).orElseThrow(() -> new IllegalArgumentException("An ID was not found for the data. Did you downgrade?"));
         }
 
@@ -674,10 +656,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
     public ItemStack deserializeItemHover(final HoverEvent.ShowItem itemHover) {
         final RegistryOps<Object> ops = CraftRegistry.getMinecraftRegistry().createSerializationContext(JavaOps.INSTANCE);
         final Object encoded = AdventureCodecs.SHOW_ITEM_CODEC.codec()
-                .encodeStart(ops, HoverEvent.showItem(itemHover)).getOrThrow(IllegalStateException::new);
+            .encodeStart(ops, HoverEvent.showItem(itemHover)).getOrThrow(IllegalStateException::new);
 
         return CraftItemStack.asBukkitCopy(net.minecraft.network.chat.HoverEvent.ShowItem.CODEC.codec()
-                .parse(ops, encoded).getOrThrow(IllegalStateException::new)
-                .item());
+            .parse(ops, encoded).getOrThrow(IllegalStateException::new)
+            .item());
     }
 }

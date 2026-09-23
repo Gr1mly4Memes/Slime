@@ -1,5 +1,7 @@
 package io.papermc.paper.registry.keys;
 
+import static net.kyori.adventure.key.Key.key;
+
 import io.papermc.paper.annotation.GeneratedClass;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
@@ -8,8 +10,6 @@ import org.bukkit.GameRule;
 import org.bukkit.MinecraftExperimental;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
-
-import static net.kyori.adventure.key.Key.key;
 
 /**
  * Vanilla keys for {@link RegistryKey#GAME_RULE}.

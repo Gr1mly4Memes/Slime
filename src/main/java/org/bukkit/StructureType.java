@@ -3,13 +3,12 @@ package org.bukkit;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import org.bukkit.map.MapCursor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.bukkit.map.MapCursor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This class handles the creation and storage of all structure types for
@@ -176,7 +175,7 @@ public final class StructureType implements Keyed {
      * <i>mapIcon</i>.
      *
      * @param name the name of the structure, case-sensitive
-     * @param mapIcon the {@link MapCursor.Type} this structure type should use
+     * @param mapIcon the {@link org.bukkit.map.MapCursor.Type} this structure type should use
      * when creating explorer maps. Use null to indicate this structure should
      * not be compatible with explorer maps.
      */
@@ -198,10 +197,10 @@ public final class StructureType implements Keyed {
     }
 
     /**
-     * Get the {@link MapCursor.Type} that this structure can use on maps. If
+     * Get the {@link org.bukkit.map.MapCursor.Type} that this structure can use on maps. If
      * this is null, this structure will not appear on explorer maps.
      *
-     * @return the {@link MapCursor.Type} or null.
+     * @return the {@link org.bukkit.map.MapCursor.Type} or null.
      */
     @Nullable
     public MapCursor.Type getMapIcon() {

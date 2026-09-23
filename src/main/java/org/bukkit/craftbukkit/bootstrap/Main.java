@@ -1,7 +1,11 @@
 // Based on net.minecraft.bundler.Main
 package org.bukkit.craftbukkit.bootstrap;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;

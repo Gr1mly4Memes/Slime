@@ -1,10 +1,9 @@
 package io.papermc.paper.datapack;
 
+import java.util.Collection;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Collection;
 
 @NullMarked
 public interface DatapackManager {

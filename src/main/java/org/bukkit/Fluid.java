@@ -2,12 +2,11 @@ package org.bukkit;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.registry.RegistryKey;
+import java.util.Locale;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
 import org.bukkit.util.OldEnum;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 
 /**
  * Represents a fluid type.

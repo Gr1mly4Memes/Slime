@@ -1,25 +1,24 @@
 package com.destroystokyo.paper.console;
 
+import com.mohistmc.youer.api.ColorAPI;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.craftbukkit.command.CraftConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 
 public class TerminalConsoleCommandSender extends CraftConsoleCommandSender {
 
-    private static final ComponentLogger LOGGER = ComponentLogger.logger(LogManager.getRootLogger().getName());
+    private static final Logger LOGGER = LogManager.getLogger(TerminalConsoleCommandSender.class);
 
     @Override
     public void sendRawMessage(String message) {
-        final Component msg = LegacyComponentSerializer.legacySection().deserialize(message);
-        this.sendMessage(msg);
+        LOGGER.info(ColorAPI.ansi(message));
     }
 
     @Override
     public void sendMessage(final @NotNull Component message) {
-        LOGGER.info(message);
+        LOGGER.info(ColorAPI.ansi(message));
     }
 
 }

@@ -32,7 +32,7 @@ public record PaperSuspiciousStewEffects(
         @Override
         public Builder add(final SuspiciousEffectEntry entry) {
             this.effects.add(new net.minecraft.world.item.component.SuspiciousStewEffects.Entry(
-                CraftPotionEffectType.bukkitToMinecraftHolder(entry.effect()),
+                org.bukkit.craftbukkit.potion.CraftPotionEffectType.bukkitToMinecraftHolder(entry.effect()),
                 entry.duration()
             ));
             return this;

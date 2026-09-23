@@ -2,19 +2,16 @@ package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
 import io.papermc.paper.potion.SuspiciousEffectEntry;
+import java.util.Collection;
+import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Holds the effects that will be applied when consuming Suspicious Stew.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#SUSPICIOUS_STEW_EFFECTS
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface SuspiciousStewEffects {
 
@@ -24,7 +21,7 @@ public interface SuspiciousStewEffects {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder suspiciousStewEffects() {
+    static SuspiciousStewEffects.Builder suspiciousStewEffects() {
         return ItemComponentTypesBridge.bridge().suspiciousStewEffects();
     }
 

@@ -16,8 +16,8 @@ public class CraftMinecartHopper extends CraftMinecartContainer implements Hoppe
     }
 
     @Override
-    public MinecartHopper getHandle() {
-        return (MinecartHopper) this.entity;
+    public net.minecraft.world.entity.vehicle.minecart.MinecartHopper getHandle() {
+        return (net.minecraft.world.entity.vehicle.minecart.MinecartHopper) this.entity;
     }
 
     @Override

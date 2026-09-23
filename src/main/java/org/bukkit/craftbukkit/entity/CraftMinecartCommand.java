@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
+import java.util.Set;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.vehicle.minecart.MinecartCommandBlock;
 import org.bukkit.Bukkit;
@@ -12,8 +13,6 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
-
-import java.util.Set;
 
 public class CraftMinecartCommand extends CraftMinecart implements CommandMinecart, io.papermc.paper.commands.PaperCommandBlockHolder {
 

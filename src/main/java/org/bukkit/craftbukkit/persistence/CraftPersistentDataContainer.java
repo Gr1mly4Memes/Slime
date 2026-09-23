@@ -2,6 +2,12 @@ package org.bukkit.craftbukkit.persistence;
 
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import org.bukkit.NamespacedKey;
@@ -10,9 +16,6 @@ import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
-import java.util.Map.Entry;
 
 public class CraftPersistentDataContainer extends io.papermc.paper.persistence.PaperPersistentDataContainerView implements PersistentDataContainer { // Paper - split up view and mutable
 
@@ -149,7 +152,7 @@ public class CraftPersistentDataContainer extends io.papermc.paper.persistence.P
             this.clear();
         }
         try (final java.io.DataInputStream dataInput = new java.io.DataInputStream(new java.io.ByteArrayInputStream(bytes))) {
-            final CompoundTag compound = net.minecraft.nbt.NbtIo.read(dataInput);
+            final net.minecraft.nbt.CompoundTag compound = net.minecraft.nbt.NbtIo.read(dataInput);
             this.putAll(compound);
         }
     }

@@ -35,7 +35,7 @@ public interface ActionButton {
      * @return a new ActionButton.Builder instance
      */
     @Contract(pure = true, value = "_ -> new")
-    static Builder builder(final Component label) {
+    static ActionButton.Builder builder(final Component label) {
         return DialogInstancesProvider.instance().actionButtonBuilder(label);
     }
 

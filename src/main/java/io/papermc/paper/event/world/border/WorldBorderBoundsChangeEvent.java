@@ -2,6 +2,7 @@ package io.papermc.paper.event.world.border;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.util.Tick;
+import java.time.Duration;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.event.Cancellable;
@@ -10,8 +11,6 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
-
-import java.time.Duration;
 
 /**
  * Called when a world border changes its bounds, either over time, or instantly.

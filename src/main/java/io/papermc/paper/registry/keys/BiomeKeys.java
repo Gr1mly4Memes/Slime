@@ -1,13 +1,13 @@
 package io.papermc.paper.registry.keys;
 
+import static net.kyori.adventure.key.Key.key;
+
 import io.papermc.paper.annotation.GeneratedClass;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import net.kyori.adventure.key.Key;
 import org.bukkit.block.Biome;
 import org.jspecify.annotations.NullMarked;
-
-import static net.kyori.adventure.key.Key.key;
 
 /**
  * Vanilla keys for {@link RegistryKey#BIOME}.
@@ -80,6 +80,13 @@ public final class BiomeKeys {
      * @apiNote This field is version-dependant and may be removed in future Minecraft versions
      */
     public static final TypedKey<Biome> CRIMSON_FOREST = create(key("crimson_forest"));
+
+    /**
+     * {@code minecraft:dappled_forest}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TypedKey<Biome> DAPPLED_FOREST = create(key("dappled_forest"));
 
     /**
      * {@code minecraft:dark_forest}

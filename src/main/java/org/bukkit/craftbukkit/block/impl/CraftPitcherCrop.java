@@ -38,12 +38,12 @@ public class CraftPitcherCrop extends CraftBlockData implements PitcherCrop {
     }
 
     @Override
-    public Half getHalf() {
-        return this.get(HALF, Half.class);
+    public org.bukkit.block.data.Bisected.Half getHalf() {
+        return this.get(HALF, org.bukkit.block.data.Bisected.Half.class);
     }
 
     @Override
-    public void setHalf(final Half half) {
+    public void setHalf(final org.bukkit.block.data.Bisected.Half half) {
         Preconditions.checkArgument(half != null, "half cannot be null!");
         this.set(HALF, half);
     }

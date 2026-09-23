@@ -1,12 +1,12 @@
 package org.bukkit.event.player;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.kyori.adventure.text.Component;
 
 /**
  * Called when a player has completed all criteria in an advancement.

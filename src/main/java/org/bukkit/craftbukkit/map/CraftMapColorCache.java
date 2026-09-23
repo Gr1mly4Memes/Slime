@@ -2,11 +2,13 @@ package org.bukkit.craftbukkit.map;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.util.PaperCacheDir;
-import net.minecraft.util.Util;
-import org.bukkit.map.MapPalette;
-
-import java.awt.*;
-import java.io.*;
+import java.awt.Color;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.CompletableFuture;
@@ -14,6 +16,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
+import net.minecraft.util.Util;
+import org.bukkit.map.MapPalette;
 
 public class CraftMapColorCache implements MapPalette.MapColorCache {
 

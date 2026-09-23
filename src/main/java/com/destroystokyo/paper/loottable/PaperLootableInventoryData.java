@@ -4,7 +4,16 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.papermc.paper.configuration.WorldConfiguration;
 import io.papermc.paper.configuration.type.DurationOrDisabled;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.entity.vehicle.ContainerEntity;
 import net.minecraft.world.level.storage.ValueInput;
@@ -13,9 +22,6 @@ import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.framework.qual.DefaultQualifier;
-
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @DefaultQualifier(NonNull.class)
 public class PaperLootableInventoryData {

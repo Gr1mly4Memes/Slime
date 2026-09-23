@@ -3,9 +3,8 @@ package io.papermc.paper.registry.event;
 import io.papermc.paper.registry.RegistryBuilder;
 import io.papermc.paper.registry.RegistryBuilderFactory;
 import io.papermc.paper.registry.TypedKey;
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.function.Consumer;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * A registry which supports registering new objects.

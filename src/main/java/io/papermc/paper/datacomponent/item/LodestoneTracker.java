@@ -4,14 +4,12 @@ import io.papermc.paper.datacomponent.DataComponentBuilder;
 import org.bukkit.Location;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * If present, specifies the target Lodestone that a Compass should point towards.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#LODESTONE_TRACKER
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface LodestoneTracker {
 
@@ -21,7 +19,7 @@ public interface LodestoneTracker {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder lodestoneTracker() {
+    static LodestoneTracker.Builder lodestoneTracker() {
         return ItemComponentTypesBridge.bridge().lodestoneTracker();
     }
 

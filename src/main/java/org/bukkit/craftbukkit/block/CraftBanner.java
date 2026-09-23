@@ -1,7 +1,10 @@
 package org.bukkit.craftbukkit.block;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.youer.api.ColorAPI;
 import io.papermc.paper.registry.RegistryKey;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
@@ -11,9 +14,6 @@ import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.craftbukkit.block.banner.CraftPatternType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implements Banner {
 
@@ -102,7 +102,7 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
         List<BannerPatternLayers.Layer> newPatterns = new ArrayList<>();
 
         for (Pattern p : this.patterns) {
-            newPatterns.add(new BannerPatternLayers.Layer(CraftPatternType.bukkitToMinecraftHolder(p.getPattern()), net.minecraft.world.item.DyeColor.byId(p.getColor().getWoolData())));
+            newPatterns.add(new net.minecraft.world.level.block.entity.BannerPatternLayers.Layer(CraftPatternType.bukkitToMinecraftHolder(p.getPattern()), net.minecraft.world.item.DyeColor.byId(p.getColor().getWoolData())));
         }
         blockEntity.setPatterns(new BannerPatternLayers(newPatterns));
     }
@@ -134,6 +134,6 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
 
     @Override
     public void setCustomName(String name) {
-       this.customName(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserializeOrNull(name));
+       this.customName(ColorAPI.adventureOrNull(name));
     }
 }

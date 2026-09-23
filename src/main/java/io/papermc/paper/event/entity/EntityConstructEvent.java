@@ -1,5 +1,6 @@
 package io.papermc.paper.event.entity;
 
+import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
@@ -9,8 +10,6 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Called just before an {@link Entity} spawns due to a pattern of blocks being constructed (golems, the wither, etc.)

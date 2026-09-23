@@ -1,10 +1,9 @@
 package org.bukkit.craftbukkit.inventory;
 
-import org.bukkit.inventory.ItemCraftResult;
-import org.bukkit.inventory.ItemStack;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.inventory.ItemCraftResult;
+import org.bukkit.inventory.ItemStack;
 
 public final class CraftItemCraftResult implements ItemCraftResult {
 

@@ -1,51 +1,134 @@
 package org.bukkit.block;
 
+import java.util.Collection;
+import java.util.function.Consumer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
-import org.bukkit.*;
-import org.bukkit.block.data.*;
-import org.bukkit.block.data.type.*;
+import org.bukkit.Keyed;
+import org.bukkit.Material;
+import org.bukkit.Registry;
+import org.bukkit.Translatable;
+import org.bukkit.World;
+import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.AnaloguePowerable;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Brushable;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Hatchable;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.Lightable;
+import org.bukkit.block.data.MultipleFacing;
+import org.bukkit.block.data.Orientable;
+import org.bukkit.block.data.Powerable;
+import org.bukkit.block.data.Rail;
+import org.bukkit.block.data.Rotatable;
+import org.bukkit.block.data.Snowable;
+import org.bukkit.block.data.Waterlogged;
+import org.bukkit.block.data.type.AmethystCluster;
+import org.bukkit.block.data.type.Bamboo;
 import org.bukkit.block.data.type.Barrel;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Beehive;
 import org.bukkit.block.data.type.Bell;
+import org.bukkit.block.data.type.BigDripleaf;
 import org.bukkit.block.data.type.BrewingStand;
+import org.bukkit.block.data.type.BubbleColumn;
+import org.bukkit.block.data.type.Cake;
 import org.bukkit.block.data.type.CalibratedSculkSensor;
 import org.bukkit.block.data.type.Campfire;
+import org.bukkit.block.data.type.Candle;
+import org.bukkit.block.data.type.CaveVines;
+import org.bukkit.block.data.type.CaveVinesPlant;
+import org.bukkit.block.data.type.Chain;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.ChiseledBookshelf;
+import org.bukkit.block.data.type.Cocoa;
 import org.bukkit.block.data.type.CommandBlock;
 import org.bukkit.block.data.type.Comparator;
+import org.bukkit.block.data.type.CopperBulb;
 import org.bukkit.block.data.type.CopperGolemStatue;
+import org.bukkit.block.data.type.CoralWallFan;
 import org.bukkit.block.data.type.Crafter;
 import org.bukkit.block.data.type.CreakingHeart;
 import org.bukkit.block.data.type.DaylightDetector;
 import org.bukkit.block.data.type.DecoratedPot;
 import org.bukkit.block.data.type.Dispenser;
+import org.bukkit.block.data.type.Door;
+import org.bukkit.block.data.type.DriedGhast;
+import org.bukkit.block.data.type.Dripleaf;
+import org.bukkit.block.data.type.EndPortalFrame;
 import org.bukkit.block.data.type.EnderChest;
+import org.bukkit.block.data.type.Farmland;
+import org.bukkit.block.data.type.Fence;
+import org.bukkit.block.data.type.Fire;
+import org.bukkit.block.data.type.FlowerBed;
 import org.bukkit.block.data.type.Furnace;
+import org.bukkit.block.data.type.Gate;
+import org.bukkit.block.data.type.GlassPane;
+import org.bukkit.block.data.type.GlowLichen;
+import org.bukkit.block.data.type.Grindstone;
+import org.bukkit.block.data.type.HangingMoss;
 import org.bukkit.block.data.type.HangingSign;
 import org.bukkit.block.data.type.Hopper;
 import org.bukkit.block.data.type.Jigsaw;
 import org.bukkit.block.data.type.Jukebox;
+import org.bukkit.block.data.type.Ladder;
+import org.bukkit.block.data.type.Lantern;
+import org.bukkit.block.data.type.LeafLitter;
+import org.bukkit.block.data.type.Leaves;
 import org.bukkit.block.data.type.Lectern;
+import org.bukkit.block.data.type.Light;
+import org.bukkit.block.data.type.LightningRod;
+import org.bukkit.block.data.type.MangrovePropagule;
+import org.bukkit.block.data.type.MossyCarpet;
+import org.bukkit.block.data.type.NoteBlock;
+import org.bukkit.block.data.type.Observer;
+import org.bukkit.block.data.type.Piston;
+import org.bukkit.block.data.type.PistonHead;
+import org.bukkit.block.data.type.PitcherCrop;
 import org.bukkit.block.data.type.PotentSulfur;
+import org.bukkit.block.data.type.RedstoneRail;
+import org.bukkit.block.data.type.RedstoneWallTorch;
+import org.bukkit.block.data.type.RedstoneWire;
+import org.bukkit.block.data.type.Repeater;
+import org.bukkit.block.data.type.ResinClump;
+import org.bukkit.block.data.type.RespawnAnchor;
+import org.bukkit.block.data.type.Sapling;
+import org.bukkit.block.data.type.Scaffolding;
 import org.bukkit.block.data.type.SculkCatalyst;
 import org.bukkit.block.data.type.SculkSensor;
 import org.bukkit.block.data.type.SculkShrieker;
+import org.bukkit.block.data.type.SculkVein;
+import org.bukkit.block.data.type.SeaPickle;
 import org.bukkit.block.data.type.Shelf;
+import org.bukkit.block.data.type.ShelfMushroom;
 import org.bukkit.block.data.type.Sign;
 import org.bukkit.block.data.type.Skull;
+import org.bukkit.block.data.type.Slab;
+import org.bukkit.block.data.type.SmallDripleaf;
+import org.bukkit.block.data.type.Snow;
+import org.bukkit.block.data.type.Speleothem;
+import org.bukkit.block.data.type.Stairs;
+import org.bukkit.block.data.type.StructureBlock;
+import org.bukkit.block.data.type.Switch;
+import org.bukkit.block.data.type.TNT;
+import org.bukkit.block.data.type.TechnicalPiston;
 import org.bukkit.block.data.type.TestBlock;
+import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.block.data.type.TrialSpawner;
+import org.bukkit.block.data.type.Tripwire;
+import org.bukkit.block.data.type.TripwireHook;
+import org.bukkit.block.data.type.TurtleEgg;
 import org.bukkit.block.data.type.Vault;
+import org.bukkit.block.data.type.Wall;
+import org.bukkit.block.data.type.WallHangingSign;
+import org.bukkit.block.data.type.WallSign;
+import org.bukkit.block.data.type.WallSkull;
 import org.bukkit.inventory.ItemType;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.function.Consumer;
 
 /**
  * Represents a block type.
@@ -111,2397 +194,2577 @@ public interface BlockType extends Keyed, Translatable, net.kyori.adventure.tran
 
     //<editor-fold desc="BlockTypes" defaultstate="collapsed">
     // Start generate - BlockType
-    Typed<Switch> ACACIA_BUTTON = getBlockType("acacia_button");
+    BlockType.Typed<Switch> ACACIA_BUTTON = getBlockType("acacia_button");
 
-    Typed<Door> ACACIA_DOOR = getBlockType("acacia_door");
+    BlockType.Typed<Door> ACACIA_DOOR = getBlockType("acacia_door");
 
-    Typed<Fence> ACACIA_FENCE = getBlockType("acacia_fence");
+    BlockType.Typed<Fence> ACACIA_FENCE = getBlockType("acacia_fence");
 
-    Typed<Gate> ACACIA_FENCE_GATE = getBlockType("acacia_fence_gate");
+    BlockType.Typed<Gate> ACACIA_FENCE_GATE = getBlockType("acacia_fence_gate");
 
-    Typed<HangingSign> ACACIA_HANGING_SIGN = getBlockType("acacia_hanging_sign");
+    BlockType.Typed<HangingSign> ACACIA_HANGING_SIGN = getBlockType("acacia_hanging_sign");
 
-    Typed<Leaves> ACACIA_LEAVES = getBlockType("acacia_leaves");
+    BlockType.Typed<Leaves> ACACIA_LEAVES = getBlockType("acacia_leaves");
 
-    Typed<Orientable> ACACIA_LOG = getBlockType("acacia_log");
+    BlockType.Typed<Orientable> ACACIA_LOG = getBlockType("acacia_log");
 
-    Typed<BlockData> ACACIA_PLANKS = getBlockType("acacia_planks");
+    BlockType.Typed<BlockData> ACACIA_PLANKS = getBlockType("acacia_planks");
 
-    Typed<Powerable> ACACIA_PRESSURE_PLATE = getBlockType("acacia_pressure_plate");
+    BlockType.Typed<Powerable> ACACIA_PRESSURE_PLATE = getBlockType("acacia_pressure_plate");
 
-    Typed<Sapling> ACACIA_SAPLING = getBlockType("acacia_sapling");
+    BlockType.Typed<Sapling> ACACIA_SAPLING = getBlockType("acacia_sapling");
 
-    Typed<Shelf> ACACIA_SHELF = getBlockType("acacia_shelf");
+    BlockType.Typed<Shelf> ACACIA_SHELF = getBlockType("acacia_shelf");
 
-    Typed<Sign> ACACIA_SIGN = getBlockType("acacia_sign");
+    BlockType.Typed<Sign> ACACIA_SIGN = getBlockType("acacia_sign");
 
-    Typed<Slab> ACACIA_SLAB = getBlockType("acacia_slab");
+    BlockType.Typed<Slab> ACACIA_SLAB = getBlockType("acacia_slab");
 
-    Typed<Stairs> ACACIA_STAIRS = getBlockType("acacia_stairs");
+    BlockType.Typed<Stairs> ACACIA_STAIRS = getBlockType("acacia_stairs");
 
-    Typed<TrapDoor> ACACIA_TRAPDOOR = getBlockType("acacia_trapdoor");
+    BlockType.Typed<TrapDoor> ACACIA_TRAPDOOR = getBlockType("acacia_trapdoor");
 
-    Typed<WallHangingSign> ACACIA_WALL_HANGING_SIGN = getBlockType("acacia_wall_hanging_sign");
+    BlockType.Typed<WallHangingSign> ACACIA_WALL_HANGING_SIGN = getBlockType("acacia_wall_hanging_sign");
 
-    Typed<WallSign> ACACIA_WALL_SIGN = getBlockType("acacia_wall_sign");
+    BlockType.Typed<WallSign> ACACIA_WALL_SIGN = getBlockType("acacia_wall_sign");
 
-    Typed<Orientable> ACACIA_WOOD = getBlockType("acacia_wood");
+    BlockType.Typed<Orientable> ACACIA_WOOD = getBlockType("acacia_wood");
 
-    Typed<RedstoneRail> ACTIVATOR_RAIL = getBlockType("activator_rail");
+    BlockType.Typed<RedstoneRail> ACTIVATOR_RAIL = getBlockType("activator_rail");
 
-    Typed<BlockData> AIR = getBlockType("air");
+    BlockType.Typed<BlockData> AIR = getBlockType("air");
 
-    Typed<BlockData> ALLIUM = getBlockType("allium");
+    BlockType.Typed<BlockData> ALLIUM = getBlockType("allium");
 
-    Typed<BlockData> AMETHYST_BLOCK = getBlockType("amethyst_block");
+    BlockType.Typed<BlockData> AMETHYST_BLOCK = getBlockType("amethyst_block");
 
-    Typed<AmethystCluster> AMETHYST_CLUSTER = getBlockType("amethyst_cluster");
+    BlockType.Typed<AmethystCluster> AMETHYST_CLUSTER = getBlockType("amethyst_cluster");
 
-    Typed<BlockData> ANCIENT_DEBRIS = getBlockType("ancient_debris");
+    BlockType.Typed<BlockData> ANCIENT_DEBRIS = getBlockType("ancient_debris");
 
-    Typed<BlockData> ANDESITE = getBlockType("andesite");
+    BlockType.Typed<BlockData> ANDESITE = getBlockType("andesite");
 
-    Typed<Slab> ANDESITE_SLAB = getBlockType("andesite_slab");
+    BlockType.Typed<Slab> ANDESITE_SLAB = getBlockType("andesite_slab");
 
-    Typed<Stairs> ANDESITE_STAIRS = getBlockType("andesite_stairs");
+    BlockType.Typed<Stairs> ANDESITE_STAIRS = getBlockType("andesite_stairs");
 
-    Typed<Wall> ANDESITE_WALL = getBlockType("andesite_wall");
+    BlockType.Typed<Wall> ANDESITE_WALL = getBlockType("andesite_wall");
 
-    Typed<Directional> ANVIL = getBlockType("anvil");
+    BlockType.Typed<Directional> ANVIL = getBlockType("anvil");
 
-    Typed<Directional> ATTACHED_MELON_STEM = getBlockType("attached_melon_stem");
+    BlockType.Typed<Directional> ATTACHED_MELON_STEM = getBlockType("attached_melon_stem");
 
-    Typed<Directional> ATTACHED_PUMPKIN_STEM = getBlockType("attached_pumpkin_stem");
+    BlockType.Typed<Directional> ATTACHED_PUMPKIN_STEM = getBlockType("attached_pumpkin_stem");
 
-    Typed<BlockData> AZALEA = getBlockType("azalea");
+    BlockType.Typed<BlockData> AZALEA = getBlockType("azalea");
 
-    Typed<Leaves> AZALEA_LEAVES = getBlockType("azalea_leaves");
+    BlockType.Typed<Leaves> AZALEA_LEAVES = getBlockType("azalea_leaves");
 
-    Typed<BlockData> AZURE_BLUET = getBlockType("azure_bluet");
+    BlockType.Typed<BlockData> AZURE_BLUET = getBlockType("azure_bluet");
 
-    Typed<Bamboo> BAMBOO = getBlockType("bamboo");
+    BlockType.Typed<Bamboo> BAMBOO = getBlockType("bamboo");
 
-    Typed<Orientable> BAMBOO_BLOCK = getBlockType("bamboo_block");
+    BlockType.Typed<Orientable> BAMBOO_BLOCK = getBlockType("bamboo_block");
 
-    Typed<Switch> BAMBOO_BUTTON = getBlockType("bamboo_button");
+    BlockType.Typed<Switch> BAMBOO_BUTTON = getBlockType("bamboo_button");
 
-    Typed<Door> BAMBOO_DOOR = getBlockType("bamboo_door");
+    BlockType.Typed<Door> BAMBOO_DOOR = getBlockType("bamboo_door");
 
-    Typed<Fence> BAMBOO_FENCE = getBlockType("bamboo_fence");
+    BlockType.Typed<Fence> BAMBOO_FENCE = getBlockType("bamboo_fence");
 
-    Typed<Gate> BAMBOO_FENCE_GATE = getBlockType("bamboo_fence_gate");
+    BlockType.Typed<Gate> BAMBOO_FENCE_GATE = getBlockType("bamboo_fence_gate");
 
-    Typed<HangingSign> BAMBOO_HANGING_SIGN = getBlockType("bamboo_hanging_sign");
+    BlockType.Typed<HangingSign> BAMBOO_HANGING_SIGN = getBlockType("bamboo_hanging_sign");
 
-    Typed<BlockData> BAMBOO_MOSAIC = getBlockType("bamboo_mosaic");
+    BlockType.Typed<BlockData> BAMBOO_MOSAIC = getBlockType("bamboo_mosaic");
 
-    Typed<Slab> BAMBOO_MOSAIC_SLAB = getBlockType("bamboo_mosaic_slab");
+    BlockType.Typed<Slab> BAMBOO_MOSAIC_SLAB = getBlockType("bamboo_mosaic_slab");
 
-    Typed<Stairs> BAMBOO_MOSAIC_STAIRS = getBlockType("bamboo_mosaic_stairs");
+    BlockType.Typed<Stairs> BAMBOO_MOSAIC_STAIRS = getBlockType("bamboo_mosaic_stairs");
 
-    Typed<BlockData> BAMBOO_PLANKS = getBlockType("bamboo_planks");
+    BlockType.Typed<BlockData> BAMBOO_PLANKS = getBlockType("bamboo_planks");
 
-    Typed<Powerable> BAMBOO_PRESSURE_PLATE = getBlockType("bamboo_pressure_plate");
+    BlockType.Typed<Powerable> BAMBOO_PRESSURE_PLATE = getBlockType("bamboo_pressure_plate");
 
-    Typed<BlockData> BAMBOO_SAPLING = getBlockType("bamboo_sapling");
+    BlockType.Typed<BlockData> BAMBOO_SAPLING = getBlockType("bamboo_sapling");
 
-    Typed<Shelf> BAMBOO_SHELF = getBlockType("bamboo_shelf");
+    BlockType.Typed<Shelf> BAMBOO_SHELF = getBlockType("bamboo_shelf");
 
-    Typed<Sign> BAMBOO_SIGN = getBlockType("bamboo_sign");
+    BlockType.Typed<Sign> BAMBOO_SIGN = getBlockType("bamboo_sign");
 
-    Typed<Slab> BAMBOO_SLAB = getBlockType("bamboo_slab");
+    BlockType.Typed<Slab> BAMBOO_SLAB = getBlockType("bamboo_slab");
 
-    Typed<Stairs> BAMBOO_STAIRS = getBlockType("bamboo_stairs");
+    BlockType.Typed<Stairs> BAMBOO_STAIRS = getBlockType("bamboo_stairs");
 
-    Typed<TrapDoor> BAMBOO_TRAPDOOR = getBlockType("bamboo_trapdoor");
+    BlockType.Typed<TrapDoor> BAMBOO_TRAPDOOR = getBlockType("bamboo_trapdoor");
 
-    Typed<WallHangingSign> BAMBOO_WALL_HANGING_SIGN = getBlockType("bamboo_wall_hanging_sign");
+    BlockType.Typed<WallHangingSign> BAMBOO_WALL_HANGING_SIGN = getBlockType("bamboo_wall_hanging_sign");
 
-    Typed<WallSign> BAMBOO_WALL_SIGN = getBlockType("bamboo_wall_sign");
+    BlockType.Typed<WallSign> BAMBOO_WALL_SIGN = getBlockType("bamboo_wall_sign");
 
-    Typed<Barrel> BARREL = getBlockType("barrel");
+    BlockType.Typed<Barrel> BARREL = getBlockType("barrel");
 
-    Typed<Waterlogged> BARRIER = getBlockType("barrier");
+    BlockType.Typed<Waterlogged> BARRIER = getBlockType("barrier");
 
-    Typed<Orientable> BASALT = getBlockType("basalt");
+    BlockType.Typed<Orientable> BASALT = getBlockType("basalt");
 
-    Typed<BlockData> BEACON = getBlockType("beacon");
+    BlockType.Typed<BlockData> BEACON = getBlockType("beacon");
 
-    Typed<BlockData> BEDROCK = getBlockType("bedrock");
+    BlockType.Typed<BlockData> BEDROCK = getBlockType("bedrock");
 
-    Typed<Beehive> BEE_NEST = getBlockType("bee_nest");
+    BlockType.Typed<Beehive> BEE_NEST = getBlockType("bee_nest");
 
-    Typed<Beehive> BEEHIVE = getBlockType("beehive");
+    BlockType.Typed<Beehive> BEEHIVE = getBlockType("beehive");
 
-    Typed<Ageable> BEETROOTS = getBlockType("beetroots");
+    BlockType.Typed<Ageable> BEETROOTS = getBlockType("beetroots");
 
-    Typed<Bell> BELL = getBlockType("bell");
+    BlockType.Typed<Bell> BELL = getBlockType("bell");
 
-    Typed<BigDripleaf> BIG_DRIPLEAF = getBlockType("big_dripleaf");
+    BlockType.Typed<BigDripleaf> BIG_DRIPLEAF = getBlockType("big_dripleaf");
 
-    Typed<Dripleaf> BIG_DRIPLEAF_STEM = getBlockType("big_dripleaf_stem");
+    BlockType.Typed<Dripleaf> BIG_DRIPLEAF_STEM = getBlockType("big_dripleaf_stem");
 
-    Typed<Switch> BIRCH_BUTTON = getBlockType("birch_button");
+    BlockType.Typed<Switch> BIRCH_BUTTON = getBlockType("birch_button");
 
-    Typed<Door> BIRCH_DOOR = getBlockType("birch_door");
+    BlockType.Typed<Door> BIRCH_DOOR = getBlockType("birch_door");
 
-    Typed<Fence> BIRCH_FENCE = getBlockType("birch_fence");
+    BlockType.Typed<Fence> BIRCH_FENCE = getBlockType("birch_fence");
 
-    Typed<Gate> BIRCH_FENCE_GATE = getBlockType("birch_fence_gate");
+    BlockType.Typed<Gate> BIRCH_FENCE_GATE = getBlockType("birch_fence_gate");
 
-    Typed<HangingSign> BIRCH_HANGING_SIGN = getBlockType("birch_hanging_sign");
+    BlockType.Typed<HangingSign> BIRCH_HANGING_SIGN = getBlockType("birch_hanging_sign");
 
-    Typed<Leaves> BIRCH_LEAVES = getBlockType("birch_leaves");
+    BlockType.Typed<Leaves> BIRCH_LEAVES = getBlockType("birch_leaves");
 
-    Typed<Orientable> BIRCH_LOG = getBlockType("birch_log");
+    BlockType.Typed<Orientable> BIRCH_LOG = getBlockType("birch_log");
 
-    Typed<BlockData> BIRCH_PLANKS = getBlockType("birch_planks");
+    BlockType.Typed<BlockData> BIRCH_PLANKS = getBlockType("birch_planks");
 
-    Typed<Powerable> BIRCH_PRESSURE_PLATE = getBlockType("birch_pressure_plate");
+    BlockType.Typed<Powerable> BIRCH_PRESSURE_PLATE = getBlockType("birch_pressure_plate");
 
-    Typed<Sapling> BIRCH_SAPLING = getBlockType("birch_sapling");
+    BlockType.Typed<Sapling> BIRCH_SAPLING = getBlockType("birch_sapling");
 
-    Typed<Shelf> BIRCH_SHELF = getBlockType("birch_shelf");
+    BlockType.Typed<Shelf> BIRCH_SHELF = getBlockType("birch_shelf");
 
-    Typed<Sign> BIRCH_SIGN = getBlockType("birch_sign");
+    BlockType.Typed<Sign> BIRCH_SIGN = getBlockType("birch_sign");
 
-    Typed<Slab> BIRCH_SLAB = getBlockType("birch_slab");
+    BlockType.Typed<Slab> BIRCH_SLAB = getBlockType("birch_slab");
 
-    Typed<Stairs> BIRCH_STAIRS = getBlockType("birch_stairs");
+    BlockType.Typed<Stairs> BIRCH_STAIRS = getBlockType("birch_stairs");
 
-    Typed<TrapDoor> BIRCH_TRAPDOOR = getBlockType("birch_trapdoor");
+    BlockType.Typed<TrapDoor> BIRCH_TRAPDOOR = getBlockType("birch_trapdoor");
 
-    Typed<WallHangingSign> BIRCH_WALL_HANGING_SIGN = getBlockType("birch_wall_hanging_sign");
+    BlockType.Typed<WallHangingSign> BIRCH_WALL_HANGING_SIGN = getBlockType("birch_wall_hanging_sign");
 
-    Typed<WallSign> BIRCH_WALL_SIGN = getBlockType("birch_wall_sign");
+    BlockType.Typed<WallSign> BIRCH_WALL_SIGN = getBlockType("birch_wall_sign");
 
-    Typed<Orientable> BIRCH_WOOD = getBlockType("birch_wood");
+    BlockType.Typed<Orientable> BIRCH_WOOD = getBlockType("birch_wood");
 
-    Typed<Rotatable> BLACK_BANNER = getBlockType("black_banner");
+    BlockType.Typed<Rotatable> BLACK_BANNER = getBlockType("black_banner");
 
-    Typed<Bed> BLACK_BED = getBlockType("black_bed");
+    BlockType.Typed<Bed> BLACK_BED = getBlockType("black_bed");
 
-    Typed<Candle> BLACK_CANDLE = getBlockType("black_candle");
+    BlockType.Typed<Candle> BLACK_CANDLE = getBlockType("black_candle");
 
-    Typed<Lightable> BLACK_CANDLE_CAKE = getBlockType("black_candle_cake");
+    BlockType.Typed<Lightable> BLACK_CANDLE_CAKE = getBlockType("black_candle_cake");
 
-    Typed<BlockData> BLACK_CARPET = getBlockType("black_carpet");
+    BlockType.Typed<BlockData> BLACK_CARPET = getBlockType("black_carpet");
 
-    Typed<BlockData> BLACK_CONCRETE = getBlockType("black_concrete");
+    BlockType.Typed<BlockData> BLACK_CONCRETE = getBlockType("black_concrete");
 
-    Typed<BlockData> BLACK_CONCRETE_POWDER = getBlockType("black_concrete_powder");
+    BlockType.Typed<BlockData> BLACK_CONCRETE_POWDER = getBlockType("black_concrete_powder");
 
-    Typed<Directional> BLACK_GLAZED_TERRACOTTA = getBlockType("black_glazed_terracotta");
+    BlockType.Typed<Slab> BLACK_CONCRETE_SLAB = getBlockType("black_concrete_slab");
 
-    Typed<Directional> BLACK_SHULKER_BOX = getBlockType("black_shulker_box");
+    BlockType.Typed<Stairs> BLACK_CONCRETE_STAIRS = getBlockType("black_concrete_stairs");
 
-    Typed<BlockData> BLACK_STAINED_GLASS = getBlockType("black_stained_glass");
+    BlockType.Typed<Directional> BLACK_GLAZED_TERRACOTTA = getBlockType("black_glazed_terracotta");
 
-    Typed<GlassPane> BLACK_STAINED_GLASS_PANE = getBlockType("black_stained_glass_pane");
+    BlockType.Typed<Directional> BLACK_SHULKER_BOX = getBlockType("black_shulker_box");
 
-    Typed<BlockData> BLACK_TERRACOTTA = getBlockType("black_terracotta");
+    BlockType.Typed<BlockData> BLACK_STAINED_GLASS = getBlockType("black_stained_glass");
 
-    Typed<Directional> BLACK_WALL_BANNER = getBlockType("black_wall_banner");
+    BlockType.Typed<GlassPane> BLACK_STAINED_GLASS_PANE = getBlockType("black_stained_glass_pane");
 
-    Typed<BlockData> BLACK_WOOL = getBlockType("black_wool");
+    BlockType.Typed<BlockData> BLACK_TERRACOTTA = getBlockType("black_terracotta");
 
-    Typed<BlockData> BLACKSTONE = getBlockType("blackstone");
+    BlockType.Typed<Directional> BLACK_WALL_BANNER = getBlockType("black_wall_banner");
 
-    Typed<Slab> BLACKSTONE_SLAB = getBlockType("blackstone_slab");
+    BlockType.Typed<BlockData> BLACK_WOOL = getBlockType("black_wool");
 
-    Typed<Stairs> BLACKSTONE_STAIRS = getBlockType("blackstone_stairs");
+    BlockType.Typed<Slab> BLACK_WOOL_SLAB = getBlockType("black_wool_slab");
 
-    Typed<Wall> BLACKSTONE_WALL = getBlockType("blackstone_wall");
+    BlockType.Typed<Stairs> BLACK_WOOL_STAIRS = getBlockType("black_wool_stairs");
 
-    Typed<Furnace> BLAST_FURNACE = getBlockType("blast_furnace");
+    BlockType.Typed<BlockData> BLACKSTONE = getBlockType("blackstone");
 
-    Typed<Rotatable> BLUE_BANNER = getBlockType("blue_banner");
+    BlockType.Typed<Slab> BLACKSTONE_SLAB = getBlockType("blackstone_slab");
 
-    Typed<Bed> BLUE_BED = getBlockType("blue_bed");
+    BlockType.Typed<Stairs> BLACKSTONE_STAIRS = getBlockType("blackstone_stairs");
 
-    Typed<Candle> BLUE_CANDLE = getBlockType("blue_candle");
+    BlockType.Typed<Wall> BLACKSTONE_WALL = getBlockType("blackstone_wall");
 
-    Typed<Lightable> BLUE_CANDLE_CAKE = getBlockType("blue_candle_cake");
+    BlockType.Typed<Furnace> BLAST_FURNACE = getBlockType("blast_furnace");
 
-    Typed<BlockData> BLUE_CARPET = getBlockType("blue_carpet");
+    BlockType.Typed<Rotatable> BLUE_BANNER = getBlockType("blue_banner");
 
-    Typed<BlockData> BLUE_CONCRETE = getBlockType("blue_concrete");
+    BlockType.Typed<Bed> BLUE_BED = getBlockType("blue_bed");
 
-    Typed<BlockData> BLUE_CONCRETE_POWDER = getBlockType("blue_concrete_powder");
+    BlockType.Typed<Candle> BLUE_CANDLE = getBlockType("blue_candle");
 
-    Typed<Directional> BLUE_GLAZED_TERRACOTTA = getBlockType("blue_glazed_terracotta");
+    BlockType.Typed<Lightable> BLUE_CANDLE_CAKE = getBlockType("blue_candle_cake");
 
-    Typed<BlockData> BLUE_ICE = getBlockType("blue_ice");
+    BlockType.Typed<BlockData> BLUE_CARPET = getBlockType("blue_carpet");
 
-    Typed<BlockData> BLUE_ORCHID = getBlockType("blue_orchid");
+    BlockType.Typed<BlockData> BLUE_CONCRETE = getBlockType("blue_concrete");
 
-    Typed<Directional> BLUE_SHULKER_BOX = getBlockType("blue_shulker_box");
+    BlockType.Typed<BlockData> BLUE_CONCRETE_POWDER = getBlockType("blue_concrete_powder");
 
-    Typed<BlockData> BLUE_STAINED_GLASS = getBlockType("blue_stained_glass");
+    BlockType.Typed<Slab> BLUE_CONCRETE_SLAB = getBlockType("blue_concrete_slab");
 
-    Typed<GlassPane> BLUE_STAINED_GLASS_PANE = getBlockType("blue_stained_glass_pane");
+    BlockType.Typed<Stairs> BLUE_CONCRETE_STAIRS = getBlockType("blue_concrete_stairs");
 
-    Typed<BlockData> BLUE_TERRACOTTA = getBlockType("blue_terracotta");
+    BlockType.Typed<Directional> BLUE_GLAZED_TERRACOTTA = getBlockType("blue_glazed_terracotta");
 
-    Typed<Directional> BLUE_WALL_BANNER = getBlockType("blue_wall_banner");
+    BlockType.Typed<BlockData> BLUE_ICE = getBlockType("blue_ice");
 
-    Typed<BlockData> BLUE_WOOL = getBlockType("blue_wool");
+    BlockType.Typed<BlockData> BLUE_ORCHID = getBlockType("blue_orchid");
 
-    Typed<Orientable> BONE_BLOCK = getBlockType("bone_block");
+    BlockType.Typed<Directional> BLUE_SHULKER_BOX = getBlockType("blue_shulker_box");
 
-    Typed<BlockData> BOOKSHELF = getBlockType("bookshelf");
+    BlockType.Typed<BlockData> BLUE_STAINED_GLASS = getBlockType("blue_stained_glass");
 
-    Typed<Waterlogged> BRAIN_CORAL = getBlockType("brain_coral");
+    BlockType.Typed<GlassPane> BLUE_STAINED_GLASS_PANE = getBlockType("blue_stained_glass_pane");
 
-    Typed<BlockData> BRAIN_CORAL_BLOCK = getBlockType("brain_coral_block");
+    BlockType.Typed<BlockData> BLUE_TERRACOTTA = getBlockType("blue_terracotta");
 
-    Typed<Waterlogged> BRAIN_CORAL_FAN = getBlockType("brain_coral_fan");
+    BlockType.Typed<Directional> BLUE_WALL_BANNER = getBlockType("blue_wall_banner");
 
-    Typed<CoralWallFan> BRAIN_CORAL_WALL_FAN = getBlockType("brain_coral_wall_fan");
+    BlockType.Typed<BlockData> BLUE_WOOL = getBlockType("blue_wool");
 
-    Typed<BrewingStand> BREWING_STAND = getBlockType("brewing_stand");
+    BlockType.Typed<Slab> BLUE_WOOL_SLAB = getBlockType("blue_wool_slab");
 
-    Typed<Slab> BRICK_SLAB = getBlockType("brick_slab");
+    BlockType.Typed<Stairs> BLUE_WOOL_STAIRS = getBlockType("blue_wool_stairs");
 
-    Typed<Stairs> BRICK_STAIRS = getBlockType("brick_stairs");
+    BlockType.Typed<Orientable> BONE_BLOCK = getBlockType("bone_block");
 
-    Typed<Wall> BRICK_WALL = getBlockType("brick_wall");
+    BlockType.Typed<BlockData> BOOKSHELF = getBlockType("bookshelf");
 
-    Typed<BlockData> BRICKS = getBlockType("bricks");
+    BlockType.Typed<Waterlogged> BRAIN_CORAL = getBlockType("brain_coral");
 
-    Typed<Rotatable> BROWN_BANNER = getBlockType("brown_banner");
+    BlockType.Typed<BlockData> BRAIN_CORAL_BLOCK = getBlockType("brain_coral_block");
 
-    Typed<Bed> BROWN_BED = getBlockType("brown_bed");
+    BlockType.Typed<Waterlogged> BRAIN_CORAL_FAN = getBlockType("brain_coral_fan");
 
-    Typed<Candle> BROWN_CANDLE = getBlockType("brown_candle");
+    BlockType.Typed<CoralWallFan> BRAIN_CORAL_WALL_FAN = getBlockType("brain_coral_wall_fan");
 
-    Typed<Lightable> BROWN_CANDLE_CAKE = getBlockType("brown_candle_cake");
+    BlockType.Typed<BrewingStand> BREWING_STAND = getBlockType("brewing_stand");
 
-    Typed<BlockData> BROWN_CARPET = getBlockType("brown_carpet");
+    BlockType.Typed<Slab> BRICK_SLAB = getBlockType("brick_slab");
 
-    Typed<BlockData> BROWN_CONCRETE = getBlockType("brown_concrete");
+    BlockType.Typed<Stairs> BRICK_STAIRS = getBlockType("brick_stairs");
 
-    Typed<BlockData> BROWN_CONCRETE_POWDER = getBlockType("brown_concrete_powder");
+    BlockType.Typed<Wall> BRICK_WALL = getBlockType("brick_wall");
 
-    Typed<Directional> BROWN_GLAZED_TERRACOTTA = getBlockType("brown_glazed_terracotta");
+    BlockType.Typed<BlockData> BRICKS = getBlockType("bricks");
 
-    Typed<BlockData> BROWN_MUSHROOM = getBlockType("brown_mushroom");
+    BlockType.Typed<Rotatable> BROWN_BANNER = getBlockType("brown_banner");
 
-    Typed<MultipleFacing> BROWN_MUSHROOM_BLOCK = getBlockType("brown_mushroom_block");
+    BlockType.Typed<Bed> BROWN_BED = getBlockType("brown_bed");
 
-    Typed<Directional> BROWN_SHULKER_BOX = getBlockType("brown_shulker_box");
+    BlockType.Typed<Candle> BROWN_CANDLE = getBlockType("brown_candle");
 
-    Typed<BlockData> BROWN_STAINED_GLASS = getBlockType("brown_stained_glass");
+    BlockType.Typed<Lightable> BROWN_CANDLE_CAKE = getBlockType("brown_candle_cake");
 
-    Typed<GlassPane> BROWN_STAINED_GLASS_PANE = getBlockType("brown_stained_glass_pane");
+    BlockType.Typed<BlockData> BROWN_CARPET = getBlockType("brown_carpet");
 
-    Typed<BlockData> BROWN_TERRACOTTA = getBlockType("brown_terracotta");
+    BlockType.Typed<BlockData> BROWN_CONCRETE = getBlockType("brown_concrete");
 
-    Typed<Directional> BROWN_WALL_BANNER = getBlockType("brown_wall_banner");
+    BlockType.Typed<BlockData> BROWN_CONCRETE_POWDER = getBlockType("brown_concrete_powder");
 
-    Typed<BlockData> BROWN_WOOL = getBlockType("brown_wool");
+    BlockType.Typed<Slab> BROWN_CONCRETE_SLAB = getBlockType("brown_concrete_slab");
 
-    Typed<BubbleColumn> BUBBLE_COLUMN = getBlockType("bubble_column");
+    BlockType.Typed<Stairs> BROWN_CONCRETE_STAIRS = getBlockType("brown_concrete_stairs");
 
-    Typed<Waterlogged> BUBBLE_CORAL = getBlockType("bubble_coral");
+    BlockType.Typed<Directional> BROWN_GLAZED_TERRACOTTA = getBlockType("brown_glazed_terracotta");
 
-    Typed<BlockData> BUBBLE_CORAL_BLOCK = getBlockType("bubble_coral_block");
+    BlockType.Typed<BlockData> BROWN_MUSHROOM = getBlockType("brown_mushroom");
 
-    Typed<Waterlogged> BUBBLE_CORAL_FAN = getBlockType("bubble_coral_fan");
+    BlockType.Typed<MultipleFacing> BROWN_MUSHROOM_BLOCK = getBlockType("brown_mushroom_block");
 
-    Typed<CoralWallFan> BUBBLE_CORAL_WALL_FAN = getBlockType("bubble_coral_wall_fan");
+    BlockType.Typed<Directional> BROWN_SHULKER_BOX = getBlockType("brown_shulker_box");
 
-    Typed<BlockData> BUDDING_AMETHYST = getBlockType("budding_amethyst");
+    BlockType.Typed<BlockData> BROWN_STAINED_GLASS = getBlockType("brown_stained_glass");
 
-    Typed<BlockData> BUSH = getBlockType("bush");
+    BlockType.Typed<GlassPane> BROWN_STAINED_GLASS_PANE = getBlockType("brown_stained_glass_pane");
 
-    Typed<Ageable> CACTUS = getBlockType("cactus");
+    BlockType.Typed<BlockData> BROWN_TERRACOTTA = getBlockType("brown_terracotta");
 
-    Typed<BlockData> CACTUS_FLOWER = getBlockType("cactus_flower");
+    BlockType.Typed<Directional> BROWN_WALL_BANNER = getBlockType("brown_wall_banner");
 
-    Typed<Cake> CAKE = getBlockType("cake");
+    BlockType.Typed<BlockData> BROWN_WOOL = getBlockType("brown_wool");
 
-    Typed<BlockData> CALCITE = getBlockType("calcite");
+    BlockType.Typed<Slab> BROWN_WOOL_SLAB = getBlockType("brown_wool_slab");
 
-    Typed<CalibratedSculkSensor> CALIBRATED_SCULK_SENSOR = getBlockType("calibrated_sculk_sensor");
+    BlockType.Typed<Stairs> BROWN_WOOL_STAIRS = getBlockType("brown_wool_stairs");
 
-    Typed<Campfire> CAMPFIRE = getBlockType("campfire");
+    BlockType.Typed<BubbleColumn> BUBBLE_COLUMN = getBlockType("bubble_column");
 
-    Typed<Candle> CANDLE = getBlockType("candle");
+    BlockType.Typed<Waterlogged> BUBBLE_CORAL = getBlockType("bubble_coral");
 
-    Typed<Lightable> CANDLE_CAKE = getBlockType("candle_cake");
+    BlockType.Typed<BlockData> BUBBLE_CORAL_BLOCK = getBlockType("bubble_coral_block");
 
-    Typed<Ageable> CARROTS = getBlockType("carrots");
+    BlockType.Typed<Waterlogged> BUBBLE_CORAL_FAN = getBlockType("bubble_coral_fan");
 
-    Typed<BlockData> CARTOGRAPHY_TABLE = getBlockType("cartography_table");
+    BlockType.Typed<CoralWallFan> BUBBLE_CORAL_WALL_FAN = getBlockType("bubble_coral_wall_fan");
 
-    Typed<Directional> CARVED_PUMPKIN = getBlockType("carved_pumpkin");
+    BlockType.Typed<BlockData> BUDDING_AMETHYST = getBlockType("budding_amethyst");
 
-    Typed<BlockData> CAULDRON = getBlockType("cauldron");
+    BlockType.Typed<BlockData> BUSH = getBlockType("bush");
 
-    Typed<BlockData> CAVE_AIR = getBlockType("cave_air");
+    BlockType.Typed<Ageable> CACTUS = getBlockType("cactus");
 
-    Typed<CaveVines> CAVE_VINES = getBlockType("cave_vines");
+    BlockType.Typed<BlockData> CACTUS_FLOWER = getBlockType("cactus_flower");
 
-    Typed<CaveVinesPlant> CAVE_VINES_PLANT = getBlockType("cave_vines_plant");
+    BlockType.Typed<Cake> CAKE = getBlockType("cake");
 
-    Typed<CommandBlock> CHAIN_COMMAND_BLOCK = getBlockType("chain_command_block");
+    BlockType.Typed<BlockData> CALCITE = getBlockType("calcite");
 
-    Typed<Switch> CHERRY_BUTTON = getBlockType("cherry_button");
+    BlockType.Typed<CalibratedSculkSensor> CALIBRATED_SCULK_SENSOR = getBlockType("calibrated_sculk_sensor");
 
-    Typed<Door> CHERRY_DOOR = getBlockType("cherry_door");
+    BlockType.Typed<Campfire> CAMPFIRE = getBlockType("campfire");
 
-    Typed<Fence> CHERRY_FENCE = getBlockType("cherry_fence");
+    BlockType.Typed<Candle> CANDLE = getBlockType("candle");
 
-    Typed<Gate> CHERRY_FENCE_GATE = getBlockType("cherry_fence_gate");
+    BlockType.Typed<Lightable> CANDLE_CAKE = getBlockType("candle_cake");
 
-    Typed<HangingSign> CHERRY_HANGING_SIGN = getBlockType("cherry_hanging_sign");
+    BlockType.Typed<Ageable> CARROTS = getBlockType("carrots");
 
-    Typed<Leaves> CHERRY_LEAVES = getBlockType("cherry_leaves");
+    BlockType.Typed<BlockData> CARTOGRAPHY_TABLE = getBlockType("cartography_table");
 
-    Typed<Orientable> CHERRY_LOG = getBlockType("cherry_log");
+    BlockType.Typed<Directional> CARVED_PUMPKIN = getBlockType("carved_pumpkin");
 
-    Typed<BlockData> CHERRY_PLANKS = getBlockType("cherry_planks");
+    BlockType.Typed<BlockData> CAULDRON = getBlockType("cauldron");
 
-    Typed<Powerable> CHERRY_PRESSURE_PLATE = getBlockType("cherry_pressure_plate");
+    BlockType.Typed<BlockData> CAVE_AIR = getBlockType("cave_air");
 
-    Typed<Sapling> CHERRY_SAPLING = getBlockType("cherry_sapling");
+    BlockType.Typed<CaveVines> CAVE_VINES = getBlockType("cave_vines");
 
-    Typed<Shelf> CHERRY_SHELF = getBlockType("cherry_shelf");
+    BlockType.Typed<CaveVinesPlant> CAVE_VINES_PLANT = getBlockType("cave_vines_plant");
 
-    Typed<Sign> CHERRY_SIGN = getBlockType("cherry_sign");
+    BlockType.Typed<CommandBlock> CHAIN_COMMAND_BLOCK = getBlockType("chain_command_block");
 
-    Typed<Slab> CHERRY_SLAB = getBlockType("cherry_slab");
+    BlockType.Typed<Switch> CHERRY_BUTTON = getBlockType("cherry_button");
 
-    Typed<Stairs> CHERRY_STAIRS = getBlockType("cherry_stairs");
+    BlockType.Typed<Door> CHERRY_DOOR = getBlockType("cherry_door");
 
-    Typed<TrapDoor> CHERRY_TRAPDOOR = getBlockType("cherry_trapdoor");
+    BlockType.Typed<Fence> CHERRY_FENCE = getBlockType("cherry_fence");
 
-    Typed<WallHangingSign> CHERRY_WALL_HANGING_SIGN = getBlockType("cherry_wall_hanging_sign");
+    BlockType.Typed<Gate> CHERRY_FENCE_GATE = getBlockType("cherry_fence_gate");
 
-    Typed<WallSign> CHERRY_WALL_SIGN = getBlockType("cherry_wall_sign");
+    BlockType.Typed<HangingSign> CHERRY_HANGING_SIGN = getBlockType("cherry_hanging_sign");
 
-    Typed<Orientable> CHERRY_WOOD = getBlockType("cherry_wood");
+    BlockType.Typed<Leaves> CHERRY_LEAVES = getBlockType("cherry_leaves");
 
-    Typed<Chest> CHEST = getBlockType("chest");
+    BlockType.Typed<Orientable> CHERRY_LOG = getBlockType("cherry_log");
 
-    Typed<Directional> CHIPPED_ANVIL = getBlockType("chipped_anvil");
+    BlockType.Typed<BlockData> CHERRY_PLANKS = getBlockType("cherry_planks");
 
-    Typed<ChiseledBookshelf> CHISELED_BOOKSHELF = getBlockType("chiseled_bookshelf");
+    BlockType.Typed<Powerable> CHERRY_PRESSURE_PLATE = getBlockType("cherry_pressure_plate");
 
-    Typed<BlockData> CHISELED_CINNABAR = getBlockType("chiseled_cinnabar");
+    BlockType.Typed<Sapling> CHERRY_SAPLING = getBlockType("cherry_sapling");
 
-    Typed<BlockData> CHISELED_COPPER = getBlockType("chiseled_copper");
+    BlockType.Typed<Shelf> CHERRY_SHELF = getBlockType("cherry_shelf");
 
-    Typed<BlockData> CHISELED_DEEPSLATE = getBlockType("chiseled_deepslate");
+    BlockType.Typed<Sign> CHERRY_SIGN = getBlockType("cherry_sign");
 
-    Typed<BlockData> CHISELED_NETHER_BRICKS = getBlockType("chiseled_nether_bricks");
+    BlockType.Typed<Slab> CHERRY_SLAB = getBlockType("cherry_slab");
 
-    Typed<BlockData> CHISELED_POLISHED_BLACKSTONE = getBlockType("chiseled_polished_blackstone");
+    BlockType.Typed<Stairs> CHERRY_STAIRS = getBlockType("cherry_stairs");
 
-    Typed<BlockData> CHISELED_QUARTZ_BLOCK = getBlockType("chiseled_quartz_block");
+    BlockType.Typed<TrapDoor> CHERRY_TRAPDOOR = getBlockType("cherry_trapdoor");
 
-    Typed<BlockData> CHISELED_RED_SANDSTONE = getBlockType("chiseled_red_sandstone");
+    BlockType.Typed<WallHangingSign> CHERRY_WALL_HANGING_SIGN = getBlockType("cherry_wall_hanging_sign");
 
-    Typed<BlockData> CHISELED_RESIN_BRICKS = getBlockType("chiseled_resin_bricks");
+    BlockType.Typed<WallSign> CHERRY_WALL_SIGN = getBlockType("cherry_wall_sign");
 
-    Typed<BlockData> CHISELED_SANDSTONE = getBlockType("chiseled_sandstone");
+    BlockType.Typed<Orientable> CHERRY_WOOD = getBlockType("cherry_wood");
 
-    Typed<BlockData> CHISELED_STONE_BRICKS = getBlockType("chiseled_stone_bricks");
+    BlockType.Typed<Chest> CHEST = getBlockType("chest");
 
-    Typed<BlockData> CHISELED_SULFUR = getBlockType("chiseled_sulfur");
+    BlockType.Typed<Directional> CHIPPED_ANVIL = getBlockType("chipped_anvil");
 
-    Typed<BlockData> CHISELED_TUFF = getBlockType("chiseled_tuff");
+    BlockType.Typed<ChiseledBookshelf> CHISELED_BOOKSHELF = getBlockType("chiseled_bookshelf");
 
-    Typed<BlockData> CHISELED_TUFF_BRICKS = getBlockType("chiseled_tuff_bricks");
+    BlockType.Typed<BlockData> CHISELED_CINNABAR = getBlockType("chiseled_cinnabar");
 
-    Typed<Ageable> CHORUS_FLOWER = getBlockType("chorus_flower");
+    BlockType.Typed<BlockData> CHISELED_COPPER = getBlockType("chiseled_copper");
 
-    Typed<MultipleFacing> CHORUS_PLANT = getBlockType("chorus_plant");
+    BlockType.Typed<BlockData> CHISELED_DEEPSLATE = getBlockType("chiseled_deepslate");
 
-    Typed<BlockData> CINNABAR = getBlockType("cinnabar");
+    BlockType.Typed<BlockData> CHISELED_NETHER_BRICKS = getBlockType("chiseled_nether_bricks");
 
-    Typed<Slab> CINNABAR_BRICK_SLAB = getBlockType("cinnabar_brick_slab");
+    BlockType.Typed<BlockData> CHISELED_POLISHED_BLACKSTONE = getBlockType("chiseled_polished_blackstone");
 
-    Typed<Stairs> CINNABAR_BRICK_STAIRS = getBlockType("cinnabar_brick_stairs");
+    BlockType.Typed<BlockData> CHISELED_QUARTZ_BLOCK = getBlockType("chiseled_quartz_block");
 
-    Typed<Wall> CINNABAR_BRICK_WALL = getBlockType("cinnabar_brick_wall");
+    BlockType.Typed<BlockData> CHISELED_RED_SANDSTONE = getBlockType("chiseled_red_sandstone");
 
-    Typed<BlockData> CINNABAR_BRICKS = getBlockType("cinnabar_bricks");
+    BlockType.Typed<BlockData> CHISELED_RESIN_BRICKS = getBlockType("chiseled_resin_bricks");
 
-    Typed<Slab> CINNABAR_SLAB = getBlockType("cinnabar_slab");
+    BlockType.Typed<BlockData> CHISELED_SANDSTONE = getBlockType("chiseled_sandstone");
 
-    Typed<Stairs> CINNABAR_STAIRS = getBlockType("cinnabar_stairs");
+    BlockType.Typed<BlockData> CHISELED_STONE_BRICKS = getBlockType("chiseled_stone_bricks");
 
-    Typed<Wall> CINNABAR_WALL = getBlockType("cinnabar_wall");
+    BlockType.Typed<BlockData> CHISELED_SULFUR = getBlockType("chiseled_sulfur");
 
-    Typed<BlockData> CLAY = getBlockType("clay");
+    BlockType.Typed<BlockData> CHISELED_TUFF = getBlockType("chiseled_tuff");
 
-    Typed<BlockData> CLOSED_EYEBLOSSOM = getBlockType("closed_eyeblossom");
+    BlockType.Typed<BlockData> CHISELED_TUFF_BRICKS = getBlockType("chiseled_tuff_bricks");
 
-    Typed<BlockData> COAL_BLOCK = getBlockType("coal_block");
+    BlockType.Typed<Ageable> CHORUS_FLOWER = getBlockType("chorus_flower");
 
-    Typed<BlockData> COAL_ORE = getBlockType("coal_ore");
+    BlockType.Typed<MultipleFacing> CHORUS_PLANT = getBlockType("chorus_plant");
 
-    Typed<BlockData> COARSE_DIRT = getBlockType("coarse_dirt");
+    BlockType.Typed<BlockData> CINNABAR = getBlockType("cinnabar");
 
-    Typed<BlockData> COBBLED_DEEPSLATE = getBlockType("cobbled_deepslate");
+    BlockType.Typed<Slab> CINNABAR_BRICK_SLAB = getBlockType("cinnabar_brick_slab");
 
-    Typed<Slab> COBBLED_DEEPSLATE_SLAB = getBlockType("cobbled_deepslate_slab");
+    BlockType.Typed<Stairs> CINNABAR_BRICK_STAIRS = getBlockType("cinnabar_brick_stairs");
 
-    Typed<Stairs> COBBLED_DEEPSLATE_STAIRS = getBlockType("cobbled_deepslate_stairs");
+    BlockType.Typed<Wall> CINNABAR_BRICK_WALL = getBlockType("cinnabar_brick_wall");
 
-    Typed<Wall> COBBLED_DEEPSLATE_WALL = getBlockType("cobbled_deepslate_wall");
+    BlockType.Typed<BlockData> CINNABAR_BRICKS = getBlockType("cinnabar_bricks");
 
-    Typed<BlockData> COBBLESTONE = getBlockType("cobblestone");
+    BlockType.Typed<Slab> CINNABAR_SLAB = getBlockType("cinnabar_slab");
 
-    Typed<Slab> COBBLESTONE_SLAB = getBlockType("cobblestone_slab");
+    BlockType.Typed<Stairs> CINNABAR_STAIRS = getBlockType("cinnabar_stairs");
 
-    Typed<Stairs> COBBLESTONE_STAIRS = getBlockType("cobblestone_stairs");
+    BlockType.Typed<Wall> CINNABAR_WALL = getBlockType("cinnabar_wall");
 
-    Typed<Wall> COBBLESTONE_WALL = getBlockType("cobblestone_wall");
+    BlockType.Typed<BlockData> CLAY = getBlockType("clay");
 
-    Typed<BlockData> COBWEB = getBlockType("cobweb");
+    BlockType.Typed<BlockData> CLOSED_EYEBLOSSOM = getBlockType("closed_eyeblossom");
 
-    Typed<Cocoa> COCOA = getBlockType("cocoa");
+    BlockType.Typed<BlockData> COAL_BLOCK = getBlockType("coal_block");
 
-    Typed<CommandBlock> COMMAND_BLOCK = getBlockType("command_block");
+    BlockType.Typed<BlockData> COAL_ORE = getBlockType("coal_ore");
 
-    Typed<Comparator> COMPARATOR = getBlockType("comparator");
+    BlockType.Typed<BlockData> COARSE_DIRT = getBlockType("coarse_dirt");
 
-    Typed<Levelled> COMPOSTER = getBlockType("composter");
+    BlockType.Typed<BlockData> COBBLED_DEEPSLATE = getBlockType("cobbled_deepslate");
 
-    Typed<Waterlogged> CONDUIT = getBlockType("conduit");
+    BlockType.Typed<Slab> COBBLED_DEEPSLATE_SLAB = getBlockType("cobbled_deepslate_slab");
 
-    Typed<Fence> COPPER_BARS = getBlockType("copper_bars");
+    BlockType.Typed<Stairs> COBBLED_DEEPSLATE_STAIRS = getBlockType("cobbled_deepslate_stairs");
 
-    Typed<BlockData> COPPER_BLOCK = getBlockType("copper_block");
+    BlockType.Typed<Wall> COBBLED_DEEPSLATE_WALL = getBlockType("cobbled_deepslate_wall");
 
-    Typed<CopperBulb> COPPER_BULB = getBlockType("copper_bulb");
+    BlockType.Typed<BlockData> COBBLESTONE = getBlockType("cobblestone");
 
-    Typed<Chain> COPPER_CHAIN = getBlockType("copper_chain");
+    BlockType.Typed<Slab> COBBLESTONE_SLAB = getBlockType("cobblestone_slab");
 
-    Typed<Chest> COPPER_CHEST = getBlockType("copper_chest");
+    BlockType.Typed<Stairs> COBBLESTONE_STAIRS = getBlockType("cobblestone_stairs");
 
-    Typed<Door> COPPER_DOOR = getBlockType("copper_door");
+    BlockType.Typed<Wall> COBBLESTONE_WALL = getBlockType("cobblestone_wall");
 
-    Typed<CopperGolemStatue> COPPER_GOLEM_STATUE = getBlockType("copper_golem_statue");
+    BlockType.Typed<BlockData> COBWEB = getBlockType("cobweb");
 
-    Typed<Waterlogged> COPPER_GRATE = getBlockType("copper_grate");
+    BlockType.Typed<Cocoa> COCOA = getBlockType("cocoa");
 
-    Typed<Lantern> COPPER_LANTERN = getBlockType("copper_lantern");
+    BlockType.Typed<CommandBlock> COMMAND_BLOCK = getBlockType("command_block");
 
-    Typed<BlockData> COPPER_ORE = getBlockType("copper_ore");
+    BlockType.Typed<Comparator> COMPARATOR = getBlockType("comparator");
 
-    Typed<BlockData> COPPER_TORCH = getBlockType("copper_torch");
+    BlockType.Typed<Levelled> COMPOSTER = getBlockType("composter");
 
-    Typed<TrapDoor> COPPER_TRAPDOOR = getBlockType("copper_trapdoor");
+    BlockType.Typed<Waterlogged> CONDUIT = getBlockType("conduit");
 
-    Typed<Directional> COPPER_WALL_TORCH = getBlockType("copper_wall_torch");
+    BlockType.Typed<Fence> COPPER_BARS = getBlockType("copper_bars");
 
-    Typed<BlockData> CORNFLOWER = getBlockType("cornflower");
+    BlockType.Typed<BlockData> COPPER_BLOCK = getBlockType("copper_block");
 
-    Typed<BlockData> CRACKED_DEEPSLATE_BRICKS = getBlockType("cracked_deepslate_bricks");
+    BlockType.Typed<CopperBulb> COPPER_BULB = getBlockType("copper_bulb");
 
-    Typed<BlockData> CRACKED_DEEPSLATE_TILES = getBlockType("cracked_deepslate_tiles");
+    BlockType.Typed<Chain> COPPER_CHAIN = getBlockType("copper_chain");
 
-    Typed<BlockData> CRACKED_NETHER_BRICKS = getBlockType("cracked_nether_bricks");
+    BlockType.Typed<Chest> COPPER_CHEST = getBlockType("copper_chest");
 
-    Typed<BlockData> CRACKED_POLISHED_BLACKSTONE_BRICKS = getBlockType("cracked_polished_blackstone_bricks");
+    BlockType.Typed<Door> COPPER_DOOR = getBlockType("copper_door");
 
-    Typed<BlockData> CRACKED_STONE_BRICKS = getBlockType("cracked_stone_bricks");
+    BlockType.Typed<CopperGolemStatue> COPPER_GOLEM_STATUE = getBlockType("copper_golem_statue");
 
-    Typed<Crafter> CRAFTER = getBlockType("crafter");
+    BlockType.Typed<Waterlogged> COPPER_GRATE = getBlockType("copper_grate");
 
-    Typed<BlockData> CRAFTING_TABLE = getBlockType("crafting_table");
+    BlockType.Typed<Lantern> COPPER_LANTERN = getBlockType("copper_lantern");
 
-    Typed<CreakingHeart> CREAKING_HEART = getBlockType("creaking_heart");
+    BlockType.Typed<BlockData> COPPER_ORE = getBlockType("copper_ore");
 
-    Typed<Skull> CREEPER_HEAD = getBlockType("creeper_head");
+    BlockType.Typed<BlockData> COPPER_TORCH = getBlockType("copper_torch");
 
-    Typed<WallSkull> CREEPER_WALL_HEAD = getBlockType("creeper_wall_head");
+    BlockType.Typed<TrapDoor> COPPER_TRAPDOOR = getBlockType("copper_trapdoor");
 
-    Typed<Switch> CRIMSON_BUTTON = getBlockType("crimson_button");
+    BlockType.Typed<Directional> COPPER_WALL_TORCH = getBlockType("copper_wall_torch");
 
-    Typed<Door> CRIMSON_DOOR = getBlockType("crimson_door");
+    BlockType.Typed<BlockData> CORNFLOWER = getBlockType("cornflower");
 
-    Typed<Fence> CRIMSON_FENCE = getBlockType("crimson_fence");
+    BlockType.Typed<BlockData> CRACKED_DEEPSLATE_BRICKS = getBlockType("cracked_deepslate_bricks");
 
-    Typed<Gate> CRIMSON_FENCE_GATE = getBlockType("crimson_fence_gate");
+    BlockType.Typed<BlockData> CRACKED_DEEPSLATE_TILES = getBlockType("cracked_deepslate_tiles");
 
-    Typed<BlockData> CRIMSON_FUNGUS = getBlockType("crimson_fungus");
+    BlockType.Typed<BlockData> CRACKED_NETHER_BRICKS = getBlockType("cracked_nether_bricks");
 
-    Typed<HangingSign> CRIMSON_HANGING_SIGN = getBlockType("crimson_hanging_sign");
+    BlockType.Typed<BlockData> CRACKED_POLISHED_BLACKSTONE_BRICKS = getBlockType("cracked_polished_blackstone_bricks");
 
-    Typed<Orientable> CRIMSON_HYPHAE = getBlockType("crimson_hyphae");
+    BlockType.Typed<BlockData> CRACKED_STONE_BRICKS = getBlockType("cracked_stone_bricks");
 
-    Typed<BlockData> CRIMSON_NYLIUM = getBlockType("crimson_nylium");
+    BlockType.Typed<Crafter> CRAFTER = getBlockType("crafter");
 
-    Typed<BlockData> CRIMSON_PLANKS = getBlockType("crimson_planks");
+    BlockType.Typed<BlockData> CRAFTING_TABLE = getBlockType("crafting_table");
 
-    Typed<Powerable> CRIMSON_PRESSURE_PLATE = getBlockType("crimson_pressure_plate");
+    BlockType.Typed<CreakingHeart> CREAKING_HEART = getBlockType("creaking_heart");
 
-    Typed<BlockData> CRIMSON_ROOTS = getBlockType("crimson_roots");
+    BlockType.Typed<Skull> CREEPER_HEAD = getBlockType("creeper_head");
 
-    Typed<Shelf> CRIMSON_SHELF = getBlockType("crimson_shelf");
+    BlockType.Typed<WallSkull> CREEPER_WALL_HEAD = getBlockType("creeper_wall_head");
 
-    Typed<Sign> CRIMSON_SIGN = getBlockType("crimson_sign");
+    BlockType.Typed<Switch> CRIMSON_BUTTON = getBlockType("crimson_button");
 
-    Typed<Slab> CRIMSON_SLAB = getBlockType("crimson_slab");
+    BlockType.Typed<Door> CRIMSON_DOOR = getBlockType("crimson_door");
 
-    Typed<Stairs> CRIMSON_STAIRS = getBlockType("crimson_stairs");
+    BlockType.Typed<Fence> CRIMSON_FENCE = getBlockType("crimson_fence");
 
-    Typed<Orientable> CRIMSON_STEM = getBlockType("crimson_stem");
+    BlockType.Typed<Gate> CRIMSON_FENCE_GATE = getBlockType("crimson_fence_gate");
 
-    Typed<TrapDoor> CRIMSON_TRAPDOOR = getBlockType("crimson_trapdoor");
+    BlockType.Typed<BlockData> CRIMSON_FUNGUS = getBlockType("crimson_fungus");
 
-    Typed<WallHangingSign> CRIMSON_WALL_HANGING_SIGN = getBlockType("crimson_wall_hanging_sign");
+    BlockType.Typed<HangingSign> CRIMSON_HANGING_SIGN = getBlockType("crimson_hanging_sign");
 
-    Typed<WallSign> CRIMSON_WALL_SIGN = getBlockType("crimson_wall_sign");
+    BlockType.Typed<Orientable> CRIMSON_HYPHAE = getBlockType("crimson_hyphae");
 
-    Typed<BlockData> CRYING_OBSIDIAN = getBlockType("crying_obsidian");
+    BlockType.Typed<BlockData> CRIMSON_NYLIUM = getBlockType("crimson_nylium");
 
-    Typed<BlockData> CUT_COPPER = getBlockType("cut_copper");
+    BlockType.Typed<BlockData> CRIMSON_PLANKS = getBlockType("crimson_planks");
 
-    Typed<Slab> CUT_COPPER_SLAB = getBlockType("cut_copper_slab");
+    BlockType.Typed<Powerable> CRIMSON_PRESSURE_PLATE = getBlockType("crimson_pressure_plate");
 
-    Typed<Stairs> CUT_COPPER_STAIRS = getBlockType("cut_copper_stairs");
+    BlockType.Typed<BlockData> CRIMSON_ROOTS = getBlockType("crimson_roots");
 
-    Typed<BlockData> CUT_RED_SANDSTONE = getBlockType("cut_red_sandstone");
+    BlockType.Typed<Shelf> CRIMSON_SHELF = getBlockType("crimson_shelf");
 
-    Typed<Slab> CUT_RED_SANDSTONE_SLAB = getBlockType("cut_red_sandstone_slab");
+    BlockType.Typed<Sign> CRIMSON_SIGN = getBlockType("crimson_sign");
 
-    Typed<BlockData> CUT_SANDSTONE = getBlockType("cut_sandstone");
+    BlockType.Typed<Slab> CRIMSON_SLAB = getBlockType("crimson_slab");
 
-    Typed<Slab> CUT_SANDSTONE_SLAB = getBlockType("cut_sandstone_slab");
+    BlockType.Typed<Stairs> CRIMSON_STAIRS = getBlockType("crimson_stairs");
 
-    Typed<Rotatable> CYAN_BANNER = getBlockType("cyan_banner");
+    BlockType.Typed<Orientable> CRIMSON_STEM = getBlockType("crimson_stem");
 
-    Typed<Bed> CYAN_BED = getBlockType("cyan_bed");
+    BlockType.Typed<TrapDoor> CRIMSON_TRAPDOOR = getBlockType("crimson_trapdoor");
 
-    Typed<Candle> CYAN_CANDLE = getBlockType("cyan_candle");
+    BlockType.Typed<WallHangingSign> CRIMSON_WALL_HANGING_SIGN = getBlockType("crimson_wall_hanging_sign");
 
-    Typed<Lightable> CYAN_CANDLE_CAKE = getBlockType("cyan_candle_cake");
+    BlockType.Typed<WallSign> CRIMSON_WALL_SIGN = getBlockType("crimson_wall_sign");
 
-    Typed<BlockData> CYAN_CARPET = getBlockType("cyan_carpet");
+    BlockType.Typed<BlockData> CRYING_OBSIDIAN = getBlockType("crying_obsidian");
 
-    Typed<BlockData> CYAN_CONCRETE = getBlockType("cyan_concrete");
+    BlockType.Typed<BlockData> CUT_COPPER = getBlockType("cut_copper");
 
-    Typed<BlockData> CYAN_CONCRETE_POWDER = getBlockType("cyan_concrete_powder");
+    BlockType.Typed<Slab> CUT_COPPER_SLAB = getBlockType("cut_copper_slab");
 
-    Typed<Directional> CYAN_GLAZED_TERRACOTTA = getBlockType("cyan_glazed_terracotta");
+    BlockType.Typed<Stairs> CUT_COPPER_STAIRS = getBlockType("cut_copper_stairs");
 
-    Typed<Directional> CYAN_SHULKER_BOX = getBlockType("cyan_shulker_box");
+    BlockType.Typed<BlockData> CUT_RED_SANDSTONE = getBlockType("cut_red_sandstone");
 
-    Typed<BlockData> CYAN_STAINED_GLASS = getBlockType("cyan_stained_glass");
+    BlockType.Typed<Slab> CUT_RED_SANDSTONE_SLAB = getBlockType("cut_red_sandstone_slab");
 
-    Typed<GlassPane> CYAN_STAINED_GLASS_PANE = getBlockType("cyan_stained_glass_pane");
+    BlockType.Typed<BlockData> CUT_SANDSTONE = getBlockType("cut_sandstone");
 
-    Typed<BlockData> CYAN_TERRACOTTA = getBlockType("cyan_terracotta");
+    BlockType.Typed<Slab> CUT_SANDSTONE_SLAB = getBlockType("cut_sandstone_slab");
 
-    Typed<Directional> CYAN_WALL_BANNER = getBlockType("cyan_wall_banner");
+    BlockType.Typed<Rotatable> CYAN_BANNER = getBlockType("cyan_banner");
 
-    Typed<BlockData> CYAN_WOOL = getBlockType("cyan_wool");
+    BlockType.Typed<Bed> CYAN_BED = getBlockType("cyan_bed");
 
-    Typed<Directional> DAMAGED_ANVIL = getBlockType("damaged_anvil");
+    BlockType.Typed<Candle> CYAN_CANDLE = getBlockType("cyan_candle");
 
-    Typed<BlockData> DANDELION = getBlockType("dandelion");
+    BlockType.Typed<Lightable> CYAN_CANDLE_CAKE = getBlockType("cyan_candle_cake");
 
-    Typed<Switch> DARK_OAK_BUTTON = getBlockType("dark_oak_button");
+    BlockType.Typed<BlockData> CYAN_CARPET = getBlockType("cyan_carpet");
 
-    Typed<Door> DARK_OAK_DOOR = getBlockType("dark_oak_door");
+    BlockType.Typed<BlockData> CYAN_CONCRETE = getBlockType("cyan_concrete");
 
-    Typed<Fence> DARK_OAK_FENCE = getBlockType("dark_oak_fence");
+    BlockType.Typed<BlockData> CYAN_CONCRETE_POWDER = getBlockType("cyan_concrete_powder");
 
-    Typed<Gate> DARK_OAK_FENCE_GATE = getBlockType("dark_oak_fence_gate");
+    BlockType.Typed<Slab> CYAN_CONCRETE_SLAB = getBlockType("cyan_concrete_slab");
 
-    Typed<HangingSign> DARK_OAK_HANGING_SIGN = getBlockType("dark_oak_hanging_sign");
+    BlockType.Typed<Stairs> CYAN_CONCRETE_STAIRS = getBlockType("cyan_concrete_stairs");
 
-    Typed<Leaves> DARK_OAK_LEAVES = getBlockType("dark_oak_leaves");
+    BlockType.Typed<Directional> CYAN_GLAZED_TERRACOTTA = getBlockType("cyan_glazed_terracotta");
 
-    Typed<Orientable> DARK_OAK_LOG = getBlockType("dark_oak_log");
+    BlockType.Typed<Directional> CYAN_SHULKER_BOX = getBlockType("cyan_shulker_box");
 
-    Typed<BlockData> DARK_OAK_PLANKS = getBlockType("dark_oak_planks");
+    BlockType.Typed<BlockData> CYAN_STAINED_GLASS = getBlockType("cyan_stained_glass");
 
-    Typed<Powerable> DARK_OAK_PRESSURE_PLATE = getBlockType("dark_oak_pressure_plate");
+    BlockType.Typed<GlassPane> CYAN_STAINED_GLASS_PANE = getBlockType("cyan_stained_glass_pane");
 
-    Typed<Sapling> DARK_OAK_SAPLING = getBlockType("dark_oak_sapling");
+    BlockType.Typed<BlockData> CYAN_TERRACOTTA = getBlockType("cyan_terracotta");
 
-    Typed<Shelf> DARK_OAK_SHELF = getBlockType("dark_oak_shelf");
+    BlockType.Typed<Directional> CYAN_WALL_BANNER = getBlockType("cyan_wall_banner");
 
-    Typed<Sign> DARK_OAK_SIGN = getBlockType("dark_oak_sign");
+    BlockType.Typed<BlockData> CYAN_WOOL = getBlockType("cyan_wool");
 
-    Typed<Slab> DARK_OAK_SLAB = getBlockType("dark_oak_slab");
+    BlockType.Typed<Slab> CYAN_WOOL_SLAB = getBlockType("cyan_wool_slab");
 
-    Typed<Stairs> DARK_OAK_STAIRS = getBlockType("dark_oak_stairs");
+    BlockType.Typed<Stairs> CYAN_WOOL_STAIRS = getBlockType("cyan_wool_stairs");
 
-    Typed<TrapDoor> DARK_OAK_TRAPDOOR = getBlockType("dark_oak_trapdoor");
+    BlockType.Typed<Directional> DAMAGED_ANVIL = getBlockType("damaged_anvil");
 
-    Typed<WallHangingSign> DARK_OAK_WALL_HANGING_SIGN = getBlockType("dark_oak_wall_hanging_sign");
+    BlockType.Typed<BlockData> DANDELION = getBlockType("dandelion");
 
-    Typed<WallSign> DARK_OAK_WALL_SIGN = getBlockType("dark_oak_wall_sign");
+    BlockType.Typed<Switch> DARK_OAK_BUTTON = getBlockType("dark_oak_button");
 
-    Typed<Orientable> DARK_OAK_WOOD = getBlockType("dark_oak_wood");
+    BlockType.Typed<Door> DARK_OAK_DOOR = getBlockType("dark_oak_door");
 
-    Typed<BlockData> DARK_PRISMARINE = getBlockType("dark_prismarine");
+    BlockType.Typed<Fence> DARK_OAK_FENCE = getBlockType("dark_oak_fence");
 
-    Typed<Slab> DARK_PRISMARINE_SLAB = getBlockType("dark_prismarine_slab");
+    BlockType.Typed<Gate> DARK_OAK_FENCE_GATE = getBlockType("dark_oak_fence_gate");
 
-    Typed<Stairs> DARK_PRISMARINE_STAIRS = getBlockType("dark_prismarine_stairs");
+    BlockType.Typed<HangingSign> DARK_OAK_HANGING_SIGN = getBlockType("dark_oak_hanging_sign");
 
-    Typed<DaylightDetector> DAYLIGHT_DETECTOR = getBlockType("daylight_detector");
+    BlockType.Typed<Leaves> DARK_OAK_LEAVES = getBlockType("dark_oak_leaves");
 
-    Typed<Waterlogged> DEAD_BRAIN_CORAL = getBlockType("dead_brain_coral");
+    BlockType.Typed<Orientable> DARK_OAK_LOG = getBlockType("dark_oak_log");
 
-    Typed<BlockData> DEAD_BRAIN_CORAL_BLOCK = getBlockType("dead_brain_coral_block");
+    BlockType.Typed<BlockData> DARK_OAK_PLANKS = getBlockType("dark_oak_planks");
 
-    Typed<Waterlogged> DEAD_BRAIN_CORAL_FAN = getBlockType("dead_brain_coral_fan");
+    BlockType.Typed<Powerable> DARK_OAK_PRESSURE_PLATE = getBlockType("dark_oak_pressure_plate");
 
-    Typed<CoralWallFan> DEAD_BRAIN_CORAL_WALL_FAN = getBlockType("dead_brain_coral_wall_fan");
+    BlockType.Typed<Sapling> DARK_OAK_SAPLING = getBlockType("dark_oak_sapling");
 
-    Typed<Waterlogged> DEAD_BUBBLE_CORAL = getBlockType("dead_bubble_coral");
+    BlockType.Typed<Shelf> DARK_OAK_SHELF = getBlockType("dark_oak_shelf");
 
-    Typed<BlockData> DEAD_BUBBLE_CORAL_BLOCK = getBlockType("dead_bubble_coral_block");
+    BlockType.Typed<Sign> DARK_OAK_SIGN = getBlockType("dark_oak_sign");
 
-    Typed<Waterlogged> DEAD_BUBBLE_CORAL_FAN = getBlockType("dead_bubble_coral_fan");
+    BlockType.Typed<Slab> DARK_OAK_SLAB = getBlockType("dark_oak_slab");
 
-    Typed<CoralWallFan> DEAD_BUBBLE_CORAL_WALL_FAN = getBlockType("dead_bubble_coral_wall_fan");
+    BlockType.Typed<Stairs> DARK_OAK_STAIRS = getBlockType("dark_oak_stairs");
 
-    Typed<BlockData> DEAD_BUSH = getBlockType("dead_bush");
+    BlockType.Typed<TrapDoor> DARK_OAK_TRAPDOOR = getBlockType("dark_oak_trapdoor");
 
-    Typed<Waterlogged> DEAD_FIRE_CORAL = getBlockType("dead_fire_coral");
+    BlockType.Typed<WallHangingSign> DARK_OAK_WALL_HANGING_SIGN = getBlockType("dark_oak_wall_hanging_sign");
 
-    Typed<BlockData> DEAD_FIRE_CORAL_BLOCK = getBlockType("dead_fire_coral_block");
+    BlockType.Typed<WallSign> DARK_OAK_WALL_SIGN = getBlockType("dark_oak_wall_sign");
 
-    Typed<Waterlogged> DEAD_FIRE_CORAL_FAN = getBlockType("dead_fire_coral_fan");
+    BlockType.Typed<Orientable> DARK_OAK_WOOD = getBlockType("dark_oak_wood");
 
-    Typed<CoralWallFan> DEAD_FIRE_CORAL_WALL_FAN = getBlockType("dead_fire_coral_wall_fan");
+    BlockType.Typed<BlockData> DARK_PRISMARINE = getBlockType("dark_prismarine");
 
-    Typed<Waterlogged> DEAD_HORN_CORAL = getBlockType("dead_horn_coral");
+    BlockType.Typed<Slab> DARK_PRISMARINE_SLAB = getBlockType("dark_prismarine_slab");
 
-    Typed<BlockData> DEAD_HORN_CORAL_BLOCK = getBlockType("dead_horn_coral_block");
+    BlockType.Typed<Stairs> DARK_PRISMARINE_STAIRS = getBlockType("dark_prismarine_stairs");
 
-    Typed<Waterlogged> DEAD_HORN_CORAL_FAN = getBlockType("dead_horn_coral_fan");
+    BlockType.Typed<DaylightDetector> DAYLIGHT_DETECTOR = getBlockType("daylight_detector");
 
-    Typed<CoralWallFan> DEAD_HORN_CORAL_WALL_FAN = getBlockType("dead_horn_coral_wall_fan");
+    BlockType.Typed<Waterlogged> DEAD_BRAIN_CORAL = getBlockType("dead_brain_coral");
 
-    Typed<Waterlogged> DEAD_TUBE_CORAL = getBlockType("dead_tube_coral");
+    BlockType.Typed<BlockData> DEAD_BRAIN_CORAL_BLOCK = getBlockType("dead_brain_coral_block");
 
-    Typed<BlockData> DEAD_TUBE_CORAL_BLOCK = getBlockType("dead_tube_coral_block");
+    BlockType.Typed<Waterlogged> DEAD_BRAIN_CORAL_FAN = getBlockType("dead_brain_coral_fan");
 
-    Typed<Waterlogged> DEAD_TUBE_CORAL_FAN = getBlockType("dead_tube_coral_fan");
+    BlockType.Typed<CoralWallFan> DEAD_BRAIN_CORAL_WALL_FAN = getBlockType("dead_brain_coral_wall_fan");
 
-    Typed<CoralWallFan> DEAD_TUBE_CORAL_WALL_FAN = getBlockType("dead_tube_coral_wall_fan");
+    BlockType.Typed<Waterlogged> DEAD_BUBBLE_CORAL = getBlockType("dead_bubble_coral");
 
-    Typed<DecoratedPot> DECORATED_POT = getBlockType("decorated_pot");
+    BlockType.Typed<BlockData> DEAD_BUBBLE_CORAL_BLOCK = getBlockType("dead_bubble_coral_block");
 
-    Typed<Orientable> DEEPSLATE = getBlockType("deepslate");
+    BlockType.Typed<Waterlogged> DEAD_BUBBLE_CORAL_FAN = getBlockType("dead_bubble_coral_fan");
 
-    Typed<Slab> DEEPSLATE_BRICK_SLAB = getBlockType("deepslate_brick_slab");
+    BlockType.Typed<CoralWallFan> DEAD_BUBBLE_CORAL_WALL_FAN = getBlockType("dead_bubble_coral_wall_fan");
 
-    Typed<Stairs> DEEPSLATE_BRICK_STAIRS = getBlockType("deepslate_brick_stairs");
+    BlockType.Typed<BlockData> DEAD_BUSH = getBlockType("dead_bush");
 
-    Typed<Wall> DEEPSLATE_BRICK_WALL = getBlockType("deepslate_brick_wall");
+    BlockType.Typed<Waterlogged> DEAD_FIRE_CORAL = getBlockType("dead_fire_coral");
 
-    Typed<BlockData> DEEPSLATE_BRICKS = getBlockType("deepslate_bricks");
+    BlockType.Typed<BlockData> DEAD_FIRE_CORAL_BLOCK = getBlockType("dead_fire_coral_block");
 
-    Typed<BlockData> DEEPSLATE_COAL_ORE = getBlockType("deepslate_coal_ore");
+    BlockType.Typed<Waterlogged> DEAD_FIRE_CORAL_FAN = getBlockType("dead_fire_coral_fan");
 
-    Typed<BlockData> DEEPSLATE_COPPER_ORE = getBlockType("deepslate_copper_ore");
+    BlockType.Typed<CoralWallFan> DEAD_FIRE_CORAL_WALL_FAN = getBlockType("dead_fire_coral_wall_fan");
 
-    Typed<BlockData> DEEPSLATE_DIAMOND_ORE = getBlockType("deepslate_diamond_ore");
+    BlockType.Typed<Waterlogged> DEAD_HORN_CORAL = getBlockType("dead_horn_coral");
 
-    Typed<BlockData> DEEPSLATE_EMERALD_ORE = getBlockType("deepslate_emerald_ore");
+    BlockType.Typed<BlockData> DEAD_HORN_CORAL_BLOCK = getBlockType("dead_horn_coral_block");
 
-    Typed<BlockData> DEEPSLATE_GOLD_ORE = getBlockType("deepslate_gold_ore");
+    BlockType.Typed<Waterlogged> DEAD_HORN_CORAL_FAN = getBlockType("dead_horn_coral_fan");
 
-    Typed<BlockData> DEEPSLATE_IRON_ORE = getBlockType("deepslate_iron_ore");
+    BlockType.Typed<CoralWallFan> DEAD_HORN_CORAL_WALL_FAN = getBlockType("dead_horn_coral_wall_fan");
 
-    Typed<BlockData> DEEPSLATE_LAPIS_ORE = getBlockType("deepslate_lapis_ore");
+    BlockType.Typed<Waterlogged> DEAD_TUBE_CORAL = getBlockType("dead_tube_coral");
 
-    Typed<Lightable> DEEPSLATE_REDSTONE_ORE = getBlockType("deepslate_redstone_ore");
+    BlockType.Typed<BlockData> DEAD_TUBE_CORAL_BLOCK = getBlockType("dead_tube_coral_block");
 
-    Typed<Slab> DEEPSLATE_TILE_SLAB = getBlockType("deepslate_tile_slab");
+    BlockType.Typed<Waterlogged> DEAD_TUBE_CORAL_FAN = getBlockType("dead_tube_coral_fan");
 
-    Typed<Stairs> DEEPSLATE_TILE_STAIRS = getBlockType("deepslate_tile_stairs");
+    BlockType.Typed<CoralWallFan> DEAD_TUBE_CORAL_WALL_FAN = getBlockType("dead_tube_coral_wall_fan");
 
-    Typed<Wall> DEEPSLATE_TILE_WALL = getBlockType("deepslate_tile_wall");
+    BlockType.Typed<DecoratedPot> DECORATED_POT = getBlockType("decorated_pot");
 
-    Typed<BlockData> DEEPSLATE_TILES = getBlockType("deepslate_tiles");
+    BlockType.Typed<Orientable> DEEPSLATE = getBlockType("deepslate");
 
-    Typed<RedstoneRail> DETECTOR_RAIL = getBlockType("detector_rail");
+    BlockType.Typed<Slab> DEEPSLATE_BRICK_SLAB = getBlockType("deepslate_brick_slab");
 
-    Typed<BlockData> DIAMOND_BLOCK = getBlockType("diamond_block");
+    BlockType.Typed<Stairs> DEEPSLATE_BRICK_STAIRS = getBlockType("deepslate_brick_stairs");
 
-    Typed<BlockData> DIAMOND_ORE = getBlockType("diamond_ore");
+    BlockType.Typed<Wall> DEEPSLATE_BRICK_WALL = getBlockType("deepslate_brick_wall");
 
-    Typed<BlockData> DIORITE = getBlockType("diorite");
+    BlockType.Typed<BlockData> DEEPSLATE_BRICKS = getBlockType("deepslate_bricks");
 
-    Typed<Slab> DIORITE_SLAB = getBlockType("diorite_slab");
+    BlockType.Typed<BlockData> DEEPSLATE_COAL_ORE = getBlockType("deepslate_coal_ore");
 
-    Typed<Stairs> DIORITE_STAIRS = getBlockType("diorite_stairs");
+    BlockType.Typed<BlockData> DEEPSLATE_COPPER_ORE = getBlockType("deepslate_copper_ore");
 
-    Typed<Wall> DIORITE_WALL = getBlockType("diorite_wall");
+    BlockType.Typed<BlockData> DEEPSLATE_DIAMOND_ORE = getBlockType("deepslate_diamond_ore");
 
-    Typed<BlockData> DIRT = getBlockType("dirt");
+    BlockType.Typed<BlockData> DEEPSLATE_EMERALD_ORE = getBlockType("deepslate_emerald_ore");
 
-    Typed<BlockData> DIRT_PATH = getBlockType("dirt_path");
+    BlockType.Typed<BlockData> DEEPSLATE_GOLD_ORE = getBlockType("deepslate_gold_ore");
 
-    Typed<Dispenser> DISPENSER = getBlockType("dispenser");
+    BlockType.Typed<BlockData> DEEPSLATE_IRON_ORE = getBlockType("deepslate_iron_ore");
 
-    Typed<BlockData> DRAGON_EGG = getBlockType("dragon_egg");
+    BlockType.Typed<BlockData> DEEPSLATE_LAPIS_ORE = getBlockType("deepslate_lapis_ore");
 
-    Typed<Skull> DRAGON_HEAD = getBlockType("dragon_head");
+    BlockType.Typed<Lightable> DEEPSLATE_REDSTONE_ORE = getBlockType("deepslate_redstone_ore");
 
-    Typed<WallSkull> DRAGON_WALL_HEAD = getBlockType("dragon_wall_head");
+    BlockType.Typed<Slab> DEEPSLATE_TILE_SLAB = getBlockType("deepslate_tile_slab");
 
-    Typed<DriedGhast> DRIED_GHAST = getBlockType("dried_ghast");
+    BlockType.Typed<Stairs> DEEPSLATE_TILE_STAIRS = getBlockType("deepslate_tile_stairs");
 
-    Typed<BlockData> DRIED_KELP_BLOCK = getBlockType("dried_kelp_block");
+    BlockType.Typed<Wall> DEEPSLATE_TILE_WALL = getBlockType("deepslate_tile_wall");
 
-    Typed<BlockData> DRIPSTONE_BLOCK = getBlockType("dripstone_block");
+    BlockType.Typed<BlockData> DEEPSLATE_TILES = getBlockType("deepslate_tiles");
 
-    Typed<Dispenser> DROPPER = getBlockType("dropper");
+    BlockType.Typed<RedstoneRail> DETECTOR_RAIL = getBlockType("detector_rail");
 
-    Typed<BlockData> EMERALD_BLOCK = getBlockType("emerald_block");
+    BlockType.Typed<BlockData> DIAMOND_BLOCK = getBlockType("diamond_block");
 
-    Typed<BlockData> EMERALD_ORE = getBlockType("emerald_ore");
+    BlockType.Typed<BlockData> DIAMOND_ORE = getBlockType("diamond_ore");
 
-    Typed<BlockData> ENCHANTING_TABLE = getBlockType("enchanting_table");
+    BlockType.Typed<BlockData> DIORITE = getBlockType("diorite");
 
-    Typed<BlockData> END_GATEWAY = getBlockType("end_gateway");
+    BlockType.Typed<Slab> DIORITE_SLAB = getBlockType("diorite_slab");
 
-    Typed<BlockData> END_PORTAL = getBlockType("end_portal");
+    BlockType.Typed<Stairs> DIORITE_STAIRS = getBlockType("diorite_stairs");
 
-    Typed<EndPortalFrame> END_PORTAL_FRAME = getBlockType("end_portal_frame");
+    BlockType.Typed<Wall> DIORITE_WALL = getBlockType("diorite_wall");
 
-    Typed<Directional> END_ROD = getBlockType("end_rod");
+    BlockType.Typed<BlockData> DIRT = getBlockType("dirt");
 
-    Typed<BlockData> END_STONE = getBlockType("end_stone");
+    BlockType.Typed<BlockData> DIRT_PATH = getBlockType("dirt_path");
 
-    Typed<Slab> END_STONE_BRICK_SLAB = getBlockType("end_stone_brick_slab");
+    BlockType.Typed<Dispenser> DISPENSER = getBlockType("dispenser");
 
-    Typed<Stairs> END_STONE_BRICK_STAIRS = getBlockType("end_stone_brick_stairs");
+    BlockType.Typed<BlockData> DRAGON_EGG = getBlockType("dragon_egg");
 
-    Typed<Wall> END_STONE_BRICK_WALL = getBlockType("end_stone_brick_wall");
+    BlockType.Typed<Skull> DRAGON_HEAD = getBlockType("dragon_head");
 
-    Typed<BlockData> END_STONE_BRICKS = getBlockType("end_stone_bricks");
+    BlockType.Typed<WallSkull> DRAGON_WALL_HEAD = getBlockType("dragon_wall_head");
 
-    Typed<EnderChest> ENDER_CHEST = getBlockType("ender_chest");
+    BlockType.Typed<DriedGhast> DRIED_GHAST = getBlockType("dried_ghast");
 
-    Typed<BlockData> EXPOSED_CHISELED_COPPER = getBlockType("exposed_chiseled_copper");
+    BlockType.Typed<BlockData> DRIED_KELP_BLOCK = getBlockType("dried_kelp_block");
 
-    Typed<BlockData> EXPOSED_COPPER = getBlockType("exposed_copper");
+    BlockType.Typed<BlockData> DRIPSTONE_BLOCK = getBlockType("dripstone_block");
 
-    Typed<Fence> EXPOSED_COPPER_BARS = getBlockType("exposed_copper_bars");
+    BlockType.Typed<Dispenser> DROPPER = getBlockType("dropper");
 
-    Typed<CopperBulb> EXPOSED_COPPER_BULB = getBlockType("exposed_copper_bulb");
+    BlockType.Typed<BlockData> EMERALD_BLOCK = getBlockType("emerald_block");
 
-    Typed<Chain> EXPOSED_COPPER_CHAIN = getBlockType("exposed_copper_chain");
+    BlockType.Typed<BlockData> EMERALD_ORE = getBlockType("emerald_ore");
 
-    Typed<Chest> EXPOSED_COPPER_CHEST = getBlockType("exposed_copper_chest");
+    BlockType.Typed<BlockData> ENCHANTING_TABLE = getBlockType("enchanting_table");
 
-    Typed<Door> EXPOSED_COPPER_DOOR = getBlockType("exposed_copper_door");
+    BlockType.Typed<BlockData> END_GATEWAY = getBlockType("end_gateway");
 
-    Typed<CopperGolemStatue> EXPOSED_COPPER_GOLEM_STATUE = getBlockType("exposed_copper_golem_statue");
+    BlockType.Typed<BlockData> END_PORTAL = getBlockType("end_portal");
 
-    Typed<Waterlogged> EXPOSED_COPPER_GRATE = getBlockType("exposed_copper_grate");
+    BlockType.Typed<EndPortalFrame> END_PORTAL_FRAME = getBlockType("end_portal_frame");
 
-    Typed<Lantern> EXPOSED_COPPER_LANTERN = getBlockType("exposed_copper_lantern");
+    BlockType.Typed<Directional> END_ROD = getBlockType("end_rod");
 
-    Typed<TrapDoor> EXPOSED_COPPER_TRAPDOOR = getBlockType("exposed_copper_trapdoor");
+    BlockType.Typed<BlockData> END_STONE = getBlockType("end_stone");
 
-    Typed<BlockData> EXPOSED_CUT_COPPER = getBlockType("exposed_cut_copper");
+    BlockType.Typed<Slab> END_STONE_BRICK_SLAB = getBlockType("end_stone_brick_slab");
 
-    Typed<Slab> EXPOSED_CUT_COPPER_SLAB = getBlockType("exposed_cut_copper_slab");
+    BlockType.Typed<Stairs> END_STONE_BRICK_STAIRS = getBlockType("end_stone_brick_stairs");
 
-    Typed<Stairs> EXPOSED_CUT_COPPER_STAIRS = getBlockType("exposed_cut_copper_stairs");
+    BlockType.Typed<Wall> END_STONE_BRICK_WALL = getBlockType("end_stone_brick_wall");
 
-    Typed<LightningRod> EXPOSED_LIGHTNING_ROD = getBlockType("exposed_lightning_rod");
+    BlockType.Typed<BlockData> END_STONE_BRICKS = getBlockType("end_stone_bricks");
 
-    Typed<Farmland> FARMLAND = getBlockType("farmland");
+    BlockType.Typed<EnderChest> ENDER_CHEST = getBlockType("ender_chest");
 
-    Typed<BlockData> FERN = getBlockType("fern");
+    BlockType.Typed<BlockData> EXPOSED_CHISELED_COPPER = getBlockType("exposed_chiseled_copper");
 
-    Typed<Fire> FIRE = getBlockType("fire");
+    BlockType.Typed<BlockData> EXPOSED_COPPER = getBlockType("exposed_copper");
 
-    Typed<Waterlogged> FIRE_CORAL = getBlockType("fire_coral");
+    BlockType.Typed<Fence> EXPOSED_COPPER_BARS = getBlockType("exposed_copper_bars");
 
-    Typed<BlockData> FIRE_CORAL_BLOCK = getBlockType("fire_coral_block");
+    BlockType.Typed<CopperBulb> EXPOSED_COPPER_BULB = getBlockType("exposed_copper_bulb");
 
-    Typed<Waterlogged> FIRE_CORAL_FAN = getBlockType("fire_coral_fan");
+    BlockType.Typed<Chain> EXPOSED_COPPER_CHAIN = getBlockType("exposed_copper_chain");
 
-    Typed<CoralWallFan> FIRE_CORAL_WALL_FAN = getBlockType("fire_coral_wall_fan");
+    BlockType.Typed<Chest> EXPOSED_COPPER_CHEST = getBlockType("exposed_copper_chest");
 
-    Typed<BlockData> FIREFLY_BUSH = getBlockType("firefly_bush");
+    BlockType.Typed<Door> EXPOSED_COPPER_DOOR = getBlockType("exposed_copper_door");
 
-    Typed<BlockData> FLETCHING_TABLE = getBlockType("fletching_table");
+    BlockType.Typed<CopperGolemStatue> EXPOSED_COPPER_GOLEM_STATUE = getBlockType("exposed_copper_golem_statue");
 
-    Typed<BlockData> FLOWER_POT = getBlockType("flower_pot");
+    BlockType.Typed<Waterlogged> EXPOSED_COPPER_GRATE = getBlockType("exposed_copper_grate");
 
-    Typed<BlockData> FLOWERING_AZALEA = getBlockType("flowering_azalea");
+    BlockType.Typed<Lantern> EXPOSED_COPPER_LANTERN = getBlockType("exposed_copper_lantern");
 
-    Typed<Leaves> FLOWERING_AZALEA_LEAVES = getBlockType("flowering_azalea_leaves");
+    BlockType.Typed<TrapDoor> EXPOSED_COPPER_TRAPDOOR = getBlockType("exposed_copper_trapdoor");
 
-    Typed<BlockData> FROGSPAWN = getBlockType("frogspawn");
+    BlockType.Typed<BlockData> EXPOSED_CUT_COPPER = getBlockType("exposed_cut_copper");
 
-    Typed<Ageable> FROSTED_ICE = getBlockType("frosted_ice");
+    BlockType.Typed<Slab> EXPOSED_CUT_COPPER_SLAB = getBlockType("exposed_cut_copper_slab");
 
-    Typed<Furnace> FURNACE = getBlockType("furnace");
+    BlockType.Typed<Stairs> EXPOSED_CUT_COPPER_STAIRS = getBlockType("exposed_cut_copper_stairs");
 
-    Typed<BlockData> GILDED_BLACKSTONE = getBlockType("gilded_blackstone");
+    BlockType.Typed<LightningRod> EXPOSED_LIGHTNING_ROD = getBlockType("exposed_lightning_rod");
 
-    Typed<BlockData> GLASS = getBlockType("glass");
+    BlockType.Typed<Farmland> FARMLAND = getBlockType("farmland");
 
-    Typed<Fence> GLASS_PANE = getBlockType("glass_pane");
+    BlockType.Typed<BlockData> FERN = getBlockType("fern");
 
-    Typed<GlowLichen> GLOW_LICHEN = getBlockType("glow_lichen");
+    BlockType.Typed<Fire> FIRE = getBlockType("fire");
 
-    Typed<BlockData> GLOWSTONE = getBlockType("glowstone");
+    BlockType.Typed<Waterlogged> FIRE_CORAL = getBlockType("fire_coral");
 
-    Typed<BlockData> GOLD_BLOCK = getBlockType("gold_block");
+    BlockType.Typed<BlockData> FIRE_CORAL_BLOCK = getBlockType("fire_coral_block");
 
-    Typed<BlockData> GOLD_ORE = getBlockType("gold_ore");
+    BlockType.Typed<Waterlogged> FIRE_CORAL_FAN = getBlockType("fire_coral_fan");
 
-    Typed<BlockData> GOLDEN_DANDELION = getBlockType("golden_dandelion");
+    BlockType.Typed<CoralWallFan> FIRE_CORAL_WALL_FAN = getBlockType("fire_coral_wall_fan");
 
-    Typed<BlockData> GRANITE = getBlockType("granite");
+    BlockType.Typed<BlockData> FIREFLY_BUSH = getBlockType("firefly_bush");
 
-    Typed<Slab> GRANITE_SLAB = getBlockType("granite_slab");
+    BlockType.Typed<BlockData> FLETCHING_TABLE = getBlockType("fletching_table");
 
-    Typed<Stairs> GRANITE_STAIRS = getBlockType("granite_stairs");
+    BlockType.Typed<BlockData> FLOWER_POT = getBlockType("flower_pot");
 
-    Typed<Wall> GRANITE_WALL = getBlockType("granite_wall");
+    BlockType.Typed<BlockData> FLOWERING_AZALEA = getBlockType("flowering_azalea");
 
-    Typed<Snowable> GRASS_BLOCK = getBlockType("grass_block");
+    BlockType.Typed<Leaves> FLOWERING_AZALEA_LEAVES = getBlockType("flowering_azalea_leaves");
 
-    Typed<BlockData> GRAVEL = getBlockType("gravel");
+    BlockType.Typed<BlockData> FROGSPAWN = getBlockType("frogspawn");
 
-    Typed<Rotatable> GRAY_BANNER = getBlockType("gray_banner");
+    BlockType.Typed<Ageable> FROSTED_ICE = getBlockType("frosted_ice");
 
-    Typed<Bed> GRAY_BED = getBlockType("gray_bed");
+    BlockType.Typed<Furnace> FURNACE = getBlockType("furnace");
 
-    Typed<Candle> GRAY_CANDLE = getBlockType("gray_candle");
+    BlockType.Typed<BlockData> GILDED_BLACKSTONE = getBlockType("gilded_blackstone");
 
-    Typed<Lightable> GRAY_CANDLE_CAKE = getBlockType("gray_candle_cake");
+    BlockType.Typed<BlockData> GLASS = getBlockType("glass");
 
-    Typed<BlockData> GRAY_CARPET = getBlockType("gray_carpet");
+    BlockType.Typed<Fence> GLASS_PANE = getBlockType("glass_pane");
 
-    Typed<BlockData> GRAY_CONCRETE = getBlockType("gray_concrete");
+    BlockType.Typed<GlowLichen> GLOW_LICHEN = getBlockType("glow_lichen");
 
-    Typed<BlockData> GRAY_CONCRETE_POWDER = getBlockType("gray_concrete_powder");
+    BlockType.Typed<BlockData> GLOWSTONE = getBlockType("glowstone");
 
-    Typed<Directional> GRAY_GLAZED_TERRACOTTA = getBlockType("gray_glazed_terracotta");
+    BlockType.Typed<BlockData> GOLD_BLOCK = getBlockType("gold_block");
 
-    Typed<Directional> GRAY_SHULKER_BOX = getBlockType("gray_shulker_box");
+    BlockType.Typed<BlockData> GOLD_ORE = getBlockType("gold_ore");
 
-    Typed<BlockData> GRAY_STAINED_GLASS = getBlockType("gray_stained_glass");
+    BlockType.Typed<BlockData> GOLDEN_DANDELION = getBlockType("golden_dandelion");
 
-    Typed<GlassPane> GRAY_STAINED_GLASS_PANE = getBlockType("gray_stained_glass_pane");
+    BlockType.Typed<BlockData> GRANITE = getBlockType("granite");
 
-    Typed<BlockData> GRAY_TERRACOTTA = getBlockType("gray_terracotta");
+    BlockType.Typed<Slab> GRANITE_SLAB = getBlockType("granite_slab");
 
-    Typed<Directional> GRAY_WALL_BANNER = getBlockType("gray_wall_banner");
+    BlockType.Typed<Stairs> GRANITE_STAIRS = getBlockType("granite_stairs");
 
-    Typed<BlockData> GRAY_WOOL = getBlockType("gray_wool");
+    BlockType.Typed<Wall> GRANITE_WALL = getBlockType("granite_wall");
 
-    Typed<Rotatable> GREEN_BANNER = getBlockType("green_banner");
+    BlockType.Typed<Snowable> GRASS_BLOCK = getBlockType("grass_block");
 
-    Typed<Bed> GREEN_BED = getBlockType("green_bed");
+    BlockType.Typed<BlockData> GRAVEL = getBlockType("gravel");
 
-    Typed<Candle> GREEN_CANDLE = getBlockType("green_candle");
+    BlockType.Typed<Rotatable> GRAY_BANNER = getBlockType("gray_banner");
 
-    Typed<Lightable> GREEN_CANDLE_CAKE = getBlockType("green_candle_cake");
+    BlockType.Typed<Bed> GRAY_BED = getBlockType("gray_bed");
 
-    Typed<BlockData> GREEN_CARPET = getBlockType("green_carpet");
+    BlockType.Typed<Candle> GRAY_CANDLE = getBlockType("gray_candle");
 
-    Typed<BlockData> GREEN_CONCRETE = getBlockType("green_concrete");
+    BlockType.Typed<Lightable> GRAY_CANDLE_CAKE = getBlockType("gray_candle_cake");
 
-    Typed<BlockData> GREEN_CONCRETE_POWDER = getBlockType("green_concrete_powder");
+    BlockType.Typed<BlockData> GRAY_CARPET = getBlockType("gray_carpet");
 
-    Typed<Directional> GREEN_GLAZED_TERRACOTTA = getBlockType("green_glazed_terracotta");
+    BlockType.Typed<BlockData> GRAY_CONCRETE = getBlockType("gray_concrete");
 
-    Typed<Directional> GREEN_SHULKER_BOX = getBlockType("green_shulker_box");
+    BlockType.Typed<BlockData> GRAY_CONCRETE_POWDER = getBlockType("gray_concrete_powder");
 
-    Typed<BlockData> GREEN_STAINED_GLASS = getBlockType("green_stained_glass");
+    BlockType.Typed<Slab> GRAY_CONCRETE_SLAB = getBlockType("gray_concrete_slab");
 
-    Typed<GlassPane> GREEN_STAINED_GLASS_PANE = getBlockType("green_stained_glass_pane");
+    BlockType.Typed<Stairs> GRAY_CONCRETE_STAIRS = getBlockType("gray_concrete_stairs");
 
-    Typed<BlockData> GREEN_TERRACOTTA = getBlockType("green_terracotta");
+    BlockType.Typed<Directional> GRAY_GLAZED_TERRACOTTA = getBlockType("gray_glazed_terracotta");
 
-    Typed<Directional> GREEN_WALL_BANNER = getBlockType("green_wall_banner");
+    BlockType.Typed<Directional> GRAY_SHULKER_BOX = getBlockType("gray_shulker_box");
 
-    Typed<BlockData> GREEN_WOOL = getBlockType("green_wool");
+    BlockType.Typed<BlockData> GRAY_STAINED_GLASS = getBlockType("gray_stained_glass");
 
-    Typed<Grindstone> GRINDSTONE = getBlockType("grindstone");
+    BlockType.Typed<GlassPane> GRAY_STAINED_GLASS_PANE = getBlockType("gray_stained_glass_pane");
 
-    Typed<Waterlogged> HANGING_ROOTS = getBlockType("hanging_roots");
+    BlockType.Typed<BlockData> GRAY_TERRACOTTA = getBlockType("gray_terracotta");
 
-    Typed<Orientable> HAY_BLOCK = getBlockType("hay_block");
+    BlockType.Typed<Directional> GRAY_WALL_BANNER = getBlockType("gray_wall_banner");
 
-    Typed<Waterlogged> HEAVY_CORE = getBlockType("heavy_core");
+    BlockType.Typed<BlockData> GRAY_WOOL = getBlockType("gray_wool");
 
-    Typed<AnaloguePowerable> HEAVY_WEIGHTED_PRESSURE_PLATE = getBlockType("heavy_weighted_pressure_plate");
+    BlockType.Typed<Slab> GRAY_WOOL_SLAB = getBlockType("gray_wool_slab");
 
-    Typed<BlockData> HONEY_BLOCK = getBlockType("honey_block");
+    BlockType.Typed<Stairs> GRAY_WOOL_STAIRS = getBlockType("gray_wool_stairs");
 
-    Typed<BlockData> HONEYCOMB_BLOCK = getBlockType("honeycomb_block");
+    BlockType.Typed<Rotatable> GREEN_BANNER = getBlockType("green_banner");
 
-    Typed<Hopper> HOPPER = getBlockType("hopper");
+    BlockType.Typed<Bed> GREEN_BED = getBlockType("green_bed");
 
-    Typed<Waterlogged> HORN_CORAL = getBlockType("horn_coral");
+    BlockType.Typed<Candle> GREEN_CANDLE = getBlockType("green_candle");
 
-    Typed<BlockData> HORN_CORAL_BLOCK = getBlockType("horn_coral_block");
+    BlockType.Typed<Lightable> GREEN_CANDLE_CAKE = getBlockType("green_candle_cake");
 
-    Typed<Waterlogged> HORN_CORAL_FAN = getBlockType("horn_coral_fan");
+    BlockType.Typed<BlockData> GREEN_CARPET = getBlockType("green_carpet");
 
-    Typed<CoralWallFan> HORN_CORAL_WALL_FAN = getBlockType("horn_coral_wall_fan");
+    BlockType.Typed<BlockData> GREEN_CONCRETE = getBlockType("green_concrete");
 
-    Typed<BlockData> ICE = getBlockType("ice");
+    BlockType.Typed<BlockData> GREEN_CONCRETE_POWDER = getBlockType("green_concrete_powder");
 
-    Typed<BlockData> INFESTED_CHISELED_STONE_BRICKS = getBlockType("infested_chiseled_stone_bricks");
+    BlockType.Typed<Slab> GREEN_CONCRETE_SLAB = getBlockType("green_concrete_slab");
 
-    Typed<BlockData> INFESTED_COBBLESTONE = getBlockType("infested_cobblestone");
+    BlockType.Typed<Stairs> GREEN_CONCRETE_STAIRS = getBlockType("green_concrete_stairs");
 
-    Typed<BlockData> INFESTED_CRACKED_STONE_BRICKS = getBlockType("infested_cracked_stone_bricks");
+    BlockType.Typed<Directional> GREEN_GLAZED_TERRACOTTA = getBlockType("green_glazed_terracotta");
 
-    Typed<Orientable> INFESTED_DEEPSLATE = getBlockType("infested_deepslate");
+    BlockType.Typed<Directional> GREEN_SHULKER_BOX = getBlockType("green_shulker_box");
 
-    Typed<BlockData> INFESTED_MOSSY_STONE_BRICKS = getBlockType("infested_mossy_stone_bricks");
+    BlockType.Typed<BlockData> GREEN_STAINED_GLASS = getBlockType("green_stained_glass");
 
-    Typed<BlockData> INFESTED_STONE = getBlockType("infested_stone");
+    BlockType.Typed<GlassPane> GREEN_STAINED_GLASS_PANE = getBlockType("green_stained_glass_pane");
 
-    Typed<BlockData> INFESTED_STONE_BRICKS = getBlockType("infested_stone_bricks");
+    BlockType.Typed<BlockData> GREEN_TERRACOTTA = getBlockType("green_terracotta");
 
-    Typed<Fence> IRON_BARS = getBlockType("iron_bars");
+    BlockType.Typed<Directional> GREEN_WALL_BANNER = getBlockType("green_wall_banner");
 
-    Typed<BlockData> IRON_BLOCK = getBlockType("iron_block");
+    BlockType.Typed<BlockData> GREEN_WOOL = getBlockType("green_wool");
 
-    Typed<Chain> IRON_CHAIN = getBlockType("iron_chain");
+    BlockType.Typed<Slab> GREEN_WOOL_SLAB = getBlockType("green_wool_slab");
 
-    Typed<Door> IRON_DOOR = getBlockType("iron_door");
+    BlockType.Typed<Stairs> GREEN_WOOL_STAIRS = getBlockType("green_wool_stairs");
 
-    Typed<BlockData> IRON_ORE = getBlockType("iron_ore");
+    BlockType.Typed<Grindstone> GRINDSTONE = getBlockType("grindstone");
 
-    Typed<TrapDoor> IRON_TRAPDOOR = getBlockType("iron_trapdoor");
+    BlockType.Typed<Waterlogged> HANGING_ROOTS = getBlockType("hanging_roots");
 
-    Typed<Directional> JACK_O_LANTERN = getBlockType("jack_o_lantern");
+    BlockType.Typed<Orientable> HAY_BLOCK = getBlockType("hay_block");
 
-    Typed<Jigsaw> JIGSAW = getBlockType("jigsaw");
+    BlockType.Typed<Waterlogged> HEAVY_CORE = getBlockType("heavy_core");
 
-    Typed<Jukebox> JUKEBOX = getBlockType("jukebox");
+    BlockType.Typed<AnaloguePowerable> HEAVY_WEIGHTED_PRESSURE_PLATE = getBlockType("heavy_weighted_pressure_plate");
 
-    Typed<Switch> JUNGLE_BUTTON = getBlockType("jungle_button");
+    BlockType.Typed<BlockData> HONEY_BLOCK = getBlockType("honey_block");
 
-    Typed<Door> JUNGLE_DOOR = getBlockType("jungle_door");
+    BlockType.Typed<BlockData> HONEYCOMB_BLOCK = getBlockType("honeycomb_block");
 
-    Typed<Fence> JUNGLE_FENCE = getBlockType("jungle_fence");
+    BlockType.Typed<Hopper> HOPPER = getBlockType("hopper");
 
-    Typed<Gate> JUNGLE_FENCE_GATE = getBlockType("jungle_fence_gate");
+    BlockType.Typed<Waterlogged> HORN_CORAL = getBlockType("horn_coral");
 
-    Typed<HangingSign> JUNGLE_HANGING_SIGN = getBlockType("jungle_hanging_sign");
+    BlockType.Typed<BlockData> HORN_CORAL_BLOCK = getBlockType("horn_coral_block");
 
-    Typed<Leaves> JUNGLE_LEAVES = getBlockType("jungle_leaves");
+    BlockType.Typed<Waterlogged> HORN_CORAL_FAN = getBlockType("horn_coral_fan");
 
-    Typed<Orientable> JUNGLE_LOG = getBlockType("jungle_log");
+    BlockType.Typed<CoralWallFan> HORN_CORAL_WALL_FAN = getBlockType("horn_coral_wall_fan");
 
-    Typed<BlockData> JUNGLE_PLANKS = getBlockType("jungle_planks");
+    BlockType.Typed<BlockData> ICE = getBlockType("ice");
 
-    Typed<Powerable> JUNGLE_PRESSURE_PLATE = getBlockType("jungle_pressure_plate");
+    BlockType.Typed<BlockData> INFESTED_CHISELED_STONE_BRICKS = getBlockType("infested_chiseled_stone_bricks");
 
-    Typed<Sapling> JUNGLE_SAPLING = getBlockType("jungle_sapling");
+    BlockType.Typed<BlockData> INFESTED_COBBLESTONE = getBlockType("infested_cobblestone");
 
-    Typed<Shelf> JUNGLE_SHELF = getBlockType("jungle_shelf");
+    BlockType.Typed<BlockData> INFESTED_CRACKED_STONE_BRICKS = getBlockType("infested_cracked_stone_bricks");
 
-    Typed<Sign> JUNGLE_SIGN = getBlockType("jungle_sign");
+    BlockType.Typed<Orientable> INFESTED_DEEPSLATE = getBlockType("infested_deepslate");
 
-    Typed<Slab> JUNGLE_SLAB = getBlockType("jungle_slab");
+    BlockType.Typed<BlockData> INFESTED_MOSSY_STONE_BRICKS = getBlockType("infested_mossy_stone_bricks");
 
-    Typed<Stairs> JUNGLE_STAIRS = getBlockType("jungle_stairs");
+    BlockType.Typed<BlockData> INFESTED_STONE = getBlockType("infested_stone");
 
-    Typed<TrapDoor> JUNGLE_TRAPDOOR = getBlockType("jungle_trapdoor");
+    BlockType.Typed<BlockData> INFESTED_STONE_BRICKS = getBlockType("infested_stone_bricks");
 
-    Typed<WallHangingSign> JUNGLE_WALL_HANGING_SIGN = getBlockType("jungle_wall_hanging_sign");
+    BlockType.Typed<Fence> IRON_BARS = getBlockType("iron_bars");
 
-    Typed<WallSign> JUNGLE_WALL_SIGN = getBlockType("jungle_wall_sign");
+    BlockType.Typed<BlockData> IRON_BLOCK = getBlockType("iron_block");
 
-    Typed<Orientable> JUNGLE_WOOD = getBlockType("jungle_wood");
+    BlockType.Typed<Chain> IRON_CHAIN = getBlockType("iron_chain");
 
-    Typed<Ageable> KELP = getBlockType("kelp");
+    BlockType.Typed<Door> IRON_DOOR = getBlockType("iron_door");
 
-    Typed<BlockData> KELP_PLANT = getBlockType("kelp_plant");
+    BlockType.Typed<BlockData> IRON_ORE = getBlockType("iron_ore");
 
-    Typed<Ladder> LADDER = getBlockType("ladder");
+    BlockType.Typed<TrapDoor> IRON_TRAPDOOR = getBlockType("iron_trapdoor");
 
-    Typed<Lantern> LANTERN = getBlockType("lantern");
+    BlockType.Typed<Directional> JACK_O_LANTERN = getBlockType("jack_o_lantern");
 
-    Typed<BlockData> LAPIS_BLOCK = getBlockType("lapis_block");
+    BlockType.Typed<Jigsaw> JIGSAW = getBlockType("jigsaw");
 
-    Typed<BlockData> LAPIS_ORE = getBlockType("lapis_ore");
+    BlockType.Typed<Jukebox> JUKEBOX = getBlockType("jukebox");
 
-    Typed<AmethystCluster> LARGE_AMETHYST_BUD = getBlockType("large_amethyst_bud");
+    BlockType.Typed<Switch> JUNGLE_BUTTON = getBlockType("jungle_button");
 
-    Typed<Bisected> LARGE_FERN = getBlockType("large_fern");
+    BlockType.Typed<Door> JUNGLE_DOOR = getBlockType("jungle_door");
 
-    Typed<Levelled> LAVA = getBlockType("lava");
+    BlockType.Typed<Fence> JUNGLE_FENCE = getBlockType("jungle_fence");
 
-    Typed<BlockData> LAVA_CAULDRON = getBlockType("lava_cauldron");
+    BlockType.Typed<Gate> JUNGLE_FENCE_GATE = getBlockType("jungle_fence_gate");
 
-    Typed<LeafLitter> LEAF_LITTER = getBlockType("leaf_litter");
+    BlockType.Typed<HangingSign> JUNGLE_HANGING_SIGN = getBlockType("jungle_hanging_sign");
 
-    Typed<Lectern> LECTERN = getBlockType("lectern");
+    BlockType.Typed<Leaves> JUNGLE_LEAVES = getBlockType("jungle_leaves");
 
-    Typed<Switch> LEVER = getBlockType("lever");
+    BlockType.Typed<Orientable> JUNGLE_LOG = getBlockType("jungle_log");
 
-    Typed<Light> LIGHT = getBlockType("light");
+    BlockType.Typed<BlockData> JUNGLE_PLANKS = getBlockType("jungle_planks");
 
-    Typed<Rotatable> LIGHT_BLUE_BANNER = getBlockType("light_blue_banner");
+    BlockType.Typed<Powerable> JUNGLE_PRESSURE_PLATE = getBlockType("jungle_pressure_plate");
 
-    Typed<Bed> LIGHT_BLUE_BED = getBlockType("light_blue_bed");
+    BlockType.Typed<Sapling> JUNGLE_SAPLING = getBlockType("jungle_sapling");
 
-    Typed<Candle> LIGHT_BLUE_CANDLE = getBlockType("light_blue_candle");
+    BlockType.Typed<Shelf> JUNGLE_SHELF = getBlockType("jungle_shelf");
 
-    Typed<Lightable> LIGHT_BLUE_CANDLE_CAKE = getBlockType("light_blue_candle_cake");
+    BlockType.Typed<Sign> JUNGLE_SIGN = getBlockType("jungle_sign");
 
-    Typed<BlockData> LIGHT_BLUE_CARPET = getBlockType("light_blue_carpet");
+    BlockType.Typed<Slab> JUNGLE_SLAB = getBlockType("jungle_slab");
 
-    Typed<BlockData> LIGHT_BLUE_CONCRETE = getBlockType("light_blue_concrete");
+    BlockType.Typed<Stairs> JUNGLE_STAIRS = getBlockType("jungle_stairs");
 
-    Typed<BlockData> LIGHT_BLUE_CONCRETE_POWDER = getBlockType("light_blue_concrete_powder");
+    BlockType.Typed<TrapDoor> JUNGLE_TRAPDOOR = getBlockType("jungle_trapdoor");
 
-    Typed<Directional> LIGHT_BLUE_GLAZED_TERRACOTTA = getBlockType("light_blue_glazed_terracotta");
+    BlockType.Typed<WallHangingSign> JUNGLE_WALL_HANGING_SIGN = getBlockType("jungle_wall_hanging_sign");
 
-    Typed<Directional> LIGHT_BLUE_SHULKER_BOX = getBlockType("light_blue_shulker_box");
+    BlockType.Typed<WallSign> JUNGLE_WALL_SIGN = getBlockType("jungle_wall_sign");
 
-    Typed<BlockData> LIGHT_BLUE_STAINED_GLASS = getBlockType("light_blue_stained_glass");
+    BlockType.Typed<Orientable> JUNGLE_WOOD = getBlockType("jungle_wood");
 
-    Typed<GlassPane> LIGHT_BLUE_STAINED_GLASS_PANE = getBlockType("light_blue_stained_glass_pane");
+    BlockType.Typed<Ageable> KELP = getBlockType("kelp");
 
-    Typed<BlockData> LIGHT_BLUE_TERRACOTTA = getBlockType("light_blue_terracotta");
+    BlockType.Typed<BlockData> KELP_PLANT = getBlockType("kelp_plant");
 
-    Typed<Directional> LIGHT_BLUE_WALL_BANNER = getBlockType("light_blue_wall_banner");
+    BlockType.Typed<Ladder> LADDER = getBlockType("ladder");
 
-    Typed<BlockData> LIGHT_BLUE_WOOL = getBlockType("light_blue_wool");
+    BlockType.Typed<Lantern> LANTERN = getBlockType("lantern");
 
-    Typed<Rotatable> LIGHT_GRAY_BANNER = getBlockType("light_gray_banner");
+    BlockType.Typed<BlockData> LAPIS_BLOCK = getBlockType("lapis_block");
 
-    Typed<Bed> LIGHT_GRAY_BED = getBlockType("light_gray_bed");
+    BlockType.Typed<BlockData> LAPIS_ORE = getBlockType("lapis_ore");
 
-    Typed<Candle> LIGHT_GRAY_CANDLE = getBlockType("light_gray_candle");
+    BlockType.Typed<AmethystCluster> LARGE_AMETHYST_BUD = getBlockType("large_amethyst_bud");
 
-    Typed<Lightable> LIGHT_GRAY_CANDLE_CAKE = getBlockType("light_gray_candle_cake");
+    BlockType.Typed<Bisected> LARGE_FERN = getBlockType("large_fern");
 
-    Typed<BlockData> LIGHT_GRAY_CARPET = getBlockType("light_gray_carpet");
+    BlockType.Typed<Levelled> LAVA = getBlockType("lava");
 
-    Typed<BlockData> LIGHT_GRAY_CONCRETE = getBlockType("light_gray_concrete");
+    BlockType.Typed<BlockData> LAVA_CAULDRON = getBlockType("lava_cauldron");
 
-    Typed<BlockData> LIGHT_GRAY_CONCRETE_POWDER = getBlockType("light_gray_concrete_powder");
+    BlockType.Typed<LeafLitter> LEAF_LITTER = getBlockType("leaf_litter");
 
-    Typed<Directional> LIGHT_GRAY_GLAZED_TERRACOTTA = getBlockType("light_gray_glazed_terracotta");
+    BlockType.Typed<Lectern> LECTERN = getBlockType("lectern");
 
-    Typed<Directional> LIGHT_GRAY_SHULKER_BOX = getBlockType("light_gray_shulker_box");
+    BlockType.Typed<Switch> LEVER = getBlockType("lever");
 
-    Typed<BlockData> LIGHT_GRAY_STAINED_GLASS = getBlockType("light_gray_stained_glass");
+    BlockType.Typed<Light> LIGHT = getBlockType("light");
 
-    Typed<GlassPane> LIGHT_GRAY_STAINED_GLASS_PANE = getBlockType("light_gray_stained_glass_pane");
+    BlockType.Typed<Rotatable> LIGHT_BLUE_BANNER = getBlockType("light_blue_banner");
 
-    Typed<BlockData> LIGHT_GRAY_TERRACOTTA = getBlockType("light_gray_terracotta");
+    BlockType.Typed<Bed> LIGHT_BLUE_BED = getBlockType("light_blue_bed");
 
-    Typed<Directional> LIGHT_GRAY_WALL_BANNER = getBlockType("light_gray_wall_banner");
+    BlockType.Typed<Candle> LIGHT_BLUE_CANDLE = getBlockType("light_blue_candle");
 
-    Typed<BlockData> LIGHT_GRAY_WOOL = getBlockType("light_gray_wool");
+    BlockType.Typed<Lightable> LIGHT_BLUE_CANDLE_CAKE = getBlockType("light_blue_candle_cake");
 
-    Typed<AnaloguePowerable> LIGHT_WEIGHTED_PRESSURE_PLATE = getBlockType("light_weighted_pressure_plate");
+    BlockType.Typed<BlockData> LIGHT_BLUE_CARPET = getBlockType("light_blue_carpet");
 
-    Typed<LightningRod> LIGHTNING_ROD = getBlockType("lightning_rod");
+    BlockType.Typed<BlockData> LIGHT_BLUE_CONCRETE = getBlockType("light_blue_concrete");
 
-    Typed<Bisected> LILAC = getBlockType("lilac");
+    BlockType.Typed<BlockData> LIGHT_BLUE_CONCRETE_POWDER = getBlockType("light_blue_concrete_powder");
 
-    Typed<BlockData> LILY_OF_THE_VALLEY = getBlockType("lily_of_the_valley");
+    BlockType.Typed<Slab> LIGHT_BLUE_CONCRETE_SLAB = getBlockType("light_blue_concrete_slab");
 
-    Typed<BlockData> LILY_PAD = getBlockType("lily_pad");
+    BlockType.Typed<Stairs> LIGHT_BLUE_CONCRETE_STAIRS = getBlockType("light_blue_concrete_stairs");
 
-    Typed<Rotatable> LIME_BANNER = getBlockType("lime_banner");
+    BlockType.Typed<Directional> LIGHT_BLUE_GLAZED_TERRACOTTA = getBlockType("light_blue_glazed_terracotta");
 
-    Typed<Bed> LIME_BED = getBlockType("lime_bed");
+    BlockType.Typed<Directional> LIGHT_BLUE_SHULKER_BOX = getBlockType("light_blue_shulker_box");
 
-    Typed<Candle> LIME_CANDLE = getBlockType("lime_candle");
+    BlockType.Typed<BlockData> LIGHT_BLUE_STAINED_GLASS = getBlockType("light_blue_stained_glass");
 
-    Typed<Lightable> LIME_CANDLE_CAKE = getBlockType("lime_candle_cake");
+    BlockType.Typed<GlassPane> LIGHT_BLUE_STAINED_GLASS_PANE = getBlockType("light_blue_stained_glass_pane");
 
-    Typed<BlockData> LIME_CARPET = getBlockType("lime_carpet");
+    BlockType.Typed<BlockData> LIGHT_BLUE_TERRACOTTA = getBlockType("light_blue_terracotta");
 
-    Typed<BlockData> LIME_CONCRETE = getBlockType("lime_concrete");
+    BlockType.Typed<Directional> LIGHT_BLUE_WALL_BANNER = getBlockType("light_blue_wall_banner");
 
-    Typed<BlockData> LIME_CONCRETE_POWDER = getBlockType("lime_concrete_powder");
+    BlockType.Typed<BlockData> LIGHT_BLUE_WOOL = getBlockType("light_blue_wool");
 
-    Typed<Directional> LIME_GLAZED_TERRACOTTA = getBlockType("lime_glazed_terracotta");
+    BlockType.Typed<Slab> LIGHT_BLUE_WOOL_SLAB = getBlockType("light_blue_wool_slab");
 
-    Typed<Directional> LIME_SHULKER_BOX = getBlockType("lime_shulker_box");
+    BlockType.Typed<Stairs> LIGHT_BLUE_WOOL_STAIRS = getBlockType("light_blue_wool_stairs");
 
-    Typed<BlockData> LIME_STAINED_GLASS = getBlockType("lime_stained_glass");
+    BlockType.Typed<Rotatable> LIGHT_GRAY_BANNER = getBlockType("light_gray_banner");
 
-    Typed<GlassPane> LIME_STAINED_GLASS_PANE = getBlockType("lime_stained_glass_pane");
+    BlockType.Typed<Bed> LIGHT_GRAY_BED = getBlockType("light_gray_bed");
 
-    Typed<BlockData> LIME_TERRACOTTA = getBlockType("lime_terracotta");
+    BlockType.Typed<Candle> LIGHT_GRAY_CANDLE = getBlockType("light_gray_candle");
 
-    Typed<Directional> LIME_WALL_BANNER = getBlockType("lime_wall_banner");
+    BlockType.Typed<Lightable> LIGHT_GRAY_CANDLE_CAKE = getBlockType("light_gray_candle_cake");
 
-    Typed<BlockData> LIME_WOOL = getBlockType("lime_wool");
+    BlockType.Typed<BlockData> LIGHT_GRAY_CARPET = getBlockType("light_gray_carpet");
 
-    Typed<BlockData> LODESTONE = getBlockType("lodestone");
+    BlockType.Typed<BlockData> LIGHT_GRAY_CONCRETE = getBlockType("light_gray_concrete");
 
-    Typed<Directional> LOOM = getBlockType("loom");
+    BlockType.Typed<BlockData> LIGHT_GRAY_CONCRETE_POWDER = getBlockType("light_gray_concrete_powder");
 
-    Typed<Rotatable> MAGENTA_BANNER = getBlockType("magenta_banner");
+    BlockType.Typed<Slab> LIGHT_GRAY_CONCRETE_SLAB = getBlockType("light_gray_concrete_slab");
 
-    Typed<Bed> MAGENTA_BED = getBlockType("magenta_bed");
+    BlockType.Typed<Stairs> LIGHT_GRAY_CONCRETE_STAIRS = getBlockType("light_gray_concrete_stairs");
 
-    Typed<Candle> MAGENTA_CANDLE = getBlockType("magenta_candle");
+    BlockType.Typed<Directional> LIGHT_GRAY_GLAZED_TERRACOTTA = getBlockType("light_gray_glazed_terracotta");
 
-    Typed<Lightable> MAGENTA_CANDLE_CAKE = getBlockType("magenta_candle_cake");
+    BlockType.Typed<Directional> LIGHT_GRAY_SHULKER_BOX = getBlockType("light_gray_shulker_box");
 
-    Typed<BlockData> MAGENTA_CARPET = getBlockType("magenta_carpet");
+    BlockType.Typed<BlockData> LIGHT_GRAY_STAINED_GLASS = getBlockType("light_gray_stained_glass");
 
-    Typed<BlockData> MAGENTA_CONCRETE = getBlockType("magenta_concrete");
+    BlockType.Typed<GlassPane> LIGHT_GRAY_STAINED_GLASS_PANE = getBlockType("light_gray_stained_glass_pane");
 
-    Typed<BlockData> MAGENTA_CONCRETE_POWDER = getBlockType("magenta_concrete_powder");
+    BlockType.Typed<BlockData> LIGHT_GRAY_TERRACOTTA = getBlockType("light_gray_terracotta");
 
-    Typed<Directional> MAGENTA_GLAZED_TERRACOTTA = getBlockType("magenta_glazed_terracotta");
+    BlockType.Typed<Directional> LIGHT_GRAY_WALL_BANNER = getBlockType("light_gray_wall_banner");
 
-    Typed<Directional> MAGENTA_SHULKER_BOX = getBlockType("magenta_shulker_box");
+    BlockType.Typed<BlockData> LIGHT_GRAY_WOOL = getBlockType("light_gray_wool");
 
-    Typed<BlockData> MAGENTA_STAINED_GLASS = getBlockType("magenta_stained_glass");
+    BlockType.Typed<Slab> LIGHT_GRAY_WOOL_SLAB = getBlockType("light_gray_wool_slab");
 
-    Typed<GlassPane> MAGENTA_STAINED_GLASS_PANE = getBlockType("magenta_stained_glass_pane");
+    BlockType.Typed<Stairs> LIGHT_GRAY_WOOL_STAIRS = getBlockType("light_gray_wool_stairs");
 
-    Typed<BlockData> MAGENTA_TERRACOTTA = getBlockType("magenta_terracotta");
+    BlockType.Typed<AnaloguePowerable> LIGHT_WEIGHTED_PRESSURE_PLATE = getBlockType("light_weighted_pressure_plate");
 
-    Typed<Directional> MAGENTA_WALL_BANNER = getBlockType("magenta_wall_banner");
+    BlockType.Typed<LightningRod> LIGHTNING_ROD = getBlockType("lightning_rod");
 
-    Typed<BlockData> MAGENTA_WOOL = getBlockType("magenta_wool");
+    BlockType.Typed<Bisected> LILAC = getBlockType("lilac");
 
-    Typed<BlockData> MAGMA_BLOCK = getBlockType("magma_block");
+    BlockType.Typed<BlockData> LILY_OF_THE_VALLEY = getBlockType("lily_of_the_valley");
 
-    Typed<Switch> MANGROVE_BUTTON = getBlockType("mangrove_button");
+    BlockType.Typed<BlockData> LILY_PAD = getBlockType("lily_pad");
 
-    Typed<Door> MANGROVE_DOOR = getBlockType("mangrove_door");
+    BlockType.Typed<Rotatable> LIME_BANNER = getBlockType("lime_banner");
 
-    Typed<Fence> MANGROVE_FENCE = getBlockType("mangrove_fence");
+    BlockType.Typed<Bed> LIME_BED = getBlockType("lime_bed");
 
-    Typed<Gate> MANGROVE_FENCE_GATE = getBlockType("mangrove_fence_gate");
+    BlockType.Typed<Candle> LIME_CANDLE = getBlockType("lime_candle");
 
-    Typed<HangingSign> MANGROVE_HANGING_SIGN = getBlockType("mangrove_hanging_sign");
+    BlockType.Typed<Lightable> LIME_CANDLE_CAKE = getBlockType("lime_candle_cake");
 
-    Typed<Leaves> MANGROVE_LEAVES = getBlockType("mangrove_leaves");
+    BlockType.Typed<BlockData> LIME_CARPET = getBlockType("lime_carpet");
 
-    Typed<Orientable> MANGROVE_LOG = getBlockType("mangrove_log");
+    BlockType.Typed<BlockData> LIME_CONCRETE = getBlockType("lime_concrete");
 
-    Typed<BlockData> MANGROVE_PLANKS = getBlockType("mangrove_planks");
+    BlockType.Typed<BlockData> LIME_CONCRETE_POWDER = getBlockType("lime_concrete_powder");
 
-    Typed<Powerable> MANGROVE_PRESSURE_PLATE = getBlockType("mangrove_pressure_plate");
+    BlockType.Typed<Slab> LIME_CONCRETE_SLAB = getBlockType("lime_concrete_slab");
 
-    Typed<MangrovePropagule> MANGROVE_PROPAGULE = getBlockType("mangrove_propagule");
+    BlockType.Typed<Stairs> LIME_CONCRETE_STAIRS = getBlockType("lime_concrete_stairs");
 
-    Typed<Waterlogged> MANGROVE_ROOTS = getBlockType("mangrove_roots");
+    BlockType.Typed<Directional> LIME_GLAZED_TERRACOTTA = getBlockType("lime_glazed_terracotta");
 
-    Typed<Shelf> MANGROVE_SHELF = getBlockType("mangrove_shelf");
+    BlockType.Typed<Directional> LIME_SHULKER_BOX = getBlockType("lime_shulker_box");
 
-    Typed<Sign> MANGROVE_SIGN = getBlockType("mangrove_sign");
+    BlockType.Typed<BlockData> LIME_STAINED_GLASS = getBlockType("lime_stained_glass");
 
-    Typed<Slab> MANGROVE_SLAB = getBlockType("mangrove_slab");
+    BlockType.Typed<GlassPane> LIME_STAINED_GLASS_PANE = getBlockType("lime_stained_glass_pane");
 
-    Typed<Stairs> MANGROVE_STAIRS = getBlockType("mangrove_stairs");
+    BlockType.Typed<BlockData> LIME_TERRACOTTA = getBlockType("lime_terracotta");
 
-    Typed<TrapDoor> MANGROVE_TRAPDOOR = getBlockType("mangrove_trapdoor");
+    BlockType.Typed<Directional> LIME_WALL_BANNER = getBlockType("lime_wall_banner");
 
-    Typed<WallHangingSign> MANGROVE_WALL_HANGING_SIGN = getBlockType("mangrove_wall_hanging_sign");
+    BlockType.Typed<BlockData> LIME_WOOL = getBlockType("lime_wool");
 
-    Typed<WallSign> MANGROVE_WALL_SIGN = getBlockType("mangrove_wall_sign");
+    BlockType.Typed<Slab> LIME_WOOL_SLAB = getBlockType("lime_wool_slab");
 
-    Typed<Orientable> MANGROVE_WOOD = getBlockType("mangrove_wood");
+    BlockType.Typed<Stairs> LIME_WOOL_STAIRS = getBlockType("lime_wool_stairs");
 
-    Typed<AmethystCluster> MEDIUM_AMETHYST_BUD = getBlockType("medium_amethyst_bud");
+    BlockType.Typed<BlockData> LODESTONE = getBlockType("lodestone");
 
-    Typed<BlockData> MELON = getBlockType("melon");
+    BlockType.Typed<Directional> LOOM = getBlockType("loom");
 
-    Typed<Ageable> MELON_STEM = getBlockType("melon_stem");
+    BlockType.Typed<Rotatable> MAGENTA_BANNER = getBlockType("magenta_banner");
 
-    Typed<BlockData> MOSS_BLOCK = getBlockType("moss_block");
+    BlockType.Typed<Bed> MAGENTA_BED = getBlockType("magenta_bed");
 
-    Typed<BlockData> MOSS_CARPET = getBlockType("moss_carpet");
+    BlockType.Typed<Candle> MAGENTA_CANDLE = getBlockType("magenta_candle");
 
-    Typed<BlockData> MOSSY_COBBLESTONE = getBlockType("mossy_cobblestone");
+    BlockType.Typed<Lightable> MAGENTA_CANDLE_CAKE = getBlockType("magenta_candle_cake");
 
-    Typed<Slab> MOSSY_COBBLESTONE_SLAB = getBlockType("mossy_cobblestone_slab");
+    BlockType.Typed<BlockData> MAGENTA_CARPET = getBlockType("magenta_carpet");
 
-    Typed<Stairs> MOSSY_COBBLESTONE_STAIRS = getBlockType("mossy_cobblestone_stairs");
+    BlockType.Typed<BlockData> MAGENTA_CONCRETE = getBlockType("magenta_concrete");
 
-    Typed<Wall> MOSSY_COBBLESTONE_WALL = getBlockType("mossy_cobblestone_wall");
+    BlockType.Typed<BlockData> MAGENTA_CONCRETE_POWDER = getBlockType("magenta_concrete_powder");
 
-    Typed<Slab> MOSSY_STONE_BRICK_SLAB = getBlockType("mossy_stone_brick_slab");
+    BlockType.Typed<Slab> MAGENTA_CONCRETE_SLAB = getBlockType("magenta_concrete_slab");
 
-    Typed<Stairs> MOSSY_STONE_BRICK_STAIRS = getBlockType("mossy_stone_brick_stairs");
+    BlockType.Typed<Stairs> MAGENTA_CONCRETE_STAIRS = getBlockType("magenta_concrete_stairs");
 
-    Typed<Wall> MOSSY_STONE_BRICK_WALL = getBlockType("mossy_stone_brick_wall");
+    BlockType.Typed<Directional> MAGENTA_GLAZED_TERRACOTTA = getBlockType("magenta_glazed_terracotta");
 
-    Typed<BlockData> MOSSY_STONE_BRICKS = getBlockType("mossy_stone_bricks");
+    BlockType.Typed<Directional> MAGENTA_SHULKER_BOX = getBlockType("magenta_shulker_box");
 
-    Typed<TechnicalPiston> MOVING_PISTON = getBlockType("moving_piston");
+    BlockType.Typed<BlockData> MAGENTA_STAINED_GLASS = getBlockType("magenta_stained_glass");
 
-    Typed<BlockData> MUD = getBlockType("mud");
+    BlockType.Typed<GlassPane> MAGENTA_STAINED_GLASS_PANE = getBlockType("magenta_stained_glass_pane");
 
-    Typed<Slab> MUD_BRICK_SLAB = getBlockType("mud_brick_slab");
+    BlockType.Typed<BlockData> MAGENTA_TERRACOTTA = getBlockType("magenta_terracotta");
 
-    Typed<Stairs> MUD_BRICK_STAIRS = getBlockType("mud_brick_stairs");
+    BlockType.Typed<Directional> MAGENTA_WALL_BANNER = getBlockType("magenta_wall_banner");
 
-    Typed<Wall> MUD_BRICK_WALL = getBlockType("mud_brick_wall");
+    BlockType.Typed<BlockData> MAGENTA_WOOL = getBlockType("magenta_wool");
 
-    Typed<BlockData> MUD_BRICKS = getBlockType("mud_bricks");
+    BlockType.Typed<Slab> MAGENTA_WOOL_SLAB = getBlockType("magenta_wool_slab");
 
-    Typed<Orientable> MUDDY_MANGROVE_ROOTS = getBlockType("muddy_mangrove_roots");
+    BlockType.Typed<Stairs> MAGENTA_WOOL_STAIRS = getBlockType("magenta_wool_stairs");
 
-    Typed<MultipleFacing> MUSHROOM_STEM = getBlockType("mushroom_stem");
+    BlockType.Typed<BlockData> MAGMA_BLOCK = getBlockType("magma_block");
 
-    Typed<Snowable> MYCELIUM = getBlockType("mycelium");
+    BlockType.Typed<Switch> MANGROVE_BUTTON = getBlockType("mangrove_button");
 
-    Typed<Fence> NETHER_BRICK_FENCE = getBlockType("nether_brick_fence");
+    BlockType.Typed<Door> MANGROVE_DOOR = getBlockType("mangrove_door");
 
-    Typed<Slab> NETHER_BRICK_SLAB = getBlockType("nether_brick_slab");
+    BlockType.Typed<Fence> MANGROVE_FENCE = getBlockType("mangrove_fence");
 
-    Typed<Stairs> NETHER_BRICK_STAIRS = getBlockType("nether_brick_stairs");
+    BlockType.Typed<Gate> MANGROVE_FENCE_GATE = getBlockType("mangrove_fence_gate");
 
-    Typed<Wall> NETHER_BRICK_WALL = getBlockType("nether_brick_wall");
+    BlockType.Typed<HangingSign> MANGROVE_HANGING_SIGN = getBlockType("mangrove_hanging_sign");
 
-    Typed<BlockData> NETHER_BRICKS = getBlockType("nether_bricks");
+    BlockType.Typed<Leaves> MANGROVE_LEAVES = getBlockType("mangrove_leaves");
 
-    Typed<BlockData> NETHER_GOLD_ORE = getBlockType("nether_gold_ore");
+    BlockType.Typed<Orientable> MANGROVE_LOG = getBlockType("mangrove_log");
 
-    Typed<Orientable> NETHER_PORTAL = getBlockType("nether_portal");
+    BlockType.Typed<BlockData> MANGROVE_PLANKS = getBlockType("mangrove_planks");
 
-    Typed<BlockData> NETHER_QUARTZ_ORE = getBlockType("nether_quartz_ore");
+    BlockType.Typed<Powerable> MANGROVE_PRESSURE_PLATE = getBlockType("mangrove_pressure_plate");
 
-    Typed<BlockData> NETHER_SPROUTS = getBlockType("nether_sprouts");
+    BlockType.Typed<MangrovePropagule> MANGROVE_PROPAGULE = getBlockType("mangrove_propagule");
 
-    Typed<Ageable> NETHER_WART = getBlockType("nether_wart");
+    BlockType.Typed<Waterlogged> MANGROVE_ROOTS = getBlockType("mangrove_roots");
 
-    Typed<BlockData> NETHER_WART_BLOCK = getBlockType("nether_wart_block");
+    BlockType.Typed<Shelf> MANGROVE_SHELF = getBlockType("mangrove_shelf");
 
-    Typed<BlockData> NETHERITE_BLOCK = getBlockType("netherite_block");
+    BlockType.Typed<Sign> MANGROVE_SIGN = getBlockType("mangrove_sign");
 
-    Typed<BlockData> NETHERRACK = getBlockType("netherrack");
+    BlockType.Typed<Slab> MANGROVE_SLAB = getBlockType("mangrove_slab");
 
-    Typed<NoteBlock> NOTE_BLOCK = getBlockType("note_block");
+    BlockType.Typed<Stairs> MANGROVE_STAIRS = getBlockType("mangrove_stairs");
 
-    Typed<Switch> OAK_BUTTON = getBlockType("oak_button");
+    BlockType.Typed<TrapDoor> MANGROVE_TRAPDOOR = getBlockType("mangrove_trapdoor");
 
-    Typed<Door> OAK_DOOR = getBlockType("oak_door");
+    BlockType.Typed<WallHangingSign> MANGROVE_WALL_HANGING_SIGN = getBlockType("mangrove_wall_hanging_sign");
 
-    Typed<Fence> OAK_FENCE = getBlockType("oak_fence");
+    BlockType.Typed<WallSign> MANGROVE_WALL_SIGN = getBlockType("mangrove_wall_sign");
 
-    Typed<Gate> OAK_FENCE_GATE = getBlockType("oak_fence_gate");
+    BlockType.Typed<Orientable> MANGROVE_WOOD = getBlockType("mangrove_wood");
 
-    Typed<HangingSign> OAK_HANGING_SIGN = getBlockType("oak_hanging_sign");
+    BlockType.Typed<AmethystCluster> MEDIUM_AMETHYST_BUD = getBlockType("medium_amethyst_bud");
 
-    Typed<Leaves> OAK_LEAVES = getBlockType("oak_leaves");
+    BlockType.Typed<BlockData> MELON = getBlockType("melon");
 
-    Typed<Orientable> OAK_LOG = getBlockType("oak_log");
+    BlockType.Typed<Ageable> MELON_STEM = getBlockType("melon_stem");
 
-    Typed<BlockData> OAK_PLANKS = getBlockType("oak_planks");
+    BlockType.Typed<BlockData> MOSS_BLOCK = getBlockType("moss_block");
 
-    Typed<Powerable> OAK_PRESSURE_PLATE = getBlockType("oak_pressure_plate");
+    BlockType.Typed<BlockData> MOSS_CARPET = getBlockType("moss_carpet");
 
-    Typed<Sapling> OAK_SAPLING = getBlockType("oak_sapling");
+    BlockType.Typed<BlockData> MOSSY_COBBLESTONE = getBlockType("mossy_cobblestone");
 
-    Typed<Shelf> OAK_SHELF = getBlockType("oak_shelf");
+    BlockType.Typed<Slab> MOSSY_COBBLESTONE_SLAB = getBlockType("mossy_cobblestone_slab");
 
-    Typed<Sign> OAK_SIGN = getBlockType("oak_sign");
+    BlockType.Typed<Stairs> MOSSY_COBBLESTONE_STAIRS = getBlockType("mossy_cobblestone_stairs");
 
-    Typed<Slab> OAK_SLAB = getBlockType("oak_slab");
+    BlockType.Typed<Wall> MOSSY_COBBLESTONE_WALL = getBlockType("mossy_cobblestone_wall");
 
-    Typed<Stairs> OAK_STAIRS = getBlockType("oak_stairs");
+    BlockType.Typed<Slab> MOSSY_STONE_BRICK_SLAB = getBlockType("mossy_stone_brick_slab");
 
-    Typed<TrapDoor> OAK_TRAPDOOR = getBlockType("oak_trapdoor");
+    BlockType.Typed<Stairs> MOSSY_STONE_BRICK_STAIRS = getBlockType("mossy_stone_brick_stairs");
 
-    Typed<WallHangingSign> OAK_WALL_HANGING_SIGN = getBlockType("oak_wall_hanging_sign");
+    BlockType.Typed<Wall> MOSSY_STONE_BRICK_WALL = getBlockType("mossy_stone_brick_wall");
 
-    Typed<WallSign> OAK_WALL_SIGN = getBlockType("oak_wall_sign");
+    BlockType.Typed<BlockData> MOSSY_STONE_BRICKS = getBlockType("mossy_stone_bricks");
 
-    Typed<Orientable> OAK_WOOD = getBlockType("oak_wood");
+    BlockType.Typed<TechnicalPiston> MOVING_PISTON = getBlockType("moving_piston");
 
-    Typed<Observer> OBSERVER = getBlockType("observer");
+    BlockType.Typed<BlockData> MUD = getBlockType("mud");
 
-    Typed<BlockData> OBSIDIAN = getBlockType("obsidian");
+    BlockType.Typed<Slab> MUD_BRICK_SLAB = getBlockType("mud_brick_slab");
 
-    Typed<Orientable> OCHRE_FROGLIGHT = getBlockType("ochre_froglight");
+    BlockType.Typed<Stairs> MUD_BRICK_STAIRS = getBlockType("mud_brick_stairs");
 
-    Typed<BlockData> OPEN_EYEBLOSSOM = getBlockType("open_eyeblossom");
+    BlockType.Typed<Wall> MUD_BRICK_WALL = getBlockType("mud_brick_wall");
 
-    Typed<Rotatable> ORANGE_BANNER = getBlockType("orange_banner");
+    BlockType.Typed<BlockData> MUD_BRICKS = getBlockType("mud_bricks");
 
-    Typed<Bed> ORANGE_BED = getBlockType("orange_bed");
+    BlockType.Typed<Orientable> MUDDY_MANGROVE_ROOTS = getBlockType("muddy_mangrove_roots");
 
-    Typed<Candle> ORANGE_CANDLE = getBlockType("orange_candle");
+    BlockType.Typed<MultipleFacing> MUSHROOM_STEM = getBlockType("mushroom_stem");
 
-    Typed<Lightable> ORANGE_CANDLE_CAKE = getBlockType("orange_candle_cake");
+    BlockType.Typed<Snowable> MYCELIUM = getBlockType("mycelium");
 
-    Typed<BlockData> ORANGE_CARPET = getBlockType("orange_carpet");
+    BlockType.Typed<Fence> NETHER_BRICK_FENCE = getBlockType("nether_brick_fence");
 
-    Typed<BlockData> ORANGE_CONCRETE = getBlockType("orange_concrete");
+    BlockType.Typed<Slab> NETHER_BRICK_SLAB = getBlockType("nether_brick_slab");
 
-    Typed<BlockData> ORANGE_CONCRETE_POWDER = getBlockType("orange_concrete_powder");
+    BlockType.Typed<Stairs> NETHER_BRICK_STAIRS = getBlockType("nether_brick_stairs");
 
-    Typed<Directional> ORANGE_GLAZED_TERRACOTTA = getBlockType("orange_glazed_terracotta");
+    BlockType.Typed<Wall> NETHER_BRICK_WALL = getBlockType("nether_brick_wall");
 
-    Typed<Directional> ORANGE_SHULKER_BOX = getBlockType("orange_shulker_box");
+    BlockType.Typed<BlockData> NETHER_BRICKS = getBlockType("nether_bricks");
 
-    Typed<BlockData> ORANGE_STAINED_GLASS = getBlockType("orange_stained_glass");
+    BlockType.Typed<BlockData> NETHER_GOLD_ORE = getBlockType("nether_gold_ore");
 
-    Typed<GlassPane> ORANGE_STAINED_GLASS_PANE = getBlockType("orange_stained_glass_pane");
+    BlockType.Typed<Orientable> NETHER_PORTAL = getBlockType("nether_portal");
 
-    Typed<BlockData> ORANGE_TERRACOTTA = getBlockType("orange_terracotta");
+    BlockType.Typed<BlockData> NETHER_QUARTZ_ORE = getBlockType("nether_quartz_ore");
 
-    Typed<BlockData> ORANGE_TULIP = getBlockType("orange_tulip");
+    BlockType.Typed<BlockData> NETHER_SPROUTS = getBlockType("nether_sprouts");
 
-    Typed<Directional> ORANGE_WALL_BANNER = getBlockType("orange_wall_banner");
+    BlockType.Typed<Ageable> NETHER_WART = getBlockType("nether_wart");
 
-    Typed<BlockData> ORANGE_WOOL = getBlockType("orange_wool");
+    BlockType.Typed<BlockData> NETHER_WART_BLOCK = getBlockType("nether_wart_block");
 
-    Typed<BlockData> OXEYE_DAISY = getBlockType("oxeye_daisy");
+    BlockType.Typed<BlockData> NETHERITE_BLOCK = getBlockType("netherite_block");
 
-    Typed<BlockData> OXIDIZED_CHISELED_COPPER = getBlockType("oxidized_chiseled_copper");
+    BlockType.Typed<BlockData> NETHERRACK = getBlockType("netherrack");
 
-    Typed<BlockData> OXIDIZED_COPPER = getBlockType("oxidized_copper");
+    BlockType.Typed<NoteBlock> NOTE_BLOCK = getBlockType("note_block");
 
-    Typed<Fence> OXIDIZED_COPPER_BARS = getBlockType("oxidized_copper_bars");
+    BlockType.Typed<Switch> OAK_BUTTON = getBlockType("oak_button");
 
-    Typed<CopperBulb> OXIDIZED_COPPER_BULB = getBlockType("oxidized_copper_bulb");
+    BlockType.Typed<Door> OAK_DOOR = getBlockType("oak_door");
 
-    Typed<Chain> OXIDIZED_COPPER_CHAIN = getBlockType("oxidized_copper_chain");
+    BlockType.Typed<Fence> OAK_FENCE = getBlockType("oak_fence");
 
-    Typed<Chest> OXIDIZED_COPPER_CHEST = getBlockType("oxidized_copper_chest");
+    BlockType.Typed<Gate> OAK_FENCE_GATE = getBlockType("oak_fence_gate");
 
-    Typed<Door> OXIDIZED_COPPER_DOOR = getBlockType("oxidized_copper_door");
+    BlockType.Typed<HangingSign> OAK_HANGING_SIGN = getBlockType("oak_hanging_sign");
 
-    Typed<CopperGolemStatue> OXIDIZED_COPPER_GOLEM_STATUE = getBlockType("oxidized_copper_golem_statue");
+    BlockType.Typed<Leaves> OAK_LEAVES = getBlockType("oak_leaves");
 
-    Typed<Waterlogged> OXIDIZED_COPPER_GRATE = getBlockType("oxidized_copper_grate");
+    BlockType.Typed<Orientable> OAK_LOG = getBlockType("oak_log");
 
-    Typed<Lantern> OXIDIZED_COPPER_LANTERN = getBlockType("oxidized_copper_lantern");
+    BlockType.Typed<BlockData> OAK_PLANKS = getBlockType("oak_planks");
 
-    Typed<TrapDoor> OXIDIZED_COPPER_TRAPDOOR = getBlockType("oxidized_copper_trapdoor");
+    BlockType.Typed<Powerable> OAK_PRESSURE_PLATE = getBlockType("oak_pressure_plate");
 
-    Typed<BlockData> OXIDIZED_CUT_COPPER = getBlockType("oxidized_cut_copper");
+    BlockType.Typed<Sapling> OAK_SAPLING = getBlockType("oak_sapling");
 
-    Typed<Slab> OXIDIZED_CUT_COPPER_SLAB = getBlockType("oxidized_cut_copper_slab");
+    BlockType.Typed<Shelf> OAK_SHELF = getBlockType("oak_shelf");
 
-    Typed<Stairs> OXIDIZED_CUT_COPPER_STAIRS = getBlockType("oxidized_cut_copper_stairs");
+    BlockType.Typed<Sign> OAK_SIGN = getBlockType("oak_sign");
 
-    Typed<LightningRod> OXIDIZED_LIGHTNING_ROD = getBlockType("oxidized_lightning_rod");
+    BlockType.Typed<Slab> OAK_SLAB = getBlockType("oak_slab");
 
-    Typed<BlockData> PACKED_ICE = getBlockType("packed_ice");
+    BlockType.Typed<Stairs> OAK_STAIRS = getBlockType("oak_stairs");
 
-    Typed<BlockData> PACKED_MUD = getBlockType("packed_mud");
+    BlockType.Typed<TrapDoor> OAK_TRAPDOOR = getBlockType("oak_trapdoor");
 
-    Typed<HangingMoss> PALE_HANGING_MOSS = getBlockType("pale_hanging_moss");
+    BlockType.Typed<WallHangingSign> OAK_WALL_HANGING_SIGN = getBlockType("oak_wall_hanging_sign");
 
-    Typed<BlockData> PALE_MOSS_BLOCK = getBlockType("pale_moss_block");
+    BlockType.Typed<WallSign> OAK_WALL_SIGN = getBlockType("oak_wall_sign");
 
-    Typed<MossyCarpet> PALE_MOSS_CARPET = getBlockType("pale_moss_carpet");
+    BlockType.Typed<Orientable> OAK_WOOD = getBlockType("oak_wood");
 
-    Typed<Switch> PALE_OAK_BUTTON = getBlockType("pale_oak_button");
+    BlockType.Typed<Observer> OBSERVER = getBlockType("observer");
 
-    Typed<Door> PALE_OAK_DOOR = getBlockType("pale_oak_door");
+    BlockType.Typed<BlockData> OBSIDIAN = getBlockType("obsidian");
 
-    Typed<Fence> PALE_OAK_FENCE = getBlockType("pale_oak_fence");
+    BlockType.Typed<Orientable> OCHRE_FROGLIGHT = getBlockType("ochre_froglight");
 
-    Typed<Gate> PALE_OAK_FENCE_GATE = getBlockType("pale_oak_fence_gate");
+    BlockType.Typed<BlockData> OPEN_EYEBLOSSOM = getBlockType("open_eyeblossom");
 
-    Typed<HangingSign> PALE_OAK_HANGING_SIGN = getBlockType("pale_oak_hanging_sign");
+    BlockType.Typed<Rotatable> ORANGE_BANNER = getBlockType("orange_banner");
 
-    Typed<Leaves> PALE_OAK_LEAVES = getBlockType("pale_oak_leaves");
+    BlockType.Typed<Bed> ORANGE_BED = getBlockType("orange_bed");
 
-    Typed<Orientable> PALE_OAK_LOG = getBlockType("pale_oak_log");
+    BlockType.Typed<Candle> ORANGE_CANDLE = getBlockType("orange_candle");
 
-    Typed<BlockData> PALE_OAK_PLANKS = getBlockType("pale_oak_planks");
+    BlockType.Typed<Lightable> ORANGE_CANDLE_CAKE = getBlockType("orange_candle_cake");
 
-    Typed<Powerable> PALE_OAK_PRESSURE_PLATE = getBlockType("pale_oak_pressure_plate");
+    BlockType.Typed<BlockData> ORANGE_CARPET = getBlockType("orange_carpet");
 
-    Typed<Sapling> PALE_OAK_SAPLING = getBlockType("pale_oak_sapling");
+    BlockType.Typed<BlockData> ORANGE_CONCRETE = getBlockType("orange_concrete");
 
-    Typed<Shelf> PALE_OAK_SHELF = getBlockType("pale_oak_shelf");
+    BlockType.Typed<BlockData> ORANGE_CONCRETE_POWDER = getBlockType("orange_concrete_powder");
 
-    Typed<Sign> PALE_OAK_SIGN = getBlockType("pale_oak_sign");
+    BlockType.Typed<Slab> ORANGE_CONCRETE_SLAB = getBlockType("orange_concrete_slab");
 
-    Typed<Slab> PALE_OAK_SLAB = getBlockType("pale_oak_slab");
+    BlockType.Typed<Stairs> ORANGE_CONCRETE_STAIRS = getBlockType("orange_concrete_stairs");
 
-    Typed<Stairs> PALE_OAK_STAIRS = getBlockType("pale_oak_stairs");
+    BlockType.Typed<Directional> ORANGE_GLAZED_TERRACOTTA = getBlockType("orange_glazed_terracotta");
 
-    Typed<TrapDoor> PALE_OAK_TRAPDOOR = getBlockType("pale_oak_trapdoor");
+    BlockType.Typed<Leaves> ORANGE_POPLAR_LEAVES = getBlockType("orange_poplar_leaves");
 
-    Typed<WallHangingSign> PALE_OAK_WALL_HANGING_SIGN = getBlockType("pale_oak_wall_hanging_sign");
+    BlockType.Typed<Directional> ORANGE_SHULKER_BOX = getBlockType("orange_shulker_box");
 
-    Typed<WallSign> PALE_OAK_WALL_SIGN = getBlockType("pale_oak_wall_sign");
+    BlockType.Typed<BlockData> ORANGE_STAINED_GLASS = getBlockType("orange_stained_glass");
 
-    Typed<Orientable> PALE_OAK_WOOD = getBlockType("pale_oak_wood");
+    BlockType.Typed<GlassPane> ORANGE_STAINED_GLASS_PANE = getBlockType("orange_stained_glass_pane");
 
-    Typed<Orientable> PEARLESCENT_FROGLIGHT = getBlockType("pearlescent_froglight");
+    BlockType.Typed<BlockData> ORANGE_TERRACOTTA = getBlockType("orange_terracotta");
 
-    Typed<Bisected> PEONY = getBlockType("peony");
+    BlockType.Typed<BlockData> ORANGE_TULIP = getBlockType("orange_tulip");
 
-    Typed<Slab> PETRIFIED_OAK_SLAB = getBlockType("petrified_oak_slab");
+    BlockType.Typed<Directional> ORANGE_WALL_BANNER = getBlockType("orange_wall_banner");
 
-    Typed<Skull> PIGLIN_HEAD = getBlockType("piglin_head");
+    BlockType.Typed<BlockData> ORANGE_WOOL = getBlockType("orange_wool");
 
-    Typed<WallSkull> PIGLIN_WALL_HEAD = getBlockType("piglin_wall_head");
+    BlockType.Typed<Slab> ORANGE_WOOL_SLAB = getBlockType("orange_wool_slab");
 
-    Typed<Rotatable> PINK_BANNER = getBlockType("pink_banner");
+    BlockType.Typed<Stairs> ORANGE_WOOL_STAIRS = getBlockType("orange_wool_stairs");
 
-    Typed<Bed> PINK_BED = getBlockType("pink_bed");
+    BlockType.Typed<BlockData> OXEYE_DAISY = getBlockType("oxeye_daisy");
 
-    Typed<Candle> PINK_CANDLE = getBlockType("pink_candle");
+    BlockType.Typed<BlockData> OXIDIZED_CHISELED_COPPER = getBlockType("oxidized_chiseled_copper");
 
-    Typed<Lightable> PINK_CANDLE_CAKE = getBlockType("pink_candle_cake");
+    BlockType.Typed<BlockData> OXIDIZED_COPPER = getBlockType("oxidized_copper");
 
-    Typed<BlockData> PINK_CARPET = getBlockType("pink_carpet");
+    BlockType.Typed<Fence> OXIDIZED_COPPER_BARS = getBlockType("oxidized_copper_bars");
 
-    Typed<BlockData> PINK_CONCRETE = getBlockType("pink_concrete");
+    BlockType.Typed<CopperBulb> OXIDIZED_COPPER_BULB = getBlockType("oxidized_copper_bulb");
 
-    Typed<BlockData> PINK_CONCRETE_POWDER = getBlockType("pink_concrete_powder");
+    BlockType.Typed<Chain> OXIDIZED_COPPER_CHAIN = getBlockType("oxidized_copper_chain");
 
-    Typed<Directional> PINK_GLAZED_TERRACOTTA = getBlockType("pink_glazed_terracotta");
+    BlockType.Typed<Chest> OXIDIZED_COPPER_CHEST = getBlockType("oxidized_copper_chest");
 
-    Typed<FlowerBed> PINK_PETALS = getBlockType("pink_petals");
+    BlockType.Typed<Door> OXIDIZED_COPPER_DOOR = getBlockType("oxidized_copper_door");
 
-    Typed<Directional> PINK_SHULKER_BOX = getBlockType("pink_shulker_box");
+    BlockType.Typed<CopperGolemStatue> OXIDIZED_COPPER_GOLEM_STATUE = getBlockType("oxidized_copper_golem_statue");
 
-    Typed<BlockData> PINK_STAINED_GLASS = getBlockType("pink_stained_glass");
+    BlockType.Typed<Waterlogged> OXIDIZED_COPPER_GRATE = getBlockType("oxidized_copper_grate");
 
-    Typed<GlassPane> PINK_STAINED_GLASS_PANE = getBlockType("pink_stained_glass_pane");
+    BlockType.Typed<Lantern> OXIDIZED_COPPER_LANTERN = getBlockType("oxidized_copper_lantern");
 
-    Typed<BlockData> PINK_TERRACOTTA = getBlockType("pink_terracotta");
+    BlockType.Typed<TrapDoor> OXIDIZED_COPPER_TRAPDOOR = getBlockType("oxidized_copper_trapdoor");
 
-    Typed<BlockData> PINK_TULIP = getBlockType("pink_tulip");
+    BlockType.Typed<BlockData> OXIDIZED_CUT_COPPER = getBlockType("oxidized_cut_copper");
 
-    Typed<Directional> PINK_WALL_BANNER = getBlockType("pink_wall_banner");
+    BlockType.Typed<Slab> OXIDIZED_CUT_COPPER_SLAB = getBlockType("oxidized_cut_copper_slab");
 
-    Typed<BlockData> PINK_WOOL = getBlockType("pink_wool");
+    BlockType.Typed<Stairs> OXIDIZED_CUT_COPPER_STAIRS = getBlockType("oxidized_cut_copper_stairs");
 
-    Typed<Piston> PISTON = getBlockType("piston");
+    BlockType.Typed<LightningRod> OXIDIZED_LIGHTNING_ROD = getBlockType("oxidized_lightning_rod");
 
-    Typed<PistonHead> PISTON_HEAD = getBlockType("piston_head");
+    BlockType.Typed<BlockData> PACKED_ICE = getBlockType("packed_ice");
 
-    Typed<PitcherCrop> PITCHER_CROP = getBlockType("pitcher_crop");
+    BlockType.Typed<BlockData> PACKED_MUD = getBlockType("packed_mud");
 
-    Typed<Bisected> PITCHER_PLANT = getBlockType("pitcher_plant");
+    BlockType.Typed<HangingMoss> PALE_HANGING_MOSS = getBlockType("pale_hanging_moss");
 
-    Typed<Skull> PLAYER_HEAD = getBlockType("player_head");
+    BlockType.Typed<BlockData> PALE_MOSS_BLOCK = getBlockType("pale_moss_block");
 
-    Typed<WallSkull> PLAYER_WALL_HEAD = getBlockType("player_wall_head");
+    BlockType.Typed<MossyCarpet> PALE_MOSS_CARPET = getBlockType("pale_moss_carpet");
 
-    Typed<Snowable> PODZOL = getBlockType("podzol");
+    BlockType.Typed<Switch> PALE_OAK_BUTTON = getBlockType("pale_oak_button");
 
-    Typed<Speleothem> POINTED_DRIPSTONE = getBlockType("pointed_dripstone");
+    BlockType.Typed<Door> PALE_OAK_DOOR = getBlockType("pale_oak_door");
 
-    Typed<BlockData> POLISHED_ANDESITE = getBlockType("polished_andesite");
+    BlockType.Typed<Fence> PALE_OAK_FENCE = getBlockType("pale_oak_fence");
 
-    Typed<Slab> POLISHED_ANDESITE_SLAB = getBlockType("polished_andesite_slab");
+    BlockType.Typed<Gate> PALE_OAK_FENCE_GATE = getBlockType("pale_oak_fence_gate");
 
-    Typed<Stairs> POLISHED_ANDESITE_STAIRS = getBlockType("polished_andesite_stairs");
+    BlockType.Typed<HangingSign> PALE_OAK_HANGING_SIGN = getBlockType("pale_oak_hanging_sign");
 
-    Typed<Orientable> POLISHED_BASALT = getBlockType("polished_basalt");
+    BlockType.Typed<Leaves> PALE_OAK_LEAVES = getBlockType("pale_oak_leaves");
 
-    Typed<BlockData> POLISHED_BLACKSTONE = getBlockType("polished_blackstone");
+    BlockType.Typed<Orientable> PALE_OAK_LOG = getBlockType("pale_oak_log");
 
-    Typed<Slab> POLISHED_BLACKSTONE_BRICK_SLAB = getBlockType("polished_blackstone_brick_slab");
+    BlockType.Typed<BlockData> PALE_OAK_PLANKS = getBlockType("pale_oak_planks");
 
-    Typed<Stairs> POLISHED_BLACKSTONE_BRICK_STAIRS = getBlockType("polished_blackstone_brick_stairs");
+    BlockType.Typed<Powerable> PALE_OAK_PRESSURE_PLATE = getBlockType("pale_oak_pressure_plate");
 
-    Typed<Wall> POLISHED_BLACKSTONE_BRICK_WALL = getBlockType("polished_blackstone_brick_wall");
+    BlockType.Typed<Sapling> PALE_OAK_SAPLING = getBlockType("pale_oak_sapling");
 
-    Typed<BlockData> POLISHED_BLACKSTONE_BRICKS = getBlockType("polished_blackstone_bricks");
+    BlockType.Typed<Shelf> PALE_OAK_SHELF = getBlockType("pale_oak_shelf");
 
-    Typed<Switch> POLISHED_BLACKSTONE_BUTTON = getBlockType("polished_blackstone_button");
+    BlockType.Typed<Sign> PALE_OAK_SIGN = getBlockType("pale_oak_sign");
 
-    Typed<Powerable> POLISHED_BLACKSTONE_PRESSURE_PLATE = getBlockType("polished_blackstone_pressure_plate");
+    BlockType.Typed<Slab> PALE_OAK_SLAB = getBlockType("pale_oak_slab");
 
-    Typed<Slab> POLISHED_BLACKSTONE_SLAB = getBlockType("polished_blackstone_slab");
+    BlockType.Typed<Stairs> PALE_OAK_STAIRS = getBlockType("pale_oak_stairs");
 
-    Typed<Stairs> POLISHED_BLACKSTONE_STAIRS = getBlockType("polished_blackstone_stairs");
+    BlockType.Typed<TrapDoor> PALE_OAK_TRAPDOOR = getBlockType("pale_oak_trapdoor");
 
-    Typed<Wall> POLISHED_BLACKSTONE_WALL = getBlockType("polished_blackstone_wall");
+    BlockType.Typed<WallHangingSign> PALE_OAK_WALL_HANGING_SIGN = getBlockType("pale_oak_wall_hanging_sign");
 
-    Typed<BlockData> POLISHED_CINNABAR = getBlockType("polished_cinnabar");
+    BlockType.Typed<WallSign> PALE_OAK_WALL_SIGN = getBlockType("pale_oak_wall_sign");
 
-    Typed<Slab> POLISHED_CINNABAR_SLAB = getBlockType("polished_cinnabar_slab");
+    BlockType.Typed<Orientable> PALE_OAK_WOOD = getBlockType("pale_oak_wood");
 
-    Typed<Stairs> POLISHED_CINNABAR_STAIRS = getBlockType("polished_cinnabar_stairs");
+    BlockType.Typed<Orientable> PEARLESCENT_FROGLIGHT = getBlockType("pearlescent_froglight");
 
-    Typed<Wall> POLISHED_CINNABAR_WALL = getBlockType("polished_cinnabar_wall");
+    BlockType.Typed<Bisected> PEONY = getBlockType("peony");
 
-    Typed<BlockData> POLISHED_DEEPSLATE = getBlockType("polished_deepslate");
+    BlockType.Typed<Slab> PETRIFIED_OAK_SLAB = getBlockType("petrified_oak_slab");
 
-    Typed<Slab> POLISHED_DEEPSLATE_SLAB = getBlockType("polished_deepslate_slab");
+    BlockType.Typed<Skull> PIGLIN_HEAD = getBlockType("piglin_head");
 
-    Typed<Stairs> POLISHED_DEEPSLATE_STAIRS = getBlockType("polished_deepslate_stairs");
+    BlockType.Typed<WallSkull> PIGLIN_WALL_HEAD = getBlockType("piglin_wall_head");
 
-    Typed<Wall> POLISHED_DEEPSLATE_WALL = getBlockType("polished_deepslate_wall");
+    BlockType.Typed<Rotatable> PINK_BANNER = getBlockType("pink_banner");
 
-    Typed<BlockData> POLISHED_DIORITE = getBlockType("polished_diorite");
+    BlockType.Typed<Bed> PINK_BED = getBlockType("pink_bed");
 
-    Typed<Slab> POLISHED_DIORITE_SLAB = getBlockType("polished_diorite_slab");
+    BlockType.Typed<Candle> PINK_CANDLE = getBlockType("pink_candle");
 
-    Typed<Stairs> POLISHED_DIORITE_STAIRS = getBlockType("polished_diorite_stairs");
+    BlockType.Typed<Lightable> PINK_CANDLE_CAKE = getBlockType("pink_candle_cake");
 
-    Typed<BlockData> POLISHED_GRANITE = getBlockType("polished_granite");
+    BlockType.Typed<BlockData> PINK_CARPET = getBlockType("pink_carpet");
 
-    Typed<Slab> POLISHED_GRANITE_SLAB = getBlockType("polished_granite_slab");
+    BlockType.Typed<BlockData> PINK_CONCRETE = getBlockType("pink_concrete");
 
-    Typed<Stairs> POLISHED_GRANITE_STAIRS = getBlockType("polished_granite_stairs");
+    BlockType.Typed<BlockData> PINK_CONCRETE_POWDER = getBlockType("pink_concrete_powder");
 
-    Typed<BlockData> POLISHED_SULFUR = getBlockType("polished_sulfur");
+    BlockType.Typed<Slab> PINK_CONCRETE_SLAB = getBlockType("pink_concrete_slab");
 
-    Typed<Slab> POLISHED_SULFUR_SLAB = getBlockType("polished_sulfur_slab");
+    BlockType.Typed<Stairs> PINK_CONCRETE_STAIRS = getBlockType("pink_concrete_stairs");
 
-    Typed<Stairs> POLISHED_SULFUR_STAIRS = getBlockType("polished_sulfur_stairs");
+    BlockType.Typed<Directional> PINK_GLAZED_TERRACOTTA = getBlockType("pink_glazed_terracotta");
 
-    Typed<Wall> POLISHED_SULFUR_WALL = getBlockType("polished_sulfur_wall");
+    BlockType.Typed<FlowerBed> PINK_PETALS = getBlockType("pink_petals");
 
-    Typed<BlockData> POLISHED_TUFF = getBlockType("polished_tuff");
+    BlockType.Typed<Directional> PINK_SHULKER_BOX = getBlockType("pink_shulker_box");
 
-    Typed<Slab> POLISHED_TUFF_SLAB = getBlockType("polished_tuff_slab");
+    BlockType.Typed<BlockData> PINK_STAINED_GLASS = getBlockType("pink_stained_glass");
 
-    Typed<Stairs> POLISHED_TUFF_STAIRS = getBlockType("polished_tuff_stairs");
+    BlockType.Typed<GlassPane> PINK_STAINED_GLASS_PANE = getBlockType("pink_stained_glass_pane");
 
-    Typed<Wall> POLISHED_TUFF_WALL = getBlockType("polished_tuff_wall");
+    BlockType.Typed<BlockData> PINK_TERRACOTTA = getBlockType("pink_terracotta");
 
-    Typed<BlockData> POPPY = getBlockType("poppy");
+    BlockType.Typed<BlockData> PINK_TULIP = getBlockType("pink_tulip");
 
-    Typed<Ageable> POTATOES = getBlockType("potatoes");
+    BlockType.Typed<Directional> PINK_WALL_BANNER = getBlockType("pink_wall_banner");
 
-    Typed<PotentSulfur> POTENT_SULFUR = getBlockType("potent_sulfur");
+    BlockType.Typed<BlockData> PINK_WOOL = getBlockType("pink_wool");
 
-    Typed<BlockData> POTTED_ACACIA_SAPLING = getBlockType("potted_acacia_sapling");
+    BlockType.Typed<Slab> PINK_WOOL_SLAB = getBlockType("pink_wool_slab");
 
-    Typed<BlockData> POTTED_ALLIUM = getBlockType("potted_allium");
+    BlockType.Typed<Stairs> PINK_WOOL_STAIRS = getBlockType("pink_wool_stairs");
 
-    Typed<BlockData> POTTED_AZALEA_BUSH = getBlockType("potted_azalea_bush");
+    BlockType.Typed<Piston> PISTON = getBlockType("piston");
 
-    Typed<BlockData> POTTED_AZURE_BLUET = getBlockType("potted_azure_bluet");
+    BlockType.Typed<PistonHead> PISTON_HEAD = getBlockType("piston_head");
 
-    Typed<BlockData> POTTED_BAMBOO = getBlockType("potted_bamboo");
+    BlockType.Typed<PitcherCrop> PITCHER_CROP = getBlockType("pitcher_crop");
 
-    Typed<BlockData> POTTED_BIRCH_SAPLING = getBlockType("potted_birch_sapling");
+    BlockType.Typed<Bisected> PITCHER_PLANT = getBlockType("pitcher_plant");
 
-    Typed<BlockData> POTTED_BLUE_ORCHID = getBlockType("potted_blue_orchid");
+    BlockType.Typed<Skull> PLAYER_HEAD = getBlockType("player_head");
 
-    Typed<BlockData> POTTED_BROWN_MUSHROOM = getBlockType("potted_brown_mushroom");
+    BlockType.Typed<WallSkull> PLAYER_WALL_HEAD = getBlockType("player_wall_head");
 
-    Typed<BlockData> POTTED_CACTUS = getBlockType("potted_cactus");
+    BlockType.Typed<Snowable> PODZOL = getBlockType("podzol");
 
-    Typed<BlockData> POTTED_CHERRY_SAPLING = getBlockType("potted_cherry_sapling");
+    BlockType.Typed<Speleothem> POINTED_DRIPSTONE = getBlockType("pointed_dripstone");
 
-    Typed<BlockData> POTTED_CLOSED_EYEBLOSSOM = getBlockType("potted_closed_eyeblossom");
+    BlockType.Typed<BlockData> POLISHED_ANDESITE = getBlockType("polished_andesite");
 
-    Typed<BlockData> POTTED_CORNFLOWER = getBlockType("potted_cornflower");
+    BlockType.Typed<Slab> POLISHED_ANDESITE_SLAB = getBlockType("polished_andesite_slab");
 
-    Typed<BlockData> POTTED_CRIMSON_FUNGUS = getBlockType("potted_crimson_fungus");
+    BlockType.Typed<Stairs> POLISHED_ANDESITE_STAIRS = getBlockType("polished_andesite_stairs");
 
-    Typed<BlockData> POTTED_CRIMSON_ROOTS = getBlockType("potted_crimson_roots");
+    BlockType.Typed<Orientable> POLISHED_BASALT = getBlockType("polished_basalt");
 
-    Typed<BlockData> POTTED_DANDELION = getBlockType("potted_dandelion");
+    BlockType.Typed<BlockData> POLISHED_BLACKSTONE = getBlockType("polished_blackstone");
 
-    Typed<BlockData> POTTED_DARK_OAK_SAPLING = getBlockType("potted_dark_oak_sapling");
+    BlockType.Typed<Slab> POLISHED_BLACKSTONE_BRICK_SLAB = getBlockType("polished_blackstone_brick_slab");
 
-    Typed<BlockData> POTTED_DEAD_BUSH = getBlockType("potted_dead_bush");
+    BlockType.Typed<Stairs> POLISHED_BLACKSTONE_BRICK_STAIRS = getBlockType("polished_blackstone_brick_stairs");
 
-    Typed<BlockData> POTTED_FERN = getBlockType("potted_fern");
+    BlockType.Typed<Wall> POLISHED_BLACKSTONE_BRICK_WALL = getBlockType("polished_blackstone_brick_wall");
 
-    Typed<BlockData> POTTED_FLOWERING_AZALEA_BUSH = getBlockType("potted_flowering_azalea_bush");
+    BlockType.Typed<BlockData> POLISHED_BLACKSTONE_BRICKS = getBlockType("polished_blackstone_bricks");
 
-    Typed<BlockData> POTTED_GOLDEN_DANDELION = getBlockType("potted_golden_dandelion");
+    BlockType.Typed<Switch> POLISHED_BLACKSTONE_BUTTON = getBlockType("polished_blackstone_button");
 
-    Typed<BlockData> POTTED_JUNGLE_SAPLING = getBlockType("potted_jungle_sapling");
+    BlockType.Typed<Powerable> POLISHED_BLACKSTONE_PRESSURE_PLATE = getBlockType("polished_blackstone_pressure_plate");
 
-    Typed<BlockData> POTTED_LILY_OF_THE_VALLEY = getBlockType("potted_lily_of_the_valley");
+    BlockType.Typed<Slab> POLISHED_BLACKSTONE_SLAB = getBlockType("polished_blackstone_slab");
 
-    Typed<BlockData> POTTED_MANGROVE_PROPAGULE = getBlockType("potted_mangrove_propagule");
+    BlockType.Typed<Stairs> POLISHED_BLACKSTONE_STAIRS = getBlockType("polished_blackstone_stairs");
 
-    Typed<BlockData> POTTED_OAK_SAPLING = getBlockType("potted_oak_sapling");
+    BlockType.Typed<Wall> POLISHED_BLACKSTONE_WALL = getBlockType("polished_blackstone_wall");
 
-    Typed<BlockData> POTTED_OPEN_EYEBLOSSOM = getBlockType("potted_open_eyeblossom");
+    BlockType.Typed<BlockData> POLISHED_CINNABAR = getBlockType("polished_cinnabar");
 
-    Typed<BlockData> POTTED_ORANGE_TULIP = getBlockType("potted_orange_tulip");
+    BlockType.Typed<Slab> POLISHED_CINNABAR_SLAB = getBlockType("polished_cinnabar_slab");
 
-    Typed<BlockData> POTTED_OXEYE_DAISY = getBlockType("potted_oxeye_daisy");
+    BlockType.Typed<Stairs> POLISHED_CINNABAR_STAIRS = getBlockType("polished_cinnabar_stairs");
 
-    Typed<BlockData> POTTED_PALE_OAK_SAPLING = getBlockType("potted_pale_oak_sapling");
+    BlockType.Typed<Wall> POLISHED_CINNABAR_WALL = getBlockType("polished_cinnabar_wall");
 
-    Typed<BlockData> POTTED_PINK_TULIP = getBlockType("potted_pink_tulip");
+    BlockType.Typed<BlockData> POLISHED_DEEPSLATE = getBlockType("polished_deepslate");
 
-    Typed<BlockData> POTTED_POPPY = getBlockType("potted_poppy");
+    BlockType.Typed<Slab> POLISHED_DEEPSLATE_SLAB = getBlockType("polished_deepslate_slab");
 
-    Typed<BlockData> POTTED_RED_MUSHROOM = getBlockType("potted_red_mushroom");
+    BlockType.Typed<Stairs> POLISHED_DEEPSLATE_STAIRS = getBlockType("polished_deepslate_stairs");
 
-    Typed<BlockData> POTTED_RED_TULIP = getBlockType("potted_red_tulip");
+    BlockType.Typed<Wall> POLISHED_DEEPSLATE_WALL = getBlockType("polished_deepslate_wall");
 
-    Typed<BlockData> POTTED_SPRUCE_SAPLING = getBlockType("potted_spruce_sapling");
+    BlockType.Typed<BlockData> POLISHED_DIORITE = getBlockType("polished_diorite");
 
-    Typed<BlockData> POTTED_TORCHFLOWER = getBlockType("potted_torchflower");
+    BlockType.Typed<Slab> POLISHED_DIORITE_SLAB = getBlockType("polished_diorite_slab");
 
-    Typed<BlockData> POTTED_WARPED_FUNGUS = getBlockType("potted_warped_fungus");
+    BlockType.Typed<Stairs> POLISHED_DIORITE_STAIRS = getBlockType("polished_diorite_stairs");
 
-    Typed<BlockData> POTTED_WARPED_ROOTS = getBlockType("potted_warped_roots");
+    BlockType.Typed<BlockData> POLISHED_GRANITE = getBlockType("polished_granite");
 
-    Typed<BlockData> POTTED_WHITE_TULIP = getBlockType("potted_white_tulip");
+    BlockType.Typed<Slab> POLISHED_GRANITE_SLAB = getBlockType("polished_granite_slab");
 
-    Typed<BlockData> POTTED_WITHER_ROSE = getBlockType("potted_wither_rose");
+    BlockType.Typed<Stairs> POLISHED_GRANITE_STAIRS = getBlockType("polished_granite_stairs");
 
-    Typed<BlockData> POWDER_SNOW = getBlockType("powder_snow");
+    BlockType.Typed<BlockData> POLISHED_SULFUR = getBlockType("polished_sulfur");
 
-    Typed<Levelled> POWDER_SNOW_CAULDRON = getBlockType("powder_snow_cauldron");
+    BlockType.Typed<Slab> POLISHED_SULFUR_SLAB = getBlockType("polished_sulfur_slab");
 
-    Typed<RedstoneRail> POWERED_RAIL = getBlockType("powered_rail");
+    BlockType.Typed<Stairs> POLISHED_SULFUR_STAIRS = getBlockType("polished_sulfur_stairs");
 
-    Typed<BlockData> PRISMARINE = getBlockType("prismarine");
+    BlockType.Typed<Wall> POLISHED_SULFUR_WALL = getBlockType("polished_sulfur_wall");
 
-    Typed<Slab> PRISMARINE_BRICK_SLAB = getBlockType("prismarine_brick_slab");
+    BlockType.Typed<BlockData> POLISHED_TUFF = getBlockType("polished_tuff");
 
-    Typed<Stairs> PRISMARINE_BRICK_STAIRS = getBlockType("prismarine_brick_stairs");
+    BlockType.Typed<Slab> POLISHED_TUFF_SLAB = getBlockType("polished_tuff_slab");
 
-    Typed<BlockData> PRISMARINE_BRICKS = getBlockType("prismarine_bricks");
+    BlockType.Typed<Stairs> POLISHED_TUFF_STAIRS = getBlockType("polished_tuff_stairs");
 
-    Typed<Slab> PRISMARINE_SLAB = getBlockType("prismarine_slab");
+    BlockType.Typed<Wall> POLISHED_TUFF_WALL = getBlockType("polished_tuff_wall");
 
-    Typed<Stairs> PRISMARINE_STAIRS = getBlockType("prismarine_stairs");
+    BlockType.Typed<Switch> POPLAR_BUTTON = getBlockType("poplar_button");
 
-    Typed<Wall> PRISMARINE_WALL = getBlockType("prismarine_wall");
+    BlockType.Typed<Door> POPLAR_DOOR = getBlockType("poplar_door");
 
-    Typed<BlockData> PUMPKIN = getBlockType("pumpkin");
+    BlockType.Typed<Fence> POPLAR_FENCE = getBlockType("poplar_fence");
 
-    Typed<Ageable> PUMPKIN_STEM = getBlockType("pumpkin_stem");
+    BlockType.Typed<Gate> POPLAR_FENCE_GATE = getBlockType("poplar_fence_gate");
 
-    Typed<Rotatable> PURPLE_BANNER = getBlockType("purple_banner");
+    BlockType.Typed<HangingSign> POPLAR_HANGING_SIGN = getBlockType("poplar_hanging_sign");
 
-    Typed<Bed> PURPLE_BED = getBlockType("purple_bed");
+    BlockType.Typed<Orientable> POPLAR_LOG = getBlockType("poplar_log");
 
-    Typed<Candle> PURPLE_CANDLE = getBlockType("purple_candle");
+    BlockType.Typed<BlockData> POPLAR_PLANKS = getBlockType("poplar_planks");
 
-    Typed<Lightable> PURPLE_CANDLE_CAKE = getBlockType("purple_candle_cake");
+    BlockType.Typed<Powerable> POPLAR_PRESSURE_PLATE = getBlockType("poplar_pressure_plate");
 
-    Typed<BlockData> PURPLE_CARPET = getBlockType("purple_carpet");
+    BlockType.Typed<Sapling> POPLAR_SAPLING = getBlockType("poplar_sapling");
 
-    Typed<BlockData> PURPLE_CONCRETE = getBlockType("purple_concrete");
+    BlockType.Typed<Shelf> POPLAR_SHELF = getBlockType("poplar_shelf");
 
-    Typed<BlockData> PURPLE_CONCRETE_POWDER = getBlockType("purple_concrete_powder");
+    BlockType.Typed<Sign> POPLAR_SIGN = getBlockType("poplar_sign");
 
-    Typed<Directional> PURPLE_GLAZED_TERRACOTTA = getBlockType("purple_glazed_terracotta");
+    BlockType.Typed<Slab> POPLAR_SLAB = getBlockType("poplar_slab");
 
-    Typed<Directional> PURPLE_SHULKER_BOX = getBlockType("purple_shulker_box");
+    BlockType.Typed<Stairs> POPLAR_STAIRS = getBlockType("poplar_stairs");
 
-    Typed<BlockData> PURPLE_STAINED_GLASS = getBlockType("purple_stained_glass");
+    BlockType.Typed<TrapDoor> POPLAR_TRAPDOOR = getBlockType("poplar_trapdoor");
 
-    Typed<GlassPane> PURPLE_STAINED_GLASS_PANE = getBlockType("purple_stained_glass_pane");
+    BlockType.Typed<WallHangingSign> POPLAR_WALL_HANGING_SIGN = getBlockType("poplar_wall_hanging_sign");
 
-    Typed<BlockData> PURPLE_TERRACOTTA = getBlockType("purple_terracotta");
+    BlockType.Typed<WallSign> POPLAR_WALL_SIGN = getBlockType("poplar_wall_sign");
 
-    Typed<Directional> PURPLE_WALL_BANNER = getBlockType("purple_wall_banner");
+    BlockType.Typed<Orientable> POPLAR_WOOD = getBlockType("poplar_wood");
 
-    Typed<BlockData> PURPLE_WOOL = getBlockType("purple_wool");
+    BlockType.Typed<BlockData> POPPY = getBlockType("poppy");
 
-    Typed<BlockData> PURPUR_BLOCK = getBlockType("purpur_block");
+    BlockType.Typed<Ageable> POTATOES = getBlockType("potatoes");
 
-    Typed<Orientable> PURPUR_PILLAR = getBlockType("purpur_pillar");
+    BlockType.Typed<PotentSulfur> POTENT_SULFUR = getBlockType("potent_sulfur");
 
-    Typed<Slab> PURPUR_SLAB = getBlockType("purpur_slab");
+    BlockType.Typed<BlockData> POTTED_ACACIA_SAPLING = getBlockType("potted_acacia_sapling");
 
-    Typed<Stairs> PURPUR_STAIRS = getBlockType("purpur_stairs");
+    BlockType.Typed<BlockData> POTTED_ALLIUM = getBlockType("potted_allium");
 
-    Typed<BlockData> QUARTZ_BLOCK = getBlockType("quartz_block");
+    BlockType.Typed<BlockData> POTTED_AZALEA_BUSH = getBlockType("potted_azalea_bush");
 
-    Typed<BlockData> QUARTZ_BRICKS = getBlockType("quartz_bricks");
+    BlockType.Typed<BlockData> POTTED_AZURE_BLUET = getBlockType("potted_azure_bluet");
 
-    Typed<Orientable> QUARTZ_PILLAR = getBlockType("quartz_pillar");
+    BlockType.Typed<BlockData> POTTED_BAMBOO = getBlockType("potted_bamboo");
 
-    Typed<Slab> QUARTZ_SLAB = getBlockType("quartz_slab");
+    BlockType.Typed<BlockData> POTTED_BIRCH_SAPLING = getBlockType("potted_birch_sapling");
 
-    Typed<Stairs> QUARTZ_STAIRS = getBlockType("quartz_stairs");
+    BlockType.Typed<BlockData> POTTED_BLUE_ORCHID = getBlockType("potted_blue_orchid");
 
-    Typed<Rail> RAIL = getBlockType("rail");
+    BlockType.Typed<BlockData> POTTED_BROWN_MUSHROOM = getBlockType("potted_brown_mushroom");
 
-    Typed<BlockData> RAW_COPPER_BLOCK = getBlockType("raw_copper_block");
+    BlockType.Typed<BlockData> POTTED_CACTUS = getBlockType("potted_cactus");
 
-    Typed<BlockData> RAW_GOLD_BLOCK = getBlockType("raw_gold_block");
+    BlockType.Typed<BlockData> POTTED_CHERRY_SAPLING = getBlockType("potted_cherry_sapling");
 
-    Typed<BlockData> RAW_IRON_BLOCK = getBlockType("raw_iron_block");
+    BlockType.Typed<BlockData> POTTED_CLOSED_EYEBLOSSOM = getBlockType("potted_closed_eyeblossom");
 
-    Typed<Rotatable> RED_BANNER = getBlockType("red_banner");
+    BlockType.Typed<BlockData> POTTED_CORNFLOWER = getBlockType("potted_cornflower");
 
-    Typed<Bed> RED_BED = getBlockType("red_bed");
+    BlockType.Typed<BlockData> POTTED_CRIMSON_FUNGUS = getBlockType("potted_crimson_fungus");
 
-    Typed<Candle> RED_CANDLE = getBlockType("red_candle");
+    BlockType.Typed<BlockData> POTTED_CRIMSON_ROOTS = getBlockType("potted_crimson_roots");
 
-    Typed<Lightable> RED_CANDLE_CAKE = getBlockType("red_candle_cake");
+    BlockType.Typed<BlockData> POTTED_DANDELION = getBlockType("potted_dandelion");
 
-    Typed<BlockData> RED_CARPET = getBlockType("red_carpet");
+    BlockType.Typed<BlockData> POTTED_DARK_OAK_SAPLING = getBlockType("potted_dark_oak_sapling");
 
-    Typed<BlockData> RED_CONCRETE = getBlockType("red_concrete");
+    BlockType.Typed<BlockData> POTTED_DEAD_BUSH = getBlockType("potted_dead_bush");
 
-    Typed<BlockData> RED_CONCRETE_POWDER = getBlockType("red_concrete_powder");
+    BlockType.Typed<BlockData> POTTED_FERN = getBlockType("potted_fern");
 
-    Typed<Directional> RED_GLAZED_TERRACOTTA = getBlockType("red_glazed_terracotta");
+    BlockType.Typed<BlockData> POTTED_FLOWERING_AZALEA_BUSH = getBlockType("potted_flowering_azalea_bush");
 
-    Typed<BlockData> RED_MUSHROOM = getBlockType("red_mushroom");
+    BlockType.Typed<BlockData> POTTED_GOLDEN_DANDELION = getBlockType("potted_golden_dandelion");
 
-    Typed<MultipleFacing> RED_MUSHROOM_BLOCK = getBlockType("red_mushroom_block");
+    BlockType.Typed<BlockData> POTTED_JUNGLE_SAPLING = getBlockType("potted_jungle_sapling");
 
-    Typed<Slab> RED_NETHER_BRICK_SLAB = getBlockType("red_nether_brick_slab");
+    BlockType.Typed<BlockData> POTTED_LILY_OF_THE_VALLEY = getBlockType("potted_lily_of_the_valley");
 
-    Typed<Stairs> RED_NETHER_BRICK_STAIRS = getBlockType("red_nether_brick_stairs");
+    BlockType.Typed<BlockData> POTTED_MANGROVE_PROPAGULE = getBlockType("potted_mangrove_propagule");
 
-    Typed<Wall> RED_NETHER_BRICK_WALL = getBlockType("red_nether_brick_wall");
+    BlockType.Typed<BlockData> POTTED_OAK_SAPLING = getBlockType("potted_oak_sapling");
 
-    Typed<BlockData> RED_NETHER_BRICKS = getBlockType("red_nether_bricks");
+    BlockType.Typed<BlockData> POTTED_OPEN_EYEBLOSSOM = getBlockType("potted_open_eyeblossom");
 
-    Typed<BlockData> RED_SAND = getBlockType("red_sand");
+    BlockType.Typed<BlockData> POTTED_ORANGE_TULIP = getBlockType("potted_orange_tulip");
 
-    Typed<BlockData> RED_SANDSTONE = getBlockType("red_sandstone");
+    BlockType.Typed<BlockData> POTTED_OXEYE_DAISY = getBlockType("potted_oxeye_daisy");
 
-    Typed<Slab> RED_SANDSTONE_SLAB = getBlockType("red_sandstone_slab");
+    BlockType.Typed<BlockData> POTTED_PALE_OAK_SAPLING = getBlockType("potted_pale_oak_sapling");
 
-    Typed<Stairs> RED_SANDSTONE_STAIRS = getBlockType("red_sandstone_stairs");
+    BlockType.Typed<BlockData> POTTED_PINK_TULIP = getBlockType("potted_pink_tulip");
 
-    Typed<Wall> RED_SANDSTONE_WALL = getBlockType("red_sandstone_wall");
+    BlockType.Typed<BlockData> POTTED_POPLAR_SAPLING = getBlockType("potted_poplar_sapling");
 
-    Typed<Directional> RED_SHULKER_BOX = getBlockType("red_shulker_box");
+    BlockType.Typed<BlockData> POTTED_POPPY = getBlockType("potted_poppy");
 
-    Typed<BlockData> RED_STAINED_GLASS = getBlockType("red_stained_glass");
+    BlockType.Typed<BlockData> POTTED_RED_MUSHROOM = getBlockType("potted_red_mushroom");
 
-    Typed<GlassPane> RED_STAINED_GLASS_PANE = getBlockType("red_stained_glass_pane");
+    BlockType.Typed<BlockData> POTTED_RED_TULIP = getBlockType("potted_red_tulip");
 
-    Typed<BlockData> RED_TERRACOTTA = getBlockType("red_terracotta");
+    BlockType.Typed<BlockData> POTTED_SPRUCE_SAPLING = getBlockType("potted_spruce_sapling");
 
-    Typed<BlockData> RED_TULIP = getBlockType("red_tulip");
+    BlockType.Typed<BlockData> POTTED_TORCHFLOWER = getBlockType("potted_torchflower");
 
-    Typed<Directional> RED_WALL_BANNER = getBlockType("red_wall_banner");
+    BlockType.Typed<BlockData> POTTED_WARPED_FUNGUS = getBlockType("potted_warped_fungus");
 
-    Typed<BlockData> RED_WOOL = getBlockType("red_wool");
+    BlockType.Typed<BlockData> POTTED_WARPED_ROOTS = getBlockType("potted_warped_roots");
 
-    Typed<BlockData> REDSTONE_BLOCK = getBlockType("redstone_block");
+    BlockType.Typed<BlockData> POTTED_WHITE_TULIP = getBlockType("potted_white_tulip");
 
-    Typed<Lightable> REDSTONE_LAMP = getBlockType("redstone_lamp");
+    BlockType.Typed<BlockData> POTTED_WITHER_ROSE = getBlockType("potted_wither_rose");
 
-    Typed<Lightable> REDSTONE_ORE = getBlockType("redstone_ore");
+    BlockType.Typed<BlockData> POWDER_SNOW = getBlockType("powder_snow");
 
-    Typed<Lightable> REDSTONE_TORCH = getBlockType("redstone_torch");
+    BlockType.Typed<Levelled> POWDER_SNOW_CAULDRON = getBlockType("powder_snow_cauldron");
 
-    Typed<RedstoneWallTorch> REDSTONE_WALL_TORCH = getBlockType("redstone_wall_torch");
+    BlockType.Typed<RedstoneRail> POWERED_RAIL = getBlockType("powered_rail");
 
-    Typed<RedstoneWire> REDSTONE_WIRE = getBlockType("redstone_wire");
+    BlockType.Typed<BlockData> PRISMARINE = getBlockType("prismarine");
 
-    Typed<BlockData> REINFORCED_DEEPSLATE = getBlockType("reinforced_deepslate");
+    BlockType.Typed<Slab> PRISMARINE_BRICK_SLAB = getBlockType("prismarine_brick_slab");
 
-    Typed<Repeater> REPEATER = getBlockType("repeater");
+    BlockType.Typed<Stairs> PRISMARINE_BRICK_STAIRS = getBlockType("prismarine_brick_stairs");
 
-    Typed<CommandBlock> REPEATING_COMMAND_BLOCK = getBlockType("repeating_command_block");
+    BlockType.Typed<BlockData> PRISMARINE_BRICKS = getBlockType("prismarine_bricks");
 
-    Typed<BlockData> RESIN_BLOCK = getBlockType("resin_block");
+    BlockType.Typed<Slab> PRISMARINE_SLAB = getBlockType("prismarine_slab");
 
-    Typed<Slab> RESIN_BRICK_SLAB = getBlockType("resin_brick_slab");
+    BlockType.Typed<Stairs> PRISMARINE_STAIRS = getBlockType("prismarine_stairs");
 
-    Typed<Stairs> RESIN_BRICK_STAIRS = getBlockType("resin_brick_stairs");
+    BlockType.Typed<Wall> PRISMARINE_WALL = getBlockType("prismarine_wall");
 
-    Typed<Wall> RESIN_BRICK_WALL = getBlockType("resin_brick_wall");
+    BlockType.Typed<BlockData> PUMPKIN = getBlockType("pumpkin");
 
-    Typed<BlockData> RESIN_BRICKS = getBlockType("resin_bricks");
+    BlockType.Typed<Ageable> PUMPKIN_STEM = getBlockType("pumpkin_stem");
 
-    Typed<ResinClump> RESIN_CLUMP = getBlockType("resin_clump");
+    BlockType.Typed<Rotatable> PURPLE_BANNER = getBlockType("purple_banner");
 
-    Typed<RespawnAnchor> RESPAWN_ANCHOR = getBlockType("respawn_anchor");
+    BlockType.Typed<Bed> PURPLE_BED = getBlockType("purple_bed");
 
-    Typed<BlockData> ROOTED_DIRT = getBlockType("rooted_dirt");
+    BlockType.Typed<Candle> PURPLE_CANDLE = getBlockType("purple_candle");
 
-    Typed<Bisected> ROSE_BUSH = getBlockType("rose_bush");
+    BlockType.Typed<Lightable> PURPLE_CANDLE_CAKE = getBlockType("purple_candle_cake");
 
-    Typed<BlockData> SAND = getBlockType("sand");
+    BlockType.Typed<BlockData> PURPLE_CARPET = getBlockType("purple_carpet");
 
-    Typed<BlockData> SANDSTONE = getBlockType("sandstone");
+    BlockType.Typed<BlockData> PURPLE_CONCRETE = getBlockType("purple_concrete");
 
-    Typed<Slab> SANDSTONE_SLAB = getBlockType("sandstone_slab");
+    BlockType.Typed<BlockData> PURPLE_CONCRETE_POWDER = getBlockType("purple_concrete_powder");
 
-    Typed<Stairs> SANDSTONE_STAIRS = getBlockType("sandstone_stairs");
+    BlockType.Typed<Slab> PURPLE_CONCRETE_SLAB = getBlockType("purple_concrete_slab");
 
-    Typed<Wall> SANDSTONE_WALL = getBlockType("sandstone_wall");
+    BlockType.Typed<Stairs> PURPLE_CONCRETE_STAIRS = getBlockType("purple_concrete_stairs");
 
-    Typed<Scaffolding> SCAFFOLDING = getBlockType("scaffolding");
+    BlockType.Typed<Directional> PURPLE_GLAZED_TERRACOTTA = getBlockType("purple_glazed_terracotta");
 
-    Typed<BlockData> SCULK = getBlockType("sculk");
+    BlockType.Typed<Directional> PURPLE_SHULKER_BOX = getBlockType("purple_shulker_box");
 
-    Typed<SculkCatalyst> SCULK_CATALYST = getBlockType("sculk_catalyst");
+    BlockType.Typed<BlockData> PURPLE_STAINED_GLASS = getBlockType("purple_stained_glass");
 
-    Typed<SculkSensor> SCULK_SENSOR = getBlockType("sculk_sensor");
+    BlockType.Typed<GlassPane> PURPLE_STAINED_GLASS_PANE = getBlockType("purple_stained_glass_pane");
 
-    Typed<SculkShrieker> SCULK_SHRIEKER = getBlockType("sculk_shrieker");
+    BlockType.Typed<BlockData> PURPLE_TERRACOTTA = getBlockType("purple_terracotta");
 
-    Typed<SculkVein> SCULK_VEIN = getBlockType("sculk_vein");
+    BlockType.Typed<Directional> PURPLE_WALL_BANNER = getBlockType("purple_wall_banner");
 
-    Typed<BlockData> SEA_LANTERN = getBlockType("sea_lantern");
+    BlockType.Typed<BlockData> PURPLE_WOOL = getBlockType("purple_wool");
 
-    Typed<SeaPickle> SEA_PICKLE = getBlockType("sea_pickle");
+    BlockType.Typed<Slab> PURPLE_WOOL_SLAB = getBlockType("purple_wool_slab");
 
-    Typed<BlockData> SEAGRASS = getBlockType("seagrass");
+    BlockType.Typed<Stairs> PURPLE_WOOL_STAIRS = getBlockType("purple_wool_stairs");
 
-    Typed<BlockData> SHORT_DRY_GRASS = getBlockType("short_dry_grass");
+    BlockType.Typed<BlockData> PURPUR_BLOCK = getBlockType("purpur_block");
 
-    Typed<BlockData> SHORT_GRASS = getBlockType("short_grass");
+    BlockType.Typed<Orientable> PURPUR_PILLAR = getBlockType("purpur_pillar");
 
-    Typed<BlockData> SHROOMLIGHT = getBlockType("shroomlight");
+    BlockType.Typed<Slab> PURPUR_SLAB = getBlockType("purpur_slab");
 
-    Typed<Directional> SHULKER_BOX = getBlockType("shulker_box");
+    BlockType.Typed<Stairs> PURPUR_STAIRS = getBlockType("purpur_stairs");
 
-    Typed<Skull> SKELETON_SKULL = getBlockType("skeleton_skull");
+    BlockType.Typed<BlockData> QUARTZ_BLOCK = getBlockType("quartz_block");
 
-    Typed<WallSkull> SKELETON_WALL_SKULL = getBlockType("skeleton_wall_skull");
+    BlockType.Typed<BlockData> QUARTZ_BRICKS = getBlockType("quartz_bricks");
 
-    Typed<BlockData> SLIME_BLOCK = getBlockType("slime_block");
+    BlockType.Typed<Orientable> QUARTZ_PILLAR = getBlockType("quartz_pillar");
 
-    Typed<AmethystCluster> SMALL_AMETHYST_BUD = getBlockType("small_amethyst_bud");
+    BlockType.Typed<Slab> QUARTZ_SLAB = getBlockType("quartz_slab");
 
-    Typed<SmallDripleaf> SMALL_DRIPLEAF = getBlockType("small_dripleaf");
+    BlockType.Typed<Stairs> QUARTZ_STAIRS = getBlockType("quartz_stairs");
 
-    Typed<BlockData> SMITHING_TABLE = getBlockType("smithing_table");
+    BlockType.Typed<Rail> RAIL = getBlockType("rail");
 
-    Typed<Furnace> SMOKER = getBlockType("smoker");
+    BlockType.Typed<BlockData> RAW_COPPER_BLOCK = getBlockType("raw_copper_block");
 
-    Typed<BlockData> SMOOTH_BASALT = getBlockType("smooth_basalt");
+    BlockType.Typed<BlockData> RAW_GOLD_BLOCK = getBlockType("raw_gold_block");
 
-    Typed<BlockData> SMOOTH_QUARTZ = getBlockType("smooth_quartz");
+    BlockType.Typed<BlockData> RAW_IRON_BLOCK = getBlockType("raw_iron_block");
 
-    Typed<Slab> SMOOTH_QUARTZ_SLAB = getBlockType("smooth_quartz_slab");
+    BlockType.Typed<Rotatable> RED_BANNER = getBlockType("red_banner");
 
-    Typed<Stairs> SMOOTH_QUARTZ_STAIRS = getBlockType("smooth_quartz_stairs");
+    BlockType.Typed<Bed> RED_BED = getBlockType("red_bed");
 
-    Typed<BlockData> SMOOTH_RED_SANDSTONE = getBlockType("smooth_red_sandstone");
+    BlockType.Typed<Candle> RED_CANDLE = getBlockType("red_candle");
 
-    Typed<Slab> SMOOTH_RED_SANDSTONE_SLAB = getBlockType("smooth_red_sandstone_slab");
+    BlockType.Typed<Lightable> RED_CANDLE_CAKE = getBlockType("red_candle_cake");
 
-    Typed<Stairs> SMOOTH_RED_SANDSTONE_STAIRS = getBlockType("smooth_red_sandstone_stairs");
+    BlockType.Typed<BlockData> RED_CARPET = getBlockType("red_carpet");
 
-    Typed<BlockData> SMOOTH_SANDSTONE = getBlockType("smooth_sandstone");
+    BlockType.Typed<BlockData> RED_CONCRETE = getBlockType("red_concrete");
 
-    Typed<Slab> SMOOTH_SANDSTONE_SLAB = getBlockType("smooth_sandstone_slab");
+    BlockType.Typed<BlockData> RED_CONCRETE_POWDER = getBlockType("red_concrete_powder");
 
-    Typed<Stairs> SMOOTH_SANDSTONE_STAIRS = getBlockType("smooth_sandstone_stairs");
+    BlockType.Typed<Slab> RED_CONCRETE_SLAB = getBlockType("red_concrete_slab");
 
-    Typed<BlockData> SMOOTH_STONE = getBlockType("smooth_stone");
+    BlockType.Typed<Stairs> RED_CONCRETE_STAIRS = getBlockType("red_concrete_stairs");
 
-    Typed<Slab> SMOOTH_STONE_SLAB = getBlockType("smooth_stone_slab");
+    BlockType.Typed<Directional> RED_GLAZED_TERRACOTTA = getBlockType("red_glazed_terracotta");
 
-    Typed<Hatchable> SNIFFER_EGG = getBlockType("sniffer_egg");
+    BlockType.Typed<BlockData> RED_MUSHROOM = getBlockType("red_mushroom");
 
-    Typed<Snow> SNOW = getBlockType("snow");
+    BlockType.Typed<MultipleFacing> RED_MUSHROOM_BLOCK = getBlockType("red_mushroom_block");
 
-    Typed<BlockData> SNOW_BLOCK = getBlockType("snow_block");
+    BlockType.Typed<Slab> RED_NETHER_BRICK_SLAB = getBlockType("red_nether_brick_slab");
 
-    Typed<Campfire> SOUL_CAMPFIRE = getBlockType("soul_campfire");
+    BlockType.Typed<Stairs> RED_NETHER_BRICK_STAIRS = getBlockType("red_nether_brick_stairs");
 
-    Typed<BlockData> SOUL_FIRE = getBlockType("soul_fire");
+    BlockType.Typed<Wall> RED_NETHER_BRICK_WALL = getBlockType("red_nether_brick_wall");
 
-    Typed<Lantern> SOUL_LANTERN = getBlockType("soul_lantern");
+    BlockType.Typed<BlockData> RED_NETHER_BRICKS = getBlockType("red_nether_bricks");
 
-    Typed<BlockData> SOUL_SAND = getBlockType("soul_sand");
+    BlockType.Typed<Leaves> RED_POPLAR_LEAVES = getBlockType("red_poplar_leaves");
 
-    Typed<BlockData> SOUL_SOIL = getBlockType("soul_soil");
+    BlockType.Typed<BlockData> RED_SAND = getBlockType("red_sand");
 
-    Typed<BlockData> SOUL_TORCH = getBlockType("soul_torch");
+    BlockType.Typed<BlockData> RED_SANDSTONE = getBlockType("red_sandstone");
 
-    Typed<Directional> SOUL_WALL_TORCH = getBlockType("soul_wall_torch");
+    BlockType.Typed<Slab> RED_SANDSTONE_SLAB = getBlockType("red_sandstone_slab");
 
-    Typed<BlockData> SPAWNER = getBlockType("spawner");
+    BlockType.Typed<Stairs> RED_SANDSTONE_STAIRS = getBlockType("red_sandstone_stairs");
 
-    Typed<BlockData> SPONGE = getBlockType("sponge");
+    BlockType.Typed<Wall> RED_SANDSTONE_WALL = getBlockType("red_sandstone_wall");
 
-    Typed<BlockData> SPORE_BLOSSOM = getBlockType("spore_blossom");
+    BlockType.Typed<BlockData> RED_SHRUB = getBlockType("red_shrub");
 
-    Typed<Switch> SPRUCE_BUTTON = getBlockType("spruce_button");
+    BlockType.Typed<Directional> RED_SHULKER_BOX = getBlockType("red_shulker_box");
 
-    Typed<Door> SPRUCE_DOOR = getBlockType("spruce_door");
+    BlockType.Typed<BlockData> RED_STAINED_GLASS = getBlockType("red_stained_glass");
 
-    Typed<Fence> SPRUCE_FENCE = getBlockType("spruce_fence");
+    BlockType.Typed<GlassPane> RED_STAINED_GLASS_PANE = getBlockType("red_stained_glass_pane");
 
-    Typed<Gate> SPRUCE_FENCE_GATE = getBlockType("spruce_fence_gate");
+    BlockType.Typed<BlockData> RED_TERRACOTTA = getBlockType("red_terracotta");
 
-    Typed<HangingSign> SPRUCE_HANGING_SIGN = getBlockType("spruce_hanging_sign");
+    BlockType.Typed<BlockData> RED_TULIP = getBlockType("red_tulip");
 
-    Typed<Leaves> SPRUCE_LEAVES = getBlockType("spruce_leaves");
+    BlockType.Typed<Directional> RED_WALL_BANNER = getBlockType("red_wall_banner");
 
-    Typed<Orientable> SPRUCE_LOG = getBlockType("spruce_log");
+    BlockType.Typed<BlockData> RED_WOOL = getBlockType("red_wool");
 
-    Typed<BlockData> SPRUCE_PLANKS = getBlockType("spruce_planks");
+    BlockType.Typed<Slab> RED_WOOL_SLAB = getBlockType("red_wool_slab");
 
-    Typed<Powerable> SPRUCE_PRESSURE_PLATE = getBlockType("spruce_pressure_plate");
+    BlockType.Typed<Stairs> RED_WOOL_STAIRS = getBlockType("red_wool_stairs");
 
-    Typed<Sapling> SPRUCE_SAPLING = getBlockType("spruce_sapling");
+    BlockType.Typed<BlockData> REDSTONE_BLOCK = getBlockType("redstone_block");
 
-    Typed<Shelf> SPRUCE_SHELF = getBlockType("spruce_shelf");
+    BlockType.Typed<Lightable> REDSTONE_LAMP = getBlockType("redstone_lamp");
 
-    Typed<Sign> SPRUCE_SIGN = getBlockType("spruce_sign");
+    BlockType.Typed<Lightable> REDSTONE_ORE = getBlockType("redstone_ore");
 
-    Typed<Slab> SPRUCE_SLAB = getBlockType("spruce_slab");
+    BlockType.Typed<Lightable> REDSTONE_TORCH = getBlockType("redstone_torch");
 
-    Typed<Stairs> SPRUCE_STAIRS = getBlockType("spruce_stairs");
+    BlockType.Typed<RedstoneWallTorch> REDSTONE_WALL_TORCH = getBlockType("redstone_wall_torch");
 
-    Typed<TrapDoor> SPRUCE_TRAPDOOR = getBlockType("spruce_trapdoor");
+    BlockType.Typed<RedstoneWire> REDSTONE_WIRE = getBlockType("redstone_wire");
 
-    Typed<WallHangingSign> SPRUCE_WALL_HANGING_SIGN = getBlockType("spruce_wall_hanging_sign");
+    BlockType.Typed<BlockData> REINFORCED_DEEPSLATE = getBlockType("reinforced_deepslate");
 
-    Typed<WallSign> SPRUCE_WALL_SIGN = getBlockType("spruce_wall_sign");
+    BlockType.Typed<Repeater> REPEATER = getBlockType("repeater");
 
-    Typed<Orientable> SPRUCE_WOOD = getBlockType("spruce_wood");
+    BlockType.Typed<CommandBlock> REPEATING_COMMAND_BLOCK = getBlockType("repeating_command_block");
 
-    Typed<Piston> STICKY_PISTON = getBlockType("sticky_piston");
+    BlockType.Typed<BlockData> RESIN_BLOCK = getBlockType("resin_block");
 
-    Typed<BlockData> STONE = getBlockType("stone");
+    BlockType.Typed<Slab> RESIN_BRICK_SLAB = getBlockType("resin_brick_slab");
 
-    Typed<Slab> STONE_BRICK_SLAB = getBlockType("stone_brick_slab");
+    BlockType.Typed<Stairs> RESIN_BRICK_STAIRS = getBlockType("resin_brick_stairs");
 
-    Typed<Stairs> STONE_BRICK_STAIRS = getBlockType("stone_brick_stairs");
+    BlockType.Typed<Wall> RESIN_BRICK_WALL = getBlockType("resin_brick_wall");
 
-    Typed<Wall> STONE_BRICK_WALL = getBlockType("stone_brick_wall");
+    BlockType.Typed<BlockData> RESIN_BRICKS = getBlockType("resin_bricks");
 
-    Typed<BlockData> STONE_BRICKS = getBlockType("stone_bricks");
+    BlockType.Typed<ResinClump> RESIN_CLUMP = getBlockType("resin_clump");
 
-    Typed<Switch> STONE_BUTTON = getBlockType("stone_button");
+    BlockType.Typed<RespawnAnchor> RESPAWN_ANCHOR = getBlockType("respawn_anchor");
 
-    Typed<Powerable> STONE_PRESSURE_PLATE = getBlockType("stone_pressure_plate");
+    BlockType.Typed<BlockData> ROOTED_DIRT = getBlockType("rooted_dirt");
 
-    Typed<Slab> STONE_SLAB = getBlockType("stone_slab");
+    BlockType.Typed<Bisected> ROSE_BUSH = getBlockType("rose_bush");
 
-    Typed<Stairs> STONE_STAIRS = getBlockType("stone_stairs");
+    BlockType.Typed<BlockData> SAND = getBlockType("sand");
 
-    Typed<Directional> STONECUTTER = getBlockType("stonecutter");
+    BlockType.Typed<BlockData> SANDSTONE = getBlockType("sandstone");
 
-    Typed<Orientable> STRIPPED_ACACIA_LOG = getBlockType("stripped_acacia_log");
+    BlockType.Typed<Slab> SANDSTONE_SLAB = getBlockType("sandstone_slab");
 
-    Typed<Orientable> STRIPPED_ACACIA_WOOD = getBlockType("stripped_acacia_wood");
+    BlockType.Typed<Stairs> SANDSTONE_STAIRS = getBlockType("sandstone_stairs");
 
-    Typed<Orientable> STRIPPED_BAMBOO_BLOCK = getBlockType("stripped_bamboo_block");
+    BlockType.Typed<Wall> SANDSTONE_WALL = getBlockType("sandstone_wall");
 
-    Typed<Orientable> STRIPPED_BIRCH_LOG = getBlockType("stripped_birch_log");
+    BlockType.Typed<Scaffolding> SCAFFOLDING = getBlockType("scaffolding");
 
-    Typed<Orientable> STRIPPED_BIRCH_WOOD = getBlockType("stripped_birch_wood");
+    BlockType.Typed<BlockData> SCULK = getBlockType("sculk");
 
-    Typed<Orientable> STRIPPED_CHERRY_LOG = getBlockType("stripped_cherry_log");
+    BlockType.Typed<SculkCatalyst> SCULK_CATALYST = getBlockType("sculk_catalyst");
 
-    Typed<Orientable> STRIPPED_CHERRY_WOOD = getBlockType("stripped_cherry_wood");
+    BlockType.Typed<SculkSensor> SCULK_SENSOR = getBlockType("sculk_sensor");
 
-    Typed<Orientable> STRIPPED_CRIMSON_HYPHAE = getBlockType("stripped_crimson_hyphae");
+    BlockType.Typed<SculkShrieker> SCULK_SHRIEKER = getBlockType("sculk_shrieker");
 
-    Typed<Orientable> STRIPPED_CRIMSON_STEM = getBlockType("stripped_crimson_stem");
+    BlockType.Typed<SculkVein> SCULK_VEIN = getBlockType("sculk_vein");
 
-    Typed<Orientable> STRIPPED_DARK_OAK_LOG = getBlockType("stripped_dark_oak_log");
+    BlockType.Typed<BlockData> SEA_LANTERN = getBlockType("sea_lantern");
 
-    Typed<Orientable> STRIPPED_DARK_OAK_WOOD = getBlockType("stripped_dark_oak_wood");
+    BlockType.Typed<SeaPickle> SEA_PICKLE = getBlockType("sea_pickle");
 
-    Typed<Orientable> STRIPPED_JUNGLE_LOG = getBlockType("stripped_jungle_log");
+    BlockType.Typed<BlockData> SEAGRASS = getBlockType("seagrass");
 
-    Typed<Orientable> STRIPPED_JUNGLE_WOOD = getBlockType("stripped_jungle_wood");
+    BlockType.Typed<ShelfMushroom> SHELF_MUSHROOM = getBlockType("shelf_mushroom");
 
-    Typed<Orientable> STRIPPED_MANGROVE_LOG = getBlockType("stripped_mangrove_log");
+    BlockType.Typed<BlockData> SHORT_DRY_GRASS = getBlockType("short_dry_grass");
 
-    Typed<Orientable> STRIPPED_MANGROVE_WOOD = getBlockType("stripped_mangrove_wood");
+    BlockType.Typed<BlockData> SHORT_GRASS = getBlockType("short_grass");
 
-    Typed<Orientable> STRIPPED_OAK_LOG = getBlockType("stripped_oak_log");
+    BlockType.Typed<BlockData> SHROOMLIGHT = getBlockType("shroomlight");
 
-    Typed<Orientable> STRIPPED_OAK_WOOD = getBlockType("stripped_oak_wood");
+    BlockType.Typed<Directional> SHULKER_BOX = getBlockType("shulker_box");
 
-    Typed<Orientable> STRIPPED_PALE_OAK_LOG = getBlockType("stripped_pale_oak_log");
+    BlockType.Typed<Skull> SKELETON_SKULL = getBlockType("skeleton_skull");
 
-    Typed<Orientable> STRIPPED_PALE_OAK_WOOD = getBlockType("stripped_pale_oak_wood");
+    BlockType.Typed<WallSkull> SKELETON_WALL_SKULL = getBlockType("skeleton_wall_skull");
 
-    Typed<Orientable> STRIPPED_SPRUCE_LOG = getBlockType("stripped_spruce_log");
+    BlockType.Typed<BlockData> SLIME_BLOCK = getBlockType("slime_block");
 
-    Typed<Orientable> STRIPPED_SPRUCE_WOOD = getBlockType("stripped_spruce_wood");
+    BlockType.Typed<AmethystCluster> SMALL_AMETHYST_BUD = getBlockType("small_amethyst_bud");
 
-    Typed<Orientable> STRIPPED_WARPED_HYPHAE = getBlockType("stripped_warped_hyphae");
+    BlockType.Typed<SmallDripleaf> SMALL_DRIPLEAF = getBlockType("small_dripleaf");
 
-    Typed<Orientable> STRIPPED_WARPED_STEM = getBlockType("stripped_warped_stem");
+    BlockType.Typed<BlockData> SMITHING_TABLE = getBlockType("smithing_table");
 
-    Typed<StructureBlock> STRUCTURE_BLOCK = getBlockType("structure_block");
+    BlockType.Typed<Furnace> SMOKER = getBlockType("smoker");
 
-    Typed<BlockData> STRUCTURE_VOID = getBlockType("structure_void");
+    BlockType.Typed<BlockData> SMOOTH_BASALT = getBlockType("smooth_basalt");
 
-    Typed<Ageable> SUGAR_CANE = getBlockType("sugar_cane");
+    BlockType.Typed<BlockData> SMOOTH_QUARTZ = getBlockType("smooth_quartz");
 
-    Typed<BlockData> SULFUR = getBlockType("sulfur");
+    BlockType.Typed<Slab> SMOOTH_QUARTZ_SLAB = getBlockType("smooth_quartz_slab");
 
-    Typed<Slab> SULFUR_BRICK_SLAB = getBlockType("sulfur_brick_slab");
+    BlockType.Typed<Stairs> SMOOTH_QUARTZ_STAIRS = getBlockType("smooth_quartz_stairs");
 
-    Typed<Stairs> SULFUR_BRICK_STAIRS = getBlockType("sulfur_brick_stairs");
+    BlockType.Typed<BlockData> SMOOTH_RED_SANDSTONE = getBlockType("smooth_red_sandstone");
 
-    Typed<Wall> SULFUR_BRICK_WALL = getBlockType("sulfur_brick_wall");
+    BlockType.Typed<Slab> SMOOTH_RED_SANDSTONE_SLAB = getBlockType("smooth_red_sandstone_slab");
 
-    Typed<BlockData> SULFUR_BRICKS = getBlockType("sulfur_bricks");
+    BlockType.Typed<Stairs> SMOOTH_RED_SANDSTONE_STAIRS = getBlockType("smooth_red_sandstone_stairs");
 
-    Typed<Slab> SULFUR_SLAB = getBlockType("sulfur_slab");
+    BlockType.Typed<BlockData> SMOOTH_SANDSTONE = getBlockType("smooth_sandstone");
 
-    Typed<Speleothem> SULFUR_SPIKE = getBlockType("sulfur_spike");
+    BlockType.Typed<Slab> SMOOTH_SANDSTONE_SLAB = getBlockType("smooth_sandstone_slab");
 
-    Typed<Stairs> SULFUR_STAIRS = getBlockType("sulfur_stairs");
+    BlockType.Typed<Stairs> SMOOTH_SANDSTONE_STAIRS = getBlockType("smooth_sandstone_stairs");
 
-    Typed<Wall> SULFUR_WALL = getBlockType("sulfur_wall");
+    BlockType.Typed<BlockData> SMOOTH_STONE = getBlockType("smooth_stone");
 
-    Typed<Bisected> SUNFLOWER = getBlockType("sunflower");
+    BlockType.Typed<Slab> SMOOTH_STONE_SLAB = getBlockType("smooth_stone_slab");
 
-    Typed<Brushable> SUSPICIOUS_GRAVEL = getBlockType("suspicious_gravel");
+    BlockType.Typed<Hatchable> SNIFFER_EGG = getBlockType("sniffer_egg");
 
-    Typed<Brushable> SUSPICIOUS_SAND = getBlockType("suspicious_sand");
+    BlockType.Typed<Snow> SNOW = getBlockType("snow");
 
-    Typed<Ageable> SWEET_BERRY_BUSH = getBlockType("sweet_berry_bush");
+    BlockType.Typed<BlockData> SNOW_BLOCK = getBlockType("snow_block");
 
-    Typed<BlockData> TALL_DRY_GRASS = getBlockType("tall_dry_grass");
+    BlockType.Typed<Campfire> SOUL_CAMPFIRE = getBlockType("soul_campfire");
 
-    Typed<Bisected> TALL_GRASS = getBlockType("tall_grass");
+    BlockType.Typed<BlockData> SOUL_FIRE = getBlockType("soul_fire");
 
-    Typed<Bisected> TALL_SEAGRASS = getBlockType("tall_seagrass");
+    BlockType.Typed<Lantern> SOUL_LANTERN = getBlockType("soul_lantern");
 
-    Typed<AnaloguePowerable> TARGET = getBlockType("target");
+    BlockType.Typed<BlockData> SOUL_SAND = getBlockType("soul_sand");
 
-    Typed<BlockData> TERRACOTTA = getBlockType("terracotta");
+    BlockType.Typed<BlockData> SOUL_SOIL = getBlockType("soul_soil");
 
-    Typed<TestBlock> TEST_BLOCK = getBlockType("test_block");
+    BlockType.Typed<BlockData> SOUL_TORCH = getBlockType("soul_torch");
 
-    Typed<BlockData> TEST_INSTANCE_BLOCK = getBlockType("test_instance_block");
+    BlockType.Typed<Directional> SOUL_WALL_TORCH = getBlockType("soul_wall_torch");
 
-    Typed<BlockData> TINTED_GLASS = getBlockType("tinted_glass");
+    BlockType.Typed<BlockData> SPAWNER = getBlockType("spawner");
 
-    Typed<TNT> TNT = getBlockType("tnt");
+    BlockType.Typed<BlockData> SPONGE = getBlockType("sponge");
 
-    Typed<BlockData> TORCH = getBlockType("torch");
+    BlockType.Typed<BlockData> SPORE_BLOSSOM = getBlockType("spore_blossom");
 
-    Typed<BlockData> TORCHFLOWER = getBlockType("torchflower");
+    BlockType.Typed<Switch> SPRUCE_BUTTON = getBlockType("spruce_button");
 
-    Typed<Ageable> TORCHFLOWER_CROP = getBlockType("torchflower_crop");
+    BlockType.Typed<Door> SPRUCE_DOOR = getBlockType("spruce_door");
 
-    Typed<Chest> TRAPPED_CHEST = getBlockType("trapped_chest");
+    BlockType.Typed<Fence> SPRUCE_FENCE = getBlockType("spruce_fence");
 
-    Typed<TrialSpawner> TRIAL_SPAWNER = getBlockType("trial_spawner");
+    BlockType.Typed<Gate> SPRUCE_FENCE_GATE = getBlockType("spruce_fence_gate");
 
-    Typed<Tripwire> TRIPWIRE = getBlockType("tripwire");
+    BlockType.Typed<HangingSign> SPRUCE_HANGING_SIGN = getBlockType("spruce_hanging_sign");
 
-    Typed<TripwireHook> TRIPWIRE_HOOK = getBlockType("tripwire_hook");
+    BlockType.Typed<Leaves> SPRUCE_LEAVES = getBlockType("spruce_leaves");
 
-    Typed<Waterlogged> TUBE_CORAL = getBlockType("tube_coral");
+    BlockType.Typed<Orientable> SPRUCE_LOG = getBlockType("spruce_log");
 
-    Typed<BlockData> TUBE_CORAL_BLOCK = getBlockType("tube_coral_block");
+    BlockType.Typed<BlockData> SPRUCE_PLANKS = getBlockType("spruce_planks");
 
-    Typed<Waterlogged> TUBE_CORAL_FAN = getBlockType("tube_coral_fan");
+    BlockType.Typed<Powerable> SPRUCE_PRESSURE_PLATE = getBlockType("spruce_pressure_plate");
 
-    Typed<CoralWallFan> TUBE_CORAL_WALL_FAN = getBlockType("tube_coral_wall_fan");
+    BlockType.Typed<Sapling> SPRUCE_SAPLING = getBlockType("spruce_sapling");
 
-    Typed<BlockData> TUFF = getBlockType("tuff");
+    BlockType.Typed<Shelf> SPRUCE_SHELF = getBlockType("spruce_shelf");
 
-    Typed<Slab> TUFF_BRICK_SLAB = getBlockType("tuff_brick_slab");
+    BlockType.Typed<Sign> SPRUCE_SIGN = getBlockType("spruce_sign");
 
-    Typed<Stairs> TUFF_BRICK_STAIRS = getBlockType("tuff_brick_stairs");
+    BlockType.Typed<Slab> SPRUCE_SLAB = getBlockType("spruce_slab");
 
-    Typed<Wall> TUFF_BRICK_WALL = getBlockType("tuff_brick_wall");
+    BlockType.Typed<Stairs> SPRUCE_STAIRS = getBlockType("spruce_stairs");
 
-    Typed<BlockData> TUFF_BRICKS = getBlockType("tuff_bricks");
+    BlockType.Typed<TrapDoor> SPRUCE_TRAPDOOR = getBlockType("spruce_trapdoor");
 
-    Typed<Slab> TUFF_SLAB = getBlockType("tuff_slab");
+    BlockType.Typed<WallHangingSign> SPRUCE_WALL_HANGING_SIGN = getBlockType("spruce_wall_hanging_sign");
 
-    Typed<Stairs> TUFF_STAIRS = getBlockType("tuff_stairs");
+    BlockType.Typed<WallSign> SPRUCE_WALL_SIGN = getBlockType("spruce_wall_sign");
 
-    Typed<Wall> TUFF_WALL = getBlockType("tuff_wall");
+    BlockType.Typed<Orientable> SPRUCE_WOOD = getBlockType("spruce_wood");
 
-    Typed<TurtleEgg> TURTLE_EGG = getBlockType("turtle_egg");
+    BlockType.Typed<Piston> STICKY_PISTON = getBlockType("sticky_piston");
 
-    Typed<Ageable> TWISTING_VINES = getBlockType("twisting_vines");
+    BlockType.Typed<BlockData> STONE = getBlockType("stone");
 
-    Typed<BlockData> TWISTING_VINES_PLANT = getBlockType("twisting_vines_plant");
+    BlockType.Typed<Slab> STONE_BRICK_SLAB = getBlockType("stone_brick_slab");
 
-    Typed<Vault> VAULT = getBlockType("vault");
+    BlockType.Typed<Stairs> STONE_BRICK_STAIRS = getBlockType("stone_brick_stairs");
 
-    Typed<Orientable> VERDANT_FROGLIGHT = getBlockType("verdant_froglight");
+    BlockType.Typed<Wall> STONE_BRICK_WALL = getBlockType("stone_brick_wall");
 
-    Typed<MultipleFacing> VINE = getBlockType("vine");
+    BlockType.Typed<BlockData> STONE_BRICKS = getBlockType("stone_bricks");
 
-    Typed<BlockData> VOID_AIR = getBlockType("void_air");
+    BlockType.Typed<Switch> STONE_BUTTON = getBlockType("stone_button");
 
-    Typed<Directional> WALL_TORCH = getBlockType("wall_torch");
+    BlockType.Typed<Powerable> STONE_PRESSURE_PLATE = getBlockType("stone_pressure_plate");
 
-    Typed<Switch> WARPED_BUTTON = getBlockType("warped_button");
+    BlockType.Typed<Slab> STONE_SLAB = getBlockType("stone_slab");
 
-    Typed<Door> WARPED_DOOR = getBlockType("warped_door");
+    BlockType.Typed<Stairs> STONE_STAIRS = getBlockType("stone_stairs");
 
-    Typed<Fence> WARPED_FENCE = getBlockType("warped_fence");
+    BlockType.Typed<Directional> STONECUTTER = getBlockType("stonecutter");
 
-    Typed<Gate> WARPED_FENCE_GATE = getBlockType("warped_fence_gate");
+    BlockType.Typed<Bed> STRAW_BED = getBlockType("straw_bed");
 
-    Typed<BlockData> WARPED_FUNGUS = getBlockType("warped_fungus");
+    BlockType.Typed<Orientable> STRIPPED_ACACIA_LOG = getBlockType("stripped_acacia_log");
 
-    Typed<HangingSign> WARPED_HANGING_SIGN = getBlockType("warped_hanging_sign");
+    BlockType.Typed<Orientable> STRIPPED_ACACIA_WOOD = getBlockType("stripped_acacia_wood");
 
-    Typed<Orientable> WARPED_HYPHAE = getBlockType("warped_hyphae");
+    BlockType.Typed<Orientable> STRIPPED_BAMBOO_BLOCK = getBlockType("stripped_bamboo_block");
 
-    Typed<BlockData> WARPED_NYLIUM = getBlockType("warped_nylium");
+    BlockType.Typed<Orientable> STRIPPED_BIRCH_LOG = getBlockType("stripped_birch_log");
 
-    Typed<BlockData> WARPED_PLANKS = getBlockType("warped_planks");
+    BlockType.Typed<Orientable> STRIPPED_BIRCH_WOOD = getBlockType("stripped_birch_wood");
 
-    Typed<Powerable> WARPED_PRESSURE_PLATE = getBlockType("warped_pressure_plate");
+    BlockType.Typed<Orientable> STRIPPED_CHERRY_LOG = getBlockType("stripped_cherry_log");
 
-    Typed<BlockData> WARPED_ROOTS = getBlockType("warped_roots");
+    BlockType.Typed<Orientable> STRIPPED_CHERRY_WOOD = getBlockType("stripped_cherry_wood");
 
-    Typed<Shelf> WARPED_SHELF = getBlockType("warped_shelf");
+    BlockType.Typed<Orientable> STRIPPED_CRIMSON_HYPHAE = getBlockType("stripped_crimson_hyphae");
 
-    Typed<Sign> WARPED_SIGN = getBlockType("warped_sign");
+    BlockType.Typed<Orientable> STRIPPED_CRIMSON_STEM = getBlockType("stripped_crimson_stem");
 
-    Typed<Slab> WARPED_SLAB = getBlockType("warped_slab");
+    BlockType.Typed<Orientable> STRIPPED_DARK_OAK_LOG = getBlockType("stripped_dark_oak_log");
 
-    Typed<Stairs> WARPED_STAIRS = getBlockType("warped_stairs");
+    BlockType.Typed<Orientable> STRIPPED_DARK_OAK_WOOD = getBlockType("stripped_dark_oak_wood");
 
-    Typed<Orientable> WARPED_STEM = getBlockType("warped_stem");
+    BlockType.Typed<Orientable> STRIPPED_JUNGLE_LOG = getBlockType("stripped_jungle_log");
 
-    Typed<TrapDoor> WARPED_TRAPDOOR = getBlockType("warped_trapdoor");
+    BlockType.Typed<Orientable> STRIPPED_JUNGLE_WOOD = getBlockType("stripped_jungle_wood");
 
-    Typed<WallHangingSign> WARPED_WALL_HANGING_SIGN = getBlockType("warped_wall_hanging_sign");
+    BlockType.Typed<Orientable> STRIPPED_MANGROVE_LOG = getBlockType("stripped_mangrove_log");
 
-    Typed<WallSign> WARPED_WALL_SIGN = getBlockType("warped_wall_sign");
+    BlockType.Typed<Orientable> STRIPPED_MANGROVE_WOOD = getBlockType("stripped_mangrove_wood");
 
-    Typed<BlockData> WARPED_WART_BLOCK = getBlockType("warped_wart_block");
+    BlockType.Typed<Orientable> STRIPPED_OAK_LOG = getBlockType("stripped_oak_log");
 
-    Typed<Levelled> WATER = getBlockType("water");
+    BlockType.Typed<Orientable> STRIPPED_OAK_WOOD = getBlockType("stripped_oak_wood");
 
-    Typed<Levelled> WATER_CAULDRON = getBlockType("water_cauldron");
+    BlockType.Typed<Orientable> STRIPPED_PALE_OAK_LOG = getBlockType("stripped_pale_oak_log");
 
-    Typed<BlockData> WAXED_CHISELED_COPPER = getBlockType("waxed_chiseled_copper");
+    BlockType.Typed<Orientable> STRIPPED_PALE_OAK_WOOD = getBlockType("stripped_pale_oak_wood");
 
-    Typed<Fence> WAXED_COPPER_BARS = getBlockType("waxed_copper_bars");
+    BlockType.Typed<Orientable> STRIPPED_POPLAR_LOG = getBlockType("stripped_poplar_log");
 
-    Typed<BlockData> WAXED_COPPER_BLOCK = getBlockType("waxed_copper_block");
+    BlockType.Typed<Orientable> STRIPPED_POPLAR_WOOD = getBlockType("stripped_poplar_wood");
 
-    Typed<CopperBulb> WAXED_COPPER_BULB = getBlockType("waxed_copper_bulb");
+    BlockType.Typed<Orientable> STRIPPED_SPRUCE_LOG = getBlockType("stripped_spruce_log");
 
-    Typed<Chain> WAXED_COPPER_CHAIN = getBlockType("waxed_copper_chain");
+    BlockType.Typed<Orientable> STRIPPED_SPRUCE_WOOD = getBlockType("stripped_spruce_wood");
 
-    Typed<Chest> WAXED_COPPER_CHEST = getBlockType("waxed_copper_chest");
+    BlockType.Typed<Orientable> STRIPPED_WARPED_HYPHAE = getBlockType("stripped_warped_hyphae");
 
-    Typed<Door> WAXED_COPPER_DOOR = getBlockType("waxed_copper_door");
+    BlockType.Typed<Orientable> STRIPPED_WARPED_STEM = getBlockType("stripped_warped_stem");
 
-    Typed<CopperGolemStatue> WAXED_COPPER_GOLEM_STATUE = getBlockType("waxed_copper_golem_statue");
+    BlockType.Typed<StructureBlock> STRUCTURE_BLOCK = getBlockType("structure_block");
 
-    Typed<Waterlogged> WAXED_COPPER_GRATE = getBlockType("waxed_copper_grate");
+    BlockType.Typed<BlockData> STRUCTURE_VOID = getBlockType("structure_void");
 
-    Typed<Lantern> WAXED_COPPER_LANTERN = getBlockType("waxed_copper_lantern");
+    BlockType.Typed<Ageable> SUGAR_CANE = getBlockType("sugar_cane");
 
-    Typed<TrapDoor> WAXED_COPPER_TRAPDOOR = getBlockType("waxed_copper_trapdoor");
+    BlockType.Typed<BlockData> SULFUR = getBlockType("sulfur");
 
-    Typed<BlockData> WAXED_CUT_COPPER = getBlockType("waxed_cut_copper");
+    BlockType.Typed<Slab> SULFUR_BRICK_SLAB = getBlockType("sulfur_brick_slab");
 
-    Typed<Slab> WAXED_CUT_COPPER_SLAB = getBlockType("waxed_cut_copper_slab");
+    BlockType.Typed<Stairs> SULFUR_BRICK_STAIRS = getBlockType("sulfur_brick_stairs");
 
-    Typed<Stairs> WAXED_CUT_COPPER_STAIRS = getBlockType("waxed_cut_copper_stairs");
+    BlockType.Typed<Wall> SULFUR_BRICK_WALL = getBlockType("sulfur_brick_wall");
 
-    Typed<BlockData> WAXED_EXPOSED_CHISELED_COPPER = getBlockType("waxed_exposed_chiseled_copper");
+    BlockType.Typed<BlockData> SULFUR_BRICKS = getBlockType("sulfur_bricks");
 
-    Typed<BlockData> WAXED_EXPOSED_COPPER = getBlockType("waxed_exposed_copper");
+    BlockType.Typed<Slab> SULFUR_SLAB = getBlockType("sulfur_slab");
 
-    Typed<Fence> WAXED_EXPOSED_COPPER_BARS = getBlockType("waxed_exposed_copper_bars");
+    BlockType.Typed<Speleothem> SULFUR_SPIKE = getBlockType("sulfur_spike");
 
-    Typed<CopperBulb> WAXED_EXPOSED_COPPER_BULB = getBlockType("waxed_exposed_copper_bulb");
+    BlockType.Typed<Stairs> SULFUR_STAIRS = getBlockType("sulfur_stairs");
 
-    Typed<Chain> WAXED_EXPOSED_COPPER_CHAIN = getBlockType("waxed_exposed_copper_chain");
+    BlockType.Typed<Wall> SULFUR_WALL = getBlockType("sulfur_wall");
 
-    Typed<Chest> WAXED_EXPOSED_COPPER_CHEST = getBlockType("waxed_exposed_copper_chest");
+    BlockType.Typed<Bisected> SUNFLOWER = getBlockType("sunflower");
 
-    Typed<Door> WAXED_EXPOSED_COPPER_DOOR = getBlockType("waxed_exposed_copper_door");
+    BlockType.Typed<Brushable> SUSPICIOUS_GRAVEL = getBlockType("suspicious_gravel");
 
-    Typed<CopperGolemStatue> WAXED_EXPOSED_COPPER_GOLEM_STATUE = getBlockType("waxed_exposed_copper_golem_statue");
+    BlockType.Typed<Brushable> SUSPICIOUS_SAND = getBlockType("suspicious_sand");
 
-    Typed<Waterlogged> WAXED_EXPOSED_COPPER_GRATE = getBlockType("waxed_exposed_copper_grate");
+    BlockType.Typed<Ageable> SWEET_BERRY_BUSH = getBlockType("sweet_berry_bush");
 
-    Typed<Lantern> WAXED_EXPOSED_COPPER_LANTERN = getBlockType("waxed_exposed_copper_lantern");
+    BlockType.Typed<BlockData> TALL_DRY_GRASS = getBlockType("tall_dry_grass");
 
-    Typed<TrapDoor> WAXED_EXPOSED_COPPER_TRAPDOOR = getBlockType("waxed_exposed_copper_trapdoor");
+    BlockType.Typed<Bisected> TALL_GRASS = getBlockType("tall_grass");
 
-    Typed<BlockData> WAXED_EXPOSED_CUT_COPPER = getBlockType("waxed_exposed_cut_copper");
+    BlockType.Typed<Bisected> TALL_SEAGRASS = getBlockType("tall_seagrass");
 
-    Typed<Slab> WAXED_EXPOSED_CUT_COPPER_SLAB = getBlockType("waxed_exposed_cut_copper_slab");
+    BlockType.Typed<AnaloguePowerable> TARGET = getBlockType("target");
 
-    Typed<Stairs> WAXED_EXPOSED_CUT_COPPER_STAIRS = getBlockType("waxed_exposed_cut_copper_stairs");
+    BlockType.Typed<BlockData> TERRACOTTA = getBlockType("terracotta");
 
-    Typed<LightningRod> WAXED_EXPOSED_LIGHTNING_ROD = getBlockType("waxed_exposed_lightning_rod");
+    BlockType.Typed<TestBlock> TEST_BLOCK = getBlockType("test_block");
 
-    Typed<LightningRod> WAXED_LIGHTNING_ROD = getBlockType("waxed_lightning_rod");
+    BlockType.Typed<BlockData> TEST_INSTANCE_BLOCK = getBlockType("test_instance_block");
 
-    Typed<BlockData> WAXED_OXIDIZED_CHISELED_COPPER = getBlockType("waxed_oxidized_chiseled_copper");
+    BlockType.Typed<BlockData> TINTED_GLASS = getBlockType("tinted_glass");
 
-    Typed<BlockData> WAXED_OXIDIZED_COPPER = getBlockType("waxed_oxidized_copper");
+    BlockType.Typed<TNT> TNT = getBlockType("tnt");
 
-    Typed<Fence> WAXED_OXIDIZED_COPPER_BARS = getBlockType("waxed_oxidized_copper_bars");
+    BlockType.Typed<BlockData> TORCH = getBlockType("torch");
 
-    Typed<CopperBulb> WAXED_OXIDIZED_COPPER_BULB = getBlockType("waxed_oxidized_copper_bulb");
+    BlockType.Typed<BlockData> TORCHFLOWER = getBlockType("torchflower");
 
-    Typed<Chain> WAXED_OXIDIZED_COPPER_CHAIN = getBlockType("waxed_oxidized_copper_chain");
+    BlockType.Typed<Ageable> TORCHFLOWER_CROP = getBlockType("torchflower_crop");
 
-    Typed<Chest> WAXED_OXIDIZED_COPPER_CHEST = getBlockType("waxed_oxidized_copper_chest");
+    BlockType.Typed<Chest> TRAPPED_CHEST = getBlockType("trapped_chest");
 
-    Typed<Door> WAXED_OXIDIZED_COPPER_DOOR = getBlockType("waxed_oxidized_copper_door");
+    BlockType.Typed<TrialSpawner> TRIAL_SPAWNER = getBlockType("trial_spawner");
 
-    Typed<CopperGolemStatue> WAXED_OXIDIZED_COPPER_GOLEM_STATUE = getBlockType("waxed_oxidized_copper_golem_statue");
+    BlockType.Typed<Tripwire> TRIPWIRE = getBlockType("tripwire");
 
-    Typed<Waterlogged> WAXED_OXIDIZED_COPPER_GRATE = getBlockType("waxed_oxidized_copper_grate");
+    BlockType.Typed<TripwireHook> TRIPWIRE_HOOK = getBlockType("tripwire_hook");
 
-    Typed<Lantern> WAXED_OXIDIZED_COPPER_LANTERN = getBlockType("waxed_oxidized_copper_lantern");
+    BlockType.Typed<Waterlogged> TUBE_CORAL = getBlockType("tube_coral");
 
-    Typed<TrapDoor> WAXED_OXIDIZED_COPPER_TRAPDOOR = getBlockType("waxed_oxidized_copper_trapdoor");
+    BlockType.Typed<BlockData> TUBE_CORAL_BLOCK = getBlockType("tube_coral_block");
 
-    Typed<BlockData> WAXED_OXIDIZED_CUT_COPPER = getBlockType("waxed_oxidized_cut_copper");
+    BlockType.Typed<Waterlogged> TUBE_CORAL_FAN = getBlockType("tube_coral_fan");
 
-    Typed<Slab> WAXED_OXIDIZED_CUT_COPPER_SLAB = getBlockType("waxed_oxidized_cut_copper_slab");
+    BlockType.Typed<CoralWallFan> TUBE_CORAL_WALL_FAN = getBlockType("tube_coral_wall_fan");
 
-    Typed<Stairs> WAXED_OXIDIZED_CUT_COPPER_STAIRS = getBlockType("waxed_oxidized_cut_copper_stairs");
+    BlockType.Typed<BlockData> TUFF = getBlockType("tuff");
 
-    Typed<LightningRod> WAXED_OXIDIZED_LIGHTNING_ROD = getBlockType("waxed_oxidized_lightning_rod");
+    BlockType.Typed<Slab> TUFF_BRICK_SLAB = getBlockType("tuff_brick_slab");
 
-    Typed<BlockData> WAXED_WEATHERED_CHISELED_COPPER = getBlockType("waxed_weathered_chiseled_copper");
+    BlockType.Typed<Stairs> TUFF_BRICK_STAIRS = getBlockType("tuff_brick_stairs");
 
-    Typed<BlockData> WAXED_WEATHERED_COPPER = getBlockType("waxed_weathered_copper");
+    BlockType.Typed<Wall> TUFF_BRICK_WALL = getBlockType("tuff_brick_wall");
 
-    Typed<Fence> WAXED_WEATHERED_COPPER_BARS = getBlockType("waxed_weathered_copper_bars");
+    BlockType.Typed<BlockData> TUFF_BRICKS = getBlockType("tuff_bricks");
 
-    Typed<CopperBulb> WAXED_WEATHERED_COPPER_BULB = getBlockType("waxed_weathered_copper_bulb");
+    BlockType.Typed<Slab> TUFF_SLAB = getBlockType("tuff_slab");
 
-    Typed<Chain> WAXED_WEATHERED_COPPER_CHAIN = getBlockType("waxed_weathered_copper_chain");
+    BlockType.Typed<Stairs> TUFF_STAIRS = getBlockType("tuff_stairs");
 
-    Typed<Chest> WAXED_WEATHERED_COPPER_CHEST = getBlockType("waxed_weathered_copper_chest");
+    BlockType.Typed<Wall> TUFF_WALL = getBlockType("tuff_wall");
 
-    Typed<Door> WAXED_WEATHERED_COPPER_DOOR = getBlockType("waxed_weathered_copper_door");
+    BlockType.Typed<TurtleEgg> TURTLE_EGG = getBlockType("turtle_egg");
 
-    Typed<CopperGolemStatue> WAXED_WEATHERED_COPPER_GOLEM_STATUE = getBlockType("waxed_weathered_copper_golem_statue");
+    BlockType.Typed<Ageable> TWISTING_VINES = getBlockType("twisting_vines");
 
-    Typed<Waterlogged> WAXED_WEATHERED_COPPER_GRATE = getBlockType("waxed_weathered_copper_grate");
+    BlockType.Typed<BlockData> TWISTING_VINES_PLANT = getBlockType("twisting_vines_plant");
 
-    Typed<Lantern> WAXED_WEATHERED_COPPER_LANTERN = getBlockType("waxed_weathered_copper_lantern");
+    BlockType.Typed<Vault> VAULT = getBlockType("vault");
 
-    Typed<TrapDoor> WAXED_WEATHERED_COPPER_TRAPDOOR = getBlockType("waxed_weathered_copper_trapdoor");
+    BlockType.Typed<Orientable> VERDANT_FROGLIGHT = getBlockType("verdant_froglight");
 
-    Typed<BlockData> WAXED_WEATHERED_CUT_COPPER = getBlockType("waxed_weathered_cut_copper");
+    BlockType.Typed<MultipleFacing> VINE = getBlockType("vine");
 
-    Typed<Slab> WAXED_WEATHERED_CUT_COPPER_SLAB = getBlockType("waxed_weathered_cut_copper_slab");
+    BlockType.Typed<BlockData> VOID_AIR = getBlockType("void_air");
 
-    Typed<Stairs> WAXED_WEATHERED_CUT_COPPER_STAIRS = getBlockType("waxed_weathered_cut_copper_stairs");
+    BlockType.Typed<Directional> WALL_TORCH = getBlockType("wall_torch");
 
-    Typed<LightningRod> WAXED_WEATHERED_LIGHTNING_ROD = getBlockType("waxed_weathered_lightning_rod");
+    BlockType.Typed<Switch> WARPED_BUTTON = getBlockType("warped_button");
 
-    Typed<BlockData> WEATHERED_CHISELED_COPPER = getBlockType("weathered_chiseled_copper");
+    BlockType.Typed<Door> WARPED_DOOR = getBlockType("warped_door");
 
-    Typed<BlockData> WEATHERED_COPPER = getBlockType("weathered_copper");
+    BlockType.Typed<Fence> WARPED_FENCE = getBlockType("warped_fence");
 
-    Typed<Fence> WEATHERED_COPPER_BARS = getBlockType("weathered_copper_bars");
+    BlockType.Typed<Gate> WARPED_FENCE_GATE = getBlockType("warped_fence_gate");
 
-    Typed<CopperBulb> WEATHERED_COPPER_BULB = getBlockType("weathered_copper_bulb");
+    BlockType.Typed<BlockData> WARPED_FUNGUS = getBlockType("warped_fungus");
 
-    Typed<Chain> WEATHERED_COPPER_CHAIN = getBlockType("weathered_copper_chain");
+    BlockType.Typed<HangingSign> WARPED_HANGING_SIGN = getBlockType("warped_hanging_sign");
 
-    Typed<Chest> WEATHERED_COPPER_CHEST = getBlockType("weathered_copper_chest");
+    BlockType.Typed<Orientable> WARPED_HYPHAE = getBlockType("warped_hyphae");
 
-    Typed<Door> WEATHERED_COPPER_DOOR = getBlockType("weathered_copper_door");
+    BlockType.Typed<BlockData> WARPED_NYLIUM = getBlockType("warped_nylium");
 
-    Typed<CopperGolemStatue> WEATHERED_COPPER_GOLEM_STATUE = getBlockType("weathered_copper_golem_statue");
+    BlockType.Typed<BlockData> WARPED_PLANKS = getBlockType("warped_planks");
 
-    Typed<Waterlogged> WEATHERED_COPPER_GRATE = getBlockType("weathered_copper_grate");
+    BlockType.Typed<Powerable> WARPED_PRESSURE_PLATE = getBlockType("warped_pressure_plate");
 
-    Typed<Lantern> WEATHERED_COPPER_LANTERN = getBlockType("weathered_copper_lantern");
+    BlockType.Typed<BlockData> WARPED_ROOTS = getBlockType("warped_roots");
 
-    Typed<TrapDoor> WEATHERED_COPPER_TRAPDOOR = getBlockType("weathered_copper_trapdoor");
+    BlockType.Typed<Shelf> WARPED_SHELF = getBlockType("warped_shelf");
 
-    Typed<BlockData> WEATHERED_CUT_COPPER = getBlockType("weathered_cut_copper");
+    BlockType.Typed<Sign> WARPED_SIGN = getBlockType("warped_sign");
 
-    Typed<Slab> WEATHERED_CUT_COPPER_SLAB = getBlockType("weathered_cut_copper_slab");
+    BlockType.Typed<Slab> WARPED_SLAB = getBlockType("warped_slab");
 
-    Typed<Stairs> WEATHERED_CUT_COPPER_STAIRS = getBlockType("weathered_cut_copper_stairs");
+    BlockType.Typed<Stairs> WARPED_STAIRS = getBlockType("warped_stairs");
 
-    Typed<LightningRod> WEATHERED_LIGHTNING_ROD = getBlockType("weathered_lightning_rod");
+    BlockType.Typed<Orientable> WARPED_STEM = getBlockType("warped_stem");
 
-    Typed<Ageable> WEEPING_VINES = getBlockType("weeping_vines");
+    BlockType.Typed<TrapDoor> WARPED_TRAPDOOR = getBlockType("warped_trapdoor");
 
-    Typed<BlockData> WEEPING_VINES_PLANT = getBlockType("weeping_vines_plant");
+    BlockType.Typed<WallHangingSign> WARPED_WALL_HANGING_SIGN = getBlockType("warped_wall_hanging_sign");
 
-    Typed<BlockData> WET_SPONGE = getBlockType("wet_sponge");
+    BlockType.Typed<WallSign> WARPED_WALL_SIGN = getBlockType("warped_wall_sign");
 
-    Typed<Ageable> WHEAT = getBlockType("wheat");
+    BlockType.Typed<BlockData> WARPED_WART_BLOCK = getBlockType("warped_wart_block");
 
-    Typed<Rotatable> WHITE_BANNER = getBlockType("white_banner");
+    BlockType.Typed<Levelled> WATER = getBlockType("water");
 
-    Typed<Bed> WHITE_BED = getBlockType("white_bed");
+    BlockType.Typed<Levelled> WATER_CAULDRON = getBlockType("water_cauldron");
 
-    Typed<Candle> WHITE_CANDLE = getBlockType("white_candle");
+    BlockType.Typed<BlockData> WAXED_CHISELED_COPPER = getBlockType("waxed_chiseled_copper");
 
-    Typed<Lightable> WHITE_CANDLE_CAKE = getBlockType("white_candle_cake");
+    BlockType.Typed<Fence> WAXED_COPPER_BARS = getBlockType("waxed_copper_bars");
 
-    Typed<BlockData> WHITE_CARPET = getBlockType("white_carpet");
+    BlockType.Typed<BlockData> WAXED_COPPER_BLOCK = getBlockType("waxed_copper_block");
 
-    Typed<BlockData> WHITE_CONCRETE = getBlockType("white_concrete");
+    BlockType.Typed<CopperBulb> WAXED_COPPER_BULB = getBlockType("waxed_copper_bulb");
 
-    Typed<BlockData> WHITE_CONCRETE_POWDER = getBlockType("white_concrete_powder");
+    BlockType.Typed<Chain> WAXED_COPPER_CHAIN = getBlockType("waxed_copper_chain");
 
-    Typed<Directional> WHITE_GLAZED_TERRACOTTA = getBlockType("white_glazed_terracotta");
+    BlockType.Typed<Chest> WAXED_COPPER_CHEST = getBlockType("waxed_copper_chest");
 
-    Typed<Directional> WHITE_SHULKER_BOX = getBlockType("white_shulker_box");
+    BlockType.Typed<Door> WAXED_COPPER_DOOR = getBlockType("waxed_copper_door");
 
-    Typed<BlockData> WHITE_STAINED_GLASS = getBlockType("white_stained_glass");
+    BlockType.Typed<CopperGolemStatue> WAXED_COPPER_GOLEM_STATUE = getBlockType("waxed_copper_golem_statue");
 
-    Typed<GlassPane> WHITE_STAINED_GLASS_PANE = getBlockType("white_stained_glass_pane");
+    BlockType.Typed<Waterlogged> WAXED_COPPER_GRATE = getBlockType("waxed_copper_grate");
 
-    Typed<BlockData> WHITE_TERRACOTTA = getBlockType("white_terracotta");
+    BlockType.Typed<Lantern> WAXED_COPPER_LANTERN = getBlockType("waxed_copper_lantern");
 
-    Typed<BlockData> WHITE_TULIP = getBlockType("white_tulip");
+    BlockType.Typed<TrapDoor> WAXED_COPPER_TRAPDOOR = getBlockType("waxed_copper_trapdoor");
 
-    Typed<Directional> WHITE_WALL_BANNER = getBlockType("white_wall_banner");
+    BlockType.Typed<BlockData> WAXED_CUT_COPPER = getBlockType("waxed_cut_copper");
 
-    Typed<BlockData> WHITE_WOOL = getBlockType("white_wool");
+    BlockType.Typed<Slab> WAXED_CUT_COPPER_SLAB = getBlockType("waxed_cut_copper_slab");
 
-    Typed<FlowerBed> WILDFLOWERS = getBlockType("wildflowers");
+    BlockType.Typed<Stairs> WAXED_CUT_COPPER_STAIRS = getBlockType("waxed_cut_copper_stairs");
 
-    Typed<BlockData> WITHER_ROSE = getBlockType("wither_rose");
+    BlockType.Typed<BlockData> WAXED_EXPOSED_CHISELED_COPPER = getBlockType("waxed_exposed_chiseled_copper");
 
-    Typed<Skull> WITHER_SKELETON_SKULL = getBlockType("wither_skeleton_skull");
+    BlockType.Typed<BlockData> WAXED_EXPOSED_COPPER = getBlockType("waxed_exposed_copper");
 
-    Typed<WallSkull> WITHER_SKELETON_WALL_SKULL = getBlockType("wither_skeleton_wall_skull");
+    BlockType.Typed<Fence> WAXED_EXPOSED_COPPER_BARS = getBlockType("waxed_exposed_copper_bars");
 
-    Typed<Rotatable> YELLOW_BANNER = getBlockType("yellow_banner");
+    BlockType.Typed<CopperBulb> WAXED_EXPOSED_COPPER_BULB = getBlockType("waxed_exposed_copper_bulb");
 
-    Typed<Bed> YELLOW_BED = getBlockType("yellow_bed");
+    BlockType.Typed<Chain> WAXED_EXPOSED_COPPER_CHAIN = getBlockType("waxed_exposed_copper_chain");
 
-    Typed<Candle> YELLOW_CANDLE = getBlockType("yellow_candle");
+    BlockType.Typed<Chest> WAXED_EXPOSED_COPPER_CHEST = getBlockType("waxed_exposed_copper_chest");
 
-    Typed<Lightable> YELLOW_CANDLE_CAKE = getBlockType("yellow_candle_cake");
+    BlockType.Typed<Door> WAXED_EXPOSED_COPPER_DOOR = getBlockType("waxed_exposed_copper_door");
 
-    Typed<BlockData> YELLOW_CARPET = getBlockType("yellow_carpet");
+    BlockType.Typed<CopperGolemStatue> WAXED_EXPOSED_COPPER_GOLEM_STATUE = getBlockType("waxed_exposed_copper_golem_statue");
 
-    Typed<BlockData> YELLOW_CONCRETE = getBlockType("yellow_concrete");
+    BlockType.Typed<Waterlogged> WAXED_EXPOSED_COPPER_GRATE = getBlockType("waxed_exposed_copper_grate");
 
-    Typed<BlockData> YELLOW_CONCRETE_POWDER = getBlockType("yellow_concrete_powder");
+    BlockType.Typed<Lantern> WAXED_EXPOSED_COPPER_LANTERN = getBlockType("waxed_exposed_copper_lantern");
 
-    Typed<Directional> YELLOW_GLAZED_TERRACOTTA = getBlockType("yellow_glazed_terracotta");
+    BlockType.Typed<TrapDoor> WAXED_EXPOSED_COPPER_TRAPDOOR = getBlockType("waxed_exposed_copper_trapdoor");
 
-    Typed<Directional> YELLOW_SHULKER_BOX = getBlockType("yellow_shulker_box");
+    BlockType.Typed<BlockData> WAXED_EXPOSED_CUT_COPPER = getBlockType("waxed_exposed_cut_copper");
 
-    Typed<BlockData> YELLOW_STAINED_GLASS = getBlockType("yellow_stained_glass");
+    BlockType.Typed<Slab> WAXED_EXPOSED_CUT_COPPER_SLAB = getBlockType("waxed_exposed_cut_copper_slab");
 
-    Typed<GlassPane> YELLOW_STAINED_GLASS_PANE = getBlockType("yellow_stained_glass_pane");
+    BlockType.Typed<Stairs> WAXED_EXPOSED_CUT_COPPER_STAIRS = getBlockType("waxed_exposed_cut_copper_stairs");
 
-    Typed<BlockData> YELLOW_TERRACOTTA = getBlockType("yellow_terracotta");
+    BlockType.Typed<LightningRod> WAXED_EXPOSED_LIGHTNING_ROD = getBlockType("waxed_exposed_lightning_rod");
 
-    Typed<Directional> YELLOW_WALL_BANNER = getBlockType("yellow_wall_banner");
+    BlockType.Typed<LightningRod> WAXED_LIGHTNING_ROD = getBlockType("waxed_lightning_rod");
 
-    Typed<BlockData> YELLOW_WOOL = getBlockType("yellow_wool");
+    BlockType.Typed<BlockData> WAXED_OXIDIZED_CHISELED_COPPER = getBlockType("waxed_oxidized_chiseled_copper");
 
-    Typed<Skull> ZOMBIE_HEAD = getBlockType("zombie_head");
+    BlockType.Typed<BlockData> WAXED_OXIDIZED_COPPER = getBlockType("waxed_oxidized_copper");
 
-    Typed<WallSkull> ZOMBIE_WALL_HEAD = getBlockType("zombie_wall_head");
+    BlockType.Typed<Fence> WAXED_OXIDIZED_COPPER_BARS = getBlockType("waxed_oxidized_copper_bars");
+
+    BlockType.Typed<CopperBulb> WAXED_OXIDIZED_COPPER_BULB = getBlockType("waxed_oxidized_copper_bulb");
+
+    BlockType.Typed<Chain> WAXED_OXIDIZED_COPPER_CHAIN = getBlockType("waxed_oxidized_copper_chain");
+
+    BlockType.Typed<Chest> WAXED_OXIDIZED_COPPER_CHEST = getBlockType("waxed_oxidized_copper_chest");
+
+    BlockType.Typed<Door> WAXED_OXIDIZED_COPPER_DOOR = getBlockType("waxed_oxidized_copper_door");
+
+    BlockType.Typed<CopperGolemStatue> WAXED_OXIDIZED_COPPER_GOLEM_STATUE = getBlockType("waxed_oxidized_copper_golem_statue");
+
+    BlockType.Typed<Waterlogged> WAXED_OXIDIZED_COPPER_GRATE = getBlockType("waxed_oxidized_copper_grate");
+
+    BlockType.Typed<Lantern> WAXED_OXIDIZED_COPPER_LANTERN = getBlockType("waxed_oxidized_copper_lantern");
+
+    BlockType.Typed<TrapDoor> WAXED_OXIDIZED_COPPER_TRAPDOOR = getBlockType("waxed_oxidized_copper_trapdoor");
+
+    BlockType.Typed<BlockData> WAXED_OXIDIZED_CUT_COPPER = getBlockType("waxed_oxidized_cut_copper");
+
+    BlockType.Typed<Slab> WAXED_OXIDIZED_CUT_COPPER_SLAB = getBlockType("waxed_oxidized_cut_copper_slab");
+
+    BlockType.Typed<Stairs> WAXED_OXIDIZED_CUT_COPPER_STAIRS = getBlockType("waxed_oxidized_cut_copper_stairs");
+
+    BlockType.Typed<LightningRod> WAXED_OXIDIZED_LIGHTNING_ROD = getBlockType("waxed_oxidized_lightning_rod");
+
+    BlockType.Typed<BlockData> WAXED_WEATHERED_CHISELED_COPPER = getBlockType("waxed_weathered_chiseled_copper");
+
+    BlockType.Typed<BlockData> WAXED_WEATHERED_COPPER = getBlockType("waxed_weathered_copper");
+
+    BlockType.Typed<Fence> WAXED_WEATHERED_COPPER_BARS = getBlockType("waxed_weathered_copper_bars");
+
+    BlockType.Typed<CopperBulb> WAXED_WEATHERED_COPPER_BULB = getBlockType("waxed_weathered_copper_bulb");
+
+    BlockType.Typed<Chain> WAXED_WEATHERED_COPPER_CHAIN = getBlockType("waxed_weathered_copper_chain");
+
+    BlockType.Typed<Chest> WAXED_WEATHERED_COPPER_CHEST = getBlockType("waxed_weathered_copper_chest");
+
+    BlockType.Typed<Door> WAXED_WEATHERED_COPPER_DOOR = getBlockType("waxed_weathered_copper_door");
+
+    BlockType.Typed<CopperGolemStatue> WAXED_WEATHERED_COPPER_GOLEM_STATUE = getBlockType("waxed_weathered_copper_golem_statue");
+
+    BlockType.Typed<Waterlogged> WAXED_WEATHERED_COPPER_GRATE = getBlockType("waxed_weathered_copper_grate");
+
+    BlockType.Typed<Lantern> WAXED_WEATHERED_COPPER_LANTERN = getBlockType("waxed_weathered_copper_lantern");
+
+    BlockType.Typed<TrapDoor> WAXED_WEATHERED_COPPER_TRAPDOOR = getBlockType("waxed_weathered_copper_trapdoor");
+
+    BlockType.Typed<BlockData> WAXED_WEATHERED_CUT_COPPER = getBlockType("waxed_weathered_cut_copper");
+
+    BlockType.Typed<Slab> WAXED_WEATHERED_CUT_COPPER_SLAB = getBlockType("waxed_weathered_cut_copper_slab");
+
+    BlockType.Typed<Stairs> WAXED_WEATHERED_CUT_COPPER_STAIRS = getBlockType("waxed_weathered_cut_copper_stairs");
+
+    BlockType.Typed<LightningRod> WAXED_WEATHERED_LIGHTNING_ROD = getBlockType("waxed_weathered_lightning_rod");
+
+    BlockType.Typed<BlockData> WEATHERED_CHISELED_COPPER = getBlockType("weathered_chiseled_copper");
+
+    BlockType.Typed<BlockData> WEATHERED_COPPER = getBlockType("weathered_copper");
+
+    BlockType.Typed<Fence> WEATHERED_COPPER_BARS = getBlockType("weathered_copper_bars");
+
+    BlockType.Typed<CopperBulb> WEATHERED_COPPER_BULB = getBlockType("weathered_copper_bulb");
+
+    BlockType.Typed<Chain> WEATHERED_COPPER_CHAIN = getBlockType("weathered_copper_chain");
+
+    BlockType.Typed<Chest> WEATHERED_COPPER_CHEST = getBlockType("weathered_copper_chest");
+
+    BlockType.Typed<Door> WEATHERED_COPPER_DOOR = getBlockType("weathered_copper_door");
+
+    BlockType.Typed<CopperGolemStatue> WEATHERED_COPPER_GOLEM_STATUE = getBlockType("weathered_copper_golem_statue");
+
+    BlockType.Typed<Waterlogged> WEATHERED_COPPER_GRATE = getBlockType("weathered_copper_grate");
+
+    BlockType.Typed<Lantern> WEATHERED_COPPER_LANTERN = getBlockType("weathered_copper_lantern");
+
+    BlockType.Typed<TrapDoor> WEATHERED_COPPER_TRAPDOOR = getBlockType("weathered_copper_trapdoor");
+
+    BlockType.Typed<BlockData> WEATHERED_CUT_COPPER = getBlockType("weathered_cut_copper");
+
+    BlockType.Typed<Slab> WEATHERED_CUT_COPPER_SLAB = getBlockType("weathered_cut_copper_slab");
+
+    BlockType.Typed<Stairs> WEATHERED_CUT_COPPER_STAIRS = getBlockType("weathered_cut_copper_stairs");
+
+    BlockType.Typed<LightningRod> WEATHERED_LIGHTNING_ROD = getBlockType("weathered_lightning_rod");
+
+    BlockType.Typed<Ageable> WEEPING_VINES = getBlockType("weeping_vines");
+
+    BlockType.Typed<BlockData> WEEPING_VINES_PLANT = getBlockType("weeping_vines_plant");
+
+    BlockType.Typed<BlockData> WET_SPONGE = getBlockType("wet_sponge");
+
+    BlockType.Typed<Ageable> WHEAT = getBlockType("wheat");
+
+    BlockType.Typed<Rotatable> WHITE_BANNER = getBlockType("white_banner");
+
+    BlockType.Typed<Bed> WHITE_BED = getBlockType("white_bed");
+
+    BlockType.Typed<Candle> WHITE_CANDLE = getBlockType("white_candle");
+
+    BlockType.Typed<Lightable> WHITE_CANDLE_CAKE = getBlockType("white_candle_cake");
+
+    BlockType.Typed<BlockData> WHITE_CARPET = getBlockType("white_carpet");
+
+    BlockType.Typed<BlockData> WHITE_CONCRETE = getBlockType("white_concrete");
+
+    BlockType.Typed<BlockData> WHITE_CONCRETE_POWDER = getBlockType("white_concrete_powder");
+
+    BlockType.Typed<Slab> WHITE_CONCRETE_SLAB = getBlockType("white_concrete_slab");
+
+    BlockType.Typed<Stairs> WHITE_CONCRETE_STAIRS = getBlockType("white_concrete_stairs");
+
+    BlockType.Typed<Directional> WHITE_GLAZED_TERRACOTTA = getBlockType("white_glazed_terracotta");
+
+    BlockType.Typed<Directional> WHITE_SHULKER_BOX = getBlockType("white_shulker_box");
+
+    BlockType.Typed<BlockData> WHITE_STAINED_GLASS = getBlockType("white_stained_glass");
+
+    BlockType.Typed<GlassPane> WHITE_STAINED_GLASS_PANE = getBlockType("white_stained_glass_pane");
+
+    BlockType.Typed<BlockData> WHITE_TERRACOTTA = getBlockType("white_terracotta");
+
+    BlockType.Typed<BlockData> WHITE_TULIP = getBlockType("white_tulip");
+
+    BlockType.Typed<Directional> WHITE_WALL_BANNER = getBlockType("white_wall_banner");
+
+    BlockType.Typed<BlockData> WHITE_WOOL = getBlockType("white_wool");
+
+    BlockType.Typed<Slab> WHITE_WOOL_SLAB = getBlockType("white_wool_slab");
+
+    BlockType.Typed<Stairs> WHITE_WOOL_STAIRS = getBlockType("white_wool_stairs");
+
+    BlockType.Typed<FlowerBed> WILDFLOWERS = getBlockType("wildflowers");
+
+    BlockType.Typed<BlockData> WITHER_ROSE = getBlockType("wither_rose");
+
+    BlockType.Typed<Skull> WITHER_SKELETON_SKULL = getBlockType("wither_skeleton_skull");
+
+    BlockType.Typed<WallSkull> WITHER_SKELETON_WALL_SKULL = getBlockType("wither_skeleton_wall_skull");
+
+    BlockType.Typed<Rotatable> YELLOW_BANNER = getBlockType("yellow_banner");
+
+    BlockType.Typed<Bed> YELLOW_BED = getBlockType("yellow_bed");
+
+    BlockType.Typed<Candle> YELLOW_CANDLE = getBlockType("yellow_candle");
+
+    BlockType.Typed<Lightable> YELLOW_CANDLE_CAKE = getBlockType("yellow_candle_cake");
+
+    BlockType.Typed<BlockData> YELLOW_CARPET = getBlockType("yellow_carpet");
+
+    BlockType.Typed<BlockData> YELLOW_CONCRETE = getBlockType("yellow_concrete");
+
+    BlockType.Typed<BlockData> YELLOW_CONCRETE_POWDER = getBlockType("yellow_concrete_powder");
+
+    BlockType.Typed<Slab> YELLOW_CONCRETE_SLAB = getBlockType("yellow_concrete_slab");
+
+    BlockType.Typed<Stairs> YELLOW_CONCRETE_STAIRS = getBlockType("yellow_concrete_stairs");
+
+    BlockType.Typed<Directional> YELLOW_GLAZED_TERRACOTTA = getBlockType("yellow_glazed_terracotta");
+
+    BlockType.Typed<Leaves> YELLOW_POPLAR_LEAVES = getBlockType("yellow_poplar_leaves");
+
+    BlockType.Typed<Directional> YELLOW_SHULKER_BOX = getBlockType("yellow_shulker_box");
+
+    BlockType.Typed<BlockData> YELLOW_STAINED_GLASS = getBlockType("yellow_stained_glass");
+
+    BlockType.Typed<GlassPane> YELLOW_STAINED_GLASS_PANE = getBlockType("yellow_stained_glass_pane");
+
+    BlockType.Typed<BlockData> YELLOW_TERRACOTTA = getBlockType("yellow_terracotta");
+
+    BlockType.Typed<Directional> YELLOW_WALL_BANNER = getBlockType("yellow_wall_banner");
+
+    BlockType.Typed<BlockData> YELLOW_WOOL = getBlockType("yellow_wool");
+
+    BlockType.Typed<Slab> YELLOW_WOOL_SLAB = getBlockType("yellow_wool_slab");
+
+    BlockType.Typed<Stairs> YELLOW_WOOL_STAIRS = getBlockType("yellow_wool_stairs");
+
+    BlockType.Typed<Skull> ZOMBIE_HEAD = getBlockType("zombie_head");
+
+    BlockType.Typed<WallSkull> ZOMBIE_WALL_HEAD = getBlockType("zombie_wall_head");
     // End generate - BlockType
     //</editor-fold>
 
@@ -2516,7 +2779,7 @@ public interface BlockType extends Keyed, Translatable, net.kyori.adventure.tran
      *
      * @return the typed block type.
      */
-    Typed<BlockData> typed();
+    BlockType.Typed<BlockData> typed();
 
     /**
      * Yields this block type as a typed version of itself with a specific {@link BlockData} representing it.
@@ -2525,7 +2788,7 @@ public interface BlockType extends Keyed, Translatable, net.kyori.adventure.tran
      * @param <B>          the generic type of the block data to type this block type with.
      * @return the typed block type.
      */
-    <B extends BlockData> Typed<B> typed(Class<B> blockDataType);
+    <B extends BlockData> BlockType.Typed<B> typed(Class<B> blockDataType);
 
     /**
      * Returns true if this BlockType has a corresponding {@link ItemType}.

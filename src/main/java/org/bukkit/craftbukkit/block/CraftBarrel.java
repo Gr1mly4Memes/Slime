@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.block;
 
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.Location;

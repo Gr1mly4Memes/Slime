@@ -11,6 +11,10 @@
     "minecraft:cyan_stained_glass",
     "minecraft:cyan_stained_glass_pane",
     "minecraft:cyan_terracotta",
-    "minecraft:cyan_wool"
+    "minecraft:cyan_wool",
+    "minecraft:cyan_concrete_slab",
+    "minecraft:cyan_concrete_stairs",
+    "minecraft:cyan_wool_slab",
+    "minecraft:cyan_wool_stairs"
   ]
 }

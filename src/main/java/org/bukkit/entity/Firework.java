@@ -1,13 +1,12 @@
 package org.bukkit.entity;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import java.util.UUID;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.UUID;
 
 @NullMarked
 public interface Firework extends Projectile {

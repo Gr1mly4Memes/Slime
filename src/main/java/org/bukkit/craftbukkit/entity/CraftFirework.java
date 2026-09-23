@@ -1,6 +1,9 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.OptionalInt;
+import java.util.Random;
+import java.util.UUID;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.craftbukkit.CraftServer;
@@ -8,10 +11,6 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.meta.FireworkMeta;
-
-import java.util.OptionalInt;
-import java.util.Random;
-import java.util.UUID;
 
 public class CraftFirework extends CraftProjectile implements Firework {
 
@@ -56,7 +55,7 @@ public class CraftFirework extends CraftProjectile implements Firework {
     @Override
     public LivingEntity getAttachedTo() {
         net.minecraft.world.entity.LivingEntity entity = this.getHandle().attachedToEntity;
-        return (entity != null) ? (LivingEntity) entity.getBukkitEntity() : null;
+        return (entity != null) ? entity.getBukkitEntity() : null;
     }
 
     @Override

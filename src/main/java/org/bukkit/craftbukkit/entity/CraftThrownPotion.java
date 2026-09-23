@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.AbstractThrownPotion;
@@ -11,8 +12,6 @@ import org.bukkit.craftbukkit.potion.CraftPotionUtil;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
-
-import java.util.Collection;
 
 public abstract class CraftThrownPotion extends CraftThrowableProjectile implements ThrownPotion {
 

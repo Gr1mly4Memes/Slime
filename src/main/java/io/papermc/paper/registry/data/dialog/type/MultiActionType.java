@@ -1,13 +1,12 @@
 package io.papermc.paper.registry.data.dialog.type;
 
 import io.papermc.paper.registry.data.dialog.ActionButton;
+import java.util.List;
 import org.checkerframework.checker.index.qual.Positive;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Represents a dialog that allows multiple actions to be performed.

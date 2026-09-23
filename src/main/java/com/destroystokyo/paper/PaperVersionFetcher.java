@@ -1,20 +1,13 @@
 package com.destroystokyo.paper;
 
 import com.destroystokyo.paper.util.VersionFetcher;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.logging.LogUtils;
 import io.papermc.paper.ServerBuildInfo;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import org.apache.logging.log4j.LogManager;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.framework.qual.DefaultQualifier;
-import org.slf4j.Logger;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,18 +15,28 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.StreamSupport;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.DefaultQualifier;
+import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
+import java.util.List;
 
-import static io.papermc.paper.ServerBuildInfo.StringRepresentation.VERSION_SIMPLE;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.TextColor.color;
+import static io.papermc.paper.ServerBuildInfo.StringRepresentation.VERSION_SIMPLE;
 
 @DefaultQualifier(NonNull.class)
 public class PaperVersionFetcher implements VersionFetcher {
-    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger();
+    private static final Logger LOGGER = com.mohistmc.youer.util.LogUtils.getClassLogger();
     private static final ComponentLogger COMPONENT_LOGGER = ComponentLogger.logger(LogManager.getRootLogger().getName());
     private static final int DISTANCE_ERROR = -1;
     private static final int DISTANCE_UNKNOWN = -2;

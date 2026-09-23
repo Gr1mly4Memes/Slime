@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.SmallDripleafBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,8 +14,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.SmallDripleaf;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -47,12 +46,12 @@ public class CraftSmallDripleaf extends CraftBlockData implements SmallDripleaf 
     }
 
     @Override
-    public Half getHalf() {
-        return this.get(HALF, Half.class);
+    public org.bukkit.block.data.Bisected.Half getHalf() {
+        return this.get(HALF, org.bukkit.block.data.Bisected.Half.class);
     }
 
     @Override
-    public void setHalf(final Half half) {
+    public void setHalf(final org.bukkit.block.data.Bisected.Half half) {
         Preconditions.checkArgument(half != null, "half cannot be null!");
         this.set(HALF, half);
     }

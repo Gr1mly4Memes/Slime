@@ -1,13 +1,41 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.destroystokyo.paper.inventory.meta.ArmorStandMeta;
-import net.minecraft.world.item.*;
+import java.util.function.BiFunction;
+import net.minecraft.world.item.BannerItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BundleItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.MapItem;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import org.bukkit.inventory.ItemType;
-import org.bukkit.inventory.meta.*;
-
-import java.util.function.BiFunction;
+import org.bukkit.inventory.meta.ArmorMeta;
+import org.bukkit.inventory.meta.AxolotlBucketMeta;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.BundleMeta;
+import org.bukkit.inventory.meta.ColorableArmorMeta;
+import org.bukkit.inventory.meta.CompassMeta;
+import org.bukkit.inventory.meta.CrossbowMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.FireworkEffectMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.KnowledgeBookMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.inventory.meta.MusicInstrumentMeta;
+import org.bukkit.inventory.meta.OminousBottleMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.ShieldMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.SpawnEggMeta;
+import org.bukkit.inventory.meta.SuspiciousStewMeta;
+import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 
 public final class CraftItemMetas {
 
@@ -175,7 +203,7 @@ public final class CraftItemMetas {
                 || itemType == ItemType.LINGERING_POTION || itemType == ItemType.TIPPED_ARROW) {
             return CraftItemMetas.asType(CraftItemMetas.POTION_META_DATA);
         }
-        if (itemType == ItemType.FILLED_MAP) {
+        if (itemHandle instanceof MapItem) {
             return CraftItemMetas.asType(CraftItemMetas.MAP_META_DATA);
         }
         if (itemType == ItemType.FIREWORK_ROCKET) {

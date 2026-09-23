@@ -1,21 +1,18 @@
 package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
+import java.util.Map;
 import org.bukkit.enchantments.Enchantment;
 import org.checkerframework.common.value.qual.IntRange;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.Map;
 
 /**
  * Stores a list of enchantments and their levels on an item.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#ENCHANTMENTS
  * @see io.papermc.paper.datacomponent.DataComponentTypes#STORED_ENCHANTMENTS
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface ItemEnchantments {
 
@@ -25,7 +22,7 @@ public interface ItemEnchantments {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder itemEnchantments() {
+    static ItemEnchantments.Builder itemEnchantments() {
         return ItemComponentTypesBridge.bridge().enchantments();
     }
 

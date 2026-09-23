@@ -78,20 +78,11 @@ public final class AdventureComponent implements net.minecraft.network.chat.Comp
 
     @Override
     public int hashCode() {
-        try {
-            return this.deepConverted().hashCode();
-        } catch (Throwable t) {
-            return this.adventure.hashCode(); // Slime - fallback during early bootstrap when registry not yet available (datapack hashCode before CraftRegistry init)
-        }
+        return this.deepConverted().hashCode();
     }
 
     @Override
     public boolean equals(final Object obj) {
-        try {
-            return this.deepConverted().equals(obj);
-        } catch (Throwable t) {
-            if (obj instanceof AdventureComponent ac) return this.adventure.equals(ac.adventure);
-            return false; // Slime - fallback
-        }
+        return this.deepConverted().equals(obj);
     }
 }

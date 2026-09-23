@@ -1,10 +1,9 @@
 package io.papermc.paper.registry.set;
 
 import io.papermc.paper.registry.data.dialog.DialogRegistryEntry;
-import org.jetbrains.annotations.Unmodifiable;
-
 import java.util.Collection;
 import java.util.Iterator;
+import org.jetbrains.annotations.Unmodifiable;
 
 /**
  * A collection of anonymous values relating to a registry. These

@@ -8,25 +8,23 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Holds the equippable properties of an item.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#EQUIPPABLE
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface Equippable extends BuildableDataComponent<Equippable, Equippable.Builder> {
 
     /**
-     * Creates a new {@link Builder} instance.
+     * Creates a new {@link Equippable.Builder} instance.
      *
      * @param slot The slot for the new equippable to be equippable in.
      * @return a new builder
      */
     @Contract(value = "_ -> new", pure = true)
-    static Builder equippable(final EquipmentSlot slot) {
+    static Equippable.Builder equippable(final EquipmentSlot slot) {
         return ItemComponentTypesBridge.bridge().equippable(slot);
     }
 

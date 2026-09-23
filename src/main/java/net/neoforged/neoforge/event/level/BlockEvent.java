@@ -13,13 +13,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseFireBlock;
-import net.minecraft.world.level.block.GameMasterBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalShape;
 import net.neoforged.bus.api.Event;
@@ -95,7 +93,7 @@ public abstract class BlockEvent extends Event {
         public BlockState getPlacedAgainst() {
             return placedAgainst;
         }
-        // Slime start
+        // Youer start
         public void setPlaceEventDirection(Direction placeEventDirection) {
             this.placeEventDirection = placeEventDirection;
         }
@@ -108,7 +106,7 @@ public abstract class BlockEvent extends Event {
         public InteractionHand getPlaceEventHand() {
             return placeEventHand;
         }
-        // Slime end
+        // Youer end
     }
 
     /**
@@ -166,7 +164,7 @@ public abstract class BlockEvent extends Event {
 
         /**
          * Get if redstone update was forced during setBlock call (0x16 to flags)
-         *
+         * 
          * @return if the flag was set
          */
         public boolean getForceRedstoneUpdate() {
@@ -264,8 +262,6 @@ public abstract class BlockEvent extends Event {
 
     /**
      * Fired when a block is right-clicked by a tool to change its state.
-     * For example: Used to determine if {@link ItemAbilities#AXE_STRIP an axe can strip},
-     * {@link ItemAbilities#SHOVEL_FLATTEN a shovel can path}, or {@link ItemAbilities#HOE_TILL a hoe can till}.
      * <p>
      * Care must be taken to ensure level-modifying events are only performed if {@link #isSimulated()} returns {@code false}.
      * <p>

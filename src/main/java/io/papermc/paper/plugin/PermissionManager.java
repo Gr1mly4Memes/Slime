@@ -1,13 +1,12 @@
 package io.papermc.paper.plugin;
 
+import java.util.List;
+import java.util.Set;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * A permission manager implementation to keep backwards compatibility partially alive with existing plugins that used

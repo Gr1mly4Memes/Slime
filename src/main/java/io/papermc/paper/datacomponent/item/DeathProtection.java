@@ -2,18 +2,15 @@ package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
 import io.papermc.paper.datacomponent.item.consumable.ConsumeEffect;
+import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Sets whether this item should protect the entity upon death, and what effects should be played.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#DEATH_PROTECTION
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface DeathProtection {
 
@@ -23,7 +20,7 @@ public interface DeathProtection {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder deathProtection() {
+    static DeathProtection.Builder deathProtection() {
         return ItemComponentTypesBridge.bridge().deathProtection();
     }
 

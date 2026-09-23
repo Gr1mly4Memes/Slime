@@ -8,10 +8,11 @@ import org.slf4j.Logger;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 public final class MoonriseCommon {
 
-    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger();
+    private static final Logger LOGGER = com.mohistmc.youer.util.LogUtils.getClassLogger();
 
     public static final long WORKER_QUEUE_HOLD_TIME = (long)(20.0e6); // 20ms
     public static final BalancedPrioritisedThreadPool WORKER_POOL = new BalancedPrioritisedThreadPool(

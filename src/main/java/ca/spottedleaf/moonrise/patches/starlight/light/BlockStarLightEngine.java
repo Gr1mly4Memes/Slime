@@ -5,6 +5,7 @@ import ca.spottedleaf.moonrise.patches.starlight.blockstate.StarlightAbstractBlo
 import ca.spottedleaf.moonrise.patches.starlight.chunk.StarlightChunk;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunkSection;

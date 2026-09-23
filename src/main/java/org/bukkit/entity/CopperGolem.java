@@ -30,14 +30,14 @@ public interface CopperGolem extends Golem, Shearable {
      *
      * @return the copper golem state
      */
-    State getGolemState();
+    CopperGolem.State getGolemState();
 
     /**
      * Set the copper golem state of the copper golem.
      *
      * @param state the new copper golem state
      */
-    void setGolemState(State state);
+    void setGolemState(CopperGolem.State state);
 
     /**
      * Get the current oxidizing state of the copper golem.
@@ -73,9 +73,9 @@ public interface CopperGolem extends Golem, Shearable {
      * Represents the oxidizing state of a copper golem.
      *
      * <ul>
-     *     <li>{@link Waxed}: the golem is waxed and will not oxidize further</li>
-     *     <li>{@link Unset}: the golem is not waxed but has not yet had its next weathering event 'scheduled'</li>
-     *     <li>{@link AtTime}: the absolute game time of the next weathering event</li>
+     *     <li>{@link Oxidizing.Waxed}: the golem is waxed and will not oxidize further</li>
+     *     <li>{@link Oxidizing.Unset}: the golem is not waxed but has not yet had its next weathering event 'scheduled'</li>
+     *     <li>{@link Oxidizing.AtTime}: the absolute game time of the next weathering event</li>
      * </ul>
      */
     sealed interface Oxidizing permits Oxidizing.Waxed, Oxidizing.Unset, Oxidizing.AtTime {

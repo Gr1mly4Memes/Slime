@@ -3,7 +3,17 @@ package org.bukkit.craftbukkit.inventory.util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.level.block.entity.CrafterBlockEntity;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.block.entity.DropperBlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.world.level.block.entity.LecternBlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.entity.SmokerBlockEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
@@ -85,7 +95,7 @@ public abstract class CraftBlockInventoryConverter implements CraftInventoryCrea
         }
 
         @Override
-        public Inventory getInventory(InventoryHolder owner, InventoryType type, Container blockEntity) { // Paper
+        public Inventory getInventory(InventoryHolder owner, InventoryType type, net.minecraft.world.Container blockEntity) { // Paper
             if (owner != null) return new org.bukkit.craftbukkit.inventory.CraftInventoryCustom(owner, type, blockEntity); // Paper
             return new CraftInventoryFurnace((AbstractFurnaceBlockEntity) blockEntity);
         }
@@ -124,7 +134,7 @@ public abstract class CraftBlockInventoryConverter implements CraftInventoryCrea
         }
 
         @Override
-        public Inventory getInventory(InventoryHolder owner, InventoryType type, Container blockEntity) { // Paper
+        public Inventory getInventory(InventoryHolder owner, InventoryType type, net.minecraft.world.Container blockEntity) { // Paper
             if (owner != null) return new org.bukkit.craftbukkit.inventory.CraftInventoryCustom(owner, type, blockEntity); // Paper
             return new CraftInventoryBrewer(blockEntity);
         }

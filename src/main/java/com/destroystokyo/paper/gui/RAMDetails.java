@@ -1,12 +1,14 @@
 package com.destroystokyo.paper.gui;
 
+import net.minecraft.util.Util;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.TimeUtil;
-import net.minecraft.util.Util;
 
-import javax.swing.*;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.JList;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Dimension;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;

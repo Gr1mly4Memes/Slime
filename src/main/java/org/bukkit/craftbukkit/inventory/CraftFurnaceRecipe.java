@@ -27,7 +27,7 @@ public class CraftFurnaceRecipe extends FurnaceRecipe implements CraftRecipe {
 
     @Override
     public void addToRecipeManager() {
-        SmeltingRecipe recipe = new SmeltingRecipe(
+        SmeltingRecipe recipe = new net.minecraft.world.item.crafting.SmeltingRecipe(
             new net.minecraft.world.item.crafting.Recipe.CommonInfo(true),
             new net.minecraft.world.item.crafting.AbstractCookingRecipe.CookingBookInfo(CraftRecipe.getCategory(this.getCategory()), this.getGroup()),
             CraftRecipe.toIngredient(this.getInputChoice(), true),

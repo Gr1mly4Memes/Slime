@@ -5,18 +5,16 @@ import io.papermc.paper.datacomponent.DataComponentBuilder;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * Holds the food properties of an item.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#FOOD
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface FoodProperties extends BuildableDataComponent<FoodProperties, FoodProperties.Builder> {
 
     @Contract(value = "-> new", pure = true)
-    static Builder food() {
+    static FoodProperties.Builder food() {
         return ItemComponentTypesBridge.bridge().food();
     }
 

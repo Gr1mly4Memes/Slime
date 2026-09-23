@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.inventory.util;
 
+import java.util.function.Supplier;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.npc.villager.Villager;
@@ -7,17 +8,39 @@ import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.entity.BeaconBlockEntity;
+import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.CrafterBlockEntity;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.world.level.block.entity.LecternBlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.world.level.block.entity.SmokerBlockEntity;
 import org.bukkit.craftbukkit.inventory.CraftMenuType;
 import org.bukkit.craftbukkit.inventory.CraftMerchant;
-import org.bukkit.craftbukkit.inventory.view.builder.*;
+import org.bukkit.craftbukkit.inventory.view.builder.CraftAccessLocationInventoryViewBuilder;
+import org.bukkit.craftbukkit.inventory.view.builder.CraftBlockEntityInventoryViewBuilder;
+import org.bukkit.craftbukkit.inventory.view.builder.CraftDoubleChestInventoryViewBuilder;
+import org.bukkit.craftbukkit.inventory.view.builder.CraftEnchantmentInventoryViewBuilder;
+import org.bukkit.craftbukkit.inventory.view.builder.CraftMerchantInventoryViewBuilder;
+import org.bukkit.craftbukkit.inventory.view.builder.CraftStandardInventoryViewBuilder;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.MenuType;
-import org.bukkit.inventory.view.*;
+import org.bukkit.inventory.view.AnvilView;
+import org.bukkit.inventory.view.BeaconView;
+import org.bukkit.inventory.view.BrewingStandView;
+import org.bukkit.inventory.view.CrafterView;
+import org.bukkit.inventory.view.EnchantmentView;
+import org.bukkit.inventory.view.FurnaceView;
+import org.bukkit.inventory.view.LecternView;
+import org.bukkit.inventory.view.LoomView;
+import org.bukkit.inventory.view.MerchantView;
+import org.bukkit.inventory.view.StonecutterView;
 import org.bukkit.inventory.view.builder.InventoryViewBuilder;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.function.Supplier;
 
 @NullMarked
 public final class CraftMenus {

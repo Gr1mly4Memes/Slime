@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.entity;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import java.util.List;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockCollisions;
@@ -14,8 +15,6 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public abstract class CraftAbstractArrow extends AbstractProjectile implements AbstractArrow {
 
@@ -149,8 +148,8 @@ public abstract class CraftAbstractArrow extends AbstractProjectile implements A
 
     // Paper start
     @Override
-    public CraftItemStack getItemStack() {
-        return CraftItemStack.asCraftMirror(this.getHandle().getPickupItem());
+    public ItemStack getItemStack() {
+        return CraftItemStack.asBukkitMirror(this.getHandle().getPickupItem());
     }
 
     @Override

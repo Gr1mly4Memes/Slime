@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.inventory.view;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.world.inventory.StonecutterMenu;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SelectableRecipe;
@@ -10,9 +12,6 @@ import org.bukkit.inventory.StonecutterInventory;
 import org.bukkit.inventory.StonecuttingRecipe;
 import org.bukkit.inventory.view.StonecutterView;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CraftStonecutterView extends CraftInventoryView<StonecutterMenu, StonecutterInventory> implements StonecutterView {
 

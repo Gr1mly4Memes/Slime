@@ -1,13 +1,13 @@
 package io.papermc.paper.registry.keys.tags;
 
+import static net.kyori.adventure.key.Key.key;
+
 import io.papermc.paper.annotation.GeneratedClass;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.tag.TagKey;
 import net.kyori.adventure.key.Key;
 import org.bukkit.damage.DamageType;
 import org.jspecify.annotations.NullMarked;
-
-import static net.kyori.adventure.key.Key.key;
 
 /**
  * Vanilla tag keys for {@link RegistryKey#DAMAGE_TYPE}.
@@ -80,6 +80,13 @@ public final class DamageTypeTagKeys {
      * @apiNote This field is version-dependant and may be removed in future Minecraft versions
      */
     public static final TagKey<DamageType> BYPASSES_ARMOR = create(key("bypasses_armor"));
+
+    /**
+     * {@code #minecraft:bypasses_cooldown}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TagKey<DamageType> BYPASSES_COOLDOWN = create(key("bypasses_cooldown"));
 
     /**
      * {@code #minecraft:bypasses_effects}
@@ -227,6 +234,13 @@ public final class DamageTypeTagKeys {
      * @apiNote This field is version-dependant and may be removed in future Minecraft versions
      */
     public static final TagKey<DamageType> NO_KNOCKBACK = create(key("no_knockback"));
+
+    /**
+     * {@code #minecraft:no_wolf_retaliation}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TagKey<DamageType> NO_WOLF_RETALIATION = create(key("no_wolf_retaliation"));
 
     /**
      * {@code #minecraft:panic_causes}

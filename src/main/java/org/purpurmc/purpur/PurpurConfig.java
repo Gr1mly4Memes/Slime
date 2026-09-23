@@ -2,6 +2,12 @@ package org.purpurmc.purpur;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import com.mohistmc.youer.Youer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.core.Registry;
@@ -21,16 +27,17 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.purpurmc.purpur.command.PurpurCommand;
-import org.purpurmc.purpur.task.TPSBarTask;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
+import org.purpurmc.purpur.task.TPSBarTask;
 
 @SuppressWarnings("unused")
 public class PurpurConfig {
@@ -66,10 +73,10 @@ public class PurpurConfig {
         verbose = getBoolean("verbose", false);
 
         commands = new HashMap<>();
-        commands.put("org/purpurmc/purpur", new PurpurCommand("org/purpurmc/purpur"));
+        commands.put("purpur", new PurpurCommand("purpur"));
 
-        version = getInt("config-version", 49);
-        set("config-version", 49);
+        version = getInt("config-version", 48);
+        set("config-version", 48);
 
         readConfig(PurpurConfig.class, null);
 
@@ -224,7 +231,7 @@ public class PurpurConfig {
         deathMessageOnlyBroadcastToAffectedPlayer = getBoolean("settings.broadcasts.death.only-broadcast-to-affected-player", deathMessageOnlyBroadcastToAffectedPlayer);
     }
 
-    public static String serverModName = io.papermc.paper.ServerBuildInfo.buildInfo().brandName();
+    public static String serverModName = Youer.NAME;
     private static void serverModName() {
         serverModName = getString("settings.server-mod-name", serverModName);
     }
@@ -476,7 +483,7 @@ public class PurpurConfig {
 
     public static boolean loggerSuppressInitLegacyMaterialError = false;
     public static boolean loggerSuppressIgnoredAdvancementWarnings = false;
-    public static boolean loggerSuppressUnrecognizedRecipeErrors = false;
+    public static boolean loggerSuppressUnrecognizedRecipeErrors = true;
     public static boolean loggerSuppressSetBlockFarChunk = false;
     public static boolean loggerSuppressLibraryLoader = false;
     private static void loggerSettings() {
@@ -597,7 +604,7 @@ public class PurpurConfig {
 
     public static boolean registerMinecraftDisabledCommands = false;
     private static void registerMinecraftDisabledCommands() {
-        registerMinecraftDisabledCommands = getBoolean("settings.register-minecraft-disabled-commands", registerMinecraftDisabledCommands);
+        registerMinecraftDisabledCommands = getBoolean("settings.register-minecraft-disabled-commands", registerMinecraftDebugCommands);
     }
 
     public static List<String> startupCommands = new ArrayList<>();

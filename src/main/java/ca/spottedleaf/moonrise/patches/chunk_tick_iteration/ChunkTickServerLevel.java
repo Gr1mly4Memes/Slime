@@ -1,6 +1,7 @@
 package ca.spottedleaf.moonrise.patches.chunk_tick_iteration;
 
 import ca.spottedleaf.moonrise.common.list.ReferenceList;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 public interface ChunkTickServerLevel {

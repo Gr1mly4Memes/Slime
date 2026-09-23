@@ -3,16 +3,23 @@ package org.bukkit.craftbukkit.block;
 import com.destroystokyo.paper.profile.SharedPlayerProfile;
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
+import com.mojang.datafixers.util.Either;
 import io.papermc.paper.adventure.PaperAdventure;
 import io.papermc.paper.datacomponent.item.PaperResolvableProfile;
 import net.kyori.adventure.text.Component;
+import net.minecraft.util.Util;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.NameAndId;
-import net.minecraft.util.Util;
+import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.SkullType;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
 import org.bukkit.block.data.BlockData;
@@ -23,6 +30,7 @@ import org.bukkit.craftbukkit.profile.CraftPlayerProfile;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.profile.PlayerProfile;
 import org.jetbrains.annotations.Nullable;
+import java.util.Objects;
 
 public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implements Skull {
 

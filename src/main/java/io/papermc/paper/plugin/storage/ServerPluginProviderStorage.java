@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ServerPluginProviderStorage extends ConfiguredProviderStorage<JavaPlugin> {
 
-    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger();
+    private static final Logger LOGGER = com.mohistmc.youer.util.LogUtils.getClassLogger();
 
     public ServerPluginProviderStorage() {
         super(new ProviderConfiguration<>() {

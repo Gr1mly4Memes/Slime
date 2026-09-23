@@ -9,8 +9,15 @@ import io.papermc.paper.registry.data.dialog.input.BooleanDialogInput;
 import io.papermc.paper.registry.data.dialog.input.NumberRangeDialogInput;
 import io.papermc.paper.registry.data.dialog.input.SingleOptionDialogInput;
 import io.papermc.paper.registry.data.dialog.input.TextDialogInput;
-import io.papermc.paper.registry.data.dialog.type.*;
+import io.papermc.paper.registry.data.dialog.type.ConfirmationType;
+import io.papermc.paper.registry.data.dialog.type.DialogListType;
+import io.papermc.paper.registry.data.dialog.type.MultiActionType;
+import io.papermc.paper.registry.data.dialog.type.NoticeType;
+import io.papermc.paper.registry.data.dialog.type.ServerLinksType;
 import io.papermc.paper.registry.set.RegistrySet;
+import java.util.List;
+import java.util.Optional;
+import java.util.ServiceLoader;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.api.BinaryTagHolder;
 import net.kyori.adventure.text.Component;
@@ -19,10 +26,6 @@ import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.ServiceLoader;
 
 /**
  * @hidden

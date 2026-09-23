@@ -72,7 +72,7 @@ public interface Damageable extends Entity {
     void setHealth(double health);
 
     /**
-     * Heal this entity by the given amount. This will call {@link EntityRegainHealthEvent}.
+     * Heal this entity by the given amount. This will call {@link org.bukkit.event.entity.EntityRegainHealthEvent}.
      *
      * @param amount heal amount
      */
@@ -81,7 +81,7 @@ public interface Damageable extends Entity {
     }
 
     /**
-     * Heal this entity by the given amount. This will call {@link EntityRegainHealthEvent}.
+     * Heal this entity by the given amount. This will call {@link org.bukkit.event.entity.EntityRegainHealthEvent}.
      *
      * @param amount heal amount
      * @param reason heal reason

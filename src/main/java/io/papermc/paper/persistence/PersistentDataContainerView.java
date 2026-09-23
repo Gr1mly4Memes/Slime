@@ -1,5 +1,6 @@
 package io.papermc.paper.persistence;
 
+import java.util.Set;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -8,8 +9,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Set;
 
 /**
  * This represents a view of a persistent data container. No

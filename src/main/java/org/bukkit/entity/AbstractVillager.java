@@ -26,9 +26,9 @@ public interface AbstractVillager extends Breedable, NPC, InventoryHolder, Merch
     /**
      * Reset this villager's trade offers.
      * <br>
-     * For {@link Villager Villagers}, only two trades are
+     * For {@link org.bukkit.entity.Villager Villagers}, only two trades are
      * created, rather than the number of trades expected for the villager's
-     * level. You should use {@link Villager#addTrades(int)}
+     * level. You should use {@link org.bukkit.entity.Villager#addTrades(int)}
      * to add the remaining trades.
      */
     public void resetOffers();

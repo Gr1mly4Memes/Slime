@@ -1,10 +1,9 @@
 package org.bukkit.entity;
 
+import java.util.List;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Represents a mushroom {@link Cow}
@@ -131,7 +130,7 @@ public interface MushroomCow extends AbstractCow, io.papermc.paper.entity.Sheara
      * from this mushroom cow is.
      *
      * @param duration duration of the effect (in ticks)
-     * @deprecated Mushroom cows can now hold multiple effects, use {@link #setStewEffects(List)}
+     * @deprecated Mushroom cows can now hold multiple effects, use {@link #setStewEffects(java.util.List)}
      */
     @Deprecated(forRemoval = true, since = "1.20.2")
     @org.jetbrains.annotations.Contract("_ -> fail")
@@ -149,7 +148,7 @@ public interface MushroomCow extends AbstractCow, io.papermc.paper.entity.Sheara
      */
     @Deprecated(forRemoval = true, since = "1.20.2")
     @org.jetbrains.annotations.Contract("-> fail")
-    default PotionEffectType getStewEffectType() {
+    default org.bukkit.potion.PotionEffectType getStewEffectType() {
         throw new UnsupportedOperationException("Mushroom cows can now hold multiple effects. Use #getStewEffects");
     }
 
@@ -159,12 +158,12 @@ public interface MushroomCow extends AbstractCow, io.papermc.paper.entity.Sheara
      *
      * @param type new effect type
      *             or null if this cow does not give effects
-     * @deprecated Mushroom cows can now hold multiple effects, use {@link #setStewEffects(List)}
+     * @deprecated Mushroom cows can now hold multiple effects, use {@link #setStewEffects(java.util.List)}
      * @throws UnsupportedOperationException
      */
     @Deprecated(forRemoval = true, since = "1.20.2")
     @org.jetbrains.annotations.Contract("_ -> fail")
-    default void setStewEffect(@org.jetbrains.annotations.Nullable PotionEffectType type) {
+    default void setStewEffect(@org.jetbrains.annotations.Nullable org.bukkit.potion.PotionEffectType type) {
         throw new UnsupportedOperationException("Mushroom cows can now hold multiple effects. Use #setStewEffects");
     }
 
@@ -174,14 +173,13 @@ public interface MushroomCow extends AbstractCow, io.papermc.paper.entity.Sheara
      *
      * @return immutable effect entry collection
      */
-    @NotNull
-    @org.jetbrains.annotations.Unmodifiable List<io.papermc.paper.potion.SuspiciousEffectEntry> getStewEffects();
+    java.util.@NotNull @org.jetbrains.annotations.Unmodifiable List<io.papermc.paper.potion.SuspiciousEffectEntry> getStewEffects();
 
     /**
      * Sets effects applied to stew items for this mushroom cow.
      *
      * @param effects effect entry list
      */
-    void setStewEffects(@NotNull List<io.papermc.paper.potion.SuspiciousEffectEntry> effects);
+    void setStewEffects(java.util.@NotNull List<io.papermc.paper.potion.SuspiciousEffectEntry> effects);
     // Paper end
 }

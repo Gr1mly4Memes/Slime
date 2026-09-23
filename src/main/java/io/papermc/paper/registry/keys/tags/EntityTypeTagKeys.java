@@ -1,13 +1,13 @@
 package io.papermc.paper.registry.keys.tags;
 
+import static net.kyori.adventure.key.Key.key;
+
 import io.papermc.paper.annotation.GeneratedClass;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.tag.TagKey;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.EntityType;
 import org.jspecify.annotations.NullMarked;
-
-import static net.kyori.adventure.key.Key.key;
 
 /**
  * Vanilla tag keys for {@link RegistryKey#ENTITY_TYPE}.
@@ -150,6 +150,13 @@ public final class EntityTypeTagKeys {
      * @apiNote This field is version-dependant and may be removed in future Minecraft versions
      */
     public static final TagKey<EntityType> CANNOT_BE_AGE_LOCKED = create(key("cannot_be_age_locked"));
+
+    /**
+     * {@code #minecraft:cannot_be_dismounted_by_item_usage}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TagKey<EntityType> CANNOT_BE_DISMOUNTED_BY_ITEM_USAGE = create(key("cannot_be_dismounted_by_item_usage"));
 
     /**
      * {@code #minecraft:cannot_be_pushed_onto_boats}

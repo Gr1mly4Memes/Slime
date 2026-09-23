@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.piston.MovingPistonBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,8 +12,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.TechnicalPiston;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -43,12 +42,12 @@ public class CraftMovingPiston extends CraftBlockData implements TechnicalPiston
     }
 
     @Override
-    public Type getType() {
-        return this.get(TYPE, Type.class);
+    public TechnicalPiston.Type getType() {
+        return this.get(TYPE, TechnicalPiston.Type.class);
     }
 
     @Override
-    public void setType(final Type type) {
+    public void setType(final TechnicalPiston.Type type) {
         Preconditions.checkArgument(type != null, "type cannot be null!");
         this.set(TYPE, type);
     }

@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
@@ -11,8 +12,6 @@ import org.bukkit.craftbukkit.potion.CraftPotionUtil;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.List;
 
 public class CraftMushroomCow extends CraftAbstractCow implements MushroomCow, io.papermc.paper.entity.PaperShearable { // Paper
 
@@ -120,7 +119,7 @@ public class CraftMushroomCow extends CraftAbstractCow implements MushroomCow, i
         final List<io.papermc.paper.potion.SuspiciousEffectEntry> effectEntries = new java.util.ArrayList<>(this.getHandle().stewEffects.effects().size());
         for (final SuspiciousStewEffects.Entry effect : this.getHandle().stewEffects.effects()) {
             effectEntries.add(io.papermc.paper.potion.SuspiciousEffectEntry.create(
-                CraftPotionEffectType.minecraftHolderToBukkit(effect.effect()),
+                org.bukkit.craftbukkit.potion.CraftPotionEffectType.minecraftHolderToBukkit(effect.effect()),
                 effect.duration()
             ));
         }
@@ -138,7 +137,7 @@ public class CraftMushroomCow extends CraftAbstractCow implements MushroomCow, i
         List<SuspiciousStewEffects.Entry> nmsPairs = new java.util.ArrayList<>(effects.size());
         for (final io.papermc.paper.potion.SuspiciousEffectEntry effect : effects) {
             nmsPairs.add(new SuspiciousStewEffects.Entry(
-                CraftPotionEffectType.bukkitToMinecraftHolder(effect.effect()),
+                org.bukkit.craftbukkit.potion.CraftPotionEffectType.bukkitToMinecraftHolder(effect.effect()),
                 effect.duration()
             ));
         }

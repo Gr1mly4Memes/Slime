@@ -12,13 +12,13 @@ import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import org.slf4j.Logger;
 
 public class PaperConfigurationTask implements ConfigurationTask {
-    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger();
+    private static final Logger LOGGER = com.mohistmc.youer.util.LogUtils.getClassLogger();
 
     public static final ExecutorService CONFIGURATION_POOL = Executors.newThreadPerTaskExecutor(
         Thread.ofVirtual().name("Configuration Thread #", 0).uncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER)).factory()
     );
 
-    public static final Type TYPE = new Type("paper_event_handling");
+    public static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type("paper_event_handling");
 
     private final ServerConfigurationPacketListenerImpl packetListener;
 

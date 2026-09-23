@@ -1,5 +1,8 @@
 package org.bukkit.event.player;
 
+import com.mohistmc.youer.api.ColorAPI;
+import java.net.InetAddress;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Warning;
@@ -7,9 +10,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.net.InetAddress;
-import java.util.UUID;
 
 /**
  * Stores details for players attempting to log in
@@ -26,7 +26,7 @@ import java.util.UUID;
  *     asynchronous.
  */
 @Deprecated(since = "1.3.2")
-@Warning(reason = "This event causes a login thread to synchronize with the main thread")
+@Warning(reason = "This event causes a login thread to synchronize with the main thread", value = true, propagate = false)
 public class PlayerPreLoginEvent extends Event {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();
@@ -121,7 +121,7 @@ public class PlayerPreLoginEvent extends Event {
      */
     @Deprecated
     public void setKickMessage(@NotNull final String message) {
-        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
+        this.message = ColorAPI.adventure(message);
     }
 
     /**
@@ -137,12 +137,12 @@ public class PlayerPreLoginEvent extends Event {
      *
      * @param result New result for disallowing the player
      * @param message Kick message to display to the user
-     * @deprecated in favour of {@link #disallow(Result, Component)}
+     * @deprecated in favour of {@link #disallow(org.bukkit.event.player.PlayerPreLoginEvent.Result, Component)}
      */
     @Deprecated // Paper
     public void disallow(@NotNull final Result result, @NotNull final String message) {
         this.result = result;
-        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
+        this.message = ColorAPI.adventure(message);
     }
 
     /**

@@ -5,6 +5,11 @@ import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.data.util.Conversions;
 import io.papermc.paper.registry.set.PaperRegistrySets;
 import io.papermc.paper.registry.set.RegistryKeySet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.bukkit.inventory.ItemType;
@@ -13,12 +18,6 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.recipe.CookingBookCategory;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
 import org.jspecify.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 public interface CraftRecipe extends Recipe {
 
@@ -42,7 +41,6 @@ public interface CraftRecipe extends Recipe {
             stack = Ingredient.of(((RecipeChoice.MaterialChoice) bukkit).getChoices().stream().map(CraftItemType::bukkitToMinecraft));
         } else if (bukkit instanceof RecipeChoice.ExactChoice) {
             stack = Ingredient.ofStacks(((RecipeChoice.ExactChoice) bukkit).getChoices().stream().map(CraftItemStack::asNMSCopy).toList());
-            stack.predicate = ((RecipeChoice.ExactChoice) bukkit).getPredicate(); // Purpur - Add predicate to recipe's ExactChoice ingredient
             // Paper start - support "empty" choices - legacy method that spigot might incorrectly call
             // Their impl of Ingredient.of() will error, ingredients need at least one entry.
             // Callers running into this exception may have passed an incorrect empty() recipe choice to a non-empty slot or

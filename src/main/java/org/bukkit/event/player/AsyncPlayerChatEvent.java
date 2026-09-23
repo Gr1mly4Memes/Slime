@@ -1,5 +1,7 @@
 package org.bukkit.event.player;
 
+import java.util.IllegalFormatException;
+import java.util.Set;
 import com.google.common.base.Preconditions;
 import org.bukkit.Warning;
 import org.bukkit.entity.Player;
@@ -7,9 +9,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.IllegalFormatException;
-import java.util.Set;
 
 /**
  * This event will sometimes fire synchronously, depending on how it was
@@ -30,7 +29,7 @@ import java.util.Set;
  * @deprecated use {@link io.papermc.paper.event.player.AsyncChatEvent} instead
  */
 @Deprecated
-@Warning(reason = "Don't nag on old event yet") // Paper
+@Warning(propagate = false)
 public class AsyncPlayerChatEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();

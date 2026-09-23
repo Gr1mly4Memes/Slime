@@ -33,12 +33,12 @@ public class CraftTrialSpawner extends CraftBlockData implements TrialSpawner {
     }
 
     @Override
-    public State getTrialSpawnerState() {
-        return this.get(STATE, State.class);
+    public TrialSpawner.State getTrialSpawnerState() {
+        return this.get(STATE, TrialSpawner.State.class);
     }
 
     @Override
-    public void setTrialSpawnerState(final State state) {
+    public void setTrialSpawnerState(final TrialSpawner.State state) {
         Preconditions.checkArgument(state != null, "state cannot be null!");
         this.set(STATE, state);
     }

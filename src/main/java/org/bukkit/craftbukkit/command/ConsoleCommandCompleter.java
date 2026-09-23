@@ -1,18 +1,18 @@
 package org.bukkit.craftbukkit.command;
 
-import net.minecraft.server.dedicated.DedicatedServer;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.util.Waitable;
-import org.bukkit.event.server.TabCompleteEvent;
-import org.jline.reader.Candidate;
-import org.jline.reader.Completer;
-import org.jline.reader.LineReader;
-import org.jline.reader.ParsedLine;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
+import net.minecraft.server.dedicated.DedicatedServer;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.util.Waitable;
+
+import org.jline.reader.Candidate;
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.ParsedLine;
+import org.bukkit.event.server.TabCompleteEvent;
 
 public class ConsoleCommandCompleter implements Completer {
     private final DedicatedServer server; // Paper - CraftServer -> DedicatedServer

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.registry.data.util.Conversions;
+import java.util.Optional;
 import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryAccess;
@@ -23,15 +24,18 @@ import org.bukkit.craftbukkit.CraftRegistry;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftEntityType;
-import org.bukkit.craftbukkit.inventory.components.*;
+import org.bukkit.craftbukkit.inventory.components.CraftCustomModelDataComponent;
+import org.bukkit.craftbukkit.inventory.components.CraftEquippableComponent;
+import org.bukkit.craftbukkit.inventory.components.CraftFoodComponent;
+import org.bukkit.craftbukkit.inventory.components.CraftJukeboxComponent;
+import org.bukkit.craftbukkit.inventory.components.CraftToolComponent;
+import org.bukkit.craftbukkit.inventory.components.CraftUseCooldownComponent;
 import org.bukkit.craftbukkit.util.CraftLegacy;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.Optional;
 
 public final class CraftItemFactory implements ItemFactory {
     static final Color DEFAULT_LEATHER_COLOR = Color.fromRGB(0xA06540);
@@ -153,7 +157,7 @@ public final class CraftItemFactory implements ItemFactory {
             if (reader.canRead()) {
                 throw new IllegalArgumentException("Trailing input found when parsing ItemStack: " + reader.getRemaining());
             }
-            return CraftItemStack.asCraftMirror(in.createItemStack(1));
+            return CraftItemStack.asBukkitMirror(in.createItemStack(1));
         } catch (CommandSyntaxException ex) {
             throw new IllegalArgumentException("Could not parse ItemStack: " + input, ex);
         }
@@ -190,11 +194,9 @@ public final class CraftItemFactory implements ItemFactory {
     private static ItemStack enchantItem(RandomSource source, ItemStack itemStack, int level, boolean allowTreasures) {
         Preconditions.checkArgument(itemStack != null, "ItemStack must not be null");
         Preconditions.checkArgument(!itemStack.getType().isAir(), "ItemStack must not be air");
-        itemStack = CraftItemStack.asCraftCopy(itemStack);
-        CraftItemStack craft = (CraftItemStack) itemStack;
         RegistryAccess registry = CraftRegistry.getMinecraftRegistry();
-        Optional<HolderSet.Named<Enchantment>> optional = (allowTreasures) ? Optional.empty() : registry.lookupOrThrow(Registries.ENCHANTMENT).get(EnchantmentTags.IN_ENCHANTING_TABLE);
-        return CraftItemStack.asCraftMirror(EnchantmentHelper.enchantItem(source, craft.handle, level, registry, optional));
+        Optional<HolderSet.Named<Enchantment>> tag = allowTreasures ? Optional.empty() : registry.lookupOrThrow(Registries.ENCHANTMENT).get(EnchantmentTags.IN_ENCHANTING_TABLE);
+        return CraftItemStack.asBukkitMirror(EnchantmentHelper.enchantItem(source, CraftItemStack.asNMSCopy(itemStack), level, registry, tag));
     }
 
     @Override
@@ -217,7 +219,7 @@ public final class CraftItemFactory implements ItemFactory {
     // TODO: DO WE NEED THIS?
     @Override
     public ItemStack ensureServerConversions(ItemStack item) {
-        return CraftItemStack.asCraftMirror(CraftItemStack.asNMSCopy(item));
+        return CraftItemStack.asBukkitMirror(CraftItemStack.asNMSCopy(item));
     }
     // Paper end - ensure server conversions API
 
@@ -284,9 +286,9 @@ public final class CraftItemFactory implements ItemFactory {
             return null;
         }
         String typeId = type.getKey().toString();
-        Identifier typeKey = Identifier.parse(typeId);
+        net.minecraft.resources.Identifier typeKey = Identifier.parse(typeId);
         net.minecraft.world.entity.EntityType<?> nmsType = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getValue(typeKey);
-        return SpawnEggItem.byId(nmsType).map(net.minecraft.world.item.ItemStack::new).map(net.minecraft.world.item.ItemStack::asBukkitMirror).orElse(null);
+        return net.minecraft.world.item.SpawnEggItem.byId(nmsType).map(net.minecraft.world.item.ItemStack::new).map(CraftItemStack::asBukkitMirror).orElse(null);
     }
     // Paper end - old getSpawnEgg API
     // Paper start - enchantWithLevels API
@@ -326,7 +328,7 @@ public final class CraftItemFactory implements ItemFactory {
     private ItemStack enchantWithLevels(
         ItemStack itemStack,
         int levels,
-        Optional<? extends HolderSet<Enchantment>> possibleEnchantments,
+        Optional<? extends net.minecraft.core.HolderSet<net.minecraft.world.item.enchantment.Enchantment>> possibleEnchantments,
         java.util.Random random
     ) {
         Preconditions.checkArgument(itemStack != null, "Argument 'itemStack' must not be null");
@@ -336,15 +338,15 @@ public final class CraftItemFactory implements ItemFactory {
         if (internalStack.isEnchanted()) {
             internalStack.set(net.minecraft.core.component.DataComponents.ENCHANTMENTS, net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
         }
-        final RegistryAccess registryAccess = net.minecraft.server.MinecraftServer.getServer().registryAccess();
-        final net.minecraft.world.item.ItemStack enchanted = EnchantmentHelper.enchantItem(
+        final net.minecraft.core.RegistryAccess registryAccess = net.minecraft.server.MinecraftServer.getServer().registryAccess();
+        final net.minecraft.world.item.ItemStack enchanted = net.minecraft.world.item.enchantment.EnchantmentHelper.enchantItem(
             new org.bukkit.craftbukkit.util.RandomSourceWrapper(random),
             internalStack,
             levels,
             registryAccess,
             possibleEnchantments
         );
-        return CraftItemStack.asCraftMirror(enchanted);
+        return CraftItemStack.asBukkitMirror(enchanted);
     }
     // Paper end - enchantWithLevels API
 }

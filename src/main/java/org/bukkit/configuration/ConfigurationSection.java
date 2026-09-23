@@ -1,5 +1,8 @@
 package org.bukkit.configuration;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -9,10 +12,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Represents a section of a {@link Configuration}
@@ -195,7 +194,7 @@ public interface ConfigurationSection {
      * Some implementations may have limitations on what you may store. See
      * their individual javadocs for details. No implementations should allow
      * you to store {@link Configuration}s or {@link ConfigurationSection}s,
-     * please use {@link #createSection(String)} for that.
+     * please use {@link #createSection(java.lang.String)} for that.
      *
      * @param path Path of the object to set.
      * @param value New value to set the path to.

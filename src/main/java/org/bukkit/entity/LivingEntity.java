@@ -1,8 +1,19 @@
 package org.bukkit.entity;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import io.papermc.paper.world.damagesource.CombatTracker;
+import io.papermc.paper.world.damagesource.FallLocationType;
 import net.kyori.adventure.key.Key;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.block.Block;
 import org.bukkit.damage.DamageSource;
@@ -20,11 +31,6 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Represents a living entity, such as a monster or player
@@ -124,7 +130,7 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
      */
     @Nullable
     public default org.bukkit.block.BlockFace getTargetBlockFace(int maxDistance) {
-        return getTargetBlockFace(maxDistance, FluidCollisionMode.NEVER);
+        return getTargetBlockFace(maxDistance, org.bukkit.FluidCollisionMode.NEVER);
     }
 
     /**
@@ -277,7 +283,7 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
      *
      * @param maxDistance the maximum distance to scan
      * @return block that the living entity has targeted
-     * @see #getTargetBlockExact(int, FluidCollisionMode)
+     * @see #getTargetBlockExact(int, org.bukkit.FluidCollisionMode)
      */
     @Nullable
     default Block getTargetBlockExact(int maxDistance) {
@@ -1234,7 +1240,7 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
      *
      * @return the item
      */
-    @NotNull ItemStack getActiveItem();
+    org.bukkit.inventory.@NotNull ItemStack getActiveItem();
 
     /**
      * Interrupts any ongoing active "usage" or consumption or an item.
@@ -1288,7 +1294,7 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
      * @return remaining ticks to use the item
      * @see #getActiveItemRemainingTime()
      */
-    @ApiStatus.Obsolete(since = "1.20.4")
+    @org.jetbrains.annotations.ApiStatus.Obsolete(since = "1.20.4")
     default int getItemUseRemainingTime() {
         return this.getActiveItemRemainingTime();
     }
@@ -1299,7 +1305,7 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
      * @return Get how long the players hands have been raised (Charging Bow attack, using a potion, etc)
      * @see #getActiveItemUsedTime()
      */
-    @ApiStatus.Obsolete(since = "1.20.4")
+    @org.jetbrains.annotations.ApiStatus.Obsolete(since = "1.20.4")
     default int getHandRaisedTime() {
         return this.getActiveItemUsedTime();
     }
@@ -1310,7 +1316,7 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
      * @return whether this entity is using or charging an attack (Bow pulled back, drinking potion, eating food)
      * @see #hasActiveItem()
      */
-    @ApiStatus.Obsolete(since = "1.20.4")
+    @org.jetbrains.annotations.ApiStatus.Obsolete(since = "1.20.4")
     default boolean isHandRaised() {
         return this.hasActiveItem();
     }
@@ -1324,7 +1330,7 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
      * @see #getActiveItemHand()
      */
     @NotNull
-    @ApiStatus.Obsolete(since = "1.20.4")
+    @org.jetbrains.annotations.ApiStatus.Obsolete(since = "1.20.4")
     default org.bukkit.inventory.EquipmentSlot getHandRaised() {
         return this.getActiveItemHand();
     }

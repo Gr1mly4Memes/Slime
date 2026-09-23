@@ -1,12 +1,11 @@
 package org.bukkit.plugin.messaging;
 
+import java.util.Set;
 import io.papermc.paper.connection.PlayerConnection;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 /**
  * A class responsible for managing the registrations of plugin channels and
@@ -26,7 +25,7 @@ public interface Messenger {
     /**
      * Represents the largest size that a Plugin Channel may be.
      */
-    public static final int MAX_CHANNEL_SIZE = Integer.getInteger("paper.maxCustomChannelName", Short.MAX_VALUE); // Paper - set true max channel size
+    public static final int MAX_CHANNEL_SIZE = Integer.getInteger("paper.maxCustomChannelName", java.lang.Short.MAX_VALUE); // Paper - set true max channel size
 
     /**
      * Checks if the specified channel is a reserved name.

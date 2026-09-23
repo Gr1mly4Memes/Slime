@@ -1,6 +1,10 @@
 package org.bukkit.event.inventory;
 
 import com.google.common.collect.ImmutableSet;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import org.bukkit.Location;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -12,10 +16,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This event is called when the player drags an item in their cursor across
@@ -150,7 +150,7 @@ public class InventoryDragEvent extends InventoryInteractEvent {
      * Gets the slots to be changed in this drag.
      *
      * @return list of converted slot ids, suitable for {@link
-     *     Inventory#getItem(int)}.
+     *     org.bukkit.inventory.Inventory#getItem(int)}.
      */
     @NotNull
     public Set<Integer> getInventorySlots() {

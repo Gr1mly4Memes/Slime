@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.block;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.level.block.entity.ConduitBlockEntity;
@@ -11,9 +13,6 @@ import org.bukkit.block.Conduit;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.BoundingBox;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class CraftConduit extends CraftBlockEntityState<ConduitBlockEntity> implements Conduit {
 
@@ -120,7 +119,7 @@ public class CraftConduit extends CraftBlockEntityState<ConduitBlockEntity> impl
         }
 
         final net.minecraft.world.entity.LivingEntity nmsEntity = EntityReference.get(conduit.destroyTarget, this.getWorldHandle().getMinecraftWorld(), net.minecraft.world.entity.LivingEntity.class);
-        return nmsEntity == null ? null : nmsEntity.getBukkitLivingEntity();
+        return nmsEntity == null ? null : nmsEntity.getBukkitEntity();
     }
 
     @Override

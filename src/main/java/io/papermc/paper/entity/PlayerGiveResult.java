@@ -1,11 +1,10 @@
 package io.papermc.paper.entity;
 
+import java.util.Collection;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Collection;
 
 /**
  * A result type used by {@link org.bukkit.entity.Player#give(ItemStack...)} and its overloads.

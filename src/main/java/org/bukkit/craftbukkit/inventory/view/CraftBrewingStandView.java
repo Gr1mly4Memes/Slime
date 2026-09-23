@@ -38,7 +38,7 @@ public class CraftBrewingStandView extends CraftInventoryView<BrewingStandMenu, 
 
     @Override
     public void setRecipeBrewTime(int recipeBrewTime) {
-        Preconditions.checkArgument(recipeBrewTime > 0, "recipeBrewTime must be positive");
+        com.google.common.base.Preconditions.checkArgument(recipeBrewTime > 0, "recipeBrewTime must be positive");
         this.container.brewingStandData.set(2, recipeBrewTime);
     }
 

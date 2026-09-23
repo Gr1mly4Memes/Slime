@@ -1,6 +1,8 @@
 package org.bukkit.map;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.youer.api.ColorAPI;
+import java.util.Locale;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
 import org.bukkit.Keyed;
@@ -10,8 +12,6 @@ import org.bukkit.util.OldEnum;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
 
 /**
  * Represents a cursor on a map.
@@ -69,7 +69,7 @@ public final class MapCursor {
         setDirection(direction);
         setRawType(type);
         this.visible = visible;
-        this.caption = caption == null ? null : net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(caption); // Paper
+        this.caption = caption == null ? null : ColorAPI.adventure(caption); // Paper
     }
     // Paper start
     /**
@@ -122,7 +122,7 @@ public final class MapCursor {
         setDirection(direction);
         this.type = type;
         this.visible = visible;
-        this.caption = caption == null ? null : net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(caption); // Paper
+        this.caption = caption == null ? null : ColorAPI.adventure(caption); // Paper
     }
 
     /**
@@ -168,7 +168,7 @@ public final class MapCursor {
      * @return The type (color/style) of the map cursor.
      * @apiNote Internal Use Only
      */
-    @ApiStatus.Internal // Paper
+    @org.jetbrains.annotations.ApiStatus.Internal // Paper
     public byte getRawType() {
         return type.getValue();
     }
@@ -279,7 +279,7 @@ public final class MapCursor {
      */
     @Deprecated // Paper
     public void setCaption(@Nullable String caption) {
-        this.caption = caption == null ? null : net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(caption); // Paper
+        this.caption = caption == null ? null : ColorAPI.adventure(caption); // Paper
     }
 
     /**
@@ -291,6 +291,10 @@ public final class MapCursor {
     public interface Type extends OldEnum<Type>, Keyed {
 
         // Start generate - MapCursorType
+        Type ABANDONED_CAMP = getType("abandoned_camp");
+
+        Type ANCIENT_CITY = getType("ancient_city");
+
         Type BANNER_BLACK = getType("banner_black");
 
         Type BANNER_BLUE = getType("banner_blue");
@@ -325,13 +329,19 @@ public final class MapCursor {
 
         Type BLUE_MARKER = getType("blue_marker");
 
+        Type DESERT_PYRAMID = getType("desert_pyramid");
+
         Type FRAME = getType("frame");
 
         Type JUNGLE_TEMPLE = getType("jungle_temple");
 
         Type MANSION = getType("mansion");
 
+        Type MINESHAFT = getType("mineshaft");
+
         Type MONUMENT = getType("monument");
+
+        Type OCEAN_RUIN_WARM = getType("ocean_ruin_warm");
 
         Type PLAYER = getType("player");
 

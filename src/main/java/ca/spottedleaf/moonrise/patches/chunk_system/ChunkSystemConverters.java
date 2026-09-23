@@ -3,6 +3,7 @@ package ca.spottedleaf.moonrise.patches.chunk_system;
 import ca.spottedleaf.moonrise.common.PlatformHooks;
 import net.minecraft.SharedConstants;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.fixes.References;
 

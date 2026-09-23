@@ -2,6 +2,7 @@ package io.papermc.paper.event.block;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.block.LockableTileState;
+import java.util.Objects;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import org.bukkit.block.Block;
@@ -13,8 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Objects;
 
 /**
  * Called when the server tries to check the lock on a lockable block entity.

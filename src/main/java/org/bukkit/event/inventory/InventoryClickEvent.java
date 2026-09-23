@@ -1,5 +1,6 @@
 package org.bukkit.event.inventory;
 
+import org.bukkit.Location;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;

@@ -2,13 +2,12 @@ package org.bukkit;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.util.Tick;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
-
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 public interface WorldBorder {
 

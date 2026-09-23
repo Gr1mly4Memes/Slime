@@ -1,13 +1,13 @@
 package io.papermc.paper.registry.keys.tags;
 
+import static net.kyori.adventure.key.Key.key;
+
 import io.papermc.paper.annotation.GeneratedClass;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.tag.TagKey;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Fluid;
 import org.jspecify.annotations.NullMarked;
-
-import static net.kyori.adventure.key.Key.key;
 
 /**
  * Vanilla tag keys for {@link RegistryKey#FLUID}.
@@ -26,11 +26,39 @@ import static net.kyori.adventure.key.Key.key;
 @GeneratedClass
 public final class FluidTagKeys {
     /**
+     * {@code #minecraft:axolotl_tries_to_find}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TagKey<Fluid> AXOLOTL_TRIES_TO_FIND = create(key("axolotl_tries_to_find"));
+
+    /**
      * {@code #minecraft:bubble_column_can_occupy}
      *
      * @apiNote This field is version-dependant and may be removed in future Minecraft versions
      */
     public static final TagKey<Fluid> BUBBLE_COLUMN_CAN_OCCUPY = create(key("bubble_column_can_occupy"));
+
+    /**
+     * {@code #minecraft:dolphin_tries_to_find}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TagKey<Fluid> DOLPHIN_TRIES_TO_FIND = create(key("dolphin_tries_to_find"));
+
+    /**
+     * {@code #minecraft:entity_floatable}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TagKey<Fluid> ENTITY_FLOATABLE = create(key("entity_floatable"));
+
+    /**
+     * {@code #minecraft:frog_tries_to_find_land_near}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TagKey<Fluid> FROG_TRIES_TO_FIND_LAND_NEAR = create(key("frog_tries_to_find_land_near"));
 
     /**
      * {@code #minecraft:lava}

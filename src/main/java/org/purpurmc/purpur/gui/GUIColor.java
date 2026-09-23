@@ -2,7 +2,7 @@ package org.purpurmc.purpur.gui;
 
 import net.md_5.bungee.api.ChatColor;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 

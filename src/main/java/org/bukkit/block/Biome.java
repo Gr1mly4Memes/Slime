@@ -4,13 +4,16 @@ import com.google.common.base.Preconditions;
 import io.papermc.paper.InternalAPIBridge;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
+import java.util.Locale;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.FeatureFlag;
+import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.util.OldEnum;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 
 /**
  * Holds all accepted Biomes in the server.
@@ -38,6 +41,8 @@ public interface Biome extends OldEnum<Biome>, Keyed, net.kyori.adventure.transl
     Biome COLD_OCEAN = getBiome("cold_ocean");
 
     Biome CRIMSON_FOREST = getBiome("crimson_forest");
+
+    Biome DAPPLED_FOREST = getBiome("dappled_forest");
 
     Biome DARK_FOREST = getBiome("dark_forest");
 

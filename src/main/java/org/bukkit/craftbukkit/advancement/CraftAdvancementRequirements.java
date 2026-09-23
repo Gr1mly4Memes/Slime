@@ -1,10 +1,9 @@
 package org.bukkit.craftbukkit.advancement;
 
+import java.util.List;
 import net.minecraft.advancements.AdvancementRequirements;
 import org.bukkit.advancement.AdvancementRequirement;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class CraftAdvancementRequirements implements org.bukkit.advancement.AdvancementRequirements {
 

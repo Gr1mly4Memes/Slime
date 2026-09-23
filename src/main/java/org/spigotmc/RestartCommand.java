@@ -1,13 +1,12 @@
 package org.spigotmc;
 
+import java.io.File;
+import java.util.Locale;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
-
-import java.io.File;
-import java.util.Locale;
 
 public class RestartCommand extends Command {
 

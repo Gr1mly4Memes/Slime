@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.ShelfBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,8 +13,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Shelf;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -58,12 +57,12 @@ public class CraftShelf extends CraftBlockData implements Shelf {
     }
 
     @Override
-    public ChainPart getSideChain() {
-        return this.get(SIDE_CHAIN_PART, ChainPart.class);
+    public org.bukkit.block.data.SideChaining.ChainPart getSideChain() {
+        return this.get(SIDE_CHAIN_PART, org.bukkit.block.data.SideChaining.ChainPart.class);
     }
 
     @Override
-    public void setSideChain(final ChainPart chainPart) {
+    public void setSideChain(final org.bukkit.block.data.SideChaining.ChainPart chainPart) {
         Preconditions.checkArgument(chainPart != null, "chainPart cannot be null!");
         this.set(SIDE_CHAIN_PART, chainPart);
     }

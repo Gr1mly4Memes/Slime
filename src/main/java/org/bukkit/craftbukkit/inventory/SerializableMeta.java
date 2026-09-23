@@ -2,14 +2,17 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.bukkit.block.Banner;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
 @SerializableAs("ItemMeta")
 public final class SerializableMeta implements ConfigurationSerializable {
@@ -137,7 +140,7 @@ public final class SerializableMeta implements ConfigurationSerializable {
         throw new IllegalArgumentException(field + "(" + object + ") is not a valid " + clazz);
     }
 
-    public static <T> Optional<T> getObjectOptionally(Class<T> clazz, Map<?, ?> map, Object field, boolean nullable) {
+    public static <T> java.util.Optional<T> getObjectOptionally(Class<T> clazz, Map<?, ?> map, Object field, boolean nullable) {
         return Optional.ofNullable(getObject(clazz, map, field, nullable));
     }
 

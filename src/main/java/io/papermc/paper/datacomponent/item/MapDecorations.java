@@ -1,20 +1,17 @@
 package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
+import java.util.Map;
 import org.bukkit.map.MapCursor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Map;
 
 /**
  * Holds a list of markers to be placed on a Filled Map (used for Explorer Maps).
  * @see io.papermc.paper.datacomponent.DataComponentTypes#MAP_DECORATIONS
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface MapDecorations {
 
@@ -24,13 +21,13 @@ public interface MapDecorations {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder mapDecorations() {
+    static MapDecorations.Builder mapDecorations() {
         return ItemComponentTypesBridge.bridge().mapDecorations();
     }
 
     @Contract(value = "_, _, _, _ -> new", pure = true)
     static DecorationEntry decorationEntry(final MapCursor.Type type, final double x, final double z, final float rotation) {
-        return ItemComponentTypesBridge.bridge().decorationEntry(type, x, z, rotation);
+        return ItemComponentTypesBridge.bridge().mapDecorationEntry(type, x, z, rotation);
     }
 
     /**
@@ -104,7 +101,7 @@ public interface MapDecorations {
          * @see #decorations()
          */
         @Contract(value = "_, _ -> this", mutates = "this")
-        Builder put(String id, DecorationEntry entry);
+        MapDecorations.Builder put(String id, DecorationEntry entry);
 
         /**
          * Puts all the decoration with the given id in this builder.
@@ -114,6 +111,6 @@ public interface MapDecorations {
          * @see #decorations()
          */
         @Contract(value = "_ -> this", mutates = "this")
-        Builder putAll(Map<String, DecorationEntry> entries);
+        MapDecorations.Builder putAll(Map<String, DecorationEntry> entries);
     }
 }

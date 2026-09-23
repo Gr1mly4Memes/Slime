@@ -4,16 +4,21 @@ import com.destroystokyo.paper.entity.RangedEntity;
 import com.google.common.base.CaseFormat;
 import io.papermc.paper.entity.SchoolableFish;
 import it.unimi.dsi.fastutil.ints.Int2BooleanFunction;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.*;
 
 public class MobGoalHelper {
 
@@ -38,7 +43,7 @@ public class MobGoalHelper {
         map.put(net.minecraft.world.entity.animal.dolphin.Dolphin.class, Dolphin.class);
         map.put(net.minecraft.world.entity.monster.zombie.Drowned.class, Drowned.class);
         map.put(net.minecraft.world.entity.boss.enderdragon.EnderDragon.class, EnderDragon.class);
-        map.put(net.minecraft.world.entity.monster.EnderMan.class, Enderman.class);
+        map.put(net.minecraft.world.entity.monster.Enderman.class, Enderman.class);
         map.put(net.minecraft.world.entity.monster.Endermite.class, Endermite.class);
         map.put(net.minecraft.world.entity.monster.illager.Evoker.class, Evoker.class);
         map.put(net.minecraft.world.entity.animal.fish.AbstractFish.class, Fish.class);

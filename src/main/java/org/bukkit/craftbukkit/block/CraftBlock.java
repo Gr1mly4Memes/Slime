@@ -1,9 +1,15 @@
 package org.bukkit.craftbukkit.block;
 
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BoneMealItem;
@@ -14,7 +20,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.LevelEvent;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -26,7 +32,13 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.TreeType;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -55,14 +67,8 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class CraftBlock implements Block {
-    private final LevelAccessor level;
+    private final net.minecraft.world.level.LevelAccessor level;
     private final BlockPos position;
 
     public CraftBlock(LevelAccessor level, BlockPos position) {
@@ -74,7 +80,7 @@ public class CraftBlock implements Block {
         return new CraftBlock(level, position);
     }
 
-    public BlockState getBlockState() {
+    public net.minecraft.world.level.block.state.BlockState getBlockState() {
         return this.level.getBlockState(this.position);
     }
 
@@ -181,11 +187,11 @@ public class CraftBlock implements Block {
         this.setBlockState(((CraftBlockData) data).getState(), applyPhysics);
     }
 
-    boolean setBlockState(final BlockState state, final boolean applyPhysics) {
+    boolean setBlockState(final net.minecraft.world.level.block.state.BlockState state, final boolean applyPhysics) {
         return setBlockState(this.level, this.position, state, applyPhysics);
     }
 
-    public static boolean setBlockState(LevelAccessor level, BlockPos pos, BlockState newState, boolean applyPhysics) {
+    public static boolean setBlockState(LevelAccessor level, BlockPos pos, net.minecraft.world.level.block.state.BlockState newState, boolean applyPhysics) {
         int updateFlags = net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
         if (applyPhysics) {
             updateFlags |= net.minecraft.world.level.block.Block.UPDATE_NEIGHBORS;
@@ -246,7 +252,7 @@ public class CraftBlock implements Block {
 
     @Override
     public String toString() {
-        BlockState state = this.getBlockState();
+        net.minecraft.world.level.block.state.BlockState state = this.getBlockState();
         return "CraftBlock{pos=" + this.position + ", type=" + this.getType() + ", data=" + state + ", fluid=" + state.getFluidState() + '}';
     }
 
@@ -363,8 +369,8 @@ public class CraftBlock implements Block {
         }
 
         BlockState neighborState = this.level.getBlockState(this.position.relative(direction));
-        if (neighborState.hasProperty(RedStoneWireBlock.POWER)) {
-            return neighborState.getValue(RedStoneWireBlock.POWER) > Redstone.SIGNAL_MIN;
+        if (neighborState.hasProperty(RedstoneWireBlock.POWER)) {
+            return neighborState.getValue(RedstoneWireBlock.POWER) > Redstone.SIGNAL_MIN;
         }
 
         return false;
@@ -387,8 +393,8 @@ public class CraftBlock implements Block {
             BlockPos neighborPos = this.position.relative(direction);
             if (level.hasSignal(neighborPos, direction)) {
                 BlockState state = level.getBlockState(neighborPos);
-                if (state.hasProperty(RedStoneWireBlock.POWER)) {
-                    power = Math.max(state.getValue(RedStoneWireBlock.POWER), power);
+                if (state.hasProperty(RedstoneWireBlock.POWER)) {
+                    power = Math.max(state.getValue(RedstoneWireBlock.POWER), power);
                     if (power == Redstone.SIGNAL_MAX) {
                         return power;
                     }
@@ -433,7 +439,8 @@ public class CraftBlock implements Block {
 
     @Override
     public boolean isSolid() {
-        return this.getBlockState().blocksMotion();
+        // TODO - snapshot - if datapacks can change this maybe consider deprecate this or improvement the javadocs
+        return this.getBlockState().is(BlockTags.BLOCKS_MOTION);
     }
 
     @Override
@@ -514,7 +521,7 @@ public class CraftBlock implements Block {
         UseOnContext context = new UseOnContext(world, null, InteractionHand.MAIN_HAND, Items.BONE_MEAL.getDefaultInstance(), new BlockHitResult(Vec3.ZERO, direction, this.getPosition(), false));
 
         // SPIGOT-6895: Call StructureGrowEvent and BlockFertilizeEvent
-        List<CraftBlockState> capturedBlockStates;
+        List<org.bukkit.craftbukkit.block.CraftBlockState> capturedBlockStates;
         world.captureTreeGeneration = true;
         TreeType treeType;
         InteractionResult result;

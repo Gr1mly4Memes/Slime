@@ -4,15 +4,14 @@ import com.google.common.base.Preconditions;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
-import org.bukkit.Keyed;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
+import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 record RegistryKeySetImpl<T extends Keyed>(RegistryKey<T> registryKey, List<TypedKey<T>> values) implements RegistryKeySet<T> { // TODO remove Keyed

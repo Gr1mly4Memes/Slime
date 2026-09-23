@@ -5,6 +5,7 @@ import io.papermc.paper.registry.RegistryBuilderFactory;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.data.InlinedRegistryBuilderProvider;
 import io.papermc.paper.registry.data.TrimMaterialRegistryEntry;
+import java.util.function.Consumer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
 import net.kyori.adventure.text.Component;
@@ -13,8 +14,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Translatable;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.function.Consumer;
 
 /**
  * Represents a material that may be used in an {@link ArmorTrim}.

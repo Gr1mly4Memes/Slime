@@ -1,12 +1,11 @@
 package org.bukkit;
 
 import com.google.common.base.Preconditions;
+import java.util.List;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.util.Index;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.List;
 
 /**
  * This represents a Feature Flag for a {@link io.papermc.paper.world.flag.FeatureFlagSetHolder}.

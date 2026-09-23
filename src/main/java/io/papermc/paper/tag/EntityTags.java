@@ -1,10 +1,9 @@
 package io.papermc.paper.tag;
 
+import java.util.Objects;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.entity.EntityType;
-
-import java.util.Objects;
 
 /**
  * All tags in this class are unmodifiable, attempting to modify them will throw an

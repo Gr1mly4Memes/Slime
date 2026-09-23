@@ -1,8 +1,7 @@
 package org.bukkit;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a countable statistic, which is tracked by the server.
@@ -70,6 +69,7 @@ public enum Statistic implements Keyed {
     RAID_TRIGGER,
     RAID_WIN,
     SLEEP_IN_BED,
+    SLEEP_IN_STRAW_BED,
     SNEAK_TIME,
     SPRINT_ONE_CM,
     STRIDER_ONE_CM,
@@ -99,7 +99,7 @@ public enum Statistic implements Keyed {
     // End generate - StatisticType
 
     private final Type type;
-    private final NamespacedKey key;
+    public NamespacedKey key;
 
     private Statistic() {
         this(Type.UNTYPED);

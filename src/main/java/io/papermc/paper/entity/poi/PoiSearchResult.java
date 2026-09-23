@@ -1,10 +1,9 @@
 package io.papermc.paper.entity.poi;
 
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.function.Predicate;
 
 /**
  * Holds the result of searching for a point of interest.

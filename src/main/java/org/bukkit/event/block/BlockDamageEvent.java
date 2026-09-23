@@ -89,7 +89,7 @@ public class BlockDamageEvent extends BlockEvent implements Cancellable {
      * @return The BlockFace clicked to damage the block
      */
     @NotNull
-    public BlockFace getBlockFace() {
+    public org.bukkit.block.BlockFace getBlockFace() {
         Preconditions.checkState(this.blockFace != null, "BlockFace is not available for this event, most likely due to a bad constructor call by a plugin");
         return this.blockFace;
     }

@@ -7,11 +7,19 @@ import ca.spottedleaf.concurrentutil.executor.thread.BalancedPrioritisedThreadPo
 import ca.spottedleaf.concurrentutil.lock.ReentrantAreaLock;
 import ca.spottedleaf.concurrentutil.util.ConcurrentUtil;
 import ca.spottedleaf.concurrentutil.util.Priority;
-import ca.spottedleaf.moonrise.common.util.*;
+import ca.spottedleaf.moonrise.common.util.CoordinateUtils;
+import ca.spottedleaf.moonrise.common.util.JsonUtil;
+import ca.spottedleaf.moonrise.common.util.MoonriseCommon;
+import ca.spottedleaf.moonrise.common.util.TickThread;
+import ca.spottedleaf.moonrise.common.util.WorldUtil;
 import ca.spottedleaf.moonrise.patches.chunk_system.level.ChunkSystemServerLevel;
 import ca.spottedleaf.moonrise.patches.chunk_system.level.chunk.ChunkSystemChunkStatus;
 import ca.spottedleaf.moonrise.patches.chunk_system.player.ChunkSystemServerPlayer;
-import ca.spottedleaf.moonrise.patches.chunk_system.scheduling.task.*;
+import ca.spottedleaf.moonrise.patches.chunk_system.scheduling.task.ChunkFullTask;
+import ca.spottedleaf.moonrise.patches.chunk_system.scheduling.task.ChunkLightTask;
+import ca.spottedleaf.moonrise.patches.chunk_system.scheduling.task.ChunkLoadTask;
+import ca.spottedleaf.moonrise.patches.chunk_system.scheduling.task.ChunkProgressionTask;
+import ca.spottedleaf.moonrise.patches.chunk_system.scheduling.task.ChunkUpgradeGenericStatusTask;
 import ca.spottedleaf.moonrise.patches.chunk_system.server.ChunkSystemMinecraftServer;
 import ca.spottedleaf.moonrise.patches.chunk_system.status.ChunkSystemChunkStep;
 import ca.spottedleaf.moonrise.patches.chunk_system.ticket.ChunkSystemTicketType;
@@ -23,7 +31,13 @@ import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.*;
+import net.minecraft.server.level.ChunkLevel;
+import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.FullChunkStatus;
+import net.minecraft.server.level.GenerationChunkHolder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.util.StaticCache2D;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
@@ -35,18 +49,22 @@ import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.chunk.status.ChunkStep;
 import net.minecraft.world.phys.Vec3;
 import org.slf4j.Logger;
-
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 public final class ChunkTaskScheduler {
 
-    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger();
+    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger(); // Slime
 
     public static final TicketType CHUNK_LOAD = ChunkSystemTicketType.create("chunk_system:chunk_load", Long::compareTo);
     private static final AtomicLong CHUNK_LOAD_IDS = new AtomicLong();
@@ -105,9 +123,7 @@ public final class ChunkTaskScheduler {
         ((ChunkSystemChunkStatus)ChunkStatus.STRUCTURE_STARTS).moonrise$setWriteRadius(0);
         ((ChunkSystemChunkStatus)ChunkStatus.STRUCTURE_REFERENCES).moonrise$setWriteRadius(0);
         ((ChunkSystemChunkStatus)ChunkStatus.BIOMES).moonrise$setWriteRadius(0);
-        ((ChunkSystemChunkStatus)ChunkStatus.NOISE).moonrise$setWriteRadius(0);
-        ((ChunkSystemChunkStatus)ChunkStatus.SURFACE).moonrise$setWriteRadius(0);
-        ((ChunkSystemChunkStatus)ChunkStatus.CARVERS).moonrise$setWriteRadius(0);
+        ((ChunkSystemChunkStatus)ChunkStatus.TERRAIN).moonrise$setWriteRadius(0);
         ((ChunkSystemChunkStatus)ChunkStatus.FEATURES).moonrise$setWriteRadius(1);
         ((ChunkSystemChunkStatus)ChunkStatus.INITIALIZE_LIGHT).moonrise$setWriteRadius(0);
         ((ChunkSystemChunkStatus)ChunkStatus.LIGHT).moonrise$setWriteRadius(2);
@@ -117,9 +133,7 @@ public final class ChunkTaskScheduler {
         ((ChunkSystemChunkStatus)ChunkStatus.EMPTY).moonrise$setEmptyLoadStatus(true);
         ((ChunkSystemChunkStatus)ChunkStatus.STRUCTURE_REFERENCES).moonrise$setEmptyLoadStatus(true);
         ((ChunkSystemChunkStatus)ChunkStatus.BIOMES).moonrise$setEmptyLoadStatus(true);
-        ((ChunkSystemChunkStatus)ChunkStatus.NOISE).moonrise$setEmptyLoadStatus(true);
-        ((ChunkSystemChunkStatus)ChunkStatus.SURFACE).moonrise$setEmptyLoadStatus(true);
-        ((ChunkSystemChunkStatus)ChunkStatus.CARVERS).moonrise$setEmptyLoadStatus(true);
+        ((ChunkSystemChunkStatus)ChunkStatus.TERRAIN).moonrise$setEmptyLoadStatus(true);
         ((ChunkSystemChunkStatus)ChunkStatus.FEATURES).moonrise$setEmptyLoadStatus(true);
         ((ChunkSystemChunkStatus)ChunkStatus.SPAWN).moonrise$setEmptyLoadStatus(true);
 
@@ -144,15 +158,10 @@ public final class ChunkTaskScheduler {
                 // Safe. Mojang runs it in parallel as well.
                 ChunkStatus.BIOMES,
 
-                // Safe. Mojang runs it in parallel as well.
-                ChunkStatus.NOISE,
-
-                // Parallel safe. Only touches the target chunk. Biome retrieval is now noise based, which is
-                // completely thread-safe.
-                ChunkStatus.SURFACE,
-
-                // No global state is modified in the carvers. It only touches the specified chunk. So it is parallel safe.
-                ChunkStatus.CARVERS,
+                // Safe. Mojang runs it in parallel as well. Only modifies the target chunk: the noise fill and
+                // carving mask are applied to the target chunk, and surface building only reads the biome data
+                // of its neighbours, which is stable at the required BIOMES/STRUCTURE_STARTS statuses.
+                ChunkStatus.TERRAIN,
 
                 // FEATURES is not parallel safe. It writes to neighbours.
 
@@ -366,7 +375,7 @@ public final class ChunkTaskScheduler {
             throw new IllegalArgumentException("Cannot wait for INACCESSIBLE status");
         }
 
-        final int minLevel = 33 - (toStatus.ordinal() - 1);
+        final int minLevel = ChunkLevel.byStatus(toStatus);
         final Long chunkReference = addTicket ? getNextChunkLoadId() : null;
         final long chunkKey = CoordinateUtils.getChunkKey(chunkX, chunkZ);
 
@@ -521,7 +530,7 @@ public final class ChunkTaskScheduler {
 
         if (this.hasShutdown()) {
             throw new IllegalStateException(
-                "Chunk system has shut down, cannot process chunk requests in world '" + WorldUtil.getWorldName(this.world) + "' at "
+                "Chunk system has shut down, cannot process chunk requests in world '" + ca.spottedleaf.moonrise.common.util.WorldUtil.getWorldName(this.world) + "' at "
                     + "(" + chunkX + "," + chunkZ + ") status: " + status
             );
         }
@@ -991,7 +1000,7 @@ public final class ChunkTaskScheduler {
         final JsonArray chunkWaitInfos = new JsonArray();
         ret.add("chunk-wait-infos", chunkWaitInfos);
 
-        for (final ChunkInfo info : getChunkInfos()) {
+        for (final ChunkTaskScheduler.ChunkInfo info : getChunkInfos()) {
             chunkWaitInfos.add(info.toJson());
         }
 

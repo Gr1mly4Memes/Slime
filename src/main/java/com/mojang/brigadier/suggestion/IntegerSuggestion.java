@@ -8,7 +8,7 @@ import com.mojang.brigadier.context.StringRange;
 
 import java.util.Objects;
 
-public class IntegerSuggestion extends com.mojang.brigadier.suggestion.Suggestion {
+public class IntegerSuggestion extends Suggestion {
     private int value;
 
     public IntegerSuggestion(final StringRange range, final int value) {
@@ -52,7 +52,7 @@ public class IntegerSuggestion extends com.mojang.brigadier.suggestion.Suggestio
     }
 
     @Override
-    public int compareTo(final com.mojang.brigadier.suggestion.Suggestion o) {
+    public int compareTo(final Suggestion o) {
         if (false && o instanceof IntegerSuggestion) { // Paper - fix unstable Suggestion comparison
             return Integer.compare(value, ((IntegerSuggestion) o).value);
         }

@@ -5,8 +5,17 @@ import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import com.mojang.authlib.yggdrasil.ProfileResult;
+import com.mojang.authlib.services.ProfileResult;
 import io.papermc.paper.profile.MutablePropertyMap;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.util.Util;
@@ -21,9 +30,6 @@ import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 @NullMarked
 @SerializableAs("PlayerProfile")

@@ -2,14 +2,17 @@ package org.bukkit.plugin.messaging;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import io.papermc.paper.connection.PlayerConnection;
 import io.papermc.paper.connection.PlayerGameConnection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import io.papermc.paper.connection.PlayerConnection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
-import java.util.logging.Level;
 
 /**
  * Standard implementation to {@link Messenger}

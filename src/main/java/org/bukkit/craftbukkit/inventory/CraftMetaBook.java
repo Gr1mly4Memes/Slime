@@ -4,6 +4,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.mohistmc.youer.api.ColorAPI;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import net.kyori.adventure.inventory.Book;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.core.component.DataComponentPatch;
@@ -18,9 +26,6 @@ import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.WritableBookMeta;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaBook extends CraftMetaItem implements BookMeta, WritableBookMeta {
@@ -92,7 +97,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta, WritableBo
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         if (this.pages != null) {
@@ -189,7 +194,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta, WritableBo
     @Override
     public net.kyori.adventure.text.Component page(final int page) {
         Preconditions.checkArgument(this.isValidPage(page), "Invalid page number (%s/%s)", page, this.getPageCount());
-        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(this.pages.get(page - 1));
+        return ColorAPI.adventure(this.pages.get(page - 1));
     }
 
     @Override

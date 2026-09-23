@@ -5,9 +5,13 @@ import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.purpurmc.purpur.util.MinecraftInternalPlugin;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
+import org.purpurmc.purpur.util.MinecraftInternalPlugin;
 
 public abstract class BossBarTask extends BukkitRunnable {
     private final Map<UUID, BossBar> bossbars = new HashMap<>();
@@ -27,11 +31,7 @@ public abstract class BossBarTask extends BukkitRunnable {
                 iter.remove();
                 continue;
             }
-            try {
-                updateBossBar(entry.getValue(), player);
-            } catch (Exception e) {
-                e.printStackTrace(); // Slime - don't kill scheduler on malformed MiniMessage / Adventure error
-            }
+            updateBossBar(entry.getValue(), player);
         }
     }
 
@@ -50,29 +50,18 @@ public abstract class BossBarTask extends BukkitRunnable {
     public boolean removePlayer(Player player) {
         BossBar bossbar = this.bossbars.remove(player.getUniqueId());
         if (bossbar != null) {
-            try {
-                player.hideBossBar(bossbar);
-            } catch (Exception e) {
-                // Slime - NeoForge hybrid: Adventure BossBar impl may be missing, don't propagate
-                e.printStackTrace();
-            }
+            player.hideBossBar(bossbar);
             return true;
         }
         return false;
     }
 
     public void addPlayer(Player player) {
-        removePlayer(player); // Slime - ensure previous bar cleared before re-adding
+        removePlayer(player);
         BossBar bossbar = createBossBar();
-        try {
-            this.updateBossBar(bossbar, player);
-            player.showBossBar(bossbar); // Slime - may throw NoSuchElementException if Adventure service not visible on NeoForge
-        } catch (Exception e) {
-            // Slime - log and don't cache failed bar so toggle remains consistent
-            e.printStackTrace();
-            return;
-        }
         this.bossbars.put(player.getUniqueId(), bossbar);
+        this.updateBossBar(bossbar, player);
+        player.showBossBar(bossbar);
     }
 
     public boolean hasPlayer(UUID uuid) {

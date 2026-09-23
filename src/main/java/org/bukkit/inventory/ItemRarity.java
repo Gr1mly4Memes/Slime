@@ -16,9 +16,9 @@ public enum ItemRarity {
     EPIC(NamedTextColor.LIGHT_PURPLE);
     // End generate - ItemRarity
 
-    private final NamedTextColor color;
+    private final net.kyori.adventure.text.format.NamedTextColor color;
 
-    ItemRarity(final NamedTextColor color) {
+    ItemRarity(final net.kyori.adventure.text.format.NamedTextColor color) {
         this.color = color;
     }
 

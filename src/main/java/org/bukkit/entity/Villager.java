@@ -1,6 +1,9 @@
 package org.bukkit.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.Locale;
+import java.util.Map; // Paper
+import java.util.UUID; // Paper
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
 import org.bukkit.Keyed;
@@ -10,10 +13,6 @@ import org.bukkit.Registry;
 import org.bukkit.util.OldEnum;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
-import java.util.Map; // Paper
-import java.util.UUID; // Paper
 
 /**
  * Represents a villager NPC

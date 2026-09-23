@@ -1,9 +1,11 @@
 package io.papermc.paper.plugin.manager;
 
-import co.aikar.timings.TimedEventExecutor;
 import com.destroystokyo.paper.event.server.ServerExceptionEvent;
 import com.destroystokyo.paper.exception.ServerEventException;
 import com.google.common.collect.Sets;
+import com.mohistmc.youer.YouerConfig;
+import com.mohistmc.youer.bukkit.entity.CraftFakePlayer;
+import com.mohistmc.youer.feature.YouerPlugin;
 import org.bukkit.Server;
 import org.bukkit.Warning;
 import org.bukkit.event.Event;
@@ -11,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.plugin.AuthorNagException;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.IllegalPluginAccessException;
@@ -36,15 +39,16 @@ class PaperEventManager {
 
     // SimplePluginManager
     public void callEvent(@NotNull Event event) {
-        // Slime start - Skip event if no listeners
-        RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
-        if (listeners.length == 0) return;
-        // Slime end - Skip event if no listeners
+        if (!YouerConfig.fakeplayer_callbukkitevent && event instanceof PlayerEvent playerEvent && playerEvent.getPlayer() instanceof CraftFakePlayer) return; // Youer
+        YouerPlugin.registerListener(event); // Youer
         if (event.isAsynchronous() && this.server.isPrimaryThread()) {
             throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
         } else if (!event.isAsynchronous() && !this.server.isPrimaryThread() && !this.server.isStopping()) {
             throw new IllegalStateException(event.getEventName() + " may only be triggered synchronously.");
         }
+
+        HandlerList handlers = event.getHandlers();
+        RegisteredListener[] listeners = handlers.getRegisteredListeners();
 
         for (RegisteredListener registration : listeners) {
             if (!registration.getPlugin().isEnabled()) {

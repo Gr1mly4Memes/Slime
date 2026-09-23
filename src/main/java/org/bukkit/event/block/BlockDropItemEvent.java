@@ -1,5 +1,6 @@
 package org.bukkit.event.block;
 
+import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Item;
@@ -8,8 +9,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Called after a block is broken by a player and potential drops are computed, even if said blocks loot table

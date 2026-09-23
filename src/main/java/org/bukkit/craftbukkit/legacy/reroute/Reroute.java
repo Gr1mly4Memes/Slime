@@ -1,13 +1,12 @@
 package org.bukkit.craftbukkit.legacy.reroute;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 import org.bukkit.craftbukkit.util.ApiVersion;
 import org.bukkit.craftbukkit.util.ClassTraverser;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.objectweb.asm.Type;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
 
 public class Reroute {
 

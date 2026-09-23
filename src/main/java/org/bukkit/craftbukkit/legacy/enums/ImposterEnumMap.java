@@ -1,6 +1,12 @@
 package org.bukkit.craftbukkit.legacy.enums;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * The "I can't believe it works" map.

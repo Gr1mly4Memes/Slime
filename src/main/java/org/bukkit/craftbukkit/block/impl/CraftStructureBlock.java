@@ -19,12 +19,12 @@ public class CraftStructureBlock extends CraftBlockData implements StructureBloc
     }
 
     @Override
-    public Mode getMode() {
-        return this.get(MODE, Mode.class);
+    public StructureBlock.Mode getMode() {
+        return this.get(MODE, StructureBlock.Mode.class);
     }
 
     @Override
-    public void setMode(final Mode mode) {
+    public void setMode(final StructureBlock.Mode mode) {
         Preconditions.checkArgument(mode != null, "mode cannot be null!");
         this.set(MODE, mode);
     }

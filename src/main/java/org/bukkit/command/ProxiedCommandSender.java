@@ -7,7 +7,7 @@ import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-public interface ProxiedCommandSender extends CommandSender, ForwardingAudience.Single { // Paper
+public interface ProxiedCommandSender extends CommandSender, net.kyori.adventure.audience.ForwardingAudience.Single { // Paper
 
     /**
      * Returns the CommandSender which triggered this proxied command
@@ -28,17 +28,17 @@ public interface ProxiedCommandSender extends CommandSender, ForwardingAudience.
     // Paper start
     @Override
     default void sendMessage(final @NotNull Component message, final ChatType.@NotNull Bound boundChatType) {
-        Single.super.sendMessage(message, boundChatType);
+        ForwardingAudience.Single.super.sendMessage(message, boundChatType);
     }
 
     @Override
     default void sendMessage(final @NotNull Component message) {
-        Single.super.sendMessage(message);
+        ForwardingAudience.Single.super.sendMessage(message);
     }
 
     @Override
     default void sendMessage(final @NotNull SignedMessage signedMessage, final ChatType.@NotNull Bound boundChatType) {
-        Single.super.sendMessage(signedMessage, boundChatType);
+        ForwardingAudience.Single.super.sendMessage(signedMessage, boundChatType);
     }
 
     @NotNull

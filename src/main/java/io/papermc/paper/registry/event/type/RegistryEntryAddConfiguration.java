@@ -3,10 +3,9 @@ package io.papermc.paper.registry.event.type;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.lifecycle.event.handler.configuration.PrioritizedLifecycleEventHandlerConfiguration;
 import io.papermc.paper.registry.TypedKey;
+import java.util.function.Predicate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-
-import java.util.function.Predicate;
 
 /**
  * Specific configuration for {@link io.papermc.paper.registry.event.RegistryEntryAddEvent}s.

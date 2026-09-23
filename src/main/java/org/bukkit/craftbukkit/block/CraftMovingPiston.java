@@ -32,7 +32,7 @@ public class CraftMovingPiston extends CraftBlockEntityState<PistonMovingBlockEn
 
     @Override
     public org.bukkit.block.BlockFace getDirection() {
-        return CraftBlock.notchToBlockFace(this.getBlockEntity().getDirection());
+        return org.bukkit.craftbukkit.block.CraftBlock.notchToBlockFace(this.getBlockEntity().getDirection());
     }
 
     @Override

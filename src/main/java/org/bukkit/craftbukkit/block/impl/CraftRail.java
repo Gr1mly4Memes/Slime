@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.world.level.block.RailBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -10,8 +11,6 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import org.bukkit.block.data.Rail;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -25,19 +24,19 @@ public class CraftRail extends CraftBlockData implements Rail {
     }
 
     @Override
-    public Shape getShape() {
-        return this.get(SHAPE, Shape.class);
+    public Rail.Shape getShape() {
+        return this.get(SHAPE, Rail.Shape.class);
     }
 
     @Override
-    public void setShape(final Shape shape) {
+    public void setShape(final Rail.Shape shape) {
         Preconditions.checkArgument(shape != null, "shape cannot be null!");
         this.set(SHAPE, shape);
     }
 
     @Override
-    public Set<Shape> getShapes() {
-        return this.getValues(SHAPE, Shape.class);
+    public Set<Rail.Shape> getShapes() {
+        return this.getValues(SHAPE, Rail.Shape.class);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.destroystokyo.paper.event.entity;
 
 import io.papermc.paper.event.entity.EntityKnockbackEvent;
 import io.papermc.paper.event.entity.EntityPushedByEntityAttackEvent;
+import org.bukkit.Warning;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -13,6 +14,7 @@ import org.jspecify.annotations.NullMarked;
  * vector can be modified. If this event is cancelled, the entity is not knocked back.
  */
 @NullMarked
+@Warning(propagate = false)
 public class EntityKnockbackByEntityEvent extends EntityPushedByEntityAttackEvent {
 
     private final float knockbackStrength;

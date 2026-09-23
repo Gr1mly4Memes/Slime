@@ -4,25 +4,22 @@ import io.papermc.paper.datacomponent.BuildableDataComponent;
 import io.papermc.paper.datacomponent.DataComponentBuilder;
 import io.papermc.paper.datacomponent.item.consumable.ConsumeEffect;
 import io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation;
+import java.util.List;
 import net.kyori.adventure.key.Key;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Holds the properties for this item for when it is consumed.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#CONSUMABLE
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface Consumable extends BuildableDataComponent<Consumable, Consumable.Builder> {
 
     @Contract(value = "-> new", pure = true)
-    static Builder consumable() {
+    static Consumable.Builder consumable() {
         return ItemComponentTypesBridge.bridge().consumable();
     }
 

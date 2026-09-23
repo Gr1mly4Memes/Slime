@@ -1,0 +1,10 @@
+Fix Neoforge errors
+Fix Craftbukkit errors
+Fix Bukkit errors
+Fix Gr1mly4Memes errors (hey its me!)
+reimplement Pufferfish, Leaf, and DivineMC patches[Ze Patches](
+Cry myself to sleep
+Update Purpur
+Check code
+Test for stability
+See whats up with Youer

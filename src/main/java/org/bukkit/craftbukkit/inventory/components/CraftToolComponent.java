@@ -2,6 +2,14 @@ package org.bukkit.craftbukkit.inventory.components;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
@@ -15,9 +23,6 @@ import org.bukkit.craftbukkit.configuration.ConfigSerializationUtil;
 import org.bukkit.craftbukkit.inventory.SerializableMeta;
 import org.bukkit.craftbukkit.tag.CraftBlockTag;
 import org.bukkit.inventory.meta.components.ToolComponent;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static io.papermc.paper.util.BoundChecker.requireNonNegative;
 import static io.papermc.paper.util.BoundChecker.requirePositive;

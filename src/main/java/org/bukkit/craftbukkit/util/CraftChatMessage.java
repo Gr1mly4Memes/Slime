@@ -6,22 +6,31 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.mojang.serialization.JavaOps;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import com.mojang.serialization.JsonOps;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ChatVersion;
 import net.md_5.bungee.chat.VersionedComponentSerializer;
+import com.mojang.serialization.JavaOps;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.util.ExtraCodecs;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.CraftRegistry;
 import org.jspecify.annotations.Nullable;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class CraftChatMessage {
 

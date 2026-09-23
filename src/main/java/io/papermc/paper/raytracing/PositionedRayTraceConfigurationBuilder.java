@@ -1,5 +1,6 @@
 package io.papermc.paper.raytracing;
 
+import java.util.function.Predicate;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -8,8 +9,6 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.function.Predicate;
 
 /**
  * A builder for configuring a raytrace with a starting location

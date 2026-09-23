@@ -9,13 +9,13 @@ import org.bukkit.entity.TextDisplay;
 
 public class CraftTextDisplay extends CraftDisplay implements TextDisplay {
 
-    public CraftTextDisplay(CraftServer server, Display.TextDisplay entity) {
+    public CraftTextDisplay(CraftServer server, net.minecraft.world.entity.Display.TextDisplay entity) {
         super(server, entity);
     }
 
     @Override
-    public Display.TextDisplay getHandle() {
-        return (Display.TextDisplay) this.entity;
+    public net.minecraft.world.entity.Display.TextDisplay getHandle() {
+        return (net.minecraft.world.entity.Display.TextDisplay) this.entity;
     }
 
     @Override

@@ -5,14 +5,13 @@ import io.papermc.paper.registry.RegistryBuilderFactory;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.data.InlinedRegistryBuilderProvider;
 import io.papermc.paper.registry.data.InstrumentRegistryEntry;
+import java.util.Collection;
+import java.util.function.Consumer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
 import net.kyori.adventure.text.Component;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.function.Consumer;
 
 @NullMarked
 public abstract class MusicInstrument implements Keyed, net.kyori.adventure.translation.Translatable {
@@ -115,7 +114,7 @@ public abstract class MusicInstrument implements Keyed, net.kyori.adventure.tran
      */
     @Deprecated(forRemoval = true, since = "1.20.5")
     @Override
-    public @org.jetbrains.annotations.NotNull Key key() {
+    public net.kyori.adventure.key.@org.jetbrains.annotations.NotNull Key key() {
         return Keyed.super.key();
     }
 

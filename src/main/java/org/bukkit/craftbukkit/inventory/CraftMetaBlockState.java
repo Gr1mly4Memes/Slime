@@ -3,8 +3,17 @@ package org.bukkit.craftbukkit.inventory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.*;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -22,11 +31,6 @@ import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.block.CraftBlockStates;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.util.BlockVector;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta {
@@ -106,8 +110,8 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         if (!patch.isEmpty()) {
             // Paper start - store data in a DataComponentMap to be used to construct CraftBlockEntityStates
             final DataComponentMap.Builder map = DataComponentMap.builder();
-            final BlockEntity dummyBlockEntity = Objects.requireNonNull(
-                CraftBlockStates.createNewBlockEntity(this.materialForBlockEntityType())
+            final net.minecraft.world.level.block.entity.BlockEntity dummyBlockEntity = java.util.Objects.requireNonNull(
+                org.bukkit.craftbukkit.block.CraftBlockStates.createNewBlockEntity(this.materialForBlockEntityType())
             );
 
             // we don't care about what's in here, all
@@ -149,7 +153,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             )) {
                 final TagValueOutput output = TagValueOutput.createWrappingWithContext(problemReporter, CraftRegistry.getMinecraftRegistry(), blockEntityTag);
                 if (blockEntityTag.isEmpty()) {
-                    BlockEntity.addEntityType(output, Objects.requireNonNull(CraftBlockStates.getBlockEntityType(this.materialForBlockEntityType())));
+                    BlockEntity.addEntityType(output, java.util.Objects.requireNonNull(CraftBlockStates.getBlockEntityType(this.materialForBlockEntityType())));
                 }
                 output.putInt("x", legacyPosition.getBlockX());
                 output.putInt("y", legacyPosition.getBlockY());
@@ -161,7 +165,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         // Paper start - accurately replicate logic for creating ItemStack from BlockEntity
@@ -174,7 +178,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
                 )) {
                     BlockEntity.addEntityType(
                         TagValueOutput.createWrappingWithContext(problemReporter, CraftRegistry.getMinecraftRegistry(), nbt),
-                        Objects.requireNonNull(CraftBlockStates.getBlockEntityType(this.materialForBlockEntityType()))
+                        java.util.Objects.requireNonNull(CraftBlockStates.getBlockEntityType(this.materialForBlockEntityType()))
                     );
                 }
             }
@@ -296,9 +300,9 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             // Paper "id" field is always present now
             pos = BlockEntity.getPosFromTag(null, this.blockEntityTag); // unsafe is fine here, just querying
         }
-        final BlockEntityType<?> type = Objects.requireNonNull(CraftBlockStates.getBlockEntityType(stateMaterial));
+        final net.minecraft.world.level.block.entity.BlockEntityType<?> type = java.util.Objects.requireNonNull(CraftBlockStates.getBlockEntityType(stateMaterial));
         final net.minecraft.world.level.block.state.BlockState nmsBlockState = ((org.bukkit.craftbukkit.block.data.CraftBlockData) this.getBlockData(stateMaterial)).getState();
-        final BlockEntity blockEntity = Objects.requireNonNull(type.create(pos, nmsBlockState));
+        final net.minecraft.world.level.block.entity.BlockEntity blockEntity = java.util.Objects.requireNonNull(type.create(pos, nmsBlockState));
         if (!this.blockEntityTag.isEmpty()) {
             TypedEntityData.decodeBlockEntity(this.blockEntityTag).loadInto(blockEntity, CraftRegistry.getMinecraftRegistry());
         }
@@ -345,8 +349,8 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         // have to be used to update the fields on CraftMetaItem
         final CraftBlockEntityState<?> craftBlockState = (CraftBlockEntityState<?>) blockState;
         final CompoundTag data = craftBlockState.getSnapshotCustomNbtOnly();
-        final PatchedDataComponentMap patchedMap = new PatchedDataComponentMap(craftBlockState.getHandle().getBlock().asItem().components());
-        final DataComponentMap map = craftBlockState.collectComponents();
+        final PatchedDataComponentMap patchedMap = new net.minecraft.core.component.PatchedDataComponentMap(craftBlockState.getHandle().getBlock().asItem().components());
+        final net.minecraft.core.component.DataComponentMap map = craftBlockState.collectComponents();
         patchedMap.setAll(map);
         if (!data.isEmpty()) {
             patchedMap.set(BLOCK_ENTITY_TAG.TYPE, TypedEntityData.decodeBlockEntity(data));

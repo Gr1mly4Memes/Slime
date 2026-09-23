@@ -1,12 +1,11 @@
 package org.bukkit.event.player;
 
+import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 /**
  * Called when a player takes action on a resource pack request.

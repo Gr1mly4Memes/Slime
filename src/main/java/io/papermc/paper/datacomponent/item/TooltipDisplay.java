@@ -2,13 +2,10 @@ package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
 import io.papermc.paper.datacomponent.DataComponentType;
+import java.util.Set;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NullMarked;
 
-import java.util.Set;
-
-@NullMarked
 @ApiStatus.NonExtendable
 public interface TooltipDisplay {
 

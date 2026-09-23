@@ -1,9 +1,8 @@
 package io.papermc.paper.world;
 
-import org.jspecify.annotations.NullMarked;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public enum MoonPhase {

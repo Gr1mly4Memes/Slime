@@ -1,10 +1,10 @@
 package ca.spottedleaf.dataconverter.minecraft.walkers.generic;
 
 import ca.spottedleaf.converter.datatypes.DataType;
-import ca.spottedleaf.converter.util.RenameHelper;
-import ca.spottedleaf.dataconverter.minecraft.datatypes.MCDataType;
 import ca.spottedleaf.converter.types.ListType;
 import ca.spottedleaf.converter.types.MapType;
+import ca.spottedleaf.converter.util.RenameHelper;
+import ca.spottedleaf.dataconverter.minecraft.datatypes.MCDataType;
 
 public final class WalkerUtils {
 
@@ -22,6 +22,24 @@ public final class WalkerUtils {
         }
     }
 
+    public static void convert(final MCDataType type, final ListType data, final long fromVersion, final long toVersion) {
+        if (data == null) {
+            return;
+        }
+
+        for (int i = 0, len = data.size(); i < len; ++i) {
+            final MapType listVal = data.getMap(i, null);
+            if (listVal == null) {
+                continue;
+            }
+
+            final MapType replace = type.convert(listVal, fromVersion, toVersion);
+            if (replace != null) {
+                data.setMap(i, replace);
+            }
+        }
+    }
+
     public static void convertList(final MCDataType type, final MapType data, final String path, final long fromVersion, final long toVersion) {
         if (data == null) {
             return;
@@ -29,17 +47,7 @@ public final class WalkerUtils {
 
         final ListType list = data.getListUnchecked(path);
         if (list != null) {
-            for (int i = 0, len = list.size(); i < len; ++i) {
-                final MapType listVal = list.getMap(i, null);
-                if (listVal == null) {
-                    continue;
-                }
-
-                final MapType replace = type.convert(listVal, fromVersion, toVersion);
-                if (replace != null) {
-                    list.setMap(i, replace);
-                }
-            }
+            convert(type, list, fromVersion, toVersion);
         }
     }
 

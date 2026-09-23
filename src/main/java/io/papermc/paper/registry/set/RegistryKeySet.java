@@ -4,13 +4,12 @@ import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.tag.Tag;
 import io.papermc.paper.registry.tag.TagKey;
+import java.util.Collection;
+import java.util.Iterator;
 import org.bukkit.Keyed;
 import org.bukkit.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Unmodifiable;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Represents a collection tied to a registry.
@@ -18,7 +17,7 @@ import java.util.Iterator;
  * There are 2 types of registry key sets:
  * <ul>
  *     <li>{@link Tag} which is a tag from vanilla or a datapack.
- *     These are obtained via {@link Registry#getTag(TagKey)}.</li>
+ *     These are obtained via {@link org.bukkit.Registry#getTag(io.papermc.paper.registry.tag.TagKey)}.</li>
  *     <li>{@link RegistryKeySet} which is a set of keys linked to values that are present in the registry. These are
  *     created via {@link #keySet(RegistryKey, Iterable)} or {@link #keySetFromValues(RegistryKey, Iterable)}.</li>
  * </ul>

@@ -1,13 +1,12 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
+import java.util.function.Consumer;
 import net.minecraft.world.Container;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.inventory.view.CraftAnvilView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.AnvilInventory;
-
-import java.util.function.Consumer;
 
 public class CraftInventoryAnvil extends CraftResultInventory implements AnvilInventory {
 

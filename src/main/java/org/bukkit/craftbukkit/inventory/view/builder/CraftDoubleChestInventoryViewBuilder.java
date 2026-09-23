@@ -27,7 +27,7 @@ public class CraftDoubleChestInventoryViewBuilder<V extends InventoryView> exten
 
         final ChestBlock chest = (ChestBlock) Blocks.CHEST;
         final DoubleBlockCombiner.NeighborCombineResult<? extends ChestBlockEntity> result = chest.combine(
-                super.world.getBlockState(super.position), super.world, super.position, false
+            super.world.getBlockState(super.position), super.world, super.position, false
         );
         if (result instanceof DoubleBlockCombiner.NeighborCombineResult.Single<? extends ChestBlockEntity>) {
             return handle.create(player.nextContainerCounter0(), player.getInventory());

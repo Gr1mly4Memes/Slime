@@ -61,9 +61,9 @@ public class ConfigurationOptions {
      * If this is true, all values in the default Configuration will be
      * directly copied, making it impossible to distinguish between values
      * that were set and values that are provided by default. As a result,
-     * {@link ConfigurationSection#contains(String)} will always
+     * {@link ConfigurationSection#contains(java.lang.String)} will always
      * return the same value as {@link
-     * ConfigurationSection#isSet(String)}. The default value is
+     * ConfigurationSection#isSet(java.lang.String)}. The default value is
      * false.
      *
      * @return Whether or not defaults are directly copied
@@ -79,9 +79,9 @@ public class ConfigurationOptions {
      * If this is true, all values in the default Configuration will be
      * directly copied, making it impossible to distinguish between values
      * that were set and values that are provided by default. As a result,
-     * {@link ConfigurationSection#contains(String)} will always
+     * {@link ConfigurationSection#contains(java.lang.String)} will always
      * return the same value as {@link
-     * ConfigurationSection#isSet(String)}. The default value is
+     * ConfigurationSection#isSet(java.lang.String)}. The default value is
      * false.
      *
      * @param value Whether or not defaults are directly copied

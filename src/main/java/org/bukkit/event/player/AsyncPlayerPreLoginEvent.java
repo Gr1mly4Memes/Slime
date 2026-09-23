@@ -1,16 +1,16 @@
 package org.bukkit.event.player;
 
+import com.mohistmc.youer.api.ColorAPI;
+import java.net.InetAddress;
+import java.util.UUID;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import io.papermc.paper.connection.PlayerLoginConnection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import io.papermc.paper.connection.PlayerLoginConnection;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.net.InetAddress;
-import java.util.UUID;
 
 /**
  * Stores details for players attempting to log in.
@@ -165,10 +165,10 @@ public class AsyncPlayerPreLoginEvent extends Event {
      * @param message Kick message to display to the user
      * @deprecated This method uses a deprecated enum from {@link
      *     PlayerPreLoginEvent}
-     * @see #disallow(Result, String)
+     * @see #disallow(Result, Component)
      */
     @Deprecated
-    public void disallow(@NotNull final PlayerPreLoginEvent.Result result, @NotNull final Component message) {
+    public void disallow(@NotNull final PlayerPreLoginEvent.Result result, @NotNull final net.kyori.adventure.text.Component message) {
         this.result = result == null ? null : Result.valueOf(result.name());
         this.message = message;
     }
@@ -193,7 +193,7 @@ public class AsyncPlayerPreLoginEvent extends Event {
      */
     @Deprecated
     public void setKickMessage(@NotNull final String message) {
-        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
+        this.message = ColorAPI.adventure(message);
     }
 
     /**
@@ -209,12 +209,12 @@ public class AsyncPlayerPreLoginEvent extends Event {
      *
      * @param result New result for disallowing the player
      * @param message Kick message to display to the user
-     * @deprecated in favour of {@link #disallow(Result, Component)}
+     * @deprecated in favour of {@link #disallow(org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result, Component)}
      */
     @Deprecated
     public void disallow(@NotNull final Result result, @NotNull final String message) {
         this.result = result;
-        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
+        this.message = ColorAPI.adventure(message);
     }
 
     /**
@@ -222,14 +222,14 @@ public class AsyncPlayerPreLoginEvent extends Event {
      *
      * @param result New result for disallowing the player
      * @param message Kick message to display to the user
-     * @see #disallow(Result, String)
+     * @see #disallow(Result, Component)
      * @deprecated This method uses a deprecated enum from {@link
      *     PlayerPreLoginEvent}
      */
     @Deprecated(since = "1.3.2")
     public void disallow(@NotNull final PlayerPreLoginEvent.Result result, @NotNull final String message) {
         this.result = result == null ? null : Result.valueOf(result.name());
-        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
+        this.message = ColorAPI.adventure(message);
     }
 
     /**

@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.WeatheringCopperGolemStatueBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,8 +12,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.CopperGolemStatue;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -28,12 +27,12 @@ public class CraftWeatheringCopperGolemStatue extends CraftBlockData implements 
     }
 
     @Override
-    public Pose getCopperGolemPose() {
-        return this.get(POSE, Pose.class);
+    public CopperGolemStatue.Pose getCopperGolemPose() {
+        return this.get(POSE, CopperGolemStatue.Pose.class);
     }
 
     @Override
-    public void setCopperGolemPose(final Pose pose) {
+    public void setCopperGolemPose(final CopperGolemStatue.Pose pose) {
         Preconditions.checkArgument(pose != null, "pose cannot be null!");
         this.set(POSE, pose);
     }

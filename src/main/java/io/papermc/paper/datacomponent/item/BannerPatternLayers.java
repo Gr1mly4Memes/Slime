@@ -1,19 +1,16 @@
 package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
+import java.util.List;
 import org.bukkit.block.banner.Pattern;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Holds the layers of patterns on a banner.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#BANNER_PATTERNS
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface BannerPatternLayers {
 
@@ -23,7 +20,7 @@ public interface BannerPatternLayers {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder bannerPatternLayers() {
+    static BannerPatternLayers.Builder bannerPatternLayers() {
         return ItemComponentTypesBridge.bridge().bannerPatternLayers();
     }
 

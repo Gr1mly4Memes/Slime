@@ -3,6 +3,7 @@ package io.papermc.paper.registry.data;
 import io.papermc.paper.registry.RegistryBuilder;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.set.RegistryKeySet;
+import java.util.List;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -14,8 +15,6 @@ import org.checkerframework.checker.index.qual.Positive;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 import static io.papermc.paper.util.BoundChecker.requireNonNegative;
 import static io.papermc.paper.util.BoundChecker.requirePositive;

@@ -2,6 +2,11 @@ package org.bukkit.craftbukkit.scoreboard;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import io.papermc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.audience.Audience;
 import net.minecraft.network.chat.TextColor;
@@ -14,8 +19,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Team;
-
-import java.util.*;
 
 final class CraftTeam extends CraftScoreboardComponent implements Team {
     private final PlayerTeam team;

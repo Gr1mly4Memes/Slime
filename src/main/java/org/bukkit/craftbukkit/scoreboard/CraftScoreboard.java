@@ -10,7 +10,12 @@ import net.minecraft.world.scores.Scoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
-import org.bukkit.scoreboard.*;
+import org.bukkit.scoreboard.Criteria;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.RenderType;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Team;
 
 public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     private final Scoreboard board;

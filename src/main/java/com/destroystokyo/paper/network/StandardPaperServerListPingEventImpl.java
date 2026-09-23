@@ -2,6 +2,11 @@ package com.destroystokyo.paper.network;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import io.papermc.paper.adventure.AdventureComponent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import javax.annotation.Nonnull;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.status.ClientboundStatusResponsePacket;
@@ -10,12 +15,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.NameAndId;
 import org.bukkit.craftbukkit.util.CraftIconCache;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 public final class StandardPaperServerListPingEventImpl extends PaperServerListPingEventImpl {
 
@@ -64,7 +63,7 @@ public final class StandardPaperServerListPingEventImpl extends PaperServerListP
         return profiles;
     }
 
-    public static void processRequest(MinecraftServer server, Connection connection) {
+    public static void processRequest(MinecraftServer server, Connection connection, String statusCache) {
         StandardPaperServerListPingEventImpl event = new StandardPaperServerListPingEventImpl(server, connection, server.getStatus());
         server.server.getPluginManager().callEvent(event);
 
@@ -100,7 +99,7 @@ public final class StandardPaperServerListPingEventImpl extends PaperServerListP
         final ServerStatus ping = new ServerStatus(description, players, Optional.of(version), favicon, server.enforceSecureProfile());
 
         // Send response
-        connection.send(new ClientboundStatusResponsePacket(ping));
+        connection.send(new ClientboundStatusResponsePacket(ping, statusCache));
     }
 
 }

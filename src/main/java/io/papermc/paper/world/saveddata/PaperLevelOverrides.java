@@ -24,17 +24,17 @@ import org.jspecify.annotations.Nullable;
 public final class PaperLevelOverrides extends SavedData implements ServerLevelData {
     private static final Codec<GameType> LEGACY_GAME_TYPE_CODEC = Codec.INT.xmap(GameType::byId, GameType::getId);
     public static final Codec<PaperLevelOverrides> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            RespawnData.CODEC.fieldOf("spawn").forGetter(levelOverrides -> levelOverrides.respawnData),
-            Codec.LONG.fieldOf("game_time").forGetter(levelOverrides -> levelOverrides.gameTime),
-            Codec.BOOL.fieldOf("initialized").forGetter(levelOverrides -> levelOverrides.initialized),
-            LEGACY_GAME_TYPE_CODEC.fieldOf("game_type").forGetter(levelOverrides -> levelOverrides.gameType),
-            LevelSettings.DifficultySettings.CODEC.fieldOf("difficulty_settings").forGetter(levelOverrides -> levelOverrides.difficultySettings)
+        RespawnData.CODEC.fieldOf("spawn").forGetter(levelOverrides -> levelOverrides.respawnData),
+        Codec.LONG.fieldOf("game_time").forGetter(levelOverrides -> levelOverrides.gameTime),
+        Codec.BOOL.fieldOf("initialized").forGetter(levelOverrides -> levelOverrides.initialized),
+        LEGACY_GAME_TYPE_CODEC.fieldOf("game_type").forGetter(levelOverrides -> levelOverrides.gameType),
+        LevelSettings.DifficultySettings.CODEC.fieldOf("difficulty_settings").forGetter(levelOverrides -> levelOverrides.difficultySettings)
     ).apply(instance, PaperLevelOverrides::new));
     public static final SavedDataType<PaperLevelOverrides> TYPE = new SavedDataType<>(
-            Identifier.fromNamespaceAndPath(Identifier.PAPER_NAMESPACE, "level_overrides"),
-            PaperLevelOverrides::new,
-            CODEC,
-            DataFixTypes.NONE
+        Identifier.fromNamespaceAndPath(Identifier.PAPER_NAMESPACE, "level_overrides"),
+        PaperLevelOverrides::new,
+        CODEC,
+        DataFixTypes.NONE
     );
 
     private RespawnData respawnData;
@@ -50,11 +50,11 @@ public final class PaperLevelOverrides extends SavedData implements ServerLevelD
     }
 
     private PaperLevelOverrides(
-            final RespawnData respawnData,
-            final long gameTime,
-            final boolean initialized,
-            final GameType gameType,
-            final LevelSettings.DifficultySettings difficultySettings
+        final RespawnData respawnData,
+        final long gameTime,
+        final boolean initialized,
+        final GameType gameType,
+        final LevelSettings.DifficultySettings difficultySettings
     ) {
         this.respawnData = respawnData.normalized();
         this.gameTime = gameTime;
@@ -64,12 +64,12 @@ public final class PaperLevelOverrides extends SavedData implements ServerLevelD
     }
 
     public static PaperLevelOverrides createFromLiveLevelData(final PrimaryLevelData rootData) {
-        return new PaperLevelOverrides(
-                RespawnData.fromVanilla(rootData.getRespawnData()),
-                rootData.getGameTime(),
-                false,
-                rootData.getGameType(),
-                new LevelSettings.DifficultySettings(rootData.getDifficulty(), rootData.isHardcore(), rootData.isDifficultyLocked())
+         return new PaperLevelOverrides(
+            RespawnData.fromVanilla(rootData.getRespawnData()),
+            rootData.getGameTime(),
+            false,
+            rootData.getGameType(),
+            new LevelSettings.DifficultySettings(rootData.getDifficulty(), rootData.isHardcore(), rootData.isDifficultyLocked())
         );
     }
 
@@ -79,11 +79,11 @@ public final class PaperLevelOverrides extends SavedData implements ServerLevelD
         }
 
         return new PaperLevelOverrides(
-                RespawnData.fromVanilla(levelData.get("spawn").read(LevelData.RespawnData.CODEC).result().orElse(LevelData.RespawnData.DEFAULT)),
-                levelData.get("Time").asLong(0L),
-                levelData.get("initialized").asBoolean(true),
-                GameType.byId(levelData.get("GameType").asInt(GameType.SURVIVAL.getId())),
-                levelData.get("difficulty_settings").read(LevelSettings.DifficultySettings.CODEC).result().orElse(LevelSettings.DifficultySettings.DEFAULT)
+            RespawnData.fromVanilla(levelData.get("spawn").read(LevelData.RespawnData.CODEC).result().orElse(LevelData.RespawnData.DEFAULT)),
+            levelData.get("Time").asLong(0L),
+            levelData.get("initialized").asBoolean(true),
+            GameType.byId(levelData.get("GameType").asInt(GameType.SURVIVAL.getId())),
+            levelData.get("difficulty_settings").read(LevelSettings.DifficultySettings.CODEC).result().orElse(LevelSettings.DifficultySettings.DEFAULT)
         );
     }
 
@@ -235,9 +235,9 @@ public final class PaperLevelOverrides extends SavedData implements ServerLevelD
         if (!this.difficultySettings.equals(difficultySettings)) {
             this.difficultySettings = difficultySettings;
             this.syncRootData(rootData -> rootData.settings = rootData.settings
-                    .withDifficulty(difficultySettings.difficulty())
-                    .withHardcore(difficultySettings.hardcore())
-                    .withDifficultyLock(difficultySettings.locked()));
+                .withDifficulty(difficultySettings.difficulty())
+                .withHardcore(difficultySettings.hardcore())
+                .withDifficultyLock(difficultySettings.locked()));
             this.setDirty();
         }
     }
@@ -252,9 +252,9 @@ public final class PaperLevelOverrides extends SavedData implements ServerLevelD
     public record RespawnData(BlockPos pos, float yaw, float pitch) {
         public static final RespawnData DEFAULT = new RespawnData(BlockPos.ZERO, 0.0F, 0.0F);
         public static final Codec<RespawnData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                BlockPos.CODEC.fieldOf("pos").forGetter(RespawnData::pos),
-                Codec.floatRange(-180.0F, 180.0F).fieldOf("yaw").forGetter(RespawnData::yaw),
-                Codec.floatRange(-90.0F, 90.0F).fieldOf("pitch").forGetter(RespawnData::pitch)
+            BlockPos.CODEC.fieldOf("pos").forGetter(RespawnData::pos),
+            Codec.floatRange(-180.0F, 180.0F).fieldOf("yaw").forGetter(RespawnData::yaw),
+            Codec.floatRange(-90.0F, 90.0F).fieldOf("pitch").forGetter(RespawnData::pitch)
         ).apply(instance, RespawnData::new));
 
         public RespawnData normalized() {

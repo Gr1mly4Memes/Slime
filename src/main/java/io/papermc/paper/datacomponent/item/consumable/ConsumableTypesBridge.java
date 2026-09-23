@@ -1,18 +1,13 @@
 package io.papermc.paper.datacomponent.item.consumable;
 
 import io.papermc.paper.registry.set.RegistryKeySet;
-import net.kyori.adventure.key.Key;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.NullMarked;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
+import net.kyori.adventure.key.Key;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
-@NullMarked
-@ApiStatus.Internal
 interface ConsumableTypesBridge {
 
     Optional<ConsumableTypesBridge> BRIDGE = ServiceLoader.load(ConsumableTypesBridge.class, ConsumableTypesBridge.class.getClassLoader()).findFirst();
@@ -29,5 +24,5 @@ interface ConsumableTypesBridge {
 
     ConsumeEffect.PlaySound playSoundEffect(Key sound);
 
-    ConsumeEffect.TeleportRandomly teleportRandomlyEffect(float diameter);
+    ConsumeEffect.TeleportRandomly teleportRandomlyEffect(float diameter, boolean directionalParticles);
 }

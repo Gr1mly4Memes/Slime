@@ -41,12 +41,12 @@ public class CraftSculkSensor extends CraftBlockData implements SculkSensor {
     }
 
     @Override
-    public Phase getSculkSensorPhase() {
-        return this.get(PHASE, Phase.class);
+    public SculkSensor.Phase getSculkSensorPhase() {
+        return this.get(PHASE, SculkSensor.Phase.class);
     }
 
     @Override
-    public void setSculkSensorPhase(final Phase phase) {
+    public void setSculkSensorPhase(final SculkSensor.Phase phase) {
         Preconditions.checkArgument(phase != null, "phase cannot be null!");
         this.set(PHASE, phase);
     }

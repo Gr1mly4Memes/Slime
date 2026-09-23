@@ -18,7 +18,9 @@ import org.checkerframework.framework.qual.DefaultQualifier;
 import java.text.DecimalFormat;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.NamedTextColor.BLUE;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 @DefaultQualifier(NonNull.class)
 public final class FixLightCommand implements PaperSubcommand {

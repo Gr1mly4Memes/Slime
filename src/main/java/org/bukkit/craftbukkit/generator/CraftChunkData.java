@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.generator;
 
 import com.google.common.base.Preconditions;
+import java.lang.ref.WeakReference;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
 import net.minecraft.world.level.block.Blocks;
@@ -19,8 +20,6 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.material.MaterialData;
-
-import java.lang.ref.WeakReference;
 
 /**
  * Data to be used for the block types and data in a newly generated chunk.

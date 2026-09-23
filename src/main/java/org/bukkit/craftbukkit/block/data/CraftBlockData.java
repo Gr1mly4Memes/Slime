@@ -5,6 +5,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -50,11 +58,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 public class CraftBlockData implements BlockData {
 
     private BlockState state;
@@ -91,10 +94,6 @@ public class CraftBlockData implements BlockData {
 
     private static <T extends Comparable<T>> BlockState setValue(final BlockState state, final Property.Value<T> propertyValue) {
         return state.setValue(propertyValue.property(), propertyValue.value());
-    }
-
-    private <T extends Comparable<T>> BlockState copyProperty(BlockState source, BlockState target, Property<T> property) {
-        return target.setValue(property, source.getValue(property));
     }
 
     @Override
@@ -331,6 +330,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.world.level.block.LanternBlock.class, org.bukkit.craftbukkit.block.impl.CraftLantern::new);
         register(net.minecraft.world.level.block.LayeredCauldronBlock.class, org.bukkit.craftbukkit.block.impl.CraftLayeredCauldron::new);
         register(net.minecraft.world.level.block.LeafLitterBlock.class, org.bukkit.craftbukkit.block.impl.CraftLeafLitter::new);
+        register(net.minecraft.world.level.block.LeavesBlock.class, org.bukkit.craftbukkit.block.impl.CraftLeaves::new);
         register(net.minecraft.world.level.block.LecternBlock.class, org.bukkit.craftbukkit.block.impl.CraftLectern::new);
         register(net.minecraft.world.level.block.LeverBlock.class, org.bukkit.craftbukkit.block.impl.CraftLever::new);
         register(net.minecraft.world.level.block.LightBlock.class, org.bukkit.craftbukkit.block.impl.CraftLight::new);
@@ -358,10 +358,10 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.world.level.block.PressurePlateBlock.class, org.bukkit.craftbukkit.block.impl.CraftPressurePlate::new);
         register(net.minecraft.world.level.block.RailBlock.class, org.bukkit.craftbukkit.block.impl.CraftRail::new);
         register(net.minecraft.world.level.block.RedStoneOreBlock.class, org.bukkit.craftbukkit.block.impl.CraftRedStoneOre::new);
-        register(net.minecraft.world.level.block.RedStoneWireBlock.class, org.bukkit.craftbukkit.block.impl.CraftRedStoneWire::new);
         register(net.minecraft.world.level.block.RedstoneLampBlock.class, org.bukkit.craftbukkit.block.impl.CraftRedstoneLamp::new);
         register(net.minecraft.world.level.block.RedstoneTorchBlock.class, org.bukkit.craftbukkit.block.impl.CraftRedstoneTorch::new);
         register(net.minecraft.world.level.block.RedstoneWallTorchBlock.class, org.bukkit.craftbukkit.block.impl.CraftRedstoneWallTorch::new);
+        register(net.minecraft.world.level.block.RedstoneWireBlock.class, org.bukkit.craftbukkit.block.impl.CraftRedstoneWire::new);
         register(net.minecraft.world.level.block.RepeaterBlock.class, org.bukkit.craftbukkit.block.impl.CraftRepeater::new);
         register(net.minecraft.world.level.block.RespawnAnchorBlock.class, org.bukkit.craftbukkit.block.impl.CraftRespawnAnchor::new);
         register(net.minecraft.world.level.block.RotatedPillarBlock.class, org.bukkit.craftbukkit.block.impl.CraftRotatedPillar::new);
@@ -373,6 +373,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.world.level.block.SculkVeinBlock.class, org.bukkit.craftbukkit.block.impl.CraftSculkVein::new);
         register(net.minecraft.world.level.block.SeaPickleBlock.class, org.bukkit.craftbukkit.block.impl.CraftSeaPickle::new);
         register(net.minecraft.world.level.block.ShelfBlock.class, org.bukkit.craftbukkit.block.impl.CraftShelf::new);
+        register(net.minecraft.world.level.block.ShelfMushroomBlock.class, org.bukkit.craftbukkit.block.impl.CraftShelfMushroom::new);
         register(net.minecraft.world.level.block.ShulkerBoxBlock.class, org.bukkit.craftbukkit.block.impl.CraftShulkerBox::new);
         register(net.minecraft.world.level.block.SkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftSkull::new);
         register(net.minecraft.world.level.block.SlabBlock.class, org.bukkit.craftbukkit.block.impl.CraftSlab::new);
@@ -386,6 +387,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.world.level.block.StandingSignBlock.class, org.bukkit.craftbukkit.block.impl.CraftStandingSign::new);
         register(net.minecraft.world.level.block.StemBlock.class, org.bukkit.craftbukkit.block.impl.CraftStem::new);
         register(net.minecraft.world.level.block.StonecutterBlock.class, org.bukkit.craftbukkit.block.impl.CraftStonecutter::new);
+        register(net.minecraft.world.level.block.StrawBedBlock.class, org.bukkit.craftbukkit.block.impl.CraftStrawBed::new);
         register(net.minecraft.world.level.block.StructureBlock.class, org.bukkit.craftbukkit.block.impl.CraftStructureBlock::new);
         register(net.minecraft.world.level.block.SugarCaneBlock.class, org.bukkit.craftbukkit.block.impl.CraftSugarCane::new);
         register(net.minecraft.world.level.block.SulfurSpikeBlock.class, org.bukkit.craftbukkit.block.impl.CraftSulfurSpike::new);
@@ -602,9 +604,7 @@ public class CraftBlockData implements BlockData {
         CraftBlockData other = (CraftBlockData) blockData;
         BlockState otherState = other.state;
         for (Property<?> property : this.state.getBlock().getStateDefinition().getProperties()) {
-            if (otherState.hasProperty(property)) {
-                otherState = this.copyProperty(this.state, otherState, property);
-            }
+            otherState = BlockState.copyProperty(this.state, otherState, property);
         }
 
         other.state = otherState;

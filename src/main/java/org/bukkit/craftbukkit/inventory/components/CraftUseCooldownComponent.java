@@ -1,5 +1,8 @@
 package org.bukkit.craftbukkit.inventory.components;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.component.UseCooldown;
 import org.bukkit.NamespacedKey;
@@ -7,10 +10,6 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.craftbukkit.inventory.SerializableMeta;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.meta.components.UseCooldownComponent;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 
 import static io.papermc.paper.util.BoundChecker.requirePositive;
 

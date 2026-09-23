@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.block;
 
 import io.papermc.paper.util.OldEnumHolderable;
+import java.util.Objects;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import org.bukkit.NamespacedKey;
@@ -9,8 +10,6 @@ import org.bukkit.craftbukkit.CraftRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Objects;
 
 @NullMarked
 public class CraftBiome extends OldEnumHolderable<Biome, net.minecraft.world.level.biome.Biome> implements Biome {

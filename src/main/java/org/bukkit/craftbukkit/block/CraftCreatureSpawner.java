@@ -1,6 +1,13 @@
 package org.bukkit.craftbukkit.block;
 
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.InclusiveRange;
 import net.minecraft.util.ProblemReporter;
@@ -24,9 +31,6 @@ import org.bukkit.craftbukkit.entity.CraftEntitySnapshot;
 import org.bukkit.craftbukkit.entity.CraftEntityType;
 import org.bukkit.entity.EntitySnapshot;
 import org.bukkit.entity.EntityType;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEntity> implements CreatureSpawner, org.bukkit.craftbukkit.spawner.PaperSharedSpawnerLogic { // Paper - more spawner API
 

@@ -1,15 +1,14 @@
 package org.bukkit.craftbukkit.inventory.components;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.world.item.component.CustomModelData;
 import org.bukkit.Color;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.craftbukkit.inventory.SerializableMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 @SerializableAs("CustomModelData")
 public final class CraftCustomModelDataComponent implements CustomModelDataComponent {

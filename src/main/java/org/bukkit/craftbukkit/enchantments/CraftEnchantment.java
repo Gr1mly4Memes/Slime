@@ -3,10 +3,11 @@ package org.bukkit.craftbukkit.enchantments;
 import com.google.common.base.Preconditions;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.util.Holderable;
+import java.util.Locale;
+import net.minecraft.util.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.EnchantmentTags;
-import net.minecraft.util.Util;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.CraftRegistry;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -16,8 +17,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Locale;
 
 public class CraftEnchantment extends Enchantment implements Holderable<net.minecraft.world.item.enchantment.Enchantment> {
 

@@ -1,13 +1,12 @@
 package org.bukkit.craftbukkit;
 
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.util.PathConverter;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.util.PathConverter;
 
 import static java.util.Arrays.asList;
 
@@ -122,7 +121,7 @@ public class Main {
                         .defaultsTo(new File(io.papermc.paper.configuration.PaperConfigurations.CONFIG_DIR))
                         .describedAs("Config directory");
 
-                this.acceptsAll(asList("com/destroystokyo/paper", "paper-settings"), "File for Paper settings")
+                this.acceptsAll(asList("paper", "paper-settings"), "File for Paper settings")
                         .withRequiredArg()
                         .ofType(File.class)
                         .defaultsTo(new File("paper.yml"))
@@ -141,20 +140,12 @@ public class Main {
                         .describedAs("Plugin directory");
 
                 // Purpur start - Purpur config files
-                this.acceptsAll(asList("org/purpurmc/purpur", "purpur-settings"), "File for purpur settings")
+                this.acceptsAll(asList("purpur", "purpur-settings"), "File for purpur settings")
                     .withRequiredArg()
                     .ofType(File.class)
                     .defaultsTo(new File("purpur.yml"))
                     .describedAs("Yml file");
                 // Purpur end - Purpur config files
-
-                // Slime start - Server Config
-                acceptsAll(asList("slime", "slime-settings"), "File for slime settings")
-                        .withRequiredArg()
-                        .ofType(File.class)
-                        .defaultsTo(new File("slime.yml"))
-                        .describedAs("Yml file");
-                // Slime end - Server Config
 
                 this.accepts("server-name", "Name of the server")
                         .withRequiredArg()

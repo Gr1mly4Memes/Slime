@@ -2,19 +2,16 @@ package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.block.BlockPredicate;
 import io.papermc.paper.datacomponent.DataComponentBuilder;
+import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Controls which blocks a player in Adventure mode can do a certain action with this item.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#CAN_BREAK
  * @see io.papermc.paper.datacomponent.DataComponentTypes#CAN_PLACE_ON
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface ItemAdventurePredicate {
 
@@ -24,7 +21,7 @@ public interface ItemAdventurePredicate {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder itemAdventurePredicate() {
+    static ItemAdventurePredicate.Builder itemAdventurePredicate() {
         return ItemComponentTypesBridge.bridge().itemAdventurePredicate();
     }
 

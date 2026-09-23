@@ -5,6 +5,26 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -20,15 +40,6 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Handles all plugin management from the Server
@@ -405,7 +416,7 @@ public final class SimplePluginManager implements PluginManager {
         if (true) {
             try {
                 return this.paperPluginManager.loadPlugin(file);
-            } catch (InvalidDescriptionException ignored) {
+            } catch (org.bukkit.plugin.InvalidDescriptionException ignored) {
                 return null;
             }
         }
@@ -429,9 +440,9 @@ public final class SimplePluginManager implements PluginManager {
 
         if (result != null) {
             plugins.add(result);
-            lookupNames.put(result.getDescription().getName().toLowerCase(Locale.ENGLISH), result); // Paper
+            lookupNames.put(result.getDescription().getName().toLowerCase(java.util.Locale.ENGLISH), result); // Paper
             for (String provided : result.getDescription().getProvides()) {
-                lookupNames.putIfAbsent(provided.toLowerCase(Locale.ENGLISH), result); // Paper
+                lookupNames.putIfAbsent(provided.toLowerCase(java.util.Locale.ENGLISH), result); // Paper
             }
         }
 
@@ -461,7 +472,7 @@ public final class SimplePluginManager implements PluginManager {
     @Nullable
     public synchronized Plugin getPlugin(@NotNull String name) {
         if (true) {return this.paperPluginManager.getPlugin(name);} // Paper
-        return lookupNames.get(name.replace(' ', '_').toLowerCase(Locale.ENGLISH)); // Paper
+        return lookupNames.get(name.replace(' ', '_').toLowerCase(java.util.Locale.ENGLISH)); // Paper
     }
 
     @Override
@@ -657,8 +668,8 @@ public final class SimplePluginManager implements PluginManager {
                             ));
                 }
             } catch (Throwable ex) {
-                // Paper start - error reporting
                 gg.pufferfish.pufferfish.sentry.SentryContext.setEventContext(event, registration); // Pufferfish
+                // Paper start - error reporting
                 String msg = "Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName();
                 server.getLogger().log(Level.SEVERE, msg, ex);
                 gg.pufferfish.pufferfish.sentry.SentryContext.removeEventContext(); // Pufferfish
@@ -943,7 +954,7 @@ public final class SimplePluginManager implements PluginManager {
     @Override
     public boolean useTimings() {
         if (true) {return this.paperPluginManager.useTimings();} // Paper
-        return co.aikar.timings.Timings.isTimingsEnabled(); // Spigot
+        return false; // Spigot
     }
 
     /**
@@ -953,7 +964,7 @@ public final class SimplePluginManager implements PluginManager {
      */
     @Deprecated(forRemoval = true)
     public void useTimings(boolean use) {
-        co.aikar.timings.Timings.setTimingsEnabled(use); // Paper
+
     }
 
     // Paper start

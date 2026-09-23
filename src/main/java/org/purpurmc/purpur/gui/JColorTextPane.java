@@ -1,11 +1,17 @@
 package org.purpurmc.purpur.gui;
 
 import com.google.common.collect.Sets;
+import javax.swing.UIManager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 
-import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.JTextPane;
+import javax.swing.Timer;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 import java.util.Set;
 
 public class JColorTextPane extends JTextPane {

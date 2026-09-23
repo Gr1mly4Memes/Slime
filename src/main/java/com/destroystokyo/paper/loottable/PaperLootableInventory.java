@@ -1,11 +1,10 @@
 package com.destroystokyo.paper.loottable;
 
+import java.util.UUID;
 import net.minecraft.world.level.Level;
 import org.bukkit.World;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
-
-import java.util.UUID;
 
 @DefaultQualifier(NonNull.class)
 public interface PaperLootableInventory extends PaperLootable, LootableInventory {

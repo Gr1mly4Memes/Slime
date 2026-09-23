@@ -1,10 +1,9 @@
 package io.papermc.paper.connection;
 
-import net.kyori.adventure.text.Component;
-import org.jspecify.annotations.Nullable;
-
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import net.kyori.adventure.text.Component;
+import org.jspecify.annotations.Nullable;
 
 public interface PlayerConnection {
 

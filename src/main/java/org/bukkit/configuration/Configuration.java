@@ -1,9 +1,8 @@
 package org.bukkit.configuration;
 
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 /**
  * Represents a source of configurable options and settings
@@ -48,7 +47,7 @@ public interface Configuration extends ConfigurationSection {
      * This method will not hold a reference to the specified Configuration,
      * nor will it automatically update if that Configuration ever changes. If
      * you require this, you should set the default source with {@link
-     * #setDefaults(Configuration)}.
+     * #setDefaults(org.bukkit.configuration.Configuration)}.
      *
      * @param defaults A configuration holding a list of defaults to copy.
      * @throws IllegalArgumentException Thrown if defaults is null or this.

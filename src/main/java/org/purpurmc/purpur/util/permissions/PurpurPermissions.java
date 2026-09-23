@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class PurpurPermissions {
-    private static final String ROOT = "org/purpurmc/purpur";
+    private static final String ROOT = "purpur";
     private static final String PREFIX = ROOT + ".";
     private static final Set<String> mobs = new HashSet<>();
 
@@ -43,8 +43,6 @@ public final class PurpurPermissions {
         DefaultPermissions.registerPermission(PREFIX + "bypassIdleKick", "Allows the user to bypass being kicked while idle", PermissionDefault.FALSE, purpur);
 
         DefaultPermissions.registerPermission(PREFIX + "inventory_totem", "Allows the user to use totem of undying anywhere in their inventory", PermissionDefault.FALSE, purpur);
-
-        DefaultPermissions.registerPermission(PREFIX + "spectator-can-teleport-to-players", "Allows the user to teleport to players while in spectator mode", PermissionDefault.TRUE, purpur);
 
         Permission anvil = DefaultPermissions.registerPermission(PREFIX + "anvil", "Allows the user to use all anvil color and format abilities", PermissionDefault.FALSE, purpur);
         DefaultPermissions.registerPermission(PREFIX + "anvil.color", "Allows the user to use color codes in an anvil", PermissionDefault.FALSE, anvil);

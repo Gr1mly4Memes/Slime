@@ -6,10 +6,9 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * An argument type that wraps around a native-to-vanilla argument type.

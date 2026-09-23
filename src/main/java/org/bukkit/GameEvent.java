@@ -1,11 +1,10 @@
 package org.bukkit;
 
+import java.util.Collection;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * Represents a generic Mojang game event.

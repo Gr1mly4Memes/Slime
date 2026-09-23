@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.VaultBlock;
 import net.minecraft.world.level.block.entity.vault.VaultState;
@@ -13,8 +14,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Vault;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -57,12 +56,12 @@ public class CraftVault extends CraftBlockData implements Vault {
     }
 
     @Override
-    public State getVaultState() {
-        return this.get(STATE, State.class);
+    public Vault.State getVaultState() {
+        return this.get(STATE, Vault.State.class);
     }
 
     @Override
-    public void setVaultState(final State state) {
+    public void setVaultState(final Vault.State state) {
         Preconditions.checkArgument(state != null, "state cannot be null!");
         this.set(STATE, state);
     }

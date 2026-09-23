@@ -2,9 +2,8 @@ package io.papermc.paper.registry.set;
 
 import io.papermc.paper.registry.RegistryBuilder;
 import io.papermc.paper.registry.RegistryBuilderFactory;
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.function.Consumer;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * A builder for a {@link RegistryValueSet}.

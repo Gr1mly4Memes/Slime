@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.CalibratedSculkSensorBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,8 +14,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.CalibratedSculkSensor;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -64,12 +63,12 @@ public class CraftCalibratedSculkSensor extends CraftBlockData implements Calibr
     }
 
     @Override
-    public Phase getSculkSensorPhase() {
-        return this.get(PHASE, Phase.class);
+    public org.bukkit.block.data.type.SculkSensor.Phase getSculkSensorPhase() {
+        return this.get(PHASE, org.bukkit.block.data.type.SculkSensor.Phase.class);
     }
 
     @Override
-    public void setSculkSensorPhase(final Phase phase) {
+    public void setSculkSensorPhase(final org.bukkit.block.data.type.SculkSensor.Phase phase) {
         Preconditions.checkArgument(phase != null, "phase cannot be null!");
         this.set(PHASE, phase);
     }

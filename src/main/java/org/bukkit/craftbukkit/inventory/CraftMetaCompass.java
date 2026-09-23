@@ -2,6 +2,9 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap.Builder;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponentPatch;
@@ -18,10 +21,6 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.inventory.meta.CompassMeta;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaCompass extends CraftMetaItem implements CompassMeta {
@@ -77,7 +76,7 @@ public class CraftMetaCompass extends CraftMetaItem implements CompassMeta {
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         if (this.tracker != null) {
@@ -112,7 +111,7 @@ public class CraftMetaCompass extends CraftMetaItem implements CompassMeta {
         }
         ServerLevel level = MinecraftServer.getServer().getLevel(this.tracker.target().get().dimension());
         World world = level != null ? level.getWorld() : null;
-        return CraftLocation.toBukkit(this.tracker.target().get().pos(), world); // world may be null here, if the referenced world is not loaded
+        return org.bukkit.craftbukkit.util.CraftLocation.toBukkit(this.tracker.target().get().pos(), world); // world may be null here, if the referenced world is not loaded
     }
 
     @Override
@@ -120,7 +119,7 @@ public class CraftMetaCompass extends CraftMetaItem implements CompassMeta {
         Preconditions.checkArgument(lodestone == null || lodestone.getWorld() != null, "world is null");
         if (lodestone == null) {
             if (this.tracker != null) {
-                this.tracker = new LodestoneTracker(Optional.empty(), this.tracker.tracked());
+                this.tracker = new LodestoneTracker(java.util.Optional.empty(), this.tracker.tracked());
             }
         } else {
             GlobalPos pos = GlobalPos.of(

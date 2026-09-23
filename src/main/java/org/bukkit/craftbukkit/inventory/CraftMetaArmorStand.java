@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
+import java.util.Map;
+import java.util.Objects;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -9,9 +11,6 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.component.TypedEntityData;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-
-import java.util.Map;
-import java.util.Objects;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaArmorStand extends CraftMetaItem implements com.destroystokyo.paper.inventory.meta.ArmorStandMeta {
@@ -96,7 +95,7 @@ public class CraftMetaArmorStand extends CraftMetaItem implements com.destroysto
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         if (this.entityTag != null) {

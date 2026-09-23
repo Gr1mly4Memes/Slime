@@ -2,6 +2,12 @@ package org.bukkit.craftbukkit.legacy;
 
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Dynamic;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -20,13 +26,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.StateHolder;
 import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.material.MaterialData;
-
-import java.util.*;
 
 /**
  * This class may seem unnecessarily slow and complicated/repetitive however it
@@ -330,11 +335,11 @@ public final class CraftLegacy {
                     Dynamic blockTag = BlockStateData.getTag(material.getId() << 4 | data);
                     blockTag = DataFixers.getDataFixer().update(References.BLOCK_STATE, blockTag, 100, CraftMagicNumbers.INSTANCE.getDataVersion());
                     // TODO: better skull conversion, chests
-                    if (blockTag.get("Name").asString("").contains("%%FILTER_ME%%")) {
+                    if (blockTag.get(StateHolder.ID_TAG).asString("").contains("%%FILTER_ME%%")) {
                         continue;
                     }
 
-                    String name = blockTag.get("Name").asString("");
+                    String name = blockTag.get(StateHolder.ID_TAG).asString("");
                     Block block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(name));
                     if (block == null) {
                         continue;
@@ -342,7 +347,7 @@ public final class CraftLegacy {
                     BlockState state = block.defaultBlockState();
                     StateDefinition<?, ?> def = block.getStateDefinition();
 
-                    Optional<CompoundTag> propertiesTag = blockTag.getElement("Properties").result();
+                    Optional<CompoundTag> propertiesTag = blockTag.getElement(StateHolder.PROPERTIES_TAG).result();
                     if (propertiesTag.isPresent()) {
                         CompoundTag properties = propertiesTag.get();
                         for (String propertyName : properties.keySet()) {

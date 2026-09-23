@@ -19,12 +19,12 @@ public class CraftTestBlock extends CraftBlockData implements TestBlock {
     }
 
     @Override
-    public Mode getMode() {
-        return this.get(MODE, Mode.class);
+    public TestBlock.Mode getMode() {
+        return this.get(MODE, TestBlock.Mode.class);
     }
 
     @Override
-    public void setMode(final Mode mode) {
+    public void setMode(final TestBlock.Mode mode) {
         Preconditions.checkArgument(mode != null, "mode cannot be null!");
         this.set(MODE, mode);
     }

@@ -3,20 +3,28 @@ package org.bukkit.entity;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Fireworks;
 import io.papermc.paper.datacomponent.item.UseCooldown;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Set;
+import java.util.function.Consumer;
 import net.kyori.adventure.key.Key;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MainHand;
+import org.bukkit.inventory.MenuType;
+import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * Represents a human entity, such as an NPC or a player
@@ -564,7 +572,7 @@ public interface HumanEntity extends LivingEntity, AnimalTamer, InventoryHolder 
      * @return Whether their hand is raised
      * @see LivingEntity#hasActiveItem()
      */
-    @ApiStatus.Obsolete(since = "1.20.4") // Paper - active item API
+    @org.jetbrains.annotations.ApiStatus.Obsolete(since = "1.20.4") // Paper - active item API
     public boolean isHandRaised();
 
     /**

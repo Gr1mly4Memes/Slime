@@ -2,26 +2,23 @@ package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
 import io.papermc.paper.datacomponent.item.attribute.AttributeModifierDisplay;
+import java.util.List;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Holds attribute modifiers applied to any item.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#ATTRIBUTE_MODIFIERS
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface ItemAttributeModifiers {
 
     @Contract(value = "-> new", pure = true)
-    static Builder itemAttributes() {
+    static ItemAttributeModifiers.Builder itemAttributes() {
         return ItemComponentTypesBridge.bridge().modifiers();
     }
 

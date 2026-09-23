@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.WeatheringCopperChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,8 +13,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -46,12 +45,12 @@ public class CraftWeatheringCopperChest extends CraftBlockData implements Chest 
     }
 
     @Override
-    public Type getType() {
-        return this.get(TYPE, Type.class);
+    public Chest.Type getType() {
+        return this.get(TYPE, Chest.Type.class);
     }
 
     @Override
-    public void setType(final Type type) {
+    public void setType(final Chest.Type type) {
         Preconditions.checkArgument(type != null, "type cannot be null!");
         this.set(TYPE, type);
     }

@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.damage;
 
+import java.util.Objects;
 import net.kyori.adventure.pointer.Pointers;
 import net.minecraft.Optionull;
 import net.minecraft.world.phys.Vec3;
@@ -10,8 +11,6 @@ import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
-
-import java.util.Objects;
 
 public class CraftDamageSource implements DamageSource {
 

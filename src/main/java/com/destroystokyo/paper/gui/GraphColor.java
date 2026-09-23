@@ -1,6 +1,6 @@
 package com.destroystokyo.paper.gui;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class GraphColor {
     private static final Color[] colorLine = new Color[101];

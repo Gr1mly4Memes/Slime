@@ -2,6 +2,7 @@ package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
 import io.papermc.paper.text.Filtered;
+import java.util.List;
 import net.kyori.adventure.inventory.BookLike;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -9,25 +10,21 @@ import org.checkerframework.common.value.qual.IntRange;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Holds the contents and metadata of a Written Book.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#WRITTEN_BOOK_CONTENT
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface WrittenBookContent extends BookLike {
 
     @Contract(value = "_, _ -> new", pure = true)
-    static Builder writtenBookContent(final String title, final String author) {
+    static WrittenBookContent.Builder writtenBookContent(final String title, final String author) {
         return writtenBookContent(Filtered.of(title, null), author);
     }
 
     @Contract(value = "_, _ -> new", pure = true)
-    static Builder writtenBookContent(final Filtered<String> title, final String author) {
+    static WrittenBookContent.Builder writtenBookContent(final Filtered<String> title, final String author) {
         return ItemComponentTypesBridge.bridge().writtenBookContent(title, author);
     }
 

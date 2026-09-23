@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import net.kyori.adventure.util.TriState;
 import net.minecraft.Optionull;
 import net.minecraft.sounds.SoundEvent;
@@ -12,8 +13,6 @@ import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.loot.LootTable;
-
-import java.util.Optional;
 
 public abstract class CraftMob extends CraftLivingEntity implements Mob, io.papermc.paper.entity.PaperLeashable { // Paper - Leashable API
 
@@ -30,7 +29,7 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob, io.pape
     }
 
     @Override
-    public void setHandle(Entity entity) {
+    public void setHandle(net.minecraft.world.entity.Entity entity) {
         super.setHandle(entity);
         this.paperPathfinder.setHandle(this.getHandle());
     }
@@ -68,7 +67,7 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob, io.pape
 
     @Override
     public LivingEntity getTarget() {
-        return (LivingEntity) Optionull.map(this.getHandle().getTarget(), Entity::getBukkitEntity);
+        return Optionull.map(this.getHandle().getTarget(), net.minecraft.world.entity.LivingEntity::getBukkitEntity);
     }
 
     @Override
@@ -114,29 +113,29 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob, io.pape
 
     @Override
     public void lookAt(@org.jetbrains.annotations.NotNull org.bukkit.Location location) {
-        Preconditions.checkNotNull(location, "location cannot be null");
-        Preconditions.checkArgument(location.getWorld().equals(getWorld()), "location in a different world");
+        com.google.common.base.Preconditions.checkNotNull(location, "location cannot be null");
+        com.google.common.base.Preconditions.checkArgument(location.getWorld().equals(getWorld()), "location in a different world");
         getHandle().getLookControl().setLookAt(location.getX(), location.getY(), location.getZ());
     }
 
     @Override
     public void lookAt(@org.jetbrains.annotations.NotNull org.bukkit.Location location, float headRotationSpeed, float maxHeadPitch) {
-        Preconditions.checkNotNull(location, "location cannot be null");
-        Preconditions.checkArgument(location.getWorld().equals(getWorld()), "location in a different world");
+        com.google.common.base.Preconditions.checkNotNull(location, "location cannot be null");
+        com.google.common.base.Preconditions.checkArgument(location.getWorld().equals(getWorld()), "location in a different world");
         getHandle().getLookControl().setLookAt(location.getX(), location.getY(), location.getZ(), headRotationSpeed, maxHeadPitch);
     }
 
     @Override
     public void lookAt(@org.jetbrains.annotations.NotNull org.bukkit.entity.Entity entity) {
-        Preconditions.checkNotNull(entity, "entity cannot be null");
-        Preconditions.checkArgument(entity.getWorld().equals(getWorld()), "entity in a different world");
+        com.google.common.base.Preconditions.checkNotNull(entity, "entity cannot be null");
+        com.google.common.base.Preconditions.checkArgument(entity.getWorld().equals(getWorld()), "entity in a different world");
         getHandle().getLookControl().setLookAt(((CraftEntity) entity).getHandle());
     }
 
     @Override
     public void lookAt(@org.jetbrains.annotations.NotNull org.bukkit.entity.Entity entity, float headRotationSpeed, float maxHeadPitch) {
-        Preconditions.checkNotNull(entity, "entity cannot be null");
-        Preconditions.checkArgument(entity.getWorld().equals(getWorld()), "entity in a different world");
+        com.google.common.base.Preconditions.checkNotNull(entity, "entity cannot be null");
+        com.google.common.base.Preconditions.checkArgument(entity.getWorld().equals(getWorld()), "entity in a different world");
         getHandle().getLookControl().setLookAt(((CraftEntity) entity).getHandle(), headRotationSpeed, maxHeadPitch);
     }
 

@@ -1,9 +1,17 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -29,19 +37,193 @@ import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.craftbukkit.entity.boat.*;
-import org.bukkit.entity.*;
-import org.bukkit.entity.boat.*;
-import org.bukkit.entity.minecart.*;
+import org.bukkit.craftbukkit.entity.boat.CraftAcaciaBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftAcaciaChestBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftBambooChestRaft;
+import org.bukkit.craftbukkit.entity.boat.CraftBambooRaft;
+import org.bukkit.craftbukkit.entity.boat.CraftBirchBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftBirchChestBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftCherryBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftCherryChestBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftDarkOakBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftDarkOakChestBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftJungleBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftJungleChestBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftMangroveBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftMangroveChestBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftOakBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftOakChestBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftPaleOakBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftPaleOakChestBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftPoplarBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftPoplarChestBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftSpruceBoat;
+import org.bukkit.craftbukkit.entity.boat.CraftSpruceChestBoat;
+import org.bukkit.entity.Allay;
+import org.bukkit.entity.AreaEffectCloud;
+import org.bukkit.entity.Armadillo;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.Bat;
+import org.bukkit.entity.Bee;
+import org.bukkit.entity.Blaze;
+import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.Bogged;
+import org.bukkit.entity.Breeze;
+import org.bukkit.entity.BreezeWindCharge;
+import org.bukkit.entity.Camel;
+import org.bukkit.entity.CamelHusk;
+import org.bukkit.entity.Cat;
+import org.bukkit.entity.CaveSpider;
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Cod;
+import org.bukkit.entity.CopperGolem;
+import org.bukkit.entity.Cow;
+import org.bukkit.entity.Creaking;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Cushion;
+import org.bukkit.entity.Dolphin;
+import org.bukkit.entity.Donkey;
+import org.bukkit.entity.DragonFireball;
+import org.bukkit.entity.Drowned;
+import org.bukkit.entity.Egg;
+import org.bukkit.entity.ElderGuardian;
+import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.EnderPearl;
+import org.bukkit.entity.EnderSignal;
+import org.bukkit.entity.Enderman;
+import org.bukkit.entity.Endermite;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Evoker;
+import org.bukkit.entity.EvokerFangs;
+import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Fox;
+import org.bukkit.entity.Frog;
+import org.bukkit.entity.Ghast;
+import org.bukkit.entity.Giant;
+import org.bukkit.entity.GlowItemFrame;
+import org.bukkit.entity.GlowSquid;
+import org.bukkit.entity.Goat;
+import org.bukkit.entity.Guardian;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.HappyGhast;
+import org.bukkit.entity.Hoglin;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Husk;
+import org.bukkit.entity.Illusioner;
+import org.bukkit.entity.Interaction;
+import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LargeFireball;
+import org.bukkit.entity.LeashHitch;
+import org.bukkit.entity.LightningStrike;
+import org.bukkit.entity.LingeringPotion;
+import org.bukkit.entity.Llama;
+import org.bukkit.entity.LlamaSpit;
+import org.bukkit.entity.MagmaCube;
+import org.bukkit.entity.Mannequin;
+import org.bukkit.entity.Marker;
+import org.bukkit.entity.Mule;
+import org.bukkit.entity.MushroomCow;
+import org.bukkit.entity.Nautilus;
+import org.bukkit.entity.Ocelot;
+import org.bukkit.entity.OminousItemSpawner;
+import org.bukkit.entity.Painting;
+import org.bukkit.entity.Panda;
+import org.bukkit.entity.Parched;
+import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Phantom;
+import org.bukkit.entity.Pig;
+import org.bukkit.entity.PigZombie;
+import org.bukkit.entity.Piglin;
+import org.bukkit.entity.PiglinBrute;
+import org.bukkit.entity.Pillager;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.PolarBear;
+import org.bukkit.entity.PufferFish;
+import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Ravager;
+import org.bukkit.entity.Salmon;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Shulker;
+import org.bukkit.entity.ShulkerBullet;
+import org.bukkit.entity.Silverfish;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.SkeletonHorse;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.SmallFireball;
+import org.bukkit.entity.Sniffer;
+import org.bukkit.entity.Snowball;
+import org.bukkit.entity.Snowman;
+import org.bukkit.entity.SpectralArrow;
+import org.bukkit.entity.Spider;
+import org.bukkit.entity.SplashPotion;
+import org.bukkit.entity.Squid;
+import org.bukkit.entity.Stray;
+import org.bukkit.entity.Strider;
+import org.bukkit.entity.SulfurCube;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Tadpole;
+import org.bukkit.entity.TextDisplay;
+import org.bukkit.entity.ThrownExpBottle;
+import org.bukkit.entity.TraderLlama;
+import org.bukkit.entity.Trident;
+import org.bukkit.entity.TropicalFish;
+import org.bukkit.entity.Turtle;
+import org.bukkit.entity.Vex;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Vindicator;
+import org.bukkit.entity.WanderingTrader;
+import org.bukkit.entity.Warden;
+import org.bukkit.entity.WindCharge;
+import org.bukkit.entity.Witch;
+import org.bukkit.entity.Wither;
+import org.bukkit.entity.WitherSkeleton;
+import org.bukkit.entity.WitherSkull;
+import org.bukkit.entity.Wolf;
+import org.bukkit.entity.Zoglin;
+import org.bukkit.entity.Zombie;
+import org.bukkit.entity.ZombieHorse;
+import org.bukkit.entity.ZombieNautilus;
+import org.bukkit.entity.ZombieVillager;
+import org.bukkit.entity.boat.AcaciaBoat;
+import org.bukkit.entity.boat.AcaciaChestBoat;
+import org.bukkit.entity.boat.BambooChestRaft;
+import org.bukkit.entity.boat.BambooRaft;
+import org.bukkit.entity.boat.BirchBoat;
+import org.bukkit.entity.boat.BirchChestBoat;
+import org.bukkit.entity.boat.CherryBoat;
+import org.bukkit.entity.boat.CherryChestBoat;
+import org.bukkit.entity.boat.DarkOakBoat;
+import org.bukkit.entity.boat.DarkOakChestBoat;
+import org.bukkit.entity.boat.JungleBoat;
+import org.bukkit.entity.boat.JungleChestBoat;
+import org.bukkit.entity.boat.MangroveBoat;
+import org.bukkit.entity.boat.MangroveChestBoat;
+import org.bukkit.entity.boat.OakBoat;
+import org.bukkit.entity.boat.OakChestBoat;
+import org.bukkit.entity.boat.PaleOakBoat;
+import org.bukkit.entity.boat.PaleOakChestBoat;
+import org.bukkit.entity.boat.PoplarBoat;
+import org.bukkit.entity.boat.PoplarChestBoat;
+import org.bukkit.entity.boat.SpruceBoat;
+import org.bukkit.entity.boat.SpruceChestBoat;
+import org.bukkit.entity.minecart.CommandMinecart;
+import org.bukkit.entity.minecart.ExplosiveMinecart;
+import org.bukkit.entity.minecart.HopperMinecart;
+import org.bukkit.entity.minecart.PoweredMinecart;
+import org.bukkit.entity.minecart.RideableMinecart;
+import org.bukkit.entity.minecart.SpawnerMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.util.Vector;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public final class CraftEntityTypes {
 
@@ -92,7 +274,7 @@ public final class CraftEntityTypes {
     // Paper start - respect randomizeData
     private static final BiConsumer<SpawnData, net.minecraft.world.entity.Entity> CLEAR_MOVE_IF_NOT_RANDOMIZED = (spawnData, entity) -> {
         if (!spawnData.randomizeData()) {
-            entity.setDeltaMovement(Vec3.ZERO);
+            entity.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
         }
     };
     // Paper end - respect randomizeData
@@ -258,6 +440,8 @@ public final class CraftEntityTypes {
         register(new EntityTypeData<>(EntityType.PALE_OAK_CHEST_BOAT, PaleOakChestBoat.class, CraftPaleOakChestBoat::new, createAndMove(net.minecraft.world.entity.EntityTypes.PALE_OAK_CHEST_BOAT)));
         register(new EntityTypeData<>(EntityType.SPRUCE_BOAT, SpruceBoat.class, CraftSpruceBoat::new, createAndMove(net.minecraft.world.entity.EntityTypes.SPRUCE_BOAT)));
         register(new EntityTypeData<>(EntityType.SPRUCE_CHEST_BOAT, SpruceChestBoat.class, CraftSpruceChestBoat::new, createAndMove(net.minecraft.world.entity.EntityTypes.SPRUCE_CHEST_BOAT)));
+        register(new EntityTypeData<>(EntityType.POPLAR_BOAT, PoplarBoat.class, CraftPoplarBoat::new, createAndMove(net.minecraft.world.entity.EntityTypes.POPLAR_BOAT)));
+        register(new EntityTypeData<>(EntityType.POPLAR_CHEST_BOAT, PoplarChestBoat.class, CraftPoplarChestBoat::new, createAndMove(net.minecraft.world.entity.EntityTypes.POPLAR_CHEST_BOAT)));
 
         // Set pos
         register(new EntityTypeData<>(EntityType.MARKER, Marker.class, CraftMarker::new, createAndSetPos(net.minecraft.world.entity.EntityTypes.MARKER)));
@@ -270,13 +454,14 @@ public final class CraftEntityTypes {
         register(new EntityTypeData<>(EntityType.ITEM, Item.class, CraftItem::new, spawnData -> {
             // We use stone instead of empty, to give the plugin developer a visual clue, that the spawn method is working,
             // and that the item stack should probably be changed.
-            ItemStack itemStack = new ItemStack(Items.STONE);
+            net.minecraft.world.item.ItemStack itemStack = new net.minecraft.world.item.ItemStack(Items.STONE);
             ItemEntity item = new ItemEntity(spawnData.minecraftWorld(), spawnData.x(), spawnData.y(), spawnData.z(), itemStack);
             item.setDefaultPickUpDelay();
             CLEAR_MOVE_IF_NOT_RANDOMIZED.accept(spawnData, item); // Paper - respect randomizeData
 
             return item;
         }));
+        register(new EntityTypeData<>(EntityType.CUSHION, Cushion.class, CraftCushion::new, createAndMoveEmptyRot(net.minecraft.world.entity.EntityTypes.CUSHION)));
         register(new EntityTypeData<>(EntityType.EXPERIENCE_ORB, ExperienceOrb.class, CraftExperienceOrb::new,
                 combine(combine(spawnData -> new net.minecraft.world.entity.ExperienceOrb(spawnData.minecraftWorld(), spawnData.x(), spawnData.y(), spawnData.z(), 0, org.bukkit.entity.ExperienceOrb.SpawnReason.CUSTOM, null, null), CLEAR_MOVE_IF_NOT_RANDOMIZED), (spawnData, experienceOrb) -> { if (!spawnData.randomizeData()) { experienceOrb.setYRot(0); } }) // Paper - respect randomizeData
         ));
@@ -331,7 +516,7 @@ public final class CraftEntityTypes {
     }
 
     private static <R extends net.minecraft.world.entity.Entity> Function<SpawnData, R> fromEntityType(net.minecraft.world.entity.EntityType<R> entityTypes) {
-        return spawnData -> entityTypes.create(spawnData.minecraftWorld(), EntitySpawnReason.COMMAND);
+        return spawnData -> entityTypes.create(spawnData.minecraftWorld(), new EntitySpawnRequest(EntitySpawnReason.COMMAND, true));
     }
 
     private static <R extends net.minecraft.world.entity.LivingEntity> Function<SpawnData, R> createLiving(net.minecraft.world.entity.EntityType<R> entityTypes) {

@@ -31,7 +31,7 @@ public record ServerBuildInfoImpl(
     private static final String ATTRIBUTE_GIT_COMMIT = "Git-Commit";
 
     private static final String BRAND_PAPER_NAME = "Paper";
-    private static final String BRAND_PURPUR_NAME = "Purpur"; // Purpur - Rebrand
+    private static final String BRAND_PURPUR_NAME = "Youer"; // Purpur - Rebrand
 
     private static final String BUILD_DEV = "DEV";
 

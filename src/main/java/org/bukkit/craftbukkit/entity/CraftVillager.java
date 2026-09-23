@@ -4,6 +4,10 @@ import com.destroystokyo.paper.entity.villager.Reputation;
 import com.destroystokyo.paper.entity.villager.ReputationType;
 import com.google.common.base.Preconditions;
 import io.papermc.paper.util.OldEnumHolderable;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -13,7 +17,7 @@ import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.npc.villager.VillagerData;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.entity.npc.villager.VillagerType;
-import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.AbstractBedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftRegistry;
@@ -23,11 +27,6 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.ZombieVillager;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
-
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class CraftVillager extends CraftAbstractVillager implements Villager {
 
@@ -139,7 +138,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
 
         BlockPos position = CraftLocation.toBlockPos(location);
         BlockState state = this.getHandle().level().getBlockState(position);
-        if (!(state.getBlock() instanceof BedBlock)) {
+        if (!(state.getBlock() instanceof AbstractBedBlock)) {
             return false;
         }
 

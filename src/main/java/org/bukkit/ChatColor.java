@@ -2,12 +2,11 @@ package org.bukkit;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.regex.Pattern;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * All supported color values for chat
@@ -303,7 +302,7 @@ public enum ChatColor {
      * Gets the color represented by the specified color code
      *
      * @param code Code to check
-     * @return Associative {@link ChatColor} with the given code,
+     * @return Associative {@link org.bukkit.ChatColor} with the given code,
      *     or null if it doesn't exist
      */
     @Nullable
@@ -315,7 +314,7 @@ public enum ChatColor {
      * Gets the color represented by the specified color code
      *
      * @param code Code to check
-     * @return Associative {@link ChatColor} with the given code,
+     * @return Associative {@link org.bukkit.ChatColor} with the given code,
      *     or null if it doesn't exist
      */
     @Nullable

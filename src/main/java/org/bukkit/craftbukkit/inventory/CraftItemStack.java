@@ -8,12 +8,28 @@ import io.papermc.paper.inventory.tooltip.TooltipContext;
 import io.papermc.paper.persistence.PaperPersistentDataContainerView;
 import io.papermc.paper.persistence.PersistentDataContainerView;
 import io.papermc.paper.util.MCUtil;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import net.kyori.adventure.text.Component;
 import net.minecraft.SharedConstants;
 import net.minecraft.advancements.predicates.DataComponentMatchers;
 import net.minecraft.advancements.predicates.ItemPredicate;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.*;
+import net.minecraft.core.component.DataComponentExactPredicate;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -48,12 +64,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
 
@@ -70,7 +80,7 @@ public final class CraftItemStack extends ItemStack {
         }
     }
 
-    private static CraftItemStack getCraftStack(final ItemStack bukkit) {
+    public static CraftItemStack getCraftStack(final ItemStack bukkit) {
         if (bukkit instanceof final CraftItemStack craftItemStack) {
             return craftItemStack;
         } else {
@@ -142,51 +152,16 @@ public final class CraftItemStack extends ItemStack {
         return ItemStackTemplate.fromNonEmptyStack(asNMSCopy(bukkit));
     }
 
-    public static net.minecraft.world.item.ItemStack copyNMSStack(net.minecraft.world.item.ItemStack original, int amount) {
-        net.minecraft.world.item.ItemStack stack = original.copy();
-        stack.setCount(amount);
-        return stack;
-    }
-
-    /**
-     * Copies the NMS stack to return as a strictly-Bukkit stack
-     */
-    public static ItemStack asBukkitCopy(net.minecraft.world.item.ItemStack original) {
-        // no such thing as a "strictly-Bukkit stack" anymore
-        // we copy the stack since it should be a complete copy not a mirror
-        return asCraftMirror(original.copy());
-    }
-
-    public static ItemStack asBukkitCopy(ItemStackTemplate template) {
-        return asCraftMirror(template.create()); // No need to copy the result again
-    }
-
     public static ItemStack asBukkitCopy(ItemInstance original) {
         return switch (original) {
-            case ItemStackTemplate template -> asBukkitCopy(template);
-            case net.minecraft.world.item.ItemStack item -> asBukkitCopy(item);
+            case ItemStackTemplate template -> asBukkitMirror(template.create());
+            case net.minecraft.world.item.ItemStack item -> asBukkitMirror(item.copy());
             default -> throw new AssertionError();
         };
     }
 
-    public static CraftItemStack asCraftMirror(net.minecraft.world.item.ItemStack original) {
+    public static ItemStack asBukkitMirror(net.minecraft.world.item.ItemStack original) {
         return new CraftItemStack((original == null || original.isEmpty()) ? null : original);
-    }
-
-    public static CraftItemStack asCraftCopy(ItemStack original) {
-        if (original instanceof CraftItemStack) {
-            CraftItemStack stack = (CraftItemStack) original;
-            return new CraftItemStack(stack.handle == null ? null : stack.handle.copy());
-        }
-        return new CraftItemStack(original);
-    }
-
-    public static CraftItemStack asNewCraftStack(Item item) {
-        return CraftItemStack.asNewCraftStack(item, 1);
-    }
-
-    public static CraftItemStack asNewCraftStack(Item item, int amount) {
-        return new CraftItemStack(CraftItemType.minecraftToBukkit(item), amount, (short) 0, null);
     }
 
     public static ItemPredicate asCriterionConditionItem(ItemStack key) {
@@ -556,7 +531,7 @@ public final class CraftItemStack extends ItemStack {
     @Override
     public ItemStack withType(final Material type) {
         if (type == Material.AIR) {
-            return CraftItemStack.asCraftMirror(null);
+            return CraftItemStack.asBukkitMirror(null);
         }
 
         final net.minecraft.world.item.ItemStack copy = new net.minecraft.world.item.ItemStack(
@@ -567,7 +542,7 @@ public final class CraftItemStack extends ItemStack {
             copy.applyComponents(this.handle.getComponentsPatch());
         }
 
-        final CraftItemStack mirrored = CraftItemStack.asCraftMirror(copy);
+        final ItemStack mirrored = CraftItemStack.asBukkitMirror(copy);
         mirrored.setItemMeta(mirrored.getItemMeta());
         return mirrored;
     }
@@ -590,7 +565,7 @@ public final class CraftItemStack extends ItemStack {
             flag = flag.asCreative();
         }
         final List<net.minecraft.network.chat.Component> lines = item.getTooltipLines(
-            Item.TooltipContext.of(player == null ? CraftRegistry.getMinecraftRegistry() : ((org.bukkit.craftbukkit.entity.CraftPlayer) player).getHandle().level().registryAccess()),
+            net.minecraft.world.item.Item.TooltipContext.of(player == null ? CraftRegistry.getMinecraftRegistry() : ((org.bukkit.craftbukkit.entity.CraftPlayer) player).getHandle().level().registryAccess()),
             player == null ? null : ((org.bukkit.craftbukkit.entity.CraftPlayer) player).getHandle(), flag);
         return lines.stream().map(PaperAdventure::asAdventure).toList();
     }

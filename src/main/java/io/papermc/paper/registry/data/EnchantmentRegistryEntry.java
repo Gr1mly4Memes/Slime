@@ -7,6 +7,7 @@ import io.papermc.paper.registry.event.RegistryComposeEvent;
 import io.papermc.paper.registry.set.RegistryKeySet;
 import io.papermc.paper.registry.set.RegistrySet;
 import io.papermc.paper.registry.tag.TagKey;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlotGroup;
@@ -17,8 +18,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * A data-centric version-specific registry entry for the {@link Enchantment} type.
@@ -153,7 +152,7 @@ public interface EnchantmentRegistryEntry {
 
         /**
          * Configures the set of supported items this enchantment can be applied on. This
-         * can be a {@link RegistryKeySet} created via {@link RegistrySet#keySet(RegistryKey, Iterable)} or
+         * can be a {@link RegistryKeySet} created via {@link RegistrySet#keySet(io.papermc.paper.registry.RegistryKey, Iterable)} or
          * a tag obtained via {@link RegistryComposeEvent#getOrCreateTag(TagKey)} with
          * tag keys found in {@link io.papermc.paper.registry.keys.tags.ItemTypeTagKeys} such as
          * {@link io.papermc.paper.registry.keys.tags.ItemTypeTagKeys#ENCHANTABLE_ARMOR} and
@@ -170,7 +169,7 @@ public interface EnchantmentRegistryEntry {
         /**
          * Configures a set of item types this enchantment can naturally be applied to, when enchanting in an
          * enchantment table.This can be a {@link RegistryKeySet} created via
-         * {@link RegistrySet#keySet(RegistryKey, Iterable)} or a tag obtained via
+         * {@link RegistrySet#keySet(io.papermc.paper.registry.RegistryKey, Iterable)} or a tag obtained via
          * {@link RegistryComposeEvent#getOrCreateTag(TagKey)} with
          * tag keys found in {@link io.papermc.paper.registry.keys.tags.ItemTypeTagKeys} such as
          * {@link io.papermc.paper.registry.keys.tags.ItemTypeTagKeys#ENCHANTABLE_ARMOR} and

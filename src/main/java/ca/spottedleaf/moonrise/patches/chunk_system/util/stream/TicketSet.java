@@ -3,9 +3,13 @@ package ca.spottedleaf.moonrise.patches.chunk_system.util.stream;
 import ca.spottedleaf.moonrise.patches.chunk_system.scheduling.ChunkHolderManager;
 import ca.spottedleaf.moonrise.patches.chunk_system.ticket.ChunkSystemTicket;
 import net.minecraft.server.level.Ticket;
-
-import java.util.*;
+import java.util.AbstractSet;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public final class TicketSet extends AbstractSet<Ticket> {
 

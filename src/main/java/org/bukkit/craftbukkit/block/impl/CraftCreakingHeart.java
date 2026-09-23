@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.CreakingHeartBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,8 +13,6 @@ import org.bukkit.Axis;
 import org.bukkit.block.data.type.CreakingHeart;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -45,12 +44,12 @@ public class CraftCreakingHeart extends CraftBlockData implements CreakingHeart 
     }
 
     @Override
-    public State getCreakingHeartState() {
-        return this.get(STATE, State.class);
+    public CreakingHeart.State getCreakingHeartState() {
+        return this.get(STATE, CreakingHeart.State.class);
     }
 
     @Override
-    public void setCreakingHeartState(final State state) {
+    public void setCreakingHeartState(final CreakingHeart.State state) {
         Preconditions.checkArgument(state != null, "state cannot be null!");
         this.set(STATE, state);
     }

@@ -2,10 +2,9 @@ package io.papermc.paper.command.brigadier.argument.resolvers.selector;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.argument.resolvers.ArgumentResolver;
+import java.util.List;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.List;
 
 /**
  * An {@link ArgumentResolver} that's capable of resolving

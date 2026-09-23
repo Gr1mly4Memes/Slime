@@ -14,13 +14,18 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
     private final Map<String, CommandNode<S>> children = new LinkedHashMap<>();
-    private final Map<String, com.mojang.brigadier.tree.LiteralCommandNode<S>> literals = new LinkedHashMap<>();
+    private final Map<String, LiteralCommandNode<S>> literals = new LinkedHashMap<>();
     private final Map<String, ArgumentCommandNode<S, ?>> arguments = new LinkedHashMap<>();
     public Predicate<S> requirement; // Paper - public-f
     private final CommandNode<S> redirect;
@@ -87,8 +92,8 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
             }
         } else {
             children.put(node.getName(), node);
-            if (node instanceof com.mojang.brigadier.tree.LiteralCommandNode) {
-                literals.put(node.getName(), (com.mojang.brigadier.tree.LiteralCommandNode<S>) node);
+            if (node instanceof LiteralCommandNode) {
+                literals.put(node.getName(), (LiteralCommandNode<S>) node);
             } else if (node instanceof ArgumentCommandNode) {
                 arguments.put(node.getName(), (ArgumentCommandNode<S, ?>) node);
             }
@@ -171,7 +176,7 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
             final String text = input.getString().substring(cursor, input.getCursor());
             input.setCursor(cursor);
             // Paper start - prioritize mc commands in function parsing
-            com.mojang.brigadier.tree.LiteralCommandNode<S> literal = null;
+            LiteralCommandNode<S> literal = null;
             if (source instanceof net.minecraft.commands.CommandSourceStack css && css.source == net.minecraft.commands.CommandSource.NULL) {
                 if (!text.contains(":")) {
                     literal = this.literals.get("minecraft:" + text);
@@ -197,7 +202,7 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
 
     @Override
     public int compareTo(final CommandNode<S> o) {
-        if (this instanceof com.mojang.brigadier.tree.LiteralCommandNode == o instanceof com.mojang.brigadier.tree.LiteralCommandNode) {
+        if (this instanceof LiteralCommandNode == o instanceof LiteralCommandNode) {
             return getSortedKey().compareTo(o.getSortedKey());
         }
 

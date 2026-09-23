@@ -7,6 +7,10 @@ import io.papermc.paper.configuration.type.number.DoubleOr;
 import io.papermc.paper.configuration.type.number.IntOr;
 import io.papermc.paper.util.sanitizer.ItemObfuscationBinding;
 import io.papermc.paper.util.sanitizer.OversizedItemComponentSanitizer;
+import java.util.Map;
+import java.util.Objects;
+import java.util.OptionalInt;
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.core.component.DataComponents;
@@ -20,11 +24,6 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
 import org.spongepowered.configurate.objectmapping.meta.PostProcess;
 import org.spongepowered.configurate.objectmapping.meta.Required;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.OptionalInt;
-import java.util.Set;
 
 @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal", "FieldMayBeFinal", "NotNullFieldNotInitialized", "InnerClassMayBeStatic"})
 public class GlobalConfiguration extends ConfigurationPart {
@@ -96,14 +95,13 @@ public class GlobalConfiguration extends ConfigurationPart {
         public Component noPermission = Component.text("I'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is in error.", NamedTextColor.RED);
         public boolean useDisplayNameInQuitMessage = false;
     }
-/* // Slime - remove sparks fly due to errors
+
     public Spark spark;
 
     public class Spark extends ConfigurationPart {
         public boolean enabled = true;
         public boolean enableImmediately = false;
     }
-    */
 
     public Proxies proxies;
 
@@ -323,7 +321,6 @@ public class GlobalConfiguration extends ConfigurationPart {
         public int maxJoinsPerTick = 5;
         @Constraints.Min(0)
         public IntOr.Default catchupTicks = IntOr.Default.USE_DEFAULT;
-        public boolean sendFullPosForItemEntities = false;
         public boolean loadPermissionsYmlBeforePlugins = true;
         @Constraints.Min(4)
         public int regionFileCacheSize = 256;

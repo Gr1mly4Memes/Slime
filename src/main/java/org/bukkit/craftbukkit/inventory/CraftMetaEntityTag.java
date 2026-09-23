@@ -2,6 +2,9 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -10,10 +13,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.component.TypedEntityData;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaEntityTag extends CraftMetaItem {
@@ -42,7 +41,7 @@ public class CraftMetaEntityTag extends CraftMetaItem {
         this.entityTag = entity.entityTag;
     }
 
-    CraftMetaEntityTag(DataComponentPatch patch, final Set<net.minecraft.core.component.DataComponentType<?>> extraHandledComponents) {
+    CraftMetaEntityTag(DataComponentPatch patch, final java.util.Set<net.minecraft.core.component.DataComponentType<?>> extraHandledComponents) {
         super(patch, extraHandledComponents);
 
         getOrEmpty(patch, CraftMetaEntityTag.ENTITY_TAG).ifPresent((entityData) -> {
@@ -69,7 +68,7 @@ public class CraftMetaEntityTag extends CraftMetaItem {
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         if (this.entityTag != null) {

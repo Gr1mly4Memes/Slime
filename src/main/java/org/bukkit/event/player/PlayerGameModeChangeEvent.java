@@ -34,7 +34,7 @@ public class PlayerGameModeChangeEvent extends PlayerEvent implements Cancellabl
     }
 
     @ApiStatus.Internal
-    public PlayerGameModeChangeEvent(@NotNull final Player player, @NotNull final GameMode newGameMode, @NotNull Cause cause, @Nullable Component cancelMessage) {
+    public PlayerGameModeChangeEvent(@NotNull final Player player, @NotNull final GameMode newGameMode, @NotNull Cause cause, @org.jetbrains.annotations.Nullable net.kyori.adventure.text.Component cancelMessage) {
         super(player);
         this.newGameMode = newGameMode;
         this.cause = cause;

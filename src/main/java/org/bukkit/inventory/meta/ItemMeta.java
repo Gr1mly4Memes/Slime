@@ -6,6 +6,10 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAdventurePredicate;
 import io.papermc.paper.registry.keys.tags.DamageTypeTagKeys;
 import io.papermc.paper.registry.set.RegistryKeySet;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
@@ -14,18 +18,22 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.damage.DamageType;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.*;
-import org.bukkit.inventory.meta.components.*;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFactory;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemRarity;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
+import org.bukkit.inventory.meta.components.EquippableComponent;
+import org.bukkit.inventory.meta.components.FoodComponent;
+import org.bukkit.inventory.meta.components.JukeboxPlayableComponent;
+import org.bukkit.inventory.meta.components.ToolComponent;
+import org.bukkit.inventory.meta.components.UseCooldownComponent;
 import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This type represents the storage mechanism for auxiliary item data.
@@ -50,14 +58,14 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      *
      * @return the custom name
      */
-    @Nullable Component customName();
+    net.kyori.adventure.text.@Nullable Component customName();
 
     /**
      * Sets the custom name.
      *
      * @param customName the custom name to set
      */
-    void customName(final @Nullable Component customName);
+    void customName(final net.kyori.adventure.text.@Nullable Component customName);
 
     /**
      * Checks for existence of a display name.
@@ -79,7 +87,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * @return the display name
      */
     @ApiStatus.Obsolete(since = "1.21.4")
-    default @Nullable Component displayName() {
+    default net.kyori.adventure.text.@Nullable Component displayName() {
         return this.customName();
     }
 
@@ -90,7 +98,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * @apiNote This method is obsolete, use {@link #customName(Component)} instead.
      */
     @ApiStatus.Obsolete(since = "1.21.4")
-    default void displayName(final @Nullable Component displayName) {
+    default void displayName(final net.kyori.adventure.text.@Nullable Component displayName) {
         this.customName(displayName);
     }
     // Paper end
@@ -126,7 +134,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * Sets the display name.
      *
      * @param name the name to set
-     * @deprecated in favour of {@link #displayName(Component)}
+     * @deprecated in favour of {@link #displayName(net.kyori.adventure.text.Component)}
      */
     @Deprecated // Paper
     void setDisplayName(@Nullable String name);
@@ -164,7 +172,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * @return the item name that is set
      * @see #hasItemName()
      */
-    @NotNull
+    @org.jetbrains.annotations.NotNull
     Component itemName();
 
     /**
@@ -251,14 +259,14 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      *
      * @return the lore
      */
-    @Nullable List<Component> lore();
+    @Nullable List<net.kyori.adventure.text.Component> lore();
 
     /**
      * Sets the lore.
      *
      * @param lore the lore to set
      */
-    void lore(final @Nullable List<? extends Component> lore);
+    void lore(final @Nullable List<? extends net.kyori.adventure.text.Component> lore);
     // Paper end
 
     /**
@@ -363,9 +371,9 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      *
      * @param data the data to set, or null to clear
      * @deprecated more complex custom model data can be specified with
-     * {@link #setCustomModelDataComponent(CustomModelDataComponent)}.
+     * {@link #setCustomModelDataComponent(org.bukkit.inventory.meta.components.CustomModelDataComponent)}.
      * Integers from the old custom model data are equivalent to a single float
-     * in the {@link CustomModelDataComponent#setFloats(List)} list.
+     * in the {@link CustomModelDataComponent#setFloats(java.util.List)} list.
      */
     @Deprecated(since = "1.21.5")
     void setCustomModelData(@Nullable Integer data);
@@ -878,7 +886,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * The returned component is a snapshot of its current state and does not
      * reflect a live view of what is on an item. After changing any value on
      * this component, it must be set with
-     * {@link #setJukeboxPlayable(JukeboxPlayableComponent)}
+     * {@link #setJukeboxPlayable(org.bukkit.inventory.meta.components.JukeboxPlayableComponent)}
      * to apply the changes.
      *
      * @return component

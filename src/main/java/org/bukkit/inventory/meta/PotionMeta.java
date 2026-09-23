@@ -1,5 +1,6 @@
 package org.bukkit.inventory.meta;
 
+import java.util.List;
 import org.bukkit.Color;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
@@ -8,8 +9,6 @@ import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
-
-import java.util.List;
 
 /**
  * Represents a potion or item that can have custom effects.
@@ -119,7 +118,7 @@ public interface PotionMeta extends ItemMeta {
      *
      * @param type the potion effect type to move
      * @return true if the potion meta changed as a result of this call
-     * @deprecated use {@link #setBasePotionType(PotionType)}
+     * @deprecated use {@link #setBasePotionType(org.bukkit.potion.PotionType)}
      */
     @Deprecated(since = "1.9")
     boolean setMainEffect(@NotNull PotionEffectType type);

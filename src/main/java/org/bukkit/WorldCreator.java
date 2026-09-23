@@ -1,6 +1,7 @@
 package org.bukkit;
 
 import com.google.common.base.Preconditions;
+import java.util.Random;
 import io.papermc.paper.math.Position;
 import org.bukkit.command.CommandSender;
 import org.bukkit.generator.BiomeProvider;
@@ -9,8 +10,6 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Random;
 
 /**
  * Represents various types of options that may be used to create a world.
@@ -516,7 +515,7 @@ public class WorldCreator {
      * Gets the generator settings of the world that will be created or loaded.
      *
      * @return The settings that should be used by the generator
-     * @see #generatorSettings(String)
+     * @see #generatorSettings(java.lang.String)
      */
     @NotNull
     public String generatorSettings() {

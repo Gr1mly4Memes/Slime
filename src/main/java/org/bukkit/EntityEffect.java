@@ -2,12 +2,44 @@ package org.bukkit;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.datacomponent.DataComponentTypes;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Allay;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Armadillo;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Cat;
+import org.bukkit.entity.Creaking;
+import org.bukkit.entity.Dolphin;
+import org.bukkit.entity.Egg;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EvokerFangs;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.Fox;
+import org.bukkit.entity.Goat;
+import org.bukkit.entity.Guardian;
+import org.bukkit.entity.Hoglin;
+import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
+import org.bukkit.entity.Ocelot;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Ravager;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Sniffer;
+import org.bukkit.entity.Snowball;
+import org.bukkit.entity.Squid;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Warden;
+import org.bukkit.entity.Witch;
+import org.bukkit.entity.Wolf;
+import org.bukkit.entity.Zoglin;
+import org.bukkit.entity.ZombieVillager;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Set;
 
 /**
@@ -164,12 +196,6 @@ public enum EntityEffect {
      * Plays the sheep eating grass animation.
      */
     SHEEP_EAT_GRASS(10, Sheep.class),
-    /**
-     * Causes the TNT minecart to ignite, does not play the ignition sound
-     * <p>
-     * <b>This will cause client-glitches!</b>
-     */
-    TNT_MINECART_IGNITE(70, ExplosiveMinecart.class),
     /**
      * When an Iron Golem gives a rose.
      */
@@ -453,6 +479,20 @@ public enum EntityEffect {
      * Ravager roars.
      */
     RAVAGER_ROARED(69, Ravager.class),
+    /**
+     * Causes the TNT minecart to ignite, does not play the ignition sound
+     * <p>
+     * <b>This will cause client-glitches!</b>
+     */
+    TNT_MINECART_IGNITE(70, ExplosiveMinecart.class),
+    /**
+     * Causes the boat to sink, does not play the splash sound
+     */
+    BOAT_SINK(71, org.bukkit.entity.Boat.class),
+    /**
+     * Causes the boat to launch, does not play the launch sound
+     */
+    BOAT_LAUNCH(72, org.bukkit.entity.Boat.class),
     ;
 
     private final byte data;

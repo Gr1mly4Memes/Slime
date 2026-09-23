@@ -149,7 +149,7 @@ public interface LightningStrike extends Entity {
      * @return the entity that caused this lightning or null if the lightning was not caused by an entity (e.g. normal
      * weather)
      */
-    @Nullable
+    @org.jetbrains.annotations.Nullable
     Entity getCausingEntity();
     // Paper end
 }

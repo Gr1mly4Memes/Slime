@@ -1,12 +1,11 @@
 package io.papermc.paper.plugin.provider.classloader;
 
 import io.papermc.paper.plugin.configuration.PluginMeta;
+import java.io.Closeable;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.io.Closeable;
 
 /**
  * The configured plugin class loader represents an <b>internal</b> abstraction over the classloaders used by the server

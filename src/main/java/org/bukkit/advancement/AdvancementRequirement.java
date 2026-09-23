@@ -1,8 +1,7 @@
 package org.bukkit.advancement;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public interface AdvancementRequirement {
 

@@ -3,6 +3,7 @@ package org.bukkit.entity.minecart;
 import com.destroystokyo.paper.loottable.LootableEntityInventory;
 import org.bukkit.entity.Minecart;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.loot.Lootable;
 
 /**
  * Represents a minecart with a chest. These types of {@link Minecart

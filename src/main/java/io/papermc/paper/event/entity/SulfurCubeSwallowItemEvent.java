@@ -58,7 +58,7 @@ public class SulfurCubeSwallowItemEvent extends EntityEvent implements Cancellab
     /**
      * Gets the item that is being swallowed. Modifying the returned item will
      * have no effect, you must use {@link
-     * #setNewItem(ItemStack)} instead.
+     * #setNewItem(org.bukkit.inventory.ItemStack)} instead.
      *
      * @return an ItemStack for the item being swallowed
      */

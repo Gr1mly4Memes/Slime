@@ -2,14 +2,13 @@ package io.papermc.paper.registry.data.dialog;
 
 import io.papermc.paper.registry.data.dialog.body.DialogBody;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.Index;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Represents the base of all dialogs.

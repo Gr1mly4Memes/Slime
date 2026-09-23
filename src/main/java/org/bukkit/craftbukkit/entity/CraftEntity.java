@@ -5,19 +5,20 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.mohistmc.youer.neoforge.EntityClassLookup;
 import com.mojang.logging.LogUtils;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.PaperDataComponentType;
 import io.papermc.paper.entity.LookAnchor;
 import io.papermc.paper.entity.RemovalReason;
 import io.papermc.paper.entity.TeleportFlag;
-import io.papermc.paper.math.Angle;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import io.papermc.paper.math.Angle;
 import net.kyori.adventure.pointer.PointersSupplier;
 import net.kyori.adventure.util.TriState;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -36,8 +37,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityProcessor;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntitySpawnRequest;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragonPart;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
@@ -56,6 +57,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -93,10 +95,10 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     private static PermissibleBase perm;
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
     static final PointersSupplier<org.bukkit.entity.Entity> POINTERS_SUPPLIER = PointersSupplier.<org.bukkit.entity.Entity>builder()
-            .resolving(net.kyori.adventure.identity.Identity.DISPLAY_NAME, org.bukkit.entity.Entity::name)
-            .resolving(net.kyori.adventure.identity.Identity.UUID, org.bukkit.entity.Entity::getUniqueId)
-            .resolving(net.kyori.adventure.permission.PermissionChecker.POINTER, entity1 -> entity1::permissionValue)
-            .build();
+        .resolving(net.kyori.adventure.identity.Identity.DISPLAY_NAME, org.bukkit.entity.Entity::name)
+        .resolving(net.kyori.adventure.identity.Identity.UUID, org.bukkit.entity.Entity::getUniqueId)
+        .resolving(net.kyori.adventure.permission.PermissionChecker.POINTER, entity1 -> entity1::permissionValue)
+        .build();
 
     protected final CraftServer server;
     protected Entity entity;
@@ -161,7 +163,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             return (CraftEntity) entityTypeData.convertFunction().apply(server, entity);
         }
 
-        throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
+        return EntityClassLookup.getEntity(server, entity);
     }
 
     public Entity getHandle() {
@@ -230,7 +232,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         }
         // Paper end
         this.entity.setDeltaMovement(CraftVector.toVec3(velocity));
-        this.entity.hurtMarked = true;
+        this.entity.syncVelocity = true;
     }
 
     /**
@@ -340,17 +342,17 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         }
 
         return this.entity.teleport(new TeleportTransition(
-                ((CraftWorld) location.getWorld()).getHandle(),
-                CraftLocation.toVec3(location),
-                Vec3.ZERO,
-                location.getYaw(),
-                location.getPitch(),
-                false,
-                false,
-                relativeFlags,
-                TeleportTransition.DO_NOTHING,
-                cause,
-                TeleportTransition.PassengerTeleportationMode.POSITION_RIDER
+            ((CraftWorld) location.getWorld()).getHandle(),
+            CraftLocation.toVec3(location),
+            Vec3.ZERO,
+            location.getYaw(),
+            location.getPitch(),
+            false,
+            false,
+            relativeFlags,
+            TeleportTransition.DO_NOTHING,
+            cause,
+            TeleportTransition.PassengerTeleportationMode.POSITION_RIDER
         )) != null;
     }
 
@@ -587,7 +589,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public ItemStack getPickItemStack() {
         net.minecraft.world.item.ItemStack stack = this.getHandle().getPickResult();
-        return stack == null ? ItemStack.empty() : stack.asBukkitCopy();
+        return stack == null ? ItemStack.empty() : CraftItemStack.asBukkitCopy(stack);
     }
 
     @Override
@@ -922,7 +924,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public void setInvulnerable(boolean flag) {
-        this.getHandle().setInvulnerable(flag);
+        this.getHandle().setPermanentlyInvulnerable(flag);
     }
 
     @Override
@@ -1037,11 +1039,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public String getAsString() {
         try (final ProblemReporter.ScopedCollector problemReporter = new ProblemReporter.ScopedCollector(
-                () -> "Entity#toString", LOGGER
+            () -> "Entity#toString", LOGGER
         )) {
             final TagValueOutput output = TagValueOutput.createWithContext(
-                    problemReporter,
-                    this.getHandle().registryAccess()
+                problemReporter,
+                this.getHandle().registryAccess()
             );
             if (!this.getHandle().saveAsPassenger(output, false, true, true)) {
                 return null;
@@ -1077,7 +1079,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     private Entity copy(net.minecraft.world.level.Level level) {
         try (final ProblemReporter.ScopedCollector problemReporter = new ProblemReporter.ScopedCollector(
-                () -> "Entity#copy", LOGGER
+            () -> "Entity#copy", LOGGER
         )) {
             final TagValueOutput output = TagValueOutput.createWithContext(problemReporter, level.registryAccess());
             this.getHandle().saveAsPassenger(output, false, true, true);
@@ -1098,11 +1100,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     protected CompoundTag save() {
         try (final ProblemReporter.ScopedCollector problemReporter = new ProblemReporter.ScopedCollector(
-                () -> "Entity#save", LOGGER
+            () -> "Entity#save", LOGGER
         )) {
             final TagValueOutput tagValueOutput = TagValueOutput.createWithContext(
-                    problemReporter,
-                    this.getHandle().registryAccess()
+                problemReporter,
+                this.getHandle().registryAccess()
             );
 
             tagValueOutput.putString(Entity.TAG_ID, this.getHandle().getEncodeId(true));
@@ -1176,20 +1178,20 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         CompletableFuture<Boolean> ret = new CompletableFuture<>();
 
         world.loadChunksForMoveAsync(this.getHandle().getBoundingBoxAt(locationClone.getX(), locationClone.getY(), locationClone.getZ()),
-                this instanceof CraftPlayer ? ca.spottedleaf.concurrentutil.util.Priority.HIGHER : ca.spottedleaf.concurrentutil.util.Priority.NORMAL, (chunks) -> {
-                    MinecraftServer.getServer().scheduleOnMain(() -> {
-                        final ServerChunkCache chunkCache = world.getChunkSource();
-                        for (final net.minecraft.world.level.chunk.ChunkAccess chunk : chunks) {
-                            chunkCache.addTicketAtLevel(TicketType.POST_TELEPORT, chunk.getPos(), ChunkLevel.FULL_CHUNK_LEVEL);
-                        }
-                        try {
-                            ret.complete(CraftEntity.this.teleport0(locationClone, cause, teleportFlags) ? Boolean.TRUE : Boolean.FALSE);
-                        } catch (Throwable throwable) {
-                            MinecraftServer.LOGGER.error("Failed to teleport entity {}", CraftEntity.this, throwable);
-                            ret.completeExceptionally(throwable);
-                        }
-                    });
+            this instanceof CraftPlayer ? ca.spottedleaf.concurrentutil.util.Priority.HIGHER : ca.spottedleaf.concurrentutil.util.Priority.NORMAL, (chunks) -> {
+                MinecraftServer.getServer().scheduleOnMain(() -> {
+                    final ServerChunkCache chunkCache = world.getChunkSource();
+                    for (final net.minecraft.world.level.chunk.ChunkAccess chunk : chunks) {
+                        chunkCache.addTicketAtLevel(TicketType.POST_TELEPORT, chunk.getPos(), ChunkLevel.FULL_CHUNK_LEVEL);
+                    }
+                    try {
+                        ret.complete(CraftEntity.this.teleport0(locationClone, cause, teleportFlags) ? Boolean.TRUE : Boolean.FALSE);
+                    } catch (Throwable throwable) {
+                        MinecraftServer.LOGGER.error("Failed to teleport entity {}", CraftEntity.this, throwable);
+                        ret.completeExceptionally(throwable);
+                    }
                 });
+            });
 
         return ret;
     }
@@ -1369,6 +1371,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             ((CraftPlayer) player).sendHurtAnimation(0, this);
         }
     }
+
     @Override
     public <T> @Nullable T getData(@NotNull final DataComponentType.Valued<T> type) {
         return PaperDataComponentType.convertDataComponentValue(this.getHandleRaw(), (PaperDataComponentType.ValuedImpl<T, ?>) type);

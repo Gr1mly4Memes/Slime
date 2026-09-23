@@ -5,6 +5,7 @@ import io.papermc.paper.registry.RegistryBuilderFactory;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.data.InlinedRegistryBuilderProvider;
 import io.papermc.paper.registry.data.dialog.DialogRegistryEntry;
+import java.util.function.Consumer;
 import net.kyori.adventure.dialog.DialogLike;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
@@ -12,8 +13,6 @@ import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.function.Consumer;
 
 /**
  * Represents a dialog. Can be created during normal server operation via {@link #create(Consumer)}.
@@ -46,16 +45,16 @@ public interface Dialog extends Keyed, DialogLike {
     }
 
     /**
-     * @deprecated use {@link Registry#getKey(Keyed)}, {@link RegistryAccess#getRegistry(RegistryKey)},
-     * and {@link RegistryKey#DIALOG}. Dialogs can exist without a key.
+     * @deprecated use {@link Registry#getKey(Keyed)}, {@link io.papermc.paper.registry.RegistryAccess#getRegistry(io.papermc.paper.registry.RegistryKey)},
+     * and {@link io.papermc.paper.registry.RegistryKey#DIALOG}. Dialogs can exist without a key.
      */
     @Deprecated(since = "1.21.8", forRemoval = true)
     @Override
     NamespacedKey getKey();
 
     /**
-     * @deprecated use {@link Registry#getKey(Keyed)}, {@link RegistryAccess#getRegistry(RegistryKey)},
-     * and {@link RegistryKey#DIALOG}. Dialogs can exist without a key.
+     * @deprecated use {@link Registry#getKey(Keyed)}, {@link io.papermc.paper.registry.RegistryAccess#getRegistry(io.papermc.paper.registry.RegistryKey)},
+     * and {@link io.papermc.paper.registry.RegistryKey#DIALOG}. Dialogs can exist without a key.
      */
     @Deprecated(since = "1.21.8", forRemoval = true)
     @Override

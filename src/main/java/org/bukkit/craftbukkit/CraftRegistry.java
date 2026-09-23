@@ -8,6 +8,14 @@ import io.papermc.paper.registry.entry.RegistryEntryMeta;
 import io.papermc.paper.registry.set.NamedRegistryKeySetImpl;
 import io.papermc.paper.registry.tag.Tag;
 import io.papermc.paper.util.Holderable;
+import io.papermc.paper.util.MCUtil;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.resources.ResourceKey;
@@ -21,10 +29,6 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.util.Handleable;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
 
 public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
 
@@ -56,7 +60,7 @@ public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
 
         net.minecraft.core.Registry<M> registry = CraftRegistry.getMinecraftRegistry(registryKey);
         final Registry<B> bukkitRegistry = RegistryAccess.registryAccess().getRegistry(PaperRegistries.registryFromNms(registryKey));
-        final Optional<ResourceKey<M>> resourceKey = registry.getResourceKey(minecraft);
+        final java.util.Optional<ResourceKey<M>> resourceKey = registry.getResourceKey(minecraft);
         if (resourceKey.isEmpty() && bukkitRegistry instanceof final CraftRegistry<?, ?> craftRegistry && craftRegistry.supportsDirectHolders()) {
             return ((CraftRegistry<B, M>) bukkitRegistry).createBukkit(Holder.direct(minecraft));
         } else if (resourceKey.isEmpty()) {
@@ -81,27 +85,7 @@ public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
                 yield ((CraftRegistry<B, M>) bukkitRegistry).createBukkit(direct);
             }
             case final Holder.Reference<M> reference -> bukkitRegistry.get(CraftNamespacedKey.fromResourceKey(reference.key()));
-            // Slime start - convert DeferredHolder / other non-standard holders
-            default -> {
-                final Optional<ResourceKey<M>> key = minecraft.unwrapKey();
-                if (key.isPresent()) {
-                    final B mirrored = bukkitRegistry.get(CraftNamespacedKey.fromResourceKey(key.get()));
-                    if (mirrored != null) {
-                        yield mirrored;
-                    }
-                    // DeferredHolder is not a Holder.Reference; resolve its value from the NMS registry by key
-                    M value = null;
-                    try {
-                        value = CraftRegistry.getMinecraftRegistry(registryKey).get(key.get()).map(Holder.Reference::value).orElse(null);
-                    } catch (final RuntimeException ignored) {
-                    }
-                    if (value != null && bukkitRegistry instanceof final CraftRegistry<?, ?> craftRegistry && craftRegistry.supportsDirectHolders()) {
-                        yield ((CraftRegistry<B, M>) craftRegistry).createBukkit(Holder.direct(value));
-                    }
-                }
-                throw new IllegalArgumentException("Unknown holder: " + minecraft);
-            }
-            // Slime end
+            default -> throw new IllegalArgumentException("Unknown holder: " + minecraft);
         };
         Preconditions.checkArgument(bukkit != null);
 

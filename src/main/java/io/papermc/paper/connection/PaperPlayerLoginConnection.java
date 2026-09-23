@@ -43,12 +43,12 @@ public class PaperPlayerLoginConnection extends ReadablePlayerCookieConnectionIm
     }
 
     @Override
-    public @Nullable InetSocketAddress getVirtualHost() {
+    public @org.jspecify.annotations.Nullable InetSocketAddress getVirtualHost() {
         return this.packetListener.connection.virtualHost;
     }
 
     @Override
-    public @Nullable InetSocketAddress getHAProxyAddress() {
+    public @org.jspecify.annotations.Nullable InetSocketAddress getHAProxyAddress() {
         return this.packetListener.connection.haProxyAddress instanceof final InetSocketAddress inetSocketAddress ? inetSocketAddress : null;
     }
 

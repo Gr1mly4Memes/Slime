@@ -1,13 +1,12 @@
 package io.papermc.paper.datapack;
 
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import org.bukkit.FeatureFlag;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 /**
  * Represents a snapshot of a datapack that the server has found by

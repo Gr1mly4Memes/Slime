@@ -2,7 +2,16 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+import com.mohistmc.youer.api.ColorAPI;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DynamicOps;
 import io.papermc.paper.registry.RegistryKey;
@@ -10,6 +19,32 @@ import io.papermc.paper.registry.data.util.Conversions;
 import io.papermc.paper.registry.set.PaperRegistrySets;
 import io.papermc.paper.registry.set.RegistryKeySet;
 import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.StringJoiner;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -17,9 +52,15 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.Removed;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.SnbtPrinterTagVisitor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
@@ -31,7 +72,16 @@ import net.minecraft.world.item.AdventureModePredicate;
 import net.minecraft.world.item.JukeboxPlayable;
 import net.minecraft.world.item.JukeboxSongs;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.component.*;
+import net.minecraft.world.item.component.BlockItemStateProperties;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.DamageResistant;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.component.Tool;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.component.UseCooldown;
+import net.minecraft.world.item.component.UseRemainder;
 import net.minecraft.world.item.enchantment.Enchantable;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.item.equipment.Equippable;
@@ -54,7 +104,12 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.configuration.ConfigSerializationUtil;
 import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.ItemMetaKey.Specific;
-import org.bukkit.craftbukkit.inventory.components.*;
+import org.bukkit.craftbukkit.inventory.components.CraftCustomModelDataComponent;
+import org.bukkit.craftbukkit.inventory.components.CraftEquippableComponent;
+import org.bukkit.craftbukkit.inventory.components.CraftFoodComponent;
+import org.bukkit.craftbukkit.inventory.components.CraftJukeboxComponent;
+import org.bukkit.craftbukkit.inventory.components.CraftToolComponent;
+import org.bukkit.craftbukkit.inventory.components.CraftUseCooldownComponent;
 import org.bukkit.craftbukkit.inventory.tags.DeprecatedCustomTagContainer;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
@@ -73,24 +128,19 @@ import org.bukkit.inventory.meta.BlockDataMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
-import org.bukkit.inventory.meta.components.*;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
+import org.bukkit.inventory.meta.components.EquippableComponent;
+import org.bukkit.inventory.meta.components.FoodComponent;
+import org.bukkit.inventory.meta.components.JukeboxPlayableComponent;
+import org.bukkit.inventory.meta.components.ToolComponent;
+import org.bukkit.inventory.meta.components.UseCooldownComponent;
 import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.slf4j.Logger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.*;
-import java.util.Map.Entry;
-
-import static io.papermc.paper.util.BoundChecker.*;
+import static io.papermc.paper.util.BoundChecker.requireNonNegative;
+import static io.papermc.paper.util.BoundChecker.requirePositive;
+import static io.papermc.paper.util.BoundChecker.requireRange;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -445,7 +495,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
             this.rarity = ItemRarity.valueOf(rarity.name());
         });
         getOrEmpty(patch, CraftMetaItem.USE_REMAINDER).ifPresent((useRemainder) -> {
-            this.useRemainder = CraftItemStack.asCraftMirror(useRemainder.convertInto().create());
+            this.useRemainder = CraftItemStack.asBukkitCopy(useRemainder.convertInto());
         });
         getOrEmpty(patch, CraftMetaItem.USE_COOLDOWN).ifPresent((useCooldown) -> {
             this.useCooldown = new CraftUseCooldownComponent(useCooldown);
@@ -496,15 +546,16 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
             extraHandledComponents.addAll(handledComponents);
             handledComponents = extraHandledComponents;
         }
-        Set<Entry<DataComponentType<?>, Optional<?>>> keys = patch.entrySet();
-        for (Entry<DataComponentType<?>, Optional<?>> key : keys) {
+        Set<Map.Entry<DataComponentType<?>, Object>> keys = patch.map.entrySet();
+        for (Map.Entry<DataComponentType<?>, Object> key : keys) {
+            final Object value = key.getValue();
             if (!handledComponents.contains(key.getKey())) {
-                key.getValue().ifPresent((value) -> {
+                if (Removed.isNotRemoved(value)) {
                     this.unhandledTags.set((DataComponentType) key.getKey(), value);
-                });
+                }
             }
 
-            if (key.getValue().isEmpty()) {
+            if (Removed.isRemoved(value)) {
                 this.removedTags.add(key.getKey());
             }
         }
@@ -724,9 +775,9 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
                 });
                 this.unhandledTags.copy(unhandledPatch.forget(type -> type == CraftMetaItem.CAN_PLACE_ON.TYPE || type == CraftMetaItem.CAN_BREAK.TYPE));
 
-                for (Entry<DataComponentType<?>, Optional<?>> entry : unhandledPatch.entrySet()) {
+                for (Entry<DataComponentType<?>, Object> entry : unhandledPatch.map.entrySet()) {
                     // Move removed unhandled tags to dedicated removedTags
-                    if (entry.getValue().isEmpty()) {
+                    if (Removed.isRemoved(entry.getValue())) {
                         DataComponentType<?> key = entry.getKey();
 
                         this.unhandledTags.clear(key);
@@ -849,7 +900,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
         }
 
         EnchantmentMap enchantments = new EnchantmentMap();
-        for (Entry<?, ?> entry : ench.entrySet()) {
+        for (Map.Entry<?, ?> entry : ench.entrySet()) {
             Enchantment enchantment = CraftEnchantment.stringToBukkit(entry.getKey().toString());
             if ((enchantment != null) && (entry.getValue() instanceof Integer)) {
                 enchantments.put(enchantment, (Integer) entry.getValue());
@@ -894,7 +945,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
     }
 
     @Overridden
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         if (this.hasDisplayName()) {
             tag.put(CraftMetaItem.CUSTOM_NAME, this.displayName);
         }
@@ -995,16 +1046,17 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
         }
 
         if (this.canPlaceOnPredicates != null && !this.canPlaceOnPredicates.isEmpty()) {
-            tag.put(CraftMetaItem.CAN_PLACE_ON, new AdventureModePredicate(this.canPlaceOnPredicates));
+            tag.put(CraftMetaItem.CAN_PLACE_ON, new net.minecraft.world.item.AdventureModePredicate(this.canPlaceOnPredicates));
         }
         if (this.canBreakPredicates != null && !this.canBreakPredicates.isEmpty()) {
-            tag.put(CraftMetaItem.CAN_BREAK, new AdventureModePredicate(this.canBreakPredicates));
+            tag.put(CraftMetaItem.CAN_BREAK, new net.minecraft.world.item.AdventureModePredicate(this.canBreakPredicates));
         }
 
-        for (Entry<DataComponentType<?>, Optional<?>> e : this.unhandledTags.build().entrySet()) {
-            e.getValue().ifPresent((value) -> {
+        for (Map.Entry<DataComponentType<?>, Object> e : this.unhandledTags.build().map.entrySet()) {
+            final Object value = e.getValue();
+            if (Removed.isNotRemoved(value)) {
                 tag.builder.set((DataComponentType) e.getKey(), value);
-            });
+            }
         }
 
         for (DataComponentType<?> removed : this.removedTags) {
@@ -1018,7 +1070,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
             CompoundTag pdcTag = new CompoundTag();
             Map<String, net.minecraft.nbt.Tag> rawPublicMap = this.persistentDataContainer.getRaw();
 
-            for (Entry<String, net.minecraft.nbt.Tag> entry : rawPublicMap.entrySet()) {
+            for (Map.Entry<String, net.minecraft.nbt.Tag> entry : rawPublicMap.entrySet()) {
                 pdcTag.put(entry.getKey(), entry.getValue());
             }
 
@@ -1033,7 +1085,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
         }
     }
 
-    void applyEnchantments(Map<Enchantment, Integer> enchantments, Applicator tag, ItemMetaKeyType<ItemEnchantments> key) {
+    void applyEnchantments(Map<Enchantment, Integer> enchantments, CraftMetaItem.Applicator tag, ItemMetaKeyType<ItemEnchantments> key) {
         if (enchantments == null) { // only emit enchantment component if enchantments are defined
             return;
         }
@@ -1045,14 +1097,14 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
         tag.put(key, list.toImmutable());
     }
 
-    void applyModifiers(Multimap<Attribute, AttributeModifier> modifiers, Applicator tag) {
+    void applyModifiers(Multimap<Attribute, AttributeModifier> modifiers, CraftMetaItem.Applicator tag) {
         if (modifiers == null) { // empty modifiers has a specific meaning, they should still be saved
             // don't save ItemFlag if the underlying data isn't present
             return;
         }
 
         ItemAttributeModifiers.Builder list = ItemAttributeModifiers.builder();
-        for (Entry<Attribute, AttributeModifier> entry : modifiers.entries()) {
+        for (Map.Entry<Attribute, AttributeModifier> entry : modifiers.entries()) {
             if (entry.getKey() == null || entry.getValue() == null) {
                 continue;
             }
@@ -1109,7 +1161,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
 
     @Override
     public final void setDisplayName(String name) {
-        this.displayName = CraftChatMessage.fromStringOrNull(name);
+        this.displayName = CraftChatMessage.fromStringOrNull(ColorAPI.string(name));
     }
 
     @Override
@@ -1129,7 +1181,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
 
     @Override
     public final void setItemName(String name) {
-        this.itemName = CraftChatMessage.fromStringOrNull(name);
+        this.itemName = CraftChatMessage.fromStringOrNull(ColorAPI.string(name));
     }
 
     @Override
@@ -1699,7 +1751,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(@Nullable EquipmentSlot slot) {
         if (this.attributeModifiers == null) return LinkedHashMultimap.create(); // Paper - don't change the components
         SetMultimap<Attribute, AttributeModifier> result = LinkedHashMultimap.create();
-        for (Entry<Attribute, AttributeModifier> entry : this.attributeModifiers.entries()) {
+        for (Map.Entry<Attribute, AttributeModifier> entry : this.attributeModifiers.entries()) {
             if (entry.getValue().getSlotGroup().test(slot)) { // Paper - correctly test slot against group
                 result.put(entry.getKey(), entry.getValue());
             }
@@ -1719,7 +1771,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
         Preconditions.checkArgument(attribute != null, "Attribute cannot be null");
         Preconditions.checkArgument(modifier != null, "AttributeModifier cannot be null");
         if (this.attributeModifiers != null) {
-            for (Entry<Attribute, AttributeModifier> entry : this.attributeModifiers.entries()) {
+            for (Map.Entry<Attribute, AttributeModifier> entry : this.attributeModifiers.entries()) {
                 Preconditions.checkArgument(!(entry.getValue().getKey().equals(modifier.getKey()) && entry.getKey() == attribute), "Cannot register AttributeModifier. Modifier is already applied! %s", modifier); // Paper - attribute modifiers with same namespaced key but on different attributes are fine
             }
         }
@@ -1746,9 +1798,9 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
         }
         // Paper end
 
-        Iterator<Entry<Attribute, AttributeModifier>> iterator = attributeModifiers.entries().iterator();
+        Iterator<Map.Entry<Attribute, AttributeModifier>> iterator = attributeModifiers.entries().iterator();
         while (iterator.hasNext()) {
-            Entry<Attribute, AttributeModifier> next = iterator.next();
+            Map.Entry<Attribute, AttributeModifier> next = iterator.next();
 
             if (next.getKey() == null || next.getValue() == null) {
                 iterator.remove();
@@ -1770,10 +1822,10 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
     public boolean removeAttributeModifier(@Nonnull EquipmentSlot slot) {
         if (this.attributeModifiers == null) return false;
         int removed = 0;
-        Iterator<Entry<Attribute, AttributeModifier>> iter = this.attributeModifiers.entries().iterator();
+        Iterator<Map.Entry<Attribute, AttributeModifier>> iter = this.attributeModifiers.entries().iterator();
 
         while (iter.hasNext()) {
-            Entry<Attribute, AttributeModifier> entry = iter.next();
+            Map.Entry<Attribute, AttributeModifier> entry = iter.next();
             if (entry.getValue().getSlotGroup().test(slot)) { // Paper - correctly test slot against group
                 iter.remove();
                 ++removed;
@@ -1788,10 +1840,10 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
         Preconditions.checkArgument(modifier != null, "AttributeModifier cannot be null");
         if (this.attributeModifiers == null) return false;
         int removed = 0;
-        Iterator<Entry<Attribute, AttributeModifier>> iter = this.attributeModifiers.entries().iterator();
+        Iterator<Map.Entry<Attribute, AttributeModifier>> iter = this.attributeModifiers.entries().iterator();
 
         while (iter.hasNext()) {
-            Entry<Attribute, AttributeModifier> entry = iter.next();
+            Map.Entry<Attribute, AttributeModifier> entry = iter.next();
             if (entry.getKey() == null || entry.getValue() == null) {
                 iter.remove();
                 ++removed;
@@ -1808,7 +1860,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
 
     @Override
     public String getAsString() {
-        Applicator tag = new Applicator() {}; // Paper - support updating profile after resolving it
+        CraftMetaItem.Applicator tag = new CraftMetaItem.Applicator() {}; // Paper - support updating profile after resolving it
         this.applyToItem(tag);
         DataComponentPatch patch = tag.build();
         net.minecraft.nbt.Tag nbt = DataComponentPatch.CODEC.encodeStart(CraftRegistry.getMinecraftRegistry().createSerializationContext(NbtOps.INSTANCE), patch).getOrThrow();
@@ -1817,24 +1869,24 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
 
     @Override
     public String getAsComponentString() {
-        Applicator tag = new Applicator() {};
+        CraftMetaItem.Applicator tag = new CraftMetaItem.Applicator() {};
         this.applyToItem(tag);
         DataComponentPatch patch = tag.build();
 
         DynamicOps<net.minecraft.nbt.Tag> ops = CraftRegistry.getMinecraftRegistry().createSerializationContext(NbtOps.INSTANCE);
         StringJoiner componentString = new StringJoiner(",", "[", "]");
 
-        for (Entry<DataComponentType<?>, Optional<?>> entry : patch.entrySet()) {
+        for (Entry<DataComponentType<?>, Object> entry : patch.map.entrySet()) {
             DataComponentType<?> type = entry.getKey();
             if (type.isTransient()) {
                 continue;
             }
 
-            Optional<?> componentValue = entry.getValue();
+            Object componentValue = entry.getValue();
             String componentKey = requireNonNull(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(type)).toString();
 
-            if (componentValue.isPresent()) {
-                net.minecraft.nbt.Tag componentValueAsNBT = (net.minecraft.nbt.Tag) ((DataComponentType) type).codecOrThrow().encodeStart(ops, componentValue.get()).getOrThrow();
+            if (Removed.isNotRemoved(componentValue)) {
+                net.minecraft.nbt.Tag componentValueAsNBT = (net.minecraft.nbt.Tag) ((DataComponentType) type).codecOrThrow().encodeStart(ops, componentValue).getOrThrow();
                 String componentValueAsNBTString = new SnbtPrinterTagVisitor("", 0, new ArrayList<>()).visit(componentValueAsNBT);
                 componentString.add(componentKey + "=" + componentValueAsNBTString);
             } else {
@@ -1860,12 +1912,12 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
             return false;
         }
         if (first.isEmpty() && second.isEmpty()) return true; // Paper - empty modifiers are equivalent
-        for (Entry<Attribute, AttributeModifier> entry : first.entries()) {
+        for (Map.Entry<Attribute, AttributeModifier> entry : first.entries()) {
             if (!second.containsEntry(entry.getKey(), entry.getValue())) {
                 return false;
             }
         }
-        for (Entry<Attribute, AttributeModifier> entry : second.entries()) {
+        for (Map.Entry<Attribute, AttributeModifier> entry : second.entries()) {
             if (!first.containsEntry(entry.getKey(), entry.getValue())) {
                 return false;
             }
@@ -2221,7 +2273,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
         this.serializeInternal(internalTags);
         if (!internalTags.isEmpty()) {
             CompoundTag internal = new CompoundTag();
-            for (Entry<String, net.minecraft.nbt.Tag> e : internalTags.entrySet()) {
+            for (Map.Entry<String, net.minecraft.nbt.Tag> e : internalTags.entrySet()) {
                 internal.put(e.getKey(), e.getValue());
             }
             try {
@@ -2235,11 +2287,11 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
 
         final boolean canBreakAddToUnhandled = this.canBreakPredicates != null && !this.canBreakPredicates.isEmpty();
         if (canBreakAddToUnhandled) {
-            this.unhandledTags.set(DataComponents.CAN_BREAK, new AdventureModePredicate(this.canBreakPredicates));
+            this.unhandledTags.set(DataComponents.CAN_BREAK, new net.minecraft.world.item.AdventureModePredicate(this.canBreakPredicates));
         }
         final boolean canPlaceOnAddToUnhandled = this.canPlaceOnPredicates != null && !this.canPlaceOnPredicates.isEmpty();
         if (canPlaceOnAddToUnhandled) {
-            this.unhandledTags.set(DataComponents.CAN_PLACE_ON, new AdventureModePredicate(this.canPlaceOnPredicates));
+            this.unhandledTags.set(DataComponents.CAN_PLACE_ON, new net.minecraft.world.item.AdventureModePredicate(this.canPlaceOnPredicates));
         }
 
         if (!this.unhandledTags.isEmpty()) {
@@ -2300,7 +2352,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
         }
 
         ImmutableMap.Builder<String, Integer> enchants = ImmutableMap.builder();
-        for (Entry<? extends Enchantment, Integer> enchant : enchantments.entrySet()) {
+        for (Map.Entry<? extends Enchantment, Integer> enchant : enchantments.entrySet()) {
             enchants.put(CraftEnchantment.bukkitToString(enchant.getKey()), enchant.getValue());
         }
 
@@ -2313,7 +2365,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
         }
 
         Map<String, List<Object>> mods = new LinkedHashMap<>();
-        for (Entry<Attribute, AttributeModifier> entry : modifiers.entries()) {
+        for (Map.Entry<Attribute, AttributeModifier> entry : modifiers.entries()) {
             if (entry.getKey() == null) {
                 continue;
             }
@@ -2345,7 +2397,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
                 addTo.add(Component.empty());
             } else {
                 String entry = object.toString();
-                Component component = (possiblyJsonInput) ? CraftChatMessage.fromJSONOrString(entry) : CraftChatMessage.fromStringOrNull(entry);
+                Component component = (possiblyJsonInput) ? CraftChatMessage.fromJSONOrString(entry) : CraftChatMessage.fromStringOrNull(ColorAPI.string(entry));
 
                 if (component != null) {
                     addTo.add(component);
@@ -2439,7 +2491,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
                 map.put(CraftMetaFirework.class, Set.of(CraftMetaFirework.FIREWORKS.TYPE));
                 map.put(CraftMetaKnowledgeBook.class, Set.of(CraftMetaKnowledgeBook.BOOK_RECIPES.TYPE));
                 map.put(CraftMetaLeatherArmor.class, Set.of(CraftMetaLeatherArmor.COLOR.TYPE));
-                map.put(CraftMetaMap.class, Set.of(CraftMetaMap.MAP_COLOR.TYPE, CraftMetaMap.MAP_POST_PROCESSING.TYPE, CraftMetaMap.MAP_ID.TYPE));
+                map.put(CraftMetaMap.class, Set.of(CraftMetaMap.MAP_POST_PROCESSING.TYPE, CraftMetaMap.MAP_ID.TYPE));
                 map.put(CraftMetaMusicInstrument.class, Set.of(CraftMetaMusicInstrument.GOAT_HORN_INSTRUMENT.TYPE));
                 map.put(CraftMetaOminousBottle.class, Set.of(CraftMetaOminousBottle.OMINOUS_BOTTLE_AMPLIFIER.TYPE));
                 map.put(CraftMetaPotion.class, Set.of(CraftMetaPotion.POTION_CONTENTS.TYPE));
@@ -2448,7 +2500,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
                 map.put(CraftMetaSuspiciousStew.class, Set.of(CraftMetaSuspiciousStew.EFFECTS.TYPE));
                 map.put(CraftMetaTropicalFishBucket.class, Set.of(CraftMetaTropicalFishBucket.ENTITY_TAG.TYPE, CraftMetaTropicalFishBucket.BUCKET_ENTITY_TAG.TYPE, CraftMetaTropicalFishBucket.PATTERN.TYPE, CraftMetaTropicalFishBucket.PATTERN_COLOR.TYPE, CraftMetaTropicalFishBucket.BASE_COLOR.TYPE));
 
-                for (final Entry<Class<? extends CraftMetaItem>, Set<DataComponentType<?>>> entry : map.entrySet()) {
+                for (final Map.Entry<Class<? extends CraftMetaItem>, Set<DataComponentType<?>>> entry : map.entrySet()) {
                     final ArrayList<DataComponentType<?>> topLevelTags = new ArrayList<>(entry.getValue());
                     // add tags common to CraftMetaItem to all
                     topLevelTags.addAll(DEFAULT_HANDLED_DCTS);
@@ -2505,7 +2557,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
     }
 
     private static List<net.minecraft.advancements.predicates.BlockPredicate> convertFromLegacyMaterial(final Collection<Material> materials) {
-        final Registry<net.minecraft.world.level.block.Block> blockRegistry = CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.BLOCK);
+        final net.minecraft.core.Registry<net.minecraft.world.level.block.Block> blockRegistry = CraftRegistry.getMinecraftRegistry().lookupOrThrow(net.minecraft.core.registries.Registries.BLOCK);
         return materials.stream().map(m -> {
             return net.minecraft.advancements.predicates.BlockPredicate.Builder.block().of(blockRegistry, CraftBlockType.bukkitToMinecraft(m)).build();
         }).toList();
@@ -2513,7 +2565,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
 
     private static Set<Material> convertToLegacyMaterial(final List<net.minecraft.advancements.predicates.BlockPredicate> predicates) {
         return predicates.stream()
-            .flatMap(p -> p.blocks().map(HolderSet::stream).orElse(java.util.stream.Stream.empty()))
+            .flatMap(p -> p.blocks().map(net.minecraft.core.HolderSet::stream).orElse(java.util.stream.Stream.empty()))
             .map(holder -> CraftBlockType.minecraftToBukkit(holder.value()))
             .collect(java.util.stream.Collectors.toSet());
     }
@@ -2544,7 +2596,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
 
     private static List<net.minecraft.advancements.predicates.BlockPredicate> convertFromLegacyNamespaced(final Collection<com.destroystokyo.paper.Namespaced> namespaceds) {
         final List<net.minecraft.advancements.predicates.BlockPredicate> predicates = new ArrayList<>();
-        final Registry<net.minecraft.world.level.block.Block> blockRegistry = CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.BLOCK);
+        final net.minecraft.core.Registry<net.minecraft.world.level.block.Block> blockRegistry = CraftRegistry.getMinecraftRegistry().lookupOrThrow(net.minecraft.core.registries.Registries.BLOCK);
         for (final com.destroystokyo.paper.Namespaced namespaced : namespaceds) {
             if (namespaced instanceof final org.bukkit.NamespacedKey key) {
                 predicates.add(net.minecraft.advancements.predicates.BlockPredicate.Builder.block().of(blockRegistry, CraftBlockType.bukkitToMinecraft(requireNonNull(org.bukkit.Registry.MATERIAL.get(key)))).build());
@@ -2561,8 +2613,8 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
             if (predicate.blocks().isEmpty()) {
                 continue;
             }
-            final HolderSet<net.minecraft.world.level.block.Block> holders = predicate.blocks().get();
-            if (holders instanceof final HolderSet.Named<net.minecraft.world.level.block.Block> named) {
+            final net.minecraft.core.HolderSet<net.minecraft.world.level.block.Block> holders = predicate.blocks().get();
+            if (holders instanceof final net.minecraft.core.HolderSet.Named<net.minecraft.world.level.block.Block> named) {
                 namespaceds.add(new com.destroystokyo.paper.NamespacedTag(named.key().location().getNamespace(), named.key().location().getPath()));
             } else {
                 holders.forEach(h -> {

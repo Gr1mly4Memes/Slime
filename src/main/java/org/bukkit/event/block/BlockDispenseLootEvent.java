@@ -1,5 +1,7 @@
 package org.bukkit.event.block;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -9,9 +11,6 @@ import org.bukkit.loot.LootTable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Called when a block dispenses loot from its designated LootTable.

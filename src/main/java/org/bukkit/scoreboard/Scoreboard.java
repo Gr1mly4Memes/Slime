@@ -1,10 +1,10 @@
 package org.bukkit.scoreboard;
 
+import com.mohistmc.youer.api.ColorAPI;
+import java.util.Set;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 /**
  * A scoreboard
@@ -172,7 +172,7 @@ public interface Scoreboard {
     @NotNull
     @Deprecated // Paper
     default Objective registerNewObjective(@NotNull String name, @NotNull Criteria criteria, @NotNull String displayName, @NotNull RenderType renderType) {
-        return this.registerNewObjective(name, criteria, net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(displayName), renderType); // Paper - Adventure
+        return this.registerNewObjective(name, criteria, ColorAPI.adventure(displayName), renderType); // Paper - Adventure
     }
 
     /**

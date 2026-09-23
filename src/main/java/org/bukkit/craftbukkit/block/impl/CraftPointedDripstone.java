@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.block.impl;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.annotation.GeneratedClass;
+import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,8 +13,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Speleothem;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 @NullMarked
 @GeneratedClass
@@ -29,12 +28,12 @@ public class CraftPointedDripstone extends CraftBlockData implements Speleothem 
     }
 
     @Override
-    public Thickness getThickness() {
-        return this.get(THICKNESS, Thickness.class);
+    public Speleothem.Thickness getThickness() {
+        return this.get(THICKNESS, Speleothem.Thickness.class);
     }
 
     @Override
-    public void setThickness(final Thickness thickness) {
+    public void setThickness(final Speleothem.Thickness thickness) {
         Preconditions.checkArgument(thickness != null, "thickness cannot be null!");
         this.set(THICKNESS, thickness);
     }

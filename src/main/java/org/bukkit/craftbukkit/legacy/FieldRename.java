@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.legacy;
 
+import java.util.function.BiFunction;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -19,8 +20,6 @@ import org.bukkit.loot.LootTables;
 import org.bukkit.map.MapCursor;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-
-import java.util.function.BiFunction;
 
 public class FieldRename {
 

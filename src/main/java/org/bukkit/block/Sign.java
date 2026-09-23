@@ -155,7 +155,7 @@ public interface Sign extends TileState, Colorable {
     /**
      * {@inheritDoc}
      *
-     * @deprecated A sign may have multiple writable sides now. Use {@link #getSide(Side)} and {@link SignSide#setColor(DyeColor)}.
+     * @deprecated A sign may have multiple writable sides now. Use {@link #getSide(Side)} and {@link SignSide#setColor(org.bukkit.DyeColor)}.
      */
     @Override
     @Deprecated(since = "1.20")

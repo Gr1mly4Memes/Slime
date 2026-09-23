@@ -6,6 +6,8 @@ import com.google.common.base.Preconditions;
 import io.papermc.paper.adventure.PaperAdventure;
 import io.papermc.paper.datacomponent.item.PaperResolvableProfile;
 import io.papermc.paper.datacomponent.item.ResolvableProfile;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.minecraft.Optionull;
 import net.minecraft.world.entity.Avatar;
@@ -16,9 +18,6 @@ import org.bukkit.entity.Pose;
 import org.bukkit.inventory.MainHand;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @NullMarked
 public class CraftMannequin extends CraftLivingEntity implements Mannequin {

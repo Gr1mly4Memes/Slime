@@ -2,14 +2,13 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap.Builder;
+import java.util.Map;
+import java.util.Objects;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.OminousBottleAmplifier;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.inventory.meta.OminousBottleMeta;
-
-import java.util.Map;
-import java.util.Objects;
 
 import static io.papermc.paper.util.BoundChecker.requireRange;
 
@@ -43,7 +42,7 @@ public class CraftMetaOminousBottle extends CraftMetaItem implements OminousBott
     }
 
     @Override
-    void applyToItem(Applicator tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
         if (this.hasAmplifier()) {

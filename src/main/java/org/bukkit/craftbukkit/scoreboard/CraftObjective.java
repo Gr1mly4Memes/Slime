@@ -4,8 +4,11 @@ import com.google.common.base.Preconditions;
 import net.minecraft.world.scores.Scoreboard;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
-import org.bukkit.scoreboard.*;
-
+import org.bukkit.scoreboard.Criteria;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.RenderType;
+import org.bukkit.scoreboard.Score;
 import java.util.Objects;
 
 final class CraftObjective extends CraftScoreboardComponent implements Objective {

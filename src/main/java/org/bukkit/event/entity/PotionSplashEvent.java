@@ -1,6 +1,9 @@
 package org.bukkit.event.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -11,10 +14,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * Called when a splash potion hits an area
@@ -55,7 +54,7 @@ public class PotionSplashEvent extends ProjectileHitEvent implements Cancellable
     }
 
     /**
-     * Retrieves a list of all effected entities
+     * Retrieves a list of all affected entities
      *
      * @return A fresh copy of the affected entity list
      */

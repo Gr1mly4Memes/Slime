@@ -197,6 +197,7 @@ dependencies {
     libraries 'org.apache.maven:maven-model-builder:3.9.6'
     libraries 'org.apache.maven:maven-repository-metadata:3.9.6'
     libraries 'org.apache.maven:maven-resolver-provider:3.9.6'
+
     libraries 'org.apache.maven.resolver:maven-resolver-api:1.9.18'
     libraries 'org.apache.maven.resolver:maven-resolver-connector-basic:1.9.18'
     libraries 'org.apache.maven.resolver:maven-resolver-impl:1.9.18'
@@ -207,9 +208,9 @@ dependencies {
     // LibraryLoader end
 
     // Paper start
-    libraries "ca.spottedleaf:leafpile:1.2.0"
+    libraries "ca.spottedleaf:leafpile:1.2.2"
     libraries "org.spongepowered:configurate-yaml:4.2.0"
-    libraries 'org.joml:joml:1.10.8'
+    libraries 'org.joml:joml:1.10.9'
     libraries "org.jspecify:jspecify:1.0.0"
     libraries "net.md-5:bungeecord-chat:1.21-R0.2-deprecated+build.21"
     libraries("net.kyori:adventure-api:5.2.0")
@@ -227,17 +228,16 @@ dependencies {
     libraries("net.kyori:examination-string:1.3.0")
     libraries("net.kyori:option:1.1.0")
     libraries("io.netty:netty-codec-haproxy:4.2.15.Final") // Paper - Add support for proxy protocol
-    libraries("com.velocitypowered:velocity-native:4.1.0-SNAPSHOT") {
+    libraries("com.velocitypowered:velocity-native:4.1.0") {
         exclude group: 'io.netty'
     }
-    //libraries("me.lucko:spark-api:0.1-20240720.200737-2") // Slime remove sparks fly due to loading problems
-    //libraries("me.lucko:spark-paper:1.10.180")
+    libraries("me.lucko:spark-api:0.1-20240720.200737-2")
+    libraries("me.lucko:spark-paper:1.10.152")
     // Paper end
-    // Purpur start
-    libraries("org.mozilla:rhino-runtime:1.7.14")
-    libraries("org.mozilla:rhino-engine:1.7.14")
-    libraries("dev.omega24:upnp4j:1.0")
-    // Purpur end
+    // Purpur
+    libraries("org.mozilla:rhino-runtime:1.7.14") // Purpur
+    libraries("org.mozilla:rhino-engine:1.7.14") // Purpur
+    libraries("dev.omega24:upnp4j:1.0") // Purpur
     // Pufferfish start
     libraries 'io.sentry:sentry:8.25.0'
     libraries('me.carleslc.Simple-YAML:Simple-Yaml:1.8.4') {
@@ -245,10 +245,6 @@ dependencies {
     }
     libraries "com.github.technove:Flare:34637f3f87"
     // Pufferfish end
-
-    // compat
-    implementation "maven.modrinth:lhGA9TYQ:LKQeKupY" // Architectury v21.0.4 for 26.2
-    implementation "maven.modrinth:l6YH9Als:DdMsOH3O" // 1.10.173-neoforge
 }
 
 // Select runtimeElements rather than universalJar from the main source set
@@ -278,6 +274,7 @@ neoDev {
         gameTestServer {
             type = "gameTestServer"
             loadedMods = [commonMod, neoDev.mods."neoforge-coremods"]
+            systemProperty("eventbus.checkTypesOnDispatch", "true")
         }
         data {
             // We perform client and server datagen in a single clientData run to avoid
@@ -292,13 +289,12 @@ neoDev {
     }
 }
 
-
 generateAccessTransformers {
     // Make all render pipeline snippet fields public
     fieldGroup(
             'render pipeline snippets', PUBLIC,
             named('net/minecraft/client/renderer/RenderPipelines'),
-            fieldsOfType(named('com/mojang/blaze3d/pipeline/RenderPipeline$Snippet'))
+            fieldsOfType(named('com/mojang/renderpearl/api/pipeline/RenderPipeline$Snippet'))
     )
 
     // Make all block constructors public so they can be used by mods
@@ -399,11 +395,11 @@ tasks.withType(Javadoc.class).configureEach {
 Map<String, String> placeholders = [
         'version' : project.version.toString(),
         'slime_version' : project.minecraft_version,
-        'paper_version' : project.apiVersion,
-        'purpur_version' : project.apiVersion,
         'neoform_version' : project.neoform_version,
         'minecraft_version' : project.minecraft_version,
-        'build_type' : 'STABLE'
+        'build_type' : project.channel,
+        'paper_version' : project.minecraft_version,
+        'purpur_version' : project.minecraft_version
 ]
 
 // Generates the neoforge.mods.toml and version.properties, so they contain fully realized version numbers
@@ -609,6 +605,16 @@ configurations {
     }
 }
 
+ // Slime - conflicting dependencies to match Minecraft 26.3's strict versions
+configurations.configureEach {
+    resolutionStrategy {
+        force 'org.slf4j:slf4j-api:2.0.17'
+        force 'at.yawk.lz4:lz4-java:1.10.1'
+        force 'it.unimi.dsi:fastutil:8.5.18'
+        force 'net.java.dev.jna:jna:5.17.0'
+    }
+}
+
 def installerDeps = {
     installer "net.neoforged.installertools:installertools:${project.installertools_version}:fatjar"
 }
@@ -619,7 +625,7 @@ task slimeJar(type: Jar, dependsOn: [slimeJar0, downloadMinecraftJar, project(':
     archiveClassifier = 'server'
     archiveExtension = 'jar'
     archiveBaseName = 'slime'
-    archiveVersion = minecraft_version
+    archiveVersion = minecraft_version + '-' + gradleutils.gitInfo.abbreviatedId
     destinationDirectory = file('build/libs')
 
     manifest {

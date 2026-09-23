@@ -1,5 +1,10 @@
 package org.bukkit.craftbukkit.scoreboard;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.function.Consumer;
 import net.minecraft.network.protocol.game.ClientboundSetObjectivePacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.server.MinecraftServer;
@@ -13,10 +18,6 @@ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.util.WeakCollection;
 import org.bukkit.scoreboard.ScoreboardManager;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.function.Consumer;
 
 public final class CraftScoreboardManager implements ScoreboardManager {
     private final CraftScoreboard mainScoreboard;

@@ -2,13 +2,12 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import java.util.List;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.trading.MerchantOffers;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
-
-import java.util.List;
 
 public interface CraftMerchant extends Merchant {
 

@@ -1,8 +1,7 @@
 package org.bukkit.conversations;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.EventListener;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @deprecated The conversation API has been deprecated for removal. This system does not support component based messages

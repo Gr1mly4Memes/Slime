@@ -1,12 +1,11 @@
 package io.papermc.paper;
 
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.util.Services;
-import org.jetbrains.annotations.ApiStatus;
-
 import java.time.Instant;
 import java.util.Optional;
 import java.util.OptionalInt;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.util.Services;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Information about the current server build.

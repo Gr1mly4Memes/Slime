@@ -51,7 +51,7 @@ public class EntityPortalEnterEvent extends EntityEvent implements Cancellable {
      *
      * @return the portal type
      */
-    public @NotNull PortalType getPortalType() {
+    public org.bukkit.@NotNull PortalType getPortalType() {
         return this.portalType;
     }
 

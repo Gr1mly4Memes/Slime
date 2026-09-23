@@ -1,19 +1,16 @@
 package io.papermc.paper.datacomponent.item;
 
 import io.papermc.paper.datacomponent.DataComponentBuilder;
+import java.util.List;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * Holds all items stored inside of a Bundle.
  * @see io.papermc.paper.datacomponent.DataComponentTypes#BUNDLE_CONTENTS
  */
-@NullMarked
 @ApiStatus.NonExtendable
 public interface BundleContents {
 
@@ -23,7 +20,7 @@ public interface BundleContents {
     }
 
     @Contract(value = "-> new", pure = true)
-    static Builder bundleContents() {
+    static BundleContents.Builder bundleContents() {
         return ItemComponentTypesBridge.bridge().bundleContents();
     }
 

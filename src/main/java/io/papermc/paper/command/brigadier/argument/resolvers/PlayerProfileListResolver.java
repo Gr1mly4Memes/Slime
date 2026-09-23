@@ -2,9 +2,8 @@ package io.papermc.paper.command.brigadier.argument.resolvers;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.Collection;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * An {@link ArgumentResolver} that's capable of resolving

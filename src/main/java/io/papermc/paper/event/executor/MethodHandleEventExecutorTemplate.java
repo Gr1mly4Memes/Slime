@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 /**
  * This class is designed to be used as hidden class template.
  * Initializing the class directly will fail due to missing {@code classData}.
- * Instead, {@link MethodHandles.Lookup#defineHiddenClassWithClassData(byte[], Object, boolean, MethodHandles.Lookup.ClassOption...)}
+ * Instead, {@link java.lang.invoke.MethodHandles.Lookup#defineHiddenClassWithClassData(byte[], Object, boolean, MethodHandles.Lookup.ClassOption...)}
  * must be used, with the {@code classData} object being a list consisting of two elements:
  * <ol>
  *     <li>A {@link Method} representing the event handler method</li>

@@ -1,15 +1,15 @@
 package org.bukkit.event.player;
 
+import com.mohistmc.youer.api.ColorAPI;
+import java.net.InetAddress;
 import io.papermc.paper.event.connection.PlayerConnectionValidateLoginEvent;
+import org.bukkit.Warning;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Warning;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.net.InetAddress;
 
 /**
  * Stores details for players attempting to log in.
@@ -25,7 +25,7 @@ import java.net.InetAddress;
  * Additionally, this event causes the full player entity to be created much earlier than it would be in Vanilla,
  * leaving it with mostly dysfunctional methods and state.
  */
-@Warning(reason = "Listening to this event causes the player to be created early.")
+@Warning(reason = "Listening to this event causes the player to be created early.", propagate = false) // don't nag yet given permission are not managable yet on the other events
 @Deprecated(since = "1.21.6")
 public class PlayerLoginEvent extends PlayerEvent {
 
@@ -55,11 +55,11 @@ public class PlayerLoginEvent extends PlayerEvent {
     public PlayerLoginEvent(@NotNull final Player player, @NotNull String hostname, @NotNull final InetAddress address, @NotNull final Result result, @NotNull final String message, @NotNull final InetAddress realAddress) {
         this(player, hostname, address, realAddress);
         this.result = result;
-        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
+        this.message = ColorAPI.adventure(message);
     }
 
     @ApiStatus.Internal
-    public PlayerLoginEvent(@NotNull final Player player, @NotNull String hostname, @NotNull final InetAddress address, @NotNull final Result result, @NotNull final Component message, @NotNull final InetAddress realAddress) {
+    public PlayerLoginEvent(@NotNull final Player player, @NotNull String hostname, @NotNull final InetAddress address, @NotNull final Result result, @NotNull final net.kyori.adventure.text.Component message, @NotNull final InetAddress realAddress) {
         this(player, hostname, address, realAddress);
         this.result = result;
         this.message = message;
@@ -158,7 +158,7 @@ public class PlayerLoginEvent extends PlayerEvent {
      */
     @Deprecated
     public void setKickMessage(@NotNull final String message) {
-        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
+        this.message = ColorAPI.adventure(message);
     }
 
     /**
@@ -179,7 +179,7 @@ public class PlayerLoginEvent extends PlayerEvent {
     @Deprecated
     public void disallow(@NotNull final Result result, @NotNull final String message) {
         this.result = result;
-        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
+        this.message = ColorAPI.adventure(message);
     }
 
     /**

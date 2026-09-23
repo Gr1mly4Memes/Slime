@@ -1,6 +1,7 @@
 package io.papermc.paper.event.player;
 
 import io.papermc.paper.chat.ChatRenderer;
+import java.util.Set;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
@@ -10,8 +11,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Set;
-
 /**
  * An event fired when a {@link Player} sends a chat message to the server.
  *
@@ -19,7 +18,7 @@ import java.util.Set;
  * It is recommended to use {@link AsyncChatEvent} instead, wherever possible.
  */
 @Deprecated
-@Warning(reason = "Listening to this event forces chat to wait for the main thread, delaying chat messages.")
+@Warning(reason = "Listening to this event forces chat to wait for the main thread, delaying chat messages.", propagate = false)
 @NullMarked
 public final class ChatEvent extends AbstractChatEvent {
 

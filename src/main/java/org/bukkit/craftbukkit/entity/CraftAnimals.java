@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.UUID;
 import net.minecraft.Optionull;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.animal.Animal;
@@ -9,8 +10,6 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Animals;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.UUID;
 
 public class CraftAnimals extends CraftAgeable implements Animals {
 

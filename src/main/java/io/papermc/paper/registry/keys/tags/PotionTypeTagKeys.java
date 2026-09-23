@@ -1,13 +1,13 @@
 package io.papermc.paper.registry.keys.tags;
 
+import static net.kyori.adventure.key.Key.key;
+
 import io.papermc.paper.annotation.GeneratedClass;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.tag.TagKey;
 import net.kyori.adventure.key.Key;
 import org.bukkit.potion.PotionType;
 import org.jspecify.annotations.NullMarked;
-
-import static net.kyori.adventure.key.Key.key;
 
 /**
  * Vanilla tag keys for {@link RegistryKey#POTION}.
@@ -25,6 +25,34 @@ import static net.kyori.adventure.key.Key.key;
 @NullMarked
 @GeneratedClass
 public final class PotionTypeTagKeys {
+    /**
+     * {@code #minecraft:douses_fire}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TagKey<PotionType> DOUSES_FIRE = create(key("douses_fire"));
+
+    /**
+     * {@code #minecraft:extinguishes_entities}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TagKey<PotionType> EXTINGUISHES_ENTITIES = create(key("extinguishes_entities"));
+
+    /**
+     * {@code #minecraft:hurts_water_sensitive_entities}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TagKey<PotionType> HURTS_WATER_SENSITIVE_ENTITIES = create(key("hurts_water_sensitive_entities"));
+
+    /**
+     * {@code #minecraft:rehydrates_axolotls}
+     *
+     * @apiNote This field is version-dependant and may be removed in future Minecraft versions
+     */
+    public static final TagKey<PotionType> REHYDRATES_AXOLOTLS = create(key("rehydrates_axolotls"));
+
     /**
      * {@code #minecraft:tradeable}
      *

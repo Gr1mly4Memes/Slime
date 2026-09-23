@@ -3,6 +3,12 @@ package org.bukkit;
 import com.google.common.base.Preconditions;
 import io.papermc.paper.math.FinePosition;
 import io.papermc.paper.math.Rotation;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Entity;
@@ -13,13 +19,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * Represents a 3-dimensional position in a world.
@@ -1136,6 +1135,11 @@ public class Location implements Cloneable, ConfigurationSerializable, io.paperm
     public String toString() {
         World world = (this.world == null) ? null : this.world.get();
         return "Location{" + "world=" + world + ",x=" + x + ",y=" + y + ",z=" + z + ",pitch=" + pitch + ",yaw=" + yaw + '}';
+    }
+
+    public String asString() {
+        String worldName = (this.world == null) ? "" : this.world.get().getName();
+        return "world=" + worldName + ",x=" + x + ",y=" + y + ",z=" + z + ",pitch=" + pitch + ",yaw=" + yaw;
     }
 
     /**

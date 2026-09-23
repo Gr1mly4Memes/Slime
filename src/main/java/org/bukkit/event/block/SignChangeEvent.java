@@ -1,5 +1,6 @@
 package org.bukkit.event.block;
 
+import com.mohistmc.youer.api.ColorAPI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.block.Block;
 import org.bukkit.block.sign.Side;
@@ -27,7 +28,7 @@ public class SignChangeEvent extends BlockEvent implements Cancellable {
     private boolean cancelled;
 
     @ApiStatus.Internal
-    public SignChangeEvent(@NotNull final Block sign, @NotNull final Player player, @NotNull final List<Component> adventure$lines, @NotNull Side side) {
+    public SignChangeEvent(@NotNull final Block sign, @NotNull final Player player, @NotNull final java.util.List<net.kyori.adventure.text.Component> adventure$lines, @NotNull Side side) {
         super(sign);
         this.player = player;
         this.adventure$lines = adventure$lines;
@@ -36,7 +37,7 @@ public class SignChangeEvent extends BlockEvent implements Cancellable {
 
     @ApiStatus.Internal
     @Deprecated(forRemoval = true)
-    public SignChangeEvent(@NotNull final Block sign, @NotNull final Player player, @NotNull final List<Component> adventure$lines) {
+    public SignChangeEvent(@NotNull final Block sign, @NotNull final Player player, @NotNull final java.util.List<net.kyori.adventure.text.Component> adventure$lines) {
         this(sign, player, adventure$lines, Side.FRONT);
     }
 
@@ -53,7 +54,7 @@ public class SignChangeEvent extends BlockEvent implements Cancellable {
         this.player = thePlayer;
         this.adventure$lines = new java.util.ArrayList<>();
         for (String theLine : theLines) {
-            this.adventure$lines.add(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(theLine));
+            this.adventure$lines.add(ColorAPI.adventure(theLine));
         }
         this.side = side;
     }
@@ -73,7 +74,7 @@ public class SignChangeEvent extends BlockEvent implements Cancellable {
      *
      * @return the String array for the sign's lines new text
      */
-    public @NotNull List<Component> lines() {
+    public @NotNull java.util.List<net.kyori.adventure.text.Component> lines() {
         return this.adventure$lines;
     }
 
@@ -86,7 +87,7 @@ public class SignChangeEvent extends BlockEvent implements Cancellable {
      * @throws IndexOutOfBoundsException thrown when the provided index is {@literal > 3
      *     or < 0}
      */
-    public @Nullable Component line(int index) throws IndexOutOfBoundsException {
+    public net.kyori.adventure.text.@Nullable Component line(int index) throws IndexOutOfBoundsException {
         return this.adventure$lines.get(index);
     }
 
@@ -98,7 +99,7 @@ public class SignChangeEvent extends BlockEvent implements Cancellable {
      * @throws IndexOutOfBoundsException thrown when the provided index is {@literal > 3
      *     or < 0}
      */
-    public void line(int index, @Nullable Component line) throws IndexOutOfBoundsException {
+    public void line(int index, net.kyori.adventure.text.@Nullable Component line) throws IndexOutOfBoundsException {
         this.adventure$lines.set(index, line);
     }
 
@@ -137,11 +138,11 @@ public class SignChangeEvent extends BlockEvent implements Cancellable {
      * @param line text to set
      * @throws IndexOutOfBoundsException thrown when the provided index is {@literal > 3
      *     or < 0}
-     * @deprecated in favour of {@link #line(int, Component)}
+     * @deprecated in favour of {@link #line(int, net.kyori.adventure.text.Component)}
      */
     @Deprecated // Paper
     public void setLine(int index, @Nullable String line) throws IndexOutOfBoundsException {
-        this.adventure$lines.set(index, line != null ? net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(line) : null); // Paper
+        this.adventure$lines.set(index, line != null ? ColorAPI.adventure(line) : null); // Paper
     }
 
     /**

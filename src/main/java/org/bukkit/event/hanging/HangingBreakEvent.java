@@ -13,7 +13,7 @@ public class HangingBreakEvent extends HangingEvent implements Cancellable {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private final RemoveCause cause;
+    private final HangingBreakEvent.RemoveCause cause;
     private boolean cancelled;
 
     @ApiStatus.Internal

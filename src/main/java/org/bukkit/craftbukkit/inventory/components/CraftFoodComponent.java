@@ -1,13 +1,12 @@
 package org.bukkit.craftbukkit.inventory.components;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import net.minecraft.world.food.FoodProperties;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.craftbukkit.inventory.SerializableMeta;
 import org.bukkit.inventory.meta.components.FoodComponent;
 import org.checkerframework.checker.index.qual.NonNegative;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static io.papermc.paper.util.BoundChecker.requireNonNegative;
 

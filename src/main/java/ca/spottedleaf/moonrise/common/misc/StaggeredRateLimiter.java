@@ -30,7 +30,7 @@ public final class StaggeredRateLimiter {
         this.reset(rate);
     }
 
-    public static Builder builder() {
+    public static StaggeredRateLimiter.Builder builder() {
         return new Builder();
     }
 

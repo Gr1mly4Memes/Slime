@@ -1,10 +1,9 @@
 package org.bukkit;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.NullMarked;
-
 import java.util.HashSet;
 import java.util.Set;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
 
 @ApiStatus.Internal
 @NullMarked

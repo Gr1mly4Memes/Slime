@@ -2,6 +2,10 @@ package org.bukkit.craftbukkit;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import org.bukkit.Location;
@@ -11,11 +15,6 @@ import org.bukkit.craftbukkit.boss.CraftBossBar;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.entity.Raider;
 import org.bukkit.persistence.PersistentDataContainer;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 public final class CraftRaid implements Raid {
 

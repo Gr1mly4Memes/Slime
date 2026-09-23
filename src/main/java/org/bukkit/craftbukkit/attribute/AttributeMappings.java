@@ -1,12 +1,11 @@
 package org.bukkit.craftbukkit.attribute;
 
-import org.bukkit.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.NotNull;
 
 final class AttributeMappings {
     private static final Map<UUID, NamespacedKey> ATTRIBUTE_MODIFIER_IDS = new HashMap<>();
