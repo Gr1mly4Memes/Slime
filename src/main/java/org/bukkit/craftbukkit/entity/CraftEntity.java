@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.mohistmc.youer.neoforge.EntityClassLookup;
+import gr1mly4memes.slime.bukkit.neoforge.EntityClassLookup;
 import com.mojang.logging.LogUtils;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.PaperDataComponentType;

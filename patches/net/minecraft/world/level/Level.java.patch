@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -1,14 +_,20 @@
- package net.minecraft.world.level;
- 
- import com.google.common.collect.Lists;
-+import com.mohistmc.youer.YouerConfig;
-+import com.mohistmc.youer.api.event.block.SetBlockEvent;
-+import com.mohistmc.youer.feature.ban.bans.BanBlock;
+@@ -4,11 +_,14 @@
  import com.mojang.serialization.Codec;
  import java.io.IOException;
  import java.util.Collection;
@@ -1027,26 +1021,11 @@
  
      @Override
      public @Nullable ChunkAccess getChunk(int chunkX, int chunkZ, ChunkStatus status, boolean loadOrGenerate) {
-@@ -216,6 +_,38 @@
+@@ -216,6 +_,23 @@
  
      @Override
      public boolean setBlock(BlockPos pos, BlockState blockState, @Block.UpdateFlags int updateFlags, int updateLimit) {
 +        ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread((ServerLevel)this, pos, "Updating block asynchronously"); // SparklyPaper - parallel world ticking (additional concurrency issues logs)
-+        if (BanBlock.check(blockState)) {
-+            blockState = Blocks.AIR.defaultBlockState();
-+        }
-+        {
-+            if (YouerConfig.custom_disabled_spawner && blockState.getBlock() == Blocks.SPAWNER) {
-+                blockState = Blocks.AIR.defaultBlockState();
-+            }
-+            if (SetBlockEvent.getHandlerList().getRegisteredListeners().length > 0 && this.getWorld() != null) {
-+                SetBlockEvent event = new SetBlockEvent(new Location(this.getWorld(), pos.getX(), pos.getY(), pos.getZ()));
-+                Bukkit.getPluginManager().callEvent(event);
-+                if (event.isCancelled()) {
-+                    return false;
-+                }
-+            }
-+        }
 +        // CraftBukkit start - tree generation
 +        if (this.captureTreeGeneration) {
 +            // Paper start - Protect Bedrock and End Portal/Frames from being destroyed

@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/pathfinder/PathFinder.java
++++ b/net/minecraft/world/level/pathfinder/PathFinder.java
+@@ -122,10 +_,10 @@
+         Optional<Path> optPath = !reachedTargets.isEmpty()
+             ? reachedTargets.stream()
+                 .map(target -> this.reconstructPath(target.getBestNode(), targetMap.get(target), true))
+-                .min(Comparator.comparingInt(Path::getNodeCount))
++                .min(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount))
+             : targets.stream()
+                 .map(target -> this.reconstructPath(target.getBestNode(), targetMap.get(target), false))
+-                .min(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
++                .min(Comparator.comparingInt(Path::getNodeCount));
+         profiler.pop();
+         if (optPath.isEmpty()) {
+             return null;

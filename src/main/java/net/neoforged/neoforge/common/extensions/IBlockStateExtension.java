@@ -735,6 +735,7 @@ public interface IBlockStateExtension {
 
     /// Returns this block states bounce restitution for the given position. Normally between 0 and 1
     ///
+    ///
     /// @param level The level this block is in
     /// @param pos The position this block is located at in the given level
     /// @param entity The entity currently querying for bounce restitution
@@ -744,6 +745,7 @@ public interface IBlockStateExtension {
     }
 
     /// Declares whether a block may be relocated and under what circumstances.
+    ///
     ///
     /// @param level LevelReader where this blockstate is being relocated from
     /// @param pos BlockPos of this blockstate being relocated

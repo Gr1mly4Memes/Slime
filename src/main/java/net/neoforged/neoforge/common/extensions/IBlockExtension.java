@@ -932,6 +932,7 @@ public interface IBlockExtension {
 
     /// Returns this blocks bounce restitution for the given state and position. Normally between 0 and 1
     ///
+    ///
     /// @param level The level this block is in
     /// @param pos The position this block is located at in the given level
     /// @param blockState The state of this block
@@ -951,6 +952,7 @@ public interface IBlockExtension {
     ///
     /// Blocks which may never be relocated should be added to
     /// {@link Tags.Blocks#RELOCATION_NOT_SUPPORTED}, in which case this method does not need to be overridden.
+    ///
     ///
     /// @param level LevelReader which the block is being relocated from
     /// @param pos BlockPos which the block is being relocated from

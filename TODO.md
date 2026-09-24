@@ -2,7 +2,8 @@ Fix Neoforge errors
 Fix Craftbukkit errors
 Fix Bukkit errors
 Fix Gr1mly4Memes errors (hey its me!)
-reimplement Pufferfish, Leaf, and DivineMC patches[Ze Patches](
+Add Slime patches back
+reimplement Pufferfish, Leaf, and DivineMC patches
 Cry myself to sleep
 Update Purpur
 Check code
