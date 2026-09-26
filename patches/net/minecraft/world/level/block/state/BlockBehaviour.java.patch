@@ -1,9 +1,8 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -1,5 +_,9 @@
+@@ -1,5 +_,8 @@
  package net.minecraft.world.level.block.state;
  
-+import com.mohistmc.youer.util.tps.TPSCalculator;
 +import com.mojang.serialization.Codec;
 +import com.mojang.serialization.MapCodec;
 +import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -86,31 +85,6 @@
      }
  
      protected boolean canBeReplaced(BlockState state, Fluid fluid) {
-@@ -327,14 +_,21 @@
-     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-     }
- 
-+    // DivineMC start - Lag compensation
-+    private float lagCompensation(float original, Player player) {
-+        if (player.level().isClientSide()) return original;
-+        return original * TPSCalculator.MAX_TPS / (float) ((ServerLevel) player.level()).tpsCalculator.getMostAccurateTPS();
-+    }
-+    // DivineMC end - Lag compensation
-+
-     protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-         float destroySpeed = state.getDestroySpeed(level, pos);
-         if (destroySpeed == -1.0F) {
--            return 0.0F;
-+            return lagCompensation(0.0F, player); // DivineMC - Lag compensation
-         }
- 
--        int modifier = player.hasCorrectToolForDrops(state) ? 30 : 100;
--        return player.getDestroySpeed(state) / destroySpeed / modifier;
-+        int modifier = net.neoforged.neoforge.event.EventHooks.doPlayerHarvestCheck(player, state, level, pos) ? 30 : 100;
-+        return lagCompensation(player.getDestroySpeed(state) / destroySpeed / modifier, player); // DivineMC - Lag compensation
-     }
- 
-     protected void spawnAfterBreak(BlockState state, ServerLevel level, BlockPos pos, ItemStack tool, boolean dropExperience) {
 @@ -385,10 +_,13 @@
          return this.isRandomlyTicking;
      }

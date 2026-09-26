@@ -5,7 +5,6 @@
 
 package net.neoforged.neoforge.common;
 
-import com.mohistmc.youer.Youer;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -150,11 +149,11 @@ import net.neoforged.neoforge.fluids.crafting.display.FluidStackSlotDisplay;
 import net.neoforged.neoforge.fluids.crafting.display.FluidTagSlotDisplay;
 import net.neoforged.neoforge.network.ConfigSync;
 import net.neoforged.neoforge.network.DualStackUtils;
-import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.NeoForgeRegistriesSetup;
+import net.neoforged.neoforge.registries.NewDatapackRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps;
 import net.neoforged.neoforge.registries.holdersets.AndHolderSet;
@@ -288,8 +287,8 @@ public class NeoForgeMod {
      * Stock biome modifier for removing carvers from biomes.
      */
     public static final DeferredHolder<MapCodec<? extends BiomeModifier>, MapCodec<BiomeModifiers.RemoveCarversBiomeModifier>> REMOVE_CARVERS_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("remove_carvers", () -> RecordCodecBuilder.mapCodec(builder -> builder.group(
-            Biome.LIST_CODEC.fieldOf("biomes").forGetter(BiomeModifiers.RemoveCarversBiomeModifier::biomes),
-            WorldCarver.LIST_CODEC.fieldOf("carvers").forGetter(BiomeModifiers.RemoveCarversBiomeModifier::carvers))
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(BiomeModifiers.RemoveCarversBiomeModifier::biomes),
+                    WorldCarver.LIST_CODEC.fieldOf("carvers").forGetter(BiomeModifiers.RemoveCarversBiomeModifier::carvers))
             .apply(builder, BiomeModifiers.RemoveCarversBiomeModifier::new)));
 
     /**
@@ -335,10 +334,10 @@ public class NeoForgeMod {
      * Stock structure modifier for removing spawn override lists from structures.
      */
     public static final DeferredHolder<MapCodec<? extends StructureModifier>, MapCodec<StructureModifiers.ClearSpawnsStructureModifier>> CLEAR_SPAWNS_STRUCTURE_MODIFIER_TYPE = STRUCTURE_MODIFIER_SERIALIZERS.register("clear_spawns", () -> RecordCodecBuilder.mapCodec(builder -> builder.group(
-            RegistryCodecs.holderSet(Registries.STRUCTURE, Structure.DIRECT_CODEC).fieldOf("structures").forGetter(StructureModifiers.ClearSpawnsStructureModifier::structures),
-            Codec.<List<MobCategory>, MobCategory>either(MobCategory.CODEC.listOf(), MobCategory.CODEC).<Set<MobCategory>>xmap(
-                    either -> either.map(Set::copyOf, Set::of), // convert list/singleton to set when decoding
-                    set -> set.size() == 1 ? Either.right(set.toArray(MobCategory[]::new)[0]) : Either.left(List.copyOf(set))).optionalFieldOf("categories", EnumSet.allOf(MobCategory.class)).forGetter(StructureModifiers.ClearSpawnsStructureModifier::categories))
+                    RegistryCodecs.holderSet(Registries.STRUCTURE, Structure.DIRECT_CODEC).fieldOf("structures").forGetter(StructureModifiers.ClearSpawnsStructureModifier::structures),
+                    Codec.<List<MobCategory>, MobCategory>either(MobCategory.CODEC.listOf(), MobCategory.CODEC).<Set<MobCategory>>xmap(
+                            either -> either.map(Set::copyOf, Set::of), // convert list/singleton to set when decoding
+                            set -> set.size() == 1 ? Either.right(set.toArray(MobCategory[]::new)[0]) : Either.left(List.copyOf(set))).optionalFieldOf("categories", EnumSet.allOf(MobCategory.class)).forGetter(StructureModifiers.ClearSpawnsStructureModifier::categories))
             .apply(builder, StructureModifiers.ClearSpawnsStructureModifier::new)));
 
     /**
@@ -560,10 +559,10 @@ public class NeoForgeMod {
         ENVIRONMENT_ATTRIBUTES.register("custom_clouds", () -> NeoForgeEnvironmentAttributes.CUSTOM_CLOUDS);
         ENVIRONMENT_ATTRIBUTES.register("custom_skybox", () -> NeoForgeEnvironmentAttributes.CUSTOM_SKYBOX);
 
-        // Forge-provided datapack registries
-        modEventBus.addListener((DataPackRegistryEvent.NewRegistry event) -> {
-            event.dataPackRegistry(NeoForgeRegistries.Keys.BIOME_MODIFIERS, BiomeModifier.DIRECT_CODEC);
-            event.dataPackRegistry(NeoForgeRegistries.Keys.STRUCTURE_MODIFIERS, StructureModifier.DIRECT_CODEC);
+        // NeoForge-provided datapack registries
+        modEventBus.addListener((NewDatapackRegistryEvent event) -> {
+            event.worldRegistry(NeoForgeRegistries.Keys.BIOME_MODIFIERS, BiomeModifier.DIRECT_CODEC);
+            event.worldRegistry(NeoForgeRegistries.Keys.STRUCTURE_MODIFIERS, StructureModifier.DIRECT_CODEC);
         });
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::loadComplete);
@@ -628,11 +627,10 @@ public class NeoForgeMod {
         if (NeoForgeVersion.getBuildType() == NeoForgeBuildType.PULL_REQUEST) {
             ModLoader.addLoadingIssue(ModLoadingIssue.warning("loadwarning.neoforge.prbuild").withAffectedMod(container.getModInfo()));
         }
-        new Youer(modEventBus, dist, container);
     }
 
     public void preInit(FMLCommonSetupEvent evt) {
-        // VersionChecker.startVersionCheck();
+        VersionChecker.startVersionCheck();
     }
 
     public void loadComplete(FMLLoadCompleteEvent event) {}

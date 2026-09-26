@@ -11,7 +11,7 @@
 +    private static final Exception SKIPPED_ELEMENT_MARKER = new Exception();
      private final Object registryWriteLock = new Object();
      protected final RegistryDataLoader.RegistryData<T> data;
--    private final WritableRegistry<T> registry;
+-    final WritableRegistry<T> registry;
 +    final WritableRegistry<T> registry; // Paper - package-private
      protected final ConcurrentHolderGetter<T> concurrentRegistrationGetter;
      protected final Map<ResourceKey<?>, Exception> loadingErrors;

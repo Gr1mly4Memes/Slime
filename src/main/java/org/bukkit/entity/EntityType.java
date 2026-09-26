@@ -1,7 +1,6 @@
 package org.bukkit.entity;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.youer.api.ServerAPI;
 import io.papermc.paper.InternalAPIBridge;
 import java.util.HashMap;
 import java.util.Locale;
@@ -391,25 +390,4 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
         return InternalAPIBridge.get().getDefaultEntityAttributes(this.key);
     }
     // Paper end
-
-    public void hookForgeEntity(Identifier location, net.minecraft.world.entity.EntityType<?> entityType) {
-        this.key = CraftNamespacedKey.fromMinecraft(location);
-        this.handleType = entityType;
-        NAME_MAP.put(name.toLowerCase(), this);
-        ID_MAP.put(typeId, this);
-        ServerAPI.entityTypeMap.put(entityType, name);
-        ServerAPI.entityTypeMap0.put(entityType, this);
-        this.factory = bukkitLoc -> {
-            if (bukkitLoc != null && bukkitLoc.getWorld() != null) {
-                ServerLevel serverLevel = ((CraftWorld) bukkitLoc.getWorld()).getHandle();
-                net.minecraft.world.entity.Entity entity = handleType.create(serverLevel, EntitySpawnReason.COMMAND);
-                if (entity != null) {
-                    entity.absSnapTo(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), bukkitLoc.getYaw(), bukkitLoc.getPitch());
-                }
-                return entity;
-            } else {
-                return null;
-            }
-        };
-    }
 }

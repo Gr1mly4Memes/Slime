@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -1,6 +_,7 @@
- package net.minecraft.world.item;
- 
- import com.google.common.collect.Lists;
-+import com.mohistmc.youer.feature.ban.bans.BanItem;
- import com.mojang.logging.LogUtils;
- import com.mojang.serialization.Codec;
- import com.mojang.serialization.DataResult;
 @@ -97,6 +_,8 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import org.apache.commons.lang3.function.TriConsumer;
@@ -57,15 +49,10 @@
      public ItemStack(ItemLike item, int count) {
          this(item.asItem().builtInRegistryHolder(), count);
      }
-@@ -359,14 +_,38 @@
+@@ -359,6 +_,20 @@
      }
  
      public InteractionResult useOn(UseOnContext context) {
-+        if (BanItem.checkMoShou(context.getPlayer(), context.getItemInHand())) {
-+            context.getPlayer().setItemInHand(context.getHand(), ItemStack.EMPTY);
-+            return InteractionResult.FAIL;
-+        }
-+        if (BanItem.check(context.getPlayer(), context.getItemInHand())) return InteractionResult.FAIL;
 +        var e = net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent(context, net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent.UsePhase.ITEM_AFTER_BLOCK));
 +        if (e.isCanceled()) return e.getCancellationResult();
 +        if (!context.getLevel().isClientSide()) return net.neoforged.neoforge.common.CommonHooks.onPlaceItemIntoWorld(context);
@@ -81,14 +68,9 @@
 +
 +    private InteractionResult onItemUse(UseOnContext context, java.util.function.Function<UseOnContext, InteractionResult> callback) {
          Player player = context.getPlayer();
-+        if (BanItem.checkMoShou(context.getPlayer(), context.getItemInHand())) {
-+            context.getPlayer().setItemInHand(context.getHand(), ItemStack.EMPTY);
-+            return InteractionResult.FAIL;
-+        }
-+        if (BanItem.check(player, context.getItemInHand())) return InteractionResult.FAIL;
          BlockPos pos = context.getClickedPos();
          if (player != null && !player.getAbilities().mayBuild && !this.canPlaceOnBlockInAdventureMode(new BlockInWorld(context.getLevel(), pos, false))) {
-             return InteractionResult.PASS;
+@@ -366,7 +_,7 @@
          } else {
              ItemStack stackBeforeUse = this.copy();
              Item usedItem = this.getItem();

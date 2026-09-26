@@ -32,7 +32,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 @SuppressWarnings("Convert2Diamond")
 public final class ServerboundPacketClassSerializer extends ScalarSerializer<Class<? extends Packet<?>>> {
 
-    private static final Logger LOGGER = com.mohistmc.youer.util.LogUtils.getClassLogger();
+    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger(); // Slime
     private static final TypeToken<Class<? extends Packet<?>>> TYPE = new TypeToken<Class<? extends Packet<?>>>() {};
     static final Set<Class<?>> PACKET_CLASS_HOLDERS = Set.of(
         PingPacketTypes.class,

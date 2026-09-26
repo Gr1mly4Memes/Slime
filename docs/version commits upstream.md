@@ -1,3 +1,3 @@
-PaperMC-Paper: https://github.com/PaperMC/Paper/commit/d5cc7d4af82999472037d1eda52ca3617b801b8f
-Neoforged-Neoforge: https://github.com/neoforged/NeoForge/commit/d8ba1e13bf5feb5b76f2001ef2db9f131ddc0af6
+PaperMC-Paper: https://github.com/PaperMC/Paper/commit/a15fed9c16a5cc93e4ff38d6e2135623e2dc9daa
+Neoforged-Neoforge: https://github.com/neoforged/NeoForge/commit/b27834c06a6c9a50d62c3033606e0f63a6c0b593
 Purpurmc-Purpur:

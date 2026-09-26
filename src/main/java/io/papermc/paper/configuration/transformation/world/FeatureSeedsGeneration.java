@@ -31,7 +31,7 @@ public final class FeatureSeedsGeneration implements TransformAction {
     public static final String GENERATE_KEY = "generate-random-seeds-for-all";
     public static final String FEATURES_KEY = "features";
 
-    private static final Logger LOGGER = com.mohistmc.youer.util.LogUtils.getClassLogger();
+    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger(); // Slime
 
     private final Identifier worldKey;
 

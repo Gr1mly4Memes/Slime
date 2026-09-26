@@ -23,7 +23,7 @@ import java.nio.file.Path;
 
 public class PluginInitializerManager {
 
-    private static final Logger LOGGER = com.mohistmc.youer.util.LogUtils.getClassLogger();
+    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger(); // Slime
     private static PluginInitializerManager impl;
     private final Path pluginDirectory;
     private final Path updateDirectory;

@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNullElseGet;
 
 @NullMarked
 final class LegacyCraftBukkitWorldMigration {
-    private static final Logger LOGGER = com.mohistmc.youer.util.LogUtils.getClassLogger();
+    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger(); // Slime
     private static final String[] WORLD_BORDER_RELATIVE_CANDIDATES = {"minecraft/world_border.dat", "world_border.dat"};
 
     private final WorldMigrationContext context;

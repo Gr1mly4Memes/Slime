@@ -1,12 +1,5 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -1,5 +_,6 @@
- package net.minecraft.world.entity.item;
- 
-+import com.mohistmc.youer.feature.ban.bans.BanItem;
- import java.util.Objects;
- import java.util.UUID;
- import net.minecraft.core.BlockPos;
 @@ -37,6 +_,14 @@
  import net.minecraft.world.phys.Vec3;
  import org.jspecify.annotations.Nullable;
@@ -59,7 +52,7 @@
      }
  
      @Override
-@@ -106,10 +_,50 @@
+@@ -106,10 +_,34 @@
          return 0.04;
      }
  
@@ -86,25 +79,9 @@
 +    }
 +    // Paper end - EAR 2
 +
-+    // DivineMC start - Lag compensation
-+    private void lagCompensation() {
-+        if ((this).level().isClientSide()) return;
-+
-+        if (pickupDelay == 0) return;
-+
-+        if (pickupDelay - ((ServerLevel) this.level()).tpsCalculator.applicableMissedTicks() <= 0) {
-+            pickupDelay = 0;
-+            return;
-+        }
-+
-+        pickupDelay = pickupDelay - ((ServerLevel) this.level()).tpsCalculator.applicableMissedTicks();
-+    }
-+    // DivineMC end - Lag compensation
 +
      @Override
      public void tick() {
-+        lagCompensation(); // DivineMC - Lag compensation
-+        if (getItem().onEntityItemUpdate(this)) return;
          if (this.getItem().isEmpty()) {
 -            this.discard();
 +            this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
@@ -319,11 +296,8 @@
          }
      }
  
-@@ -333,12 +_,92 @@
-     public void playerTouch(Player player) {
-         if (!this.level().isClientSide()) {
+@@ -335,10 +_,89 @@
              ItemStack itemStack = this.getItem();
-+            if (BanItem.checkMoShou(player, itemStack)) return;
              Item item = itemStack.getItem();
              int orgCount = itemStack.getCount();
 -            if (this.pickupDelay == 0 && (this.target == null || this.target.equals(player.getUUID())) && player.getInventory().add(itemStack)) {
