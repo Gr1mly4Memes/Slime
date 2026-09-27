@@ -208,7 +208,13 @@ dependencies {
     // LibraryLoader end
 
     // Paper start
-    libraries "ca.spottedleaf:leafpile:1.2.2"
+    libraries("ca.spottedleaf:leafpile:1.2.2") // TODO: Make sure to make this 1.2.4
+    /*
+    libraries(platform("ca.spottedleaf.leafpile:bom:1.2.2"))
+    libraries("ca.spottedleaf.leafpile:common")
+    libraries("ca.spottedleaf.leafpile:concurrentutil")
+    libraries("ca.spottedleaf.leafpile:converter")
+     */
     libraries "org.spongepowered:configurate-yaml:4.2.0"
     libraries 'org.joml:joml:1.10.9'
     libraries "org.jspecify:jspecify:1.0.0"

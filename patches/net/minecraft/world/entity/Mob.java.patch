@@ -54,13 +54,13 @@
      private Leashable.@Nullable LeashData leashData;
      private BlockPos homePosition = BlockPos.ZERO;
      private int homeRadius = -1;
++    public boolean aware = true; // CraftBukkit
++    public net.kyori.adventure.util.TriState despawnInPeacefulOverride = net.kyori.adventure.util.TriState.NOT_SET; // Paper - allow changing despawnInPeaceful
 +    @Nullable
 +    private EntitySpawnReason spawnType;
 +    private boolean spawnCancelled = false;
 +    /** Neo: Prevent immediate spawning from conversions to capture conversion results for events */
 +    protected boolean preventConversionSpawns = false;
-+
-+    public boolean aware = true; // CraftBukkit
 +    public int ticksSinceLastInteraction; // Purpur - Entity lifespan
  
      protected Mob(EntityType<? extends Mob> type, Level level) {
@@ -180,10 +180,16 @@
      @Override
      protected void addAdditionalSaveData(ValueOutput output) {
          super.addAdditionalSaveData(output);
-@@ -389,13 +_,27 @@
+@@ -389,13 +_,33 @@
          if (this.isNoAi()) {
              output.putBoolean("NoAI", this.isNoAi());
          }
++        output.putBoolean("Bukkit.Aware", this.aware); // CraftBukkit
++        // Paper start - allow changing despawnInPeaceful
++        if (this.despawnInPeacefulOverride != net.kyori.adventure.util.TriState.NOT_SET) {
++            output.putString("Paper.DespawnInPeacefulOverride", this.despawnInPeacefulOverride.name());
++        }
++        // Paper end - allow changing despawnInPeaceful
 +        output.putBoolean("Bukkit.Aware", this.aware); // CraftBukkit
 +        if (this.spawnType != null) {
 +            output.putString("neoforge:spawn_type", this.spawnType.name());
@@ -210,11 +216,12 @@
          this.dropChances = input.read("drop_chances", DropChances.CODEC).orElse(DropChances.DEFAULT);
          this.readLeashData(input);
          this.homeRadius = input.getIntOr("home_radius", -1);
-@@ -407,12 +_,21 @@
+@@ -407,12 +_,22 @@
          this.lootTable = input.read("DeathLootTable", LootTable.KEY_CODEC);
          this.lootTableSeed = input.getLongOr("DeathLootTableSeed", 0L);
          this.setNoAi(input.getBooleanOr("NoAI", false));
 +        this.aware = input.getBooleanOr("Bukkit.Aware", true); // CraftBukkit
++        this.despawnInPeacefulOverride = input.read("Paper.DespawnInPeacefulOverride", io.papermc.paper.util.PaperCodecs.TRI_STATE_CODEC).orElse(net.kyori.adventure.util.TriState.NOT_SET); // Paper - allow changing despawnInPeaceful
 +        this.ticksSinceLastInteraction = input.getIntOr("Purpur.ticksSinceLastInteraction", 0); // Purpur- Entity lifespan
 +        input.getString("neoforge:spawn_type")
 +                .ifPresent(spawnType -> {
@@ -400,12 +407,13 @@
  
      @Override
      public void checkDespawn() {
-+        if (net.neoforged.neoforge.event.EventHooks.checkMobDespawn(this)) return;
-         if (this.level().getDifficulty() == Difficulty.PEACEFUL && !this.getType().isAllowedInPeaceful()) {
+-        if (this.level().getDifficulty() == Difficulty.PEACEFUL && !this.getType().isAllowedInPeaceful()) {
 -            this.discard();
 -        } else {
 -            boolean isPersistent = this.isPersistenceRequired() || this.requiresCustomPersistence();
 -            Entity player = this.level().getNearestPlayer(this, -1.0);
++        if (net.neoforged.neoforge.event.EventHooks.checkMobDespawn(this)) return;
++        if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.despawnInPeacefulOverride.toBooleanOrElse(!this.getType().isAllowedInPeaceful())) { // Paper - allow changing despawnInPeaceful
 +            this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
 +        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
 +            Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API

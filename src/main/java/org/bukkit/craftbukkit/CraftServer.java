@@ -7,8 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
-import com.mohistmc.youer.api.ColorAPI;
-import com.mohistmc.youer.neoforge.NeoForgeInjectBukkit;
+import gr1mly4memes.slime.bukkit.neoforge.NeoForgeInjectBukkit;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
@@ -258,6 +257,7 @@ import org.bukkit.scheduler.BukkitWorker;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.structure.StructureManager;
 import org.bukkit.util.permissions.DefaultPermissions;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -1448,6 +1448,7 @@ public final class CraftServer implements Server {
     }
 
     @Override
+    @ApiStatus.Obsolete
     public PluginCommand getPluginCommand(String name) {
         Command command = this.commandMap.getCommand(name);
 
@@ -2339,6 +2340,7 @@ public final class CraftServer implements Server {
     }
 
     @Override
+    @ApiStatus.Obsolete
     public SimpleCommandMap getCommandMap() {
         return this.commandMap;
     }

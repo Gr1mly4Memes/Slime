@@ -84,11 +84,12 @@
  
      public Connection(PacketFlow receiving) {
          this.receiving = receiving;
-@@ -89,30 +_,57 @@
+@@ -89,30 +_,71 @@
          super.channelActive(ctx);
          this.channel = ctx.channel();
          this.address = this.channel.remoteAddress();
 +        this.preparing = false; // Spigot
++        this.clearPacketQueue(); // Paper - Optimize network
          if (this.delayedDisconnect != null) {
              this.disconnect(this.delayedDisconnect);
          }
@@ -119,6 +120,19 @@
 +        }
 +        // Paper end - Handle large packets disconnecting client
          if (cause instanceof SkipPacketException) {
++            // Paper start - packet limiter
++            if (cause instanceof SkipPacketDecoderException && !this.stopReadingPackets) {
++                this.receivedPackets++;
++                if (this.allPacketCounts != null) {
++                    synchronized (this.PACKET_LIMIT_LOCK) {
++                        this.allPacketCounts.updateAndAdd(1, System.nanoTime());
++                        if (this.allPacketCounts.getRate() >= io.papermc.paper.configuration.GlobalConfiguration.get().packetLimiter.allPackets.maxPacketRate()) {
++                            this.killForPacketSpam();
++                        }
++                    }
++                }
++            }
++            // Paper end - packet limiter
              LOGGER.debug("Skipping packet due to errors", cause.getCause());
          } else {
              boolean isFirstFault = !this.handlingFault;
