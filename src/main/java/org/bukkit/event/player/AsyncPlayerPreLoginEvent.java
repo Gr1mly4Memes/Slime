@@ -1,6 +1,5 @@
 package org.bukkit.event.player;
 
-import com.mohistmc.youer.api.ColorAPI;
 import java.net.InetAddress;
 import java.util.UUID;
 import com.destroystokyo.paper.profile.PlayerProfile;
@@ -193,7 +192,7 @@ public class AsyncPlayerPreLoginEvent extends Event {
      */
     @Deprecated
     public void setKickMessage(@NotNull final String message) {
-        this.message = ColorAPI.adventure(message);
+        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
     }
 
     /**
@@ -214,7 +213,7 @@ public class AsyncPlayerPreLoginEvent extends Event {
     @Deprecated
     public void disallow(@NotNull final Result result, @NotNull final String message) {
         this.result = result;
-        this.message = ColorAPI.adventure(message);
+        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
     }
 
     /**
@@ -229,7 +228,7 @@ public class AsyncPlayerPreLoginEvent extends Event {
     @Deprecated(since = "1.3.2")
     public void disallow(@NotNull final PlayerPreLoginEvent.Result result, @NotNull final String message) {
         this.result = result == null ? null : Result.valueOf(result.name());
-        this.message = ColorAPI.adventure(message);
+        this.message = LegacyComponentSerializer.legacySection().deserialize(message);
     }
 
     /**

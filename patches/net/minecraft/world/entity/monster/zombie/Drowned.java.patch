@@ -88,12 +88,12 @@
 +        if (this.level().spigotConfig.zombieAggressiveTowardsVillager) this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false) { // Paper - Check drowned for villager aggression config
 +            @Override
 +            public boolean canUse() {
-+                return (level().purpurConfig.zombieAggressiveTowardsVillagerWhenLagging || !level().getServer().server.isLagging()) && super.canUse();
++                return (level().purpurConfig.zombieAggressiveTowardsVillagerWhenLagging || !org.bukkit.Bukkit.isLagging()) && super.canUse();
 +            }
 +
 +            @Override
 +            public boolean canContinueToUse() {
-+                return (level().purpurConfig.zombieAggressiveTowardsVillagerWhenLagging || !level().getServer().server.isLagging()) && super.canContinueToUse();
++                return (level().purpurConfig.zombieAggressiveTowardsVillagerWhenLagging || !org.bukkit.Bukkit.isLagging()) && super.canContinueToUse();
 +            }
 +        });
 +        // Purpur end - Add option to disable zombie aggressiveness towards villagers

@@ -11,7 +11,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import com.mohistmc.youer.api.ColorAPI;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DynamicOps;
 import io.papermc.paper.registry.RegistryKey;
@@ -318,37 +317,37 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
 
     // hide_additional_tooltip backward compatibility based on TooltipDisplayComponentFix#CONVERTED_ADDITIONAL_TOOLTIP_TYPES
     private static final Set<DataComponentType<?>> HIDDEN_COMPONENTS_PREVIOUSLY = Set.of(
-        DataComponents.BANNER_PATTERNS,
-        DataComponents.BEES,
-        DataComponents.BLOCK_ENTITY_DATA,
-        DataComponents.BLOCK_STATE,
-        DataComponents.BUNDLE_CONTENTS,
-        DataComponents.CHARGED_PROJECTILES,
-        DataComponents.CONTAINER,
-        DataComponents.CONTAINER_LOOT,
-        DataComponents.FIREWORK_EXPLOSION,
-        DataComponents.FIREWORKS,
-        DataComponents.INSTRUMENT,
-        DataComponents.JUKEBOX_PLAYABLE,
-        DataComponents.MAP_ID,
-        DataComponents.PAINTING_VARIANT,
-        DataComponents.POT_DECORATIONS,
-        DataComponents.POTION_CONTENTS,
-        DataComponents.TROPICAL_FISH_PATTERN,
-        DataComponents.WRITTEN_BOOK_CONTENT
+            DataComponents.BANNER_PATTERNS,
+            DataComponents.BEES,
+            DataComponents.BLOCK_ENTITY_DATA,
+            DataComponents.BLOCK_STATE,
+            DataComponents.BUNDLE_CONTENTS,
+            DataComponents.CHARGED_PROJECTILES,
+            DataComponents.CONTAINER,
+            DataComponents.CONTAINER_LOOT,
+            DataComponents.FIREWORK_EXPLOSION,
+            DataComponents.FIREWORKS,
+            DataComponents.INSTRUMENT,
+            DataComponents.JUKEBOX_PLAYABLE,
+            DataComponents.MAP_ID,
+            DataComponents.PAINTING_VARIANT,
+            DataComponents.POT_DECORATIONS,
+            DataComponents.POTION_CONTENTS,
+            DataComponents.TROPICAL_FISH_PATTERN,
+            DataComponents.WRITTEN_BOOK_CONTENT
     );
 
     private static final Map<ItemFlag, Set<DataComponentType<?>>> ITEM_FLAG_EQUIVALENTS = ImmutableMap.<ItemFlag, Set<DataComponentType<?>>>builder()
-        .put(ItemFlag.HIDE_ATTRIBUTES, Set.of(DataComponents.ATTRIBUTE_MODIFIERS))
-        .put(ItemFlag.HIDE_ENCHANTS, Set.of(DataComponents.ENCHANTMENTS))
-        .put(ItemFlag.HIDE_STORED_ENCHANTS, Set.of(DataComponents.STORED_ENCHANTMENTS))
-        .put(ItemFlag.HIDE_UNBREAKABLE, Set.of(DataComponents.UNBREAKABLE))
-        .put(ItemFlag.HIDE_DYE, Set.of(DataComponents.DYED_COLOR))
-        .put(ItemFlag.HIDE_ARMOR_TRIM, Set.of(DataComponents.TRIM))
-        .put(ItemFlag.HIDE_PLACED_ON, Set.of(DataComponents.CAN_PLACE_ON))
-        .put(ItemFlag.HIDE_DESTROYS, Set.of(DataComponents.CAN_BREAK))
-        .put(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, HIDDEN_COMPONENTS_PREVIOUSLY)
-        .buildOrThrow();
+            .put(ItemFlag.HIDE_ATTRIBUTES, Set.of(DataComponents.ATTRIBUTE_MODIFIERS))
+            .put(ItemFlag.HIDE_ENCHANTS, Set.of(DataComponents.ENCHANTMENTS))
+            .put(ItemFlag.HIDE_STORED_ENCHANTS, Set.of(DataComponents.STORED_ENCHANTMENTS))
+            .put(ItemFlag.HIDE_UNBREAKABLE, Set.of(DataComponents.UNBREAKABLE))
+            .put(ItemFlag.HIDE_DYE, Set.of(DataComponents.DYED_COLOR))
+            .put(ItemFlag.HIDE_ARMOR_TRIM, Set.of(DataComponents.TRIM))
+            .put(ItemFlag.HIDE_PLACED_ON, Set.of(DataComponents.CAN_PLACE_ON))
+            .put(ItemFlag.HIDE_DESTROYS, Set.of(DataComponents.CAN_BREAK))
+            .put(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, HIDDEN_COMPONENTS_PREVIOUSLY)
+            .buildOrThrow();
 
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
 
@@ -1161,7 +1160,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
 
     @Override
     public final void setDisplayName(String name) {
-        this.displayName = CraftChatMessage.fromStringOrNull(ColorAPI.string(name));
+        this.displayName = CraftChatMessage.fromStringOrNull(name);
     }
 
     @Override
@@ -1181,7 +1180,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
 
     @Override
     public final void setItemName(String name) {
-        this.itemName = CraftChatMessage.fromStringOrNull(ColorAPI.string(name));
+        this.itemName = CraftChatMessage.fromStringOrNull(name);
     }
 
     @Override
@@ -1585,8 +1584,8 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
             return null;
         }
         return this.damageResistantTypes.unwrapKey()
-            .map(tagKey -> new CraftDamageTag(CraftRegistry.getMinecraftRegistry(Registries.DAMAGE_TYPE), tagKey))
-            .orElse(null);
+                .map(tagKey -> new CraftDamageTag(CraftRegistry.getMinecraftRegistry(Registries.DAMAGE_TYPE), tagKey))
+                .orElse(null);
     }
 
     @Override
@@ -2397,7 +2396,7 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
                 addTo.add(Component.empty());
             } else {
                 String entry = object.toString();
-                Component component = (possiblyJsonInput) ? CraftChatMessage.fromJSONOrString(entry) : CraftChatMessage.fromStringOrNull(ColorAPI.string(entry));
+                Component component = (possiblyJsonInput) ? CraftChatMessage.fromJSONOrString(entry) : CraftChatMessage.fromStringOrNull(entry);
 
                 if (component != null) {
                     addTo.add(component);
@@ -2439,35 +2438,35 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
     @org.jetbrains.annotations.VisibleForTesting
     public static final Map<Class<? extends CraftMetaItem>, Set<DataComponentType<?>>> HANDLED_DCTS_PER_TYPE = new HashMap<>();
     protected static final Set<DataComponentType<?>> DEFAULT_HANDLED_DCTS = Set.of(
-        CraftMetaItem.CUSTOM_NAME.TYPE,
-        CraftMetaItem.ITEM_NAME.TYPE,
-        CraftMetaItem.LORE.TYPE,
-        CraftMetaItem.CUSTOM_MODEL_DATA.TYPE,
-        CraftMetaItem.ENCHANTABLE.TYPE,
-        CraftMetaItem.BLOCK_DATA.TYPE,
-        CraftMetaItem.REPAIR.TYPE,
-        CraftMetaItem.ENCHANTMENTS.TYPE,
-        CraftMetaItem.TOOLTIP_DISPLAY.TYPE,
-        CraftMetaItem.TOOLTIP_STYLE.TYPE,
-        CraftMetaItem.ITEM_MODEL.TYPE,
-        CraftMetaItem.UNBREAKABLE.TYPE,
-        CraftMetaItem.ENCHANTMENT_GLINT_OVERRIDE.TYPE,
-        CraftMetaItem.GLIDER.TYPE,
-        CraftMetaItem.DAMAGE_RESISTANT.TYPE,
-        CraftMetaItem.MAX_STACK_SIZE.TYPE,
-        CraftMetaItem.RARITY.TYPE,
-        CraftMetaItem.USE_REMAINDER.TYPE,
-        CraftMetaItem.USE_COOLDOWN.TYPE,
-        CraftMetaItem.FOOD.TYPE,
-        CraftMetaItem.TOOL.TYPE,
-        CraftMetaItem.EQUIPPABLE.TYPE,
-        CraftMetaItem.JUKEBOX_PLAYABLE.TYPE,
-        CraftMetaItem.DAMAGE.TYPE,
-        CraftMetaItem.MAX_DAMAGE.TYPE,
-        CraftMetaItem.CUSTOM_DATA.TYPE,
-        CraftMetaItem.ATTRIBUTES.TYPE,
-        CraftMetaItem.CAN_PLACE_ON.TYPE,
-        CraftMetaItem.CAN_BREAK.TYPE
+            CraftMetaItem.CUSTOM_NAME.TYPE,
+            CraftMetaItem.ITEM_NAME.TYPE,
+            CraftMetaItem.LORE.TYPE,
+            CraftMetaItem.CUSTOM_MODEL_DATA.TYPE,
+            CraftMetaItem.ENCHANTABLE.TYPE,
+            CraftMetaItem.BLOCK_DATA.TYPE,
+            CraftMetaItem.REPAIR.TYPE,
+            CraftMetaItem.ENCHANTMENTS.TYPE,
+            CraftMetaItem.TOOLTIP_DISPLAY.TYPE,
+            CraftMetaItem.TOOLTIP_STYLE.TYPE,
+            CraftMetaItem.ITEM_MODEL.TYPE,
+            CraftMetaItem.UNBREAKABLE.TYPE,
+            CraftMetaItem.ENCHANTMENT_GLINT_OVERRIDE.TYPE,
+            CraftMetaItem.GLIDER.TYPE,
+            CraftMetaItem.DAMAGE_RESISTANT.TYPE,
+            CraftMetaItem.MAX_STACK_SIZE.TYPE,
+            CraftMetaItem.RARITY.TYPE,
+            CraftMetaItem.USE_REMAINDER.TYPE,
+            CraftMetaItem.USE_COOLDOWN.TYPE,
+            CraftMetaItem.FOOD.TYPE,
+            CraftMetaItem.TOOL.TYPE,
+            CraftMetaItem.EQUIPPABLE.TYPE,
+            CraftMetaItem.JUKEBOX_PLAYABLE.TYPE,
+            CraftMetaItem.DAMAGE.TYPE,
+            CraftMetaItem.MAX_DAMAGE.TYPE,
+            CraftMetaItem.CUSTOM_DATA.TYPE,
+            CraftMetaItem.ATTRIBUTES.TYPE,
+            CraftMetaItem.CAN_PLACE_ON.TYPE,
+            CraftMetaItem.CAN_BREAK.TYPE
     );
     public static Set<DataComponentType<?>> getTopLevelHandledComponents(final Class<? extends CraftMetaItem> clazz) {
         synchronized (HANDLED_DCTS_PER_TYPE) {
@@ -2565,9 +2564,9 @@ public class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDat
 
     private static Set<Material> convertToLegacyMaterial(final List<net.minecraft.advancements.predicates.BlockPredicate> predicates) {
         return predicates.stream()
-            .flatMap(p -> p.blocks().map(net.minecraft.core.HolderSet::stream).orElse(java.util.stream.Stream.empty()))
-            .map(holder -> CraftBlockType.minecraftToBukkit(holder.value()))
-            .collect(java.util.stream.Collectors.toSet());
+                .flatMap(p -> p.blocks().map(net.minecraft.core.HolderSet::stream).orElse(java.util.stream.Stream.empty()))
+                .map(holder -> CraftBlockType.minecraftToBukkit(holder.value()))
+                .collect(java.util.stream.Collectors.toSet());
     }
 
     @Override

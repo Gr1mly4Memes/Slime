@@ -1,6 +1,5 @@
 package io.papermc.paper.adventure;
 
-import com.mohistmc.youer.ai.deepseek.DeepSeek;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AbstractChatEvent;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -78,13 +77,10 @@ public final class ChatProcessor {
 
     @SuppressWarnings("deprecated")
     public void process() {
-        final CraftPlayer player = this.player.getBukkitEntity();
-        if (DeepSeek.init(player, craftbukkit$originalMessage)) {
-            return;
-        }
         final boolean listenersOnAsyncEvent = canYouHearMe(AsyncPlayerChatEvent.getHandlerList());
         final boolean listenersOnSyncEvent = canYouHearMe(PlayerChatEvent.getHandlerList());
         if (listenersOnAsyncEvent || listenersOnSyncEvent) {
+            final CraftPlayer player = this.player.getBukkitEntity();
             final AsyncPlayerChatEvent asyncChatEvent = new AsyncPlayerChatEvent(this.async, player, this.craftbukkit$originalMessage, new LazyPlayerSet(this.server));
             this.post(asyncChatEvent);
             if (listenersOnSyncEvent) {
@@ -99,29 +95,29 @@ public final class ChatProcessor {
                 });
                 this.readLegacyModifications(chatEvent.getMessage(), chatEvent.getFormat(), chatEvent.getPlayer());
                 this.processModern(
-                    this.modernRenderer(chatEvent.getFormat()),
-                    this.viewersFromLegacy(chatEvent.getRecipients()),
-                    this.modernMessage(chatEvent.getMessage()),
-                    chatEvent.getPlayer(),
-                    chatEvent.isCancelled()
+                        this.modernRenderer(chatEvent.getFormat()),
+                        this.viewersFromLegacy(chatEvent.getRecipients()),
+                        this.modernMessage(chatEvent.getMessage()),
+                        chatEvent.getPlayer(),
+                        chatEvent.isCancelled()
                 );
             } else {
                 this.readLegacyModifications(asyncChatEvent.getMessage(), asyncChatEvent.getFormat(), asyncChatEvent.getPlayer());
                 this.processModern(
-                    this.modernRenderer(asyncChatEvent.getFormat()),
-                    this.viewersFromLegacy(asyncChatEvent.getRecipients()),
-                    this.modernMessage(asyncChatEvent.getMessage()),
-                    asyncChatEvent.getPlayer(),
-                    asyncChatEvent.isCancelled()
+                        this.modernRenderer(asyncChatEvent.getFormat()),
+                        this.viewersFromLegacy(asyncChatEvent.getRecipients()),
+                        this.modernMessage(asyncChatEvent.getMessage()),
+                        asyncChatEvent.getPlayer(),
+                        asyncChatEvent.isCancelled()
                 );
             }
         } else {
             this.processModern(
-                defaultRenderer(),
-                new LazyChatAudienceSet(this.server),
-                this.paper$originalMessage,
-                this.player.getBukkitEntity(),
-                false
+                    defaultRenderer(),
+                    new LazyChatAudienceSet(this.server),
+                    this.paper$originalMessage,
+                    this.player.getBukkitEntity(),
+                    false
             );
         }
     }
@@ -284,16 +280,16 @@ public final class ChatProcessor {
 
         private net.kyori.adventure.chat.ChatType.Bound adventure(ChatType.Bound chatType) {
             @Subst("key:value") final String stringKey = Objects.requireNonNull(
-                chatType.chatType().unwrapKey().orElseThrow().identifier(),
-                () -> "No key for '%s' in CHAT_TYPE registry.".formatted(chatType)
+                    chatType.chatType().unwrapKey().orElseThrow().identifier(),
+                    () -> "No key for '%s' in CHAT_TYPE registry.".formatted(chatType)
             ).toString();
             net.kyori.adventure.chat.@Nullable ChatType adventure = BUILT_IN_CHAT_TYPES.get(stringKey);
             if (adventure == null) {
                 adventure = net.kyori.adventure.chat.ChatType.chatType(Key.key(stringKey));
             }
             return adventure.bind(
-                PaperAdventure.asAdventure(chatType.name()),
-                chatType.targetName().map(PaperAdventure::asAdventure).orElse(null)
+                    PaperAdventure.asAdventure(chatType.name()),
+                    chatType.targetName().map(PaperAdventure::asAdventure).orElse(null)
             );
         }
 

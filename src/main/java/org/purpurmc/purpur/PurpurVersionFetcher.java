@@ -6,7 +6,7 @@ import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.mohistmc.youer.util.LogUtils;
+import gr1mly4memes.slime.util.LogUtils;
 import io.papermc.paper.ServerBuildInfo;
 import java.io.BufferedReader;
 import java.io.IOException;

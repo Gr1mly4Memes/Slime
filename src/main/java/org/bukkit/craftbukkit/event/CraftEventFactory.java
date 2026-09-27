@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit.event;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
-import com.mohistmc.youer.bukkit.inventory.YouerModsInventory;
+import gr1mly4memes.slime.bukkit.inventory.SlimeModsInventory;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Either;
 import io.papermc.paper.adventure.PaperAdventure;
@@ -1616,7 +1616,7 @@ public class CraftEventFactory {
         human.containerMenu.containerOwner = human;
         InventoryView view = human.containerMenu.getBukkitView();
         if (view == null) {
-            org.bukkit.inventory.Inventory inventory = new CraftInventory(new YouerModsInventory(human.containerMenu, human));
+            org.bukkit.inventory.Inventory inventory = new CraftInventory(new SlimeModsInventory(human.containerMenu, human)); // Slime
             view = new CraftInventoryView<>(human.getBukkitEntity(), inventory, human.containerMenu);
         }
         InventoryCloseEvent event = new InventoryCloseEvent(view, reason); // Paper

@@ -175,8 +175,8 @@ public class ServerLifecycleHooks {
         });
 
         Set<String> missing = Stream.concat(
-                BuiltInRegistries.INCOMING_RPC_METHOD.stream().map(IncomingRpcMethod::info),
-                BuiltInRegistries.OUTGOING_RPC_METHOD.stream().map(OutgoingRpcMethod::info))
+                        BuiltInRegistries.INCOMING_RPC_METHOD.stream().map(IncomingRpcMethod::info),
+                        BuiltInRegistries.OUTGOING_RPC_METHOD.stream().map(OutgoingRpcMethod::info))
                 .<URI>mapMulti((methodInfo, consumer) -> {
                     methodInfo.result().flatMap(resultInfo -> resultInfo.schema().reference()).ifPresent(consumer);
                     methodInfo.params().flatMap(paramsInfo -> paramsInfo.schema().reference()).ifPresent(consumer);
@@ -264,7 +264,7 @@ public class ServerLifecycleHooks {
 
         // Apply sorted structure modifiers to each structure.
         registries.lookupOrThrow(Registries.STRUCTURE).listElements().forEach(structureHolder -> {
-            structureHolder.value().modifiableStructureInfo().applyStructureModifiers(structureHolder, structureModifiers);
+            structureHolder.value().modifiableStructureInfo().applyStructureModifiers(registries, structureHolder, structureModifiers);
         });
 
         if (!entitiesWithoutPlacements.isEmpty() && !FMLEnvironment.isProduction()) {

@@ -241,15 +241,15 @@
          profiler.pop();
      }
  
-+    // DivineMC start - Lag Compensation
++    // Slime start - Lag Compensation
 +    private void lagCompensation() {
++        if (!gr1mly4memes.slime.SlimeConfig.lagCompensationEnabled || !gr1mly4memes.slime.SlimeConfig.potionEffectAcceleration) return;
 +        if (this.level().isClientSide()) return;
-+
 +        for (int i = 0; i < ((ServerLevel) this.level()).tpsCalculator.applicableMissedTicks(); i++) {
 +            tickEffects();
 +        }
 +    }
-+    // DivineMC end - Lag Compensation
++    // Slime end - Lag Compensation
 +
      public boolean shouldTakeDrowningDamage() {
 -        return this.getAirSupply() <= -20;
@@ -878,7 +878,7 @@
          }
  
 +        // Slime start
-+        bukkitEntityDamageEvent = BukkitDamageHooks.handleEntityDamage(this, source, damage, this.lastHurt); // Transmits the mod's modified damage value to the Bukkit event
++        bukkitEntityDamageEvent = BukkitDamageHooks.handleEntityDamage(this, source, damage); // Transmits the mod's modified damage value to the Bukkit event
 +        if (bukkitEntityDamageEvent == null || bukkitEntityDamageEvent.isCancelled()) {
 +            this.damageContainers.pop();
 +            return false;
@@ -2278,7 +2278,7 @@
              this.completeUsingItem();
          }
      }
-@@ -3477,12 +_,22 @@
+@@ -3477,12 +_,21 @@
      }
  
      public void startUsingItem(InteractionHand hand) {
@@ -2291,7 +2291,6 @@
          ItemStack itemStack = this.getItemInHand(hand);
 -        if (!itemStack.isEmpty() && !this.isUsingItem()) {
 +        if ((!itemStack.isEmpty() && !this.isUsingItem()) || forceUpdate) { // Paper - Prevent consuming the wrong itemstack
-+            if (this instanceof ServerPlayer player && BanItem.check(player, itemStack)) return;
 +            int duration = net.neoforged.neoforge.event.EventHooks.onItemUseStart(this, itemStack, hand, itemStack.getUseDuration(this));
 +            if (duration < 0) return; // Neo: Early return for negative values, as that indicates event cancellation.
              this.useItem = itemStack;

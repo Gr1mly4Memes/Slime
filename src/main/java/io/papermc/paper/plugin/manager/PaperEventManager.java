@@ -3,24 +3,6 @@ package io.papermc.paper.plugin.manager;
 import com.destroystokyo.paper.event.server.ServerExceptionEvent;
 import com.destroystokyo.paper.exception.ServerEventException;
 import com.google.common.collect.Sets;
-import com.mohistmc.youer.YouerConfig;
-import com.mohistmc.youer.bukkit.entity.CraftFakePlayer;
-import com.mohistmc.youer.feature.YouerPlugin;
-import org.bukkit.Server;
-import org.bukkit.Warning;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.plugin.AuthorNagException;
-import org.bukkit.plugin.EventExecutor;
-import org.bukkit.plugin.IllegalPluginAccessException;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredListener;
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,6 +10,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.bukkit.Server;
+import org.bukkit.Warning;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.AuthorNagException;
+import org.bukkit.plugin.EventExecutor;
+import org.bukkit.plugin.IllegalPluginAccessException;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredListener;
+import org.jetbrains.annotations.NotNull;
 
 class PaperEventManager {
 
@@ -39,8 +34,6 @@ class PaperEventManager {
 
     // SimplePluginManager
     public void callEvent(@NotNull Event event) {
-        if (!YouerConfig.fakeplayer_callbukkitevent && event instanceof PlayerEvent playerEvent && playerEvent.getPlayer() instanceof CraftFakePlayer) return; // Youer
-        YouerPlugin.registerListener(event); // Youer
         if (event.isAsynchronous() && this.server.isPrimaryThread()) {
             throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
         } else if (!event.isAsynchronous() && !this.server.isPrimaryThread() && !this.server.isStopping()) {
@@ -64,10 +57,10 @@ class PaperEventManager {
                     plugin.setNaggable(false);
 
                     this.server.getLogger().log(Level.SEVERE, String.format(
-                        "Nag author(s): '%s' of '%s' about the following: %s",
-                        plugin.getPluginMeta().getAuthors(),
-                        plugin.getPluginMeta().getDisplayName(),
-                        ex.getMessage()
+                            "Nag author(s): '%s' of '%s' about the following: %s",
+                            plugin.getPluginMeta().getAuthors(),
+                            plugin.getPluginMeta().getDisplayName(),
+                            ex.getMessage()
                     ));
                 }
             } catch (Throwable ex) {
@@ -121,8 +114,8 @@ class PaperEventManager {
             return clazz;
         } catch (NoSuchMethodException e) {
             if (clazz.getSuperclass() != null
-                && !clazz.getSuperclass().equals(Event.class)
-                && Event.class.isAssignableFrom(clazz.getSuperclass())) {
+                    && !clazz.getSuperclass().equals(Event.class)
+                    && Event.class.isAssignableFrom(clazz.getSuperclass())) {
                 return this.getRegistrationClass(clazz.getSuperclass().asSubclass(Event.class));
             } else {
                 throw new IllegalPluginAccessException("Unable to find handler list for event " + clazz.getName() + ". Static getHandlerList method required!");
@@ -139,8 +132,8 @@ class PaperEventManager {
         try {
             Class<?> listenerClazz = listener.getClass();
             methods = Sets.union(
-                Set.of(listenerClazz.getMethods()),
-                Set.of(listenerClazz.getDeclaredMethods())
+                    Set.of(listenerClazz.getMethods()),
+                    Set.of(listenerClazz.getDeclaredMethods())
             );
         } catch (NoClassDefFoundError e) {
             plugin.getLogger().severe("Failed to register events for " + listener.getClass() + " because " + e.getMessage() + " does not exist.");
@@ -168,20 +161,25 @@ class PaperEventManager {
                 // This loop checks for extending deprecated events
                 if (clazz.getAnnotation(Deprecated.class) != null) {
                     Warning warning = clazz.getAnnotation(Warning.class);
+                    if (warning != null && !warning.propagate() && !clazz.equals(eventClass)) {
+                        break;
+                    }
+
                     Warning.WarningState warningState = this.server.getWarningState();
                     if (!warningState.printFor(warning)) {
                         break;
                     }
+
                     plugin.getLogger().log(
-                        Level.WARNING,
-                        String.format(
-                            "\"%s\" has registered a listener for %s on method \"%s\", but the event is Deprecated. \"%s\"; please notify the authors %s.",
-                            plugin.getPluginMeta().getDisplayName(),
-                            clazz.getName(),
-                            method.toGenericString(),
-                            (warning != null && warning.reason().length() != 0) ? warning.reason() : "Server performance will be affected",
-                            Arrays.toString(plugin.getPluginMeta().getAuthors().toArray())),
-                        warningState == Warning.WarningState.ON ? new AuthorNagException(null) : null);
+                            Level.WARNING,
+                            String.format(
+                                    "\"%s\" has registered a listener for %s on method \"%s\", but the event is Deprecated. \"%s\"; please notify the authors %s.",
+                                    plugin.getPluginMeta().getDisplayName(),
+                                    clazz.getName(),
+                                    method.toGenericString(),
+                                    (warning != null && !warning.reason().isEmpty()) ? warning.reason() : "Please see the deprecation notice on the event for more info",
+                                    Arrays.toString(plugin.getPluginMeta().getAuthors().toArray())),
+                            warningState == Warning.WarningState.ON ? new AuthorNagException(null) : null);
                     break;
                 }
             }

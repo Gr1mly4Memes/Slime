@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
-import gr1mly4memes.slime.bukkit.neoforge.NeoForgeInjectBukkit;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
@@ -306,6 +305,7 @@ public final class CraftServer implements Server {
     public static Exception excessiveVelEx;
     private final io.papermc.paper.logging.SysoutCatcher sysoutCatcher = new io.papermc.paper.logging.SysoutCatcher();
     private final io.papermc.paper.potion.PaperPotionBrewer potionBrewer;
+    public final io.papermc.paper.SparksFly spark;
     private final ServerConfiguration serverConfig = new PaperServerConfiguration();
 
     // Paper start - Folia region threading API
@@ -331,14 +331,14 @@ public final class CraftServer implements Server {
     @Override
     public final boolean isOwnedByCurrentRegion(World world, io.papermc.paper.math.Position position) {
         return ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(
-            ((CraftWorld) world).getHandle(), position.blockX() >> 4, position.blockZ() >> 4
+                ((CraftWorld) world).getHandle(), position.blockX() >> 4, position.blockZ() >> 4
         );
     }
 
     @Override
     public final boolean isOwnedByCurrentRegion(World world, io.papermc.paper.math.Position position, int squareRadiusChunks) {
         return ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(
-            ((CraftWorld) world).getHandle(), position.blockX() >> 4, position.blockZ() >> 4, squareRadiusChunks
+                ((CraftWorld) world).getHandle(), position.blockX() >> 4, position.blockZ() >> 4, squareRadiusChunks
         );
     }
 
@@ -346,7 +346,7 @@ public final class CraftServer implements Server {
     public final boolean isOwnedByCurrentRegion(Location location) {
         World world = location.getWorld();
         return ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(
-            ((CraftWorld) world).getHandle(), location.getBlockX() >> 4, location.getBlockZ() >> 4
+                ((CraftWorld) world).getHandle(), location.getBlockX() >> 4, location.getBlockZ() >> 4
         );
     }
 
@@ -354,28 +354,28 @@ public final class CraftServer implements Server {
     public final boolean isOwnedByCurrentRegion(Location location, int squareRadiusChunks) {
         World world = location.getWorld();
         return ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(
-            ((CraftWorld) world).getHandle(), location.getBlockX() >> 4, location.getBlockZ() >> 4, squareRadiusChunks
+                ((CraftWorld) world).getHandle(), location.getBlockX() >> 4, location.getBlockZ() >> 4, squareRadiusChunks
         );
     }
 
     @Override
     public final boolean isOwnedByCurrentRegion(World world, int chunkX, int chunkZ) {
         return ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(
-            ((CraftWorld) world).getHandle(), chunkX, chunkZ
+                ((CraftWorld) world).getHandle(), chunkX, chunkZ
         );
     }
 
     @Override
     public final boolean isOwnedByCurrentRegion(World world, int chunkX, int chunkZ, int squareRadiusChunks) {
         return ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(
-            ((CraftWorld) world).getHandle(), chunkX, chunkZ, squareRadiusChunks
+                ((CraftWorld) world).getHandle(), chunkX, chunkZ, squareRadiusChunks
         );
     }
 
     @Override
     public final boolean isOwnedByCurrentRegion(World world, int minChunkX, int minChunkZ, int maxChunkX, int maxChunkZ) {
         return ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(
-            ((CraftWorld) world).getHandle(), minChunkX, minChunkZ, maxChunkX, maxChunkZ
+                ((CraftWorld) world).getHandle(), minChunkX, minChunkZ, maxChunkX, maxChunkZ
         );
     }
 
@@ -413,29 +413,13 @@ public final class CraftServer implements Server {
         this.pluginManager = new SimplePluginManager(this, commandMap);
         this.paperPluginManager = new io.papermc.paper.plugin.manager.PaperPluginManagerImpl(this, this.commandMap, pluginManager);
         this.pluginManager.paperPluginManager = this.paperPluginManager;
-         // Paper end
-        // Purpur start - Language API
-        org.purpurmc.purpur.language.Language.setLanguage(new org.purpurmc.purpur.language.Language() {
-            private net.minecraft.locale.Language language = net.minecraft.locale.Language.getInstance();
-            @Override
-            public boolean has(@org.jetbrains.annotations.NotNull String key) {
-                return language.has(key);
-            }
-
-            @Override
-            public @org.jetbrains.annotations.NotNull String getOrDefault(@org.jetbrains.annotations.NotNull String key) {
-                return language.getOrDefault(key);
-            }
-        });
-        // Purpur end - Language API
+        // Paper end
 
         CraftRegistry.setMinecraftRegistry(console.registryAccess());
 
         if (!Main.useConsole) {
             this.getLogger().info("Console input is disabled due to --noconsole command argument");
         }
-
-        NeoForgeInjectBukkit.init();
 
         this.configuration = YamlConfiguration.loadConfiguration(this.getConfigFile());
         this.configuration.options().copyDefaults(true);
@@ -497,6 +481,7 @@ public final class CraftServer implements Server {
         }
         this.potionBrewer = new io.papermc.paper.potion.PaperPotionBrewer(console); // Paper - custom potion mixes
         datapackManager = new io.papermc.paper.datapack.PaperDatapackManager(console.getPackRepository()); // Paper
+        this.spark = new io.papermc.paper.SparksFly(this); // Paper - spark
     }
 
     public boolean getCommandBlockOverride(String command) {
@@ -643,7 +628,7 @@ public final class CraftServer implements Server {
                     permsToLoad.add(perm);
                 } else {
                     this.getLogger().log(Level.WARNING, "Plugin " + plugin.getDescription().getFullName() + " tried to register permission '" + perm.getName() + "' but it's already registered");
-                // Paper end
+                    // Paper end
                 }
             }
             this.paperPluginManager.addPermissions(permsToLoad); // Paper
@@ -922,11 +907,6 @@ public final class CraftServer implements Server {
     }
 
     @Override
-    public Set<String> getWorldsByName() {
-        return new HashSet<>(worlds.keySet());
-    }
-
-    @Override
     public boolean isTickingWorlds() {
         return console.isIteratingOverLevels;
     }
@@ -1008,7 +988,6 @@ public final class CraftServer implements Server {
 
         org.spigotmc.SpigotConfig.init((File) this.console.options.valueOf("spigot-settings")); // Spigot
         this.console.paperConfigurations.reloadConfigs(this.console);
-        org.purpurmc.purpur.PurpurConfig.init((File) console.options.valueOf("purpur-settings")); // Purpur - Purpur config files
         for (ServerLevel world : this.console.getAllLevels()) {
             // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
             world.setSpawnSettings(world.isSpawningMonsters()); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
@@ -1024,7 +1003,6 @@ public final class CraftServer implements Server {
                 }
             }
             world.spigotConfig.init(); // Spigot
-            world.purpurConfig.init(); // Purpur - Purpur config files
         }
 
         Plugin[] pluginClone = pluginManager.getPlugins().clone(); // Paper
@@ -1041,7 +1019,7 @@ public final class CraftServer implements Server {
         this.reloadData();
         org.spigotmc.SpigotConfig.registerCommands(); // Spigot
         io.papermc.paper.command.PaperCommands.registerCommands(this.console); // Paper
-        org.purpurmc.purpur.PurpurConfig.registerCommands(); // Purpur - Purpur config files
+        this.spark.registerCommandBeforePlugins(this); // Paper - spark
         this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
         this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");
 
@@ -1059,10 +1037,10 @@ public final class CraftServer implements Server {
         for (BukkitWorker worker : overdueWorkers) {
             Plugin plugin = worker.getOwner();
             this.getLogger().log(Level.SEVERE, String.format(
-                "Nag author(s): '%s' of '%s' about the following: %s",
-                plugin.getDescription().getAuthors(),
-                plugin.getDescription().getFullName(),
-                "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
+                    "Nag author(s): '%s' of '%s' about the following: %s",
+                    plugin.getDescription().getAuthors(),
+                    plugin.getDescription().getFullName(),
+                    "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
             ));
             if (console.isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread(worker.getThread(), "still running"); // Paper - Debugging
         }
@@ -1070,6 +1048,7 @@ public final class CraftServer implements Server {
         this.loadPlugins();
         this.enablePlugins(PluginLoadOrder.STARTUP);
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
+        this.spark.registerCommandAfterPlugins(this); // Paper - spark
         // Paper start - brigadier command API
         io.papermc.paper.command.brigadier.PaperCommands.INSTANCE.setValid(); // to clear invalid state for event fire below
         io.papermc.paper.plugin.lifecycle.event.LifecycleEventRunner.INSTANCE.callReloadableRegistrarEvent(io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS, io.papermc.paper.command.brigadier.PaperCommands.INSTANCE, org.bukkit.plugin.Plugin.class, io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent.Cause.RELOAD); // call commands event for regular plugins
@@ -1096,10 +1075,10 @@ public final class CraftServer implements Server {
         for (BukkitWorker worker : overdueWorkers) {
             Plugin plugin = worker.getOwner();
             getLogger().log(Level.SEVERE, String.format(
-                "Nag author(s): '%s' of '%s' about the following: %s",
-                plugin.getPluginMeta().getAuthors(),
-                plugin.getPluginMeta().getDisplayName(),
-                "This plugin is not properly shutting down its async tasks when it is being shut down. This task may throw errors during the final shutdown logs and might not complete before process dies."
+                    "Nag author(s): '%s' of '%s' about the following: %s",
+                    plugin.getPluginMeta().getAuthors(),
+                    plugin.getPluginMeta().getDisplayName(),
+                    "This plugin is not properly shutting down its async tasks when it is being shut down. This task may throw errors during the final shutdown logs and might not complete before process dies."
             ));
             if (console.isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread(worker.getThread(), "still running"); // Paper - Debugging
         }
@@ -1229,24 +1208,24 @@ public final class CraftServer implements Server {
         }
         try {
             WorldFolderMigration.migrateApiWorld(
-                this.console.storageSource,
-                registryAccess,
-                name,
-                actualDimension,
-                dimensionKey
+                    this.console.storageSource,
+                    registryAccess,
+                    name,
+                    actualDimension,
+                    dimensionKey
             );
         } catch (final IOException ex) {
             throw new RuntimeException("Failed to migrate legacy world " + name, ex);
         }
         PaperWorldLoader.LoadedWorldData loadedWorldData = PaperWorldLoader.loadWorldData(
-            this.console,
-            dimensionKey,
-            name
+                this.console,
+                dimensionKey,
+                name
         );
         final PrimaryLevelData primaryLevelData = (PrimaryLevelData) this.console.getWorldData();
         WorldGenSettings worldGenSettings = LevelStorageSource.readExistingSavedData(this.console.storageSource, dimensionKey, registryAccess, WorldGenSettings.TYPE)
-            .result()
-            .orElse(null);
+                .result()
+                .orElse(null);
         RegistryAccess contextRegistryAccess = registryAccess;
         if (worldGenSettings == null) {
             WorldOptions worldOptions = new WorldOptions(creator.seed(), creator.generateStructures(), creator.bonusChest());
@@ -1254,9 +1233,9 @@ public final class CraftServer implements Server {
             String flatGenSettings = creator.generatorSettings();
             if (flatGenSettings.isEmpty()) {
                 flatGenSettings = FlatLevelGeneratorSettings.CODEC.encodeStart(registryAccess.createSerializationContext(JsonOps.INSTANCE), FlatLevelGeneratorSettings.getDefault(
-                    registryAccess.lookupOrThrow(Registries.BIOME),
-                    registryAccess.lookupOrThrow(Registries.STRUCTURE_SET),
-                    registryAccess.lookupOrThrow(Registries.PLACED_FEATURE)
+                        registryAccess.lookupOrThrow(Registries.BIOME),
+                        registryAccess.lookupOrThrow(Registries.STRUCTURE_SET),
+                        registryAccess.lookupOrThrow(Registries.PLACED_FEATURE)
                 )).getOrThrow().toString();
             }
             DedicatedServerProperties.WorldDimensionData properties = new DedicatedServerProperties.WorldDimensionData(GsonHelper.parse(flatGenSettings), creator.type().name().toLowerCase(Locale.ROOT));
@@ -1271,10 +1250,10 @@ public final class CraftServer implements Server {
             contextRegistryAccess = complete.dimensionsRegistryAccess();
             loadedWorldData.levelOverrides().setHardcore(creator.hardcore());
             loadedWorldData = new PaperWorldLoader.LoadedWorldData(
-                loadedWorldData.bukkitName(),
-                loadedWorldData.uuid(),
-                loadedWorldData.pdc(),
-                loadedWorldData.levelOverrides()
+                    loadedWorldData.bukkitName(),
+                    loadedWorldData.uuid(),
+                    loadedWorldData.pdc(),
+                    loadedWorldData.levelOverrides()
             );
         }
         final WorldGenSettings genSettingsFinal = worldGenSettings;
@@ -1302,26 +1281,26 @@ public final class CraftServer implements Server {
         final SavedDataStorage savedDataStorage = new SavedDataStorage(this.console.storageSource.getDimensionPath(dimensionKey).resolve(LevelResource.DATA.id()), this.console.getFixerUpper(), registryAccess);
         savedDataStorage.set(WorldGenSettings.TYPE, new WorldGenSettings(genSettingsFinal.options(), genSettingsFinal.dimensions()));
         List<CustomSpawner> list = ImmutableList.of(
-            new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(savedDataStorage)
+                new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(savedDataStorage)
         );
 
         ServerLevel serverLevel = new ServerLevel(
-            this.console,
-            Util.backgroundExecutor(),
-            this.console.storageSource,
-            genSettingsFinal,
-            dimensionKey,
-            customStem,
-            primaryLevelData.isDebugWorld(),
-            biomeZoomSeed,
-            creator.environment() == Environment.NORMAL ? list : ImmutableList.of(),
-            true,
-            actualDimension,
-            creator.environment(),
-            chunkGenerator,
-            biomeProvider,
-            savedDataStorage,
-            loadedWorldData
+                this.console,
+                Util.backgroundExecutor(),
+                this.console.storageSource,
+                genSettingsFinal,
+                dimensionKey,
+                customStem,
+                primaryLevelData.isDebugWorld(),
+                biomeZoomSeed,
+                creator.environment() == Environment.NORMAL ? list : ImmutableList.of(),
+                true,
+                actualDimension,
+                creator.environment(),
+                chunkGenerator,
+                biomeProvider,
+                savedDataStorage,
+                loadedWorldData
         );
 
         if (!(this.worlds.containsKey(name.toLowerCase(Locale.ROOT)))) {
@@ -1492,44 +1471,6 @@ public final class CraftServer implements Server {
         // Paper end - API for updating recipes on clients
         return true;
     }
-
-    // Purpur start - Debug Marker API
-    @Override
-    public void sendBlockHighlight(Location location, int duration) {
-        sendBlockHighlight(location, duration, "", 0x6400FF00);
-    }
-
-    @Override
-    public void sendBlockHighlight(Location location, int duration, int argb) {
-        sendBlockHighlight(location, duration, "", argb);
-    }
-
-    @Override
-    public void sendBlockHighlight(Location location, int duration, String text) {
-        sendBlockHighlight(location, duration, text, 0x6400FF00);
-    }
-
-    @Override
-    public void sendBlockHighlight(Location location, int duration, String text, int argb) {
-        this.worlds.forEach((name, world) -> world.sendBlockHighlight(location, duration, text, argb));
-    }
-
-    @Override
-    public void sendBlockHighlight(Location location, int duration, org.bukkit.Color color, int transparency) {
-        sendBlockHighlight(location, duration, "", color, transparency);
-    }
-
-    @Override
-    public void sendBlockHighlight(Location location, int duration, String text, org.bukkit.Color color, int transparency) {
-        if (transparency < 0 || transparency > 255) throw new IllegalArgumentException("transparency is outside of 0-255 range");
-        sendBlockHighlight(location, duration, text, transparency << 24 | color.asRGB());
-    }
-
-    @Override
-    public void clearBlockHighlights() {
-        this.worlds.forEach((name, world) -> world.clearBlockHighlights());
-    }
-    // Purpur end - Debug Marker API
 
     @Override
     public List<Recipe> getRecipesFor(ItemStack result) {
@@ -1738,7 +1679,7 @@ public final class CraftServer implements Server {
     @Override
     public net.kyori.adventure.text.Component shutdownMessage() {
         String msg = getShutdownMessage();
-        return msg != null ? ColorAPI.adventure(msg) : null;
+        return msg != null ? net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(msg) : null;
     }
 
     @Override
@@ -2124,13 +2065,13 @@ public final class CraftServer implements Server {
     @Override
     public <B extends BanList<E>, E> B getBanList(final io.papermc.paper.ban.BanListType<B> type) {
         Preconditions.checkArgument(type != null, "BanList.BanType cannot be null");
-       if (type == io.papermc.paper.ban.BanListType.IP) {
-           return (B) new CraftIpBanList(this.playerList.getIpBans());
-       } else if (type == io.papermc.paper.ban.BanListType.PROFILE) {
-          return (B) new CraftProfileBanList(this.playerList.getBans());
-       } else {
-           throw new IllegalArgumentException("Unknown BanListType: " + type);
-       }
+        if (type == io.papermc.paper.ban.BanListType.IP) {
+            return (B) new CraftIpBanList(this.playerList.getIpBans());
+        } else if (type == io.papermc.paper.ban.BanListType.PROFILE) {
+            return (B) new CraftProfileBanList(this.playerList.getBans());
+        } else {
+            throw new IllegalArgumentException("Unknown BanListType: " + type);
+        }
     }
 
     @Override
@@ -2178,9 +2119,9 @@ public final class CraftServer implements Server {
     @Override
     public GameMode getDefaultGameMode() {
         return GameMode.getByValue(Optionull.mapOrDefault(
-            this.console.getLevel(net.minecraft.world.level.Level.OVERWORLD),
-            l -> l.serverLevelData.getGameType(),
-            this.console.getProperties().gameMode.get()
+                this.console.getLevel(net.minecraft.world.level.Level.OVERWORLD),
+                l -> l.serverLevelData.getGameType(),
+                this.console.getProperties().gameMode.get()
         ).getId());
     }
 
@@ -2506,7 +2447,7 @@ public final class CraftServer implements Server {
     @Override
     public Iterator<KeyedBossBar> getBossBars() {
         return Iterators.unmodifiableIterator(Iterators.transform(
-            this.getServer().getCustomBossEvents().getEvents().iterator(), CustomBossEvent::getBukkitEntity)
+                this.getServer().getCustomBossEvents().getEvents().iterator(), CustomBossEvent::getBukkitEntity)
         );
     }
 
@@ -2557,7 +2498,7 @@ public final class CraftServer implements Server {
     @Override
     public Iterator<org.bukkit.advancement.Advancement> advancementIterator() {
         return Iterators.unmodifiableIterator(Iterators.transform(
-            this.console.getAdvancements().getAllAdvancements().iterator(), AdvancementHolder::toBukkit)
+                this.console.getAdvancements().getAllAdvancements().iterator(), AdvancementHolder::toBukkit)
         );
     }
 
@@ -2776,18 +2717,6 @@ public final class CraftServer implements Server {
         public YamlConfiguration getPaperConfig() {
             return CraftServer.this.console.paperConfigurations.createLegacyObject(CraftServer.this.console);
         }
-
-        // Purpur start - Purpur config files
-        @Override
-        public YamlConfiguration getPurpurConfig() {
-            return org.purpurmc.purpur.PurpurConfig.config;
-        }
-
-        @Override
-        public java.util.Properties getServerProperties() {
-            return getProperties().properties;
-        }
-        // Purpur end - Purpur config files
 
         @Override
         public void restart() {
@@ -3024,18 +2953,4 @@ public final class CraftServer implements Server {
     public void allowPausing(final Plugin plugin, final boolean value) {
         this.console.addPluginAllowingSleep(plugin.getName(), value);
     }
-
-    // Purpur start - Bring back server name
-    @Override
-    public String getServerName() {
-        return this.getProperties().serverName;
-    }
-    // Purpur end - Bring back server name
-
-    // Purpur start - Lagging threshold
-    @Override
-    public boolean isLagging() {
-        return getServer().lagging;
-    }
-    // Purpur end - Lagging threshold
 }

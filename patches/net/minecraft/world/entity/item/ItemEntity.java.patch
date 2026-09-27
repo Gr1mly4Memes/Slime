@@ -52,7 +52,7 @@
      }
  
      @Override
-@@ -106,10 +_,34 @@
+@@ -106,10 +_,48 @@
          return 0.04;
      }
  
@@ -79,9 +79,23 @@
 +    }
 +    // Paper end - EAR 2
 +
++    // Slime start - Lag compensation
++    private void lagCompensation() {
++        if (!gr1mly4memes.slime.SlimeConfig.lagCompensationEnabled || !gr1mly4memes.slime.SlimeConfig.pickupAcceleration) return;
++        if ((this).level().isClientSide()) return;
++        if (pickupDelay == 0) return;
++        if (pickupDelay - ((ServerLevel) this.level()).tpsCalculator.applicableMissedTicks() <= 0) {
++            pickupDelay = 0;
++            return;
++        }
++        pickupDelay = pickupDelay - ((ServerLevel) this.level()).tpsCalculator.applicableMissedTicks();
++    }
++    // Slime end - Lag compensation
++
 +
      @Override
      public void tick() {
++        lagCompensation(); // Slime - Lag compensation
          if (this.getItem().isEmpty()) {
 -            this.discard();
 +            this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause

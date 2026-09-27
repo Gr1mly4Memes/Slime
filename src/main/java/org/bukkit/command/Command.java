@@ -42,6 +42,11 @@ public abstract class Command {
      * @deprecated Timings will be removed in the future
      */
     @Deprecated(forRemoval = true)
+    public co.aikar.timings.Timing timings; // Paper
+    /**
+     * @deprecated Timings will be removed in the future
+     */
+    @Deprecated(forRemoval = true)
     @NotNull public String getTimingName() {return getName();} // Paper
 
     protected Command(@NotNull String name) {
@@ -192,7 +197,7 @@ public abstract class Command {
             return true;
         }
 
-            // Paper start - use components for permissionMessage
+        // Paper start - use components for permissionMessage
         net.kyori.adventure.text.Component permissionMessage = this.permissionMessage != null ? this.permissionMessage : Bukkit.permissionMessage();
         if (!permissionMessage.equals(net.kyori.adventure.text.Component.empty())) {
             target.sendMessage(permissionMessage.replaceText(net.kyori.adventure.text.TextReplacementConfig.builder().matchLiteral("<permission>").replacement(permission).build()));
@@ -404,7 +409,7 @@ public abstract class Command {
     @Deprecated(since = "1.20.4")
     @NotNull
     public Command setPermissionMessage(@Nullable String permissionMessage) {
-        this.permissionMessage = ColorAPI.adventureOrNull(permissionMessage); // Paper
+        this.permissionMessage = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserializeOrNull(permissionMessage); // Paper
         return this;
     }
 
@@ -459,7 +464,7 @@ public abstract class Command {
 
     public static void broadcastCommandMessage(@NotNull CommandSender source, @NotNull String message, boolean sendToSource) {
         // Paper start
-        broadcastCommandMessage(source, ColorAPI.adventure(message), sendToSource);
+        broadcastCommandMessage(source, net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(message), sendToSource);
     }
 
     public static void broadcastCommandMessage(@NotNull CommandSender source, net.kyori.adventure.text.@NotNull Component message) {
@@ -468,11 +473,11 @@ public abstract class Command {
 
     public static void broadcastCommandMessage(@NotNull CommandSender source, net.kyori.adventure.text.@NotNull Component message, boolean sendToSource) {
         net.kyori.adventure.text.TextComponent.Builder result = net.kyori.adventure.text.Component.text()
-            .color(net.kyori.adventure.text.format.NamedTextColor.WHITE)
-            .decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false)
-            .append(source.name())
-            .append(net.kyori.adventure.text.Component.text(": "))
-            .append(message);
+                .color(net.kyori.adventure.text.format.NamedTextColor.WHITE)
+                .decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false)
+                .append(source.name())
+                .append(net.kyori.adventure.text.Component.text(": "))
+                .append(message);
         // Paper end
 
         if (source instanceof BlockCommandSender) {
@@ -494,9 +499,9 @@ public abstract class Command {
         Set<Permissible> users = Bukkit.getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
         // Paper start
         net.kyori.adventure.text.TextComponent.Builder colored = net.kyori.adventure.text.Component.text()
-            .color(net.kyori.adventure.text.format.NamedTextColor.GRAY)
-            .decorate(net.kyori.adventure.text.format.TextDecoration.ITALIC)
-            .append(net.kyori.adventure.text.Component.text("["), result, net.kyori.adventure.text.Component.text("]"));
+                .color(net.kyori.adventure.text.format.NamedTextColor.GRAY)
+                .decorate(net.kyori.adventure.text.format.TextDecoration.ITALIC)
+                .append(net.kyori.adventure.text.Component.text("["), result, net.kyori.adventure.text.Component.text("]"));
         // Paper end
 
         if (sendToSource && !(source instanceof ConsoleCommandSender)) {

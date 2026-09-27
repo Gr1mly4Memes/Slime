@@ -1,6 +1,5 @@
 package io.papermc.paper.commands;
 
-import com.mohistmc.youer.api.ColorAPI;
 import io.papermc.paper.adventure.PaperAdventure;
 import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
@@ -31,7 +30,7 @@ public final class FeedbackForwardingSender extends ServerCommandSender {
 
     @Override
     public void sendMessage(final String message) {
-        this.sendMessage(ColorAPI.adventure(message));
+        this.sendMessage(LegacyComponentSerializer.legacySection().deserialize(message));
     }
 
     @Override
@@ -69,13 +68,13 @@ public final class FeedbackForwardingSender extends ServerCommandSender {
     public CommandSourceStack asVanilla() {
         final @Nullable ServerLevel respawnDimension = this.server.getServer().findRespawnDimension();
         return new CommandSourceStack(
-            new Source(this),
-            respawnDimension == null ? Vec3.ZERO : Vec3.atLowerCornerOf(respawnDimension.getRespawnData().pos()),
-            Vec2.ZERO,
-            respawnDimension,
-            LevelBasedPermissionSet.OWNER,
-            net.minecraft.network.chat.Component.literal(this.getName()),
-            this.server.getServer()
+                new Source(this),
+                respawnDimension == null ? Vec3.ZERO : Vec3.atLowerCornerOf(respawnDimension.getRespawnData().pos()),
+                Vec2.ZERO,
+                respawnDimension,
+                LevelBasedPermissionSet.OWNER,
+                net.minecraft.network.chat.Component.literal(this.getName()),
+                this.server.getServer()
         );
     }
 

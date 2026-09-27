@@ -151,7 +151,7 @@
 +    public final org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 +    private final alternate.current.wire.WireHandler wireHandler = new alternate.current.wire.WireHandler(this); // Paper - optimize redstone (Alternate Current)
 +    public boolean hasRidableMoveEvent = false; // Purpur - Ridables
-+    public TPSCalculator tpsCalculator = new TPSCalculator(); // DivineMC - Lag Compensation
++    public gr1mly4memes.slime.util.tps.TPSCalculator tpsCalculator = new gr1mly4memes.slime.util.tps.TPSCalculator(); // Slime - Lag Compensation
 +
 +    @Override
 +    public @Nullable LevelChunk getChunkIfLoaded(int x, int z) {
@@ -675,7 +675,7 @@
              this.chunkSource.chunkScanner(),
              this.registryAccess(),
              server.getStructureTemplateManager(),
-@@ -302,11 +_,35 @@
+@@ -302,18 +_,47 @@
  
          this.sleepStatus = new SleepStatus();
          this.gameEventDispatcher = new GameEventDispatcher(this);
@@ -713,6 +713,19 @@
  
      @Override
      public int getNextEntityId() {
+         int id = 0;
+ 
+-        while (id == 0 || this.chunkSource.hasEntityWithId(id)) {
++        while (id <= 0 || this.chunkSource.hasEntityWithId(id)) { // Slime - Prevent Entity ID counter overflow
+             id = ENTITY_COUNTER.incrementAndGet();
++            // Slime start - Prevent Entity ID counter overflow
++            if (id <= 0) {
++                ENTITY_COUNTER.set(0);
++            }
++            // Slime end - Prevent Entity ID counter overflow
+         }
+ 
+         return id;
 @@ -339,7 +_,7 @@
      }
  
@@ -760,7 +773,7 @@
              }
          }
  
-+        this.tpsCalculator.doTick(); // DivineMC - Lag compensation
++        this.tpsCalculator.doTick(); // Slime - Lag compensation
 +
          this.updateSkyBrightness();
          if (runs) {
@@ -1436,7 +1449,7 @@
          Entity existing = this.getEntity(player.getUUID());
          if (existing != null) {
              LOGGER.warn("Force-added player with duplicate UUID {}", player.getUUID());
-@@ -993,45 +_,136 @@
+@@ -993,46 +_,139 @@
              this.removePlayerImmediately((ServerPlayer)existing, Entity.RemovalReason.DISCARDED);
          }
  
@@ -1464,11 +1477,6 @@
              return false;
          } else {
 -            return this.entityManager.addNewEntity(entity);
-+            if (entity instanceof Villager && YouerConfig.custom_no_villager) return false;
-+            if (BanEntity.check(entity)) {
-+                entity.discard();
-+                return false;
-+            }
 +            if (entity instanceof net.minecraft.world.entity.item.ItemEntity item && item.getItem().isEmpty()) return false; // Paper - Prevent empty items from being added
 +            // Paper start - capture all item additions to the world
 +            if (captureDrops != null && entity instanceof net.minecraft.world.entity.item.ItemEntity item) {
@@ -1551,6 +1559,7 @@
  
      @Override
      public void destroyBlockProgress(int id, BlockPos blockPos, int progress) {
+-        for (ServerPlayer player : this.server.getPlayerList().getPlayers()) {
 +        // CraftBukkit start
 +        Player breakerPlayer = null;
 +        Entity entity = this.getEntity(id);
@@ -1567,20 +1576,29 @@
 +                    .callEvent();
 +        }
 +        // Paper end - Add BlockBreakProgressUpdateEvent
-         for (ServerPlayer player : this.server.getPlayerList().getPlayers()) {
++        // Nitro - reduce block destruction packet allocations
++        var players = this.server.getPlayerList().getPlayers();
++        if (players.isEmpty()) {
++            return;
++        }
++        ClientboundBlockDestructionPacket packet = new ClientboundBlockDestructionPacket(id, blockPos, progress);
++        // Nitro - reduce block destruction packet allocations
++        for (ServerPlayer player : players) { // Nitro - reduce block destruction packet allocations
              if (player.level() == this && player.getId() != id) {
                  double xd = blockPos.getX() - player.getX();
                  double yd = blockPos.getY() - player.getY();
                  double zd = blockPos.getZ() - player.getZ();
                  if (xd * xd + yd * yd + zd * zd < 1024.0) {
+-                    player.connection.send(new ClientboundBlockDestructionPacket(id, blockPos, progress));
 +                    // CraftBukkit start
 +                    if (breakerPlayer != null && !player.getBukkitEntity().canSee(breakerPlayer.getBukkitEntity())) {
 +                        continue;
 +                    }
 +                    // CraftBukkit end
-                     player.connection.send(new ClientboundBlockDestructionPacket(id, blockPos, progress));
++                    player.connection.send(packet); // Nitro - reduce block destruction packet allocations
                  }
              }
+         }
 @@ -1042,6 +_,12 @@
      public void playSeededSound(
          @Nullable Entity except, double x, double y, double z, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch, long seed

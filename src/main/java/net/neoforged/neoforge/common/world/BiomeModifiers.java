@@ -10,6 +10,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.random.Weighted;
 import net.minecraft.util.random.WeightedList;
@@ -44,9 +45,9 @@ public final class BiomeModifiers {
      * @param step     Decoration step to run features in.
      */
     public record AddFeaturesBiomeModifier(HolderSet<Biome> biomes, HolderSet<PlacedFeature> features,
-            Decoration step) implements BiomeModifier {
+                                           Decoration step) implements BiomeModifier {
         @Override
-        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+        public void modify(RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
             if (phase == Phase.ADD && this.biomes.contains(biome)) {
                 BiomeGenerationSettingsBuilder generationSettings = builder.getGenerationSettings();
                 this.features.forEach(holder -> generationSettings.addFeature(this.step, holder));
@@ -76,7 +77,7 @@ public final class BiomeModifiers {
      * @param steps    Decoration steps to remove features from.
      */
     public record RemoveFeaturesBiomeModifier(HolderSet<Biome> biomes, HolderSet<PlacedFeature> features,
-            Set<Decoration> steps) implements BiomeModifier {
+                                              Set<Decoration> steps) implements BiomeModifier {
         /**
          * Creates a modifier that removes the given features from all decoration steps in the given biomes.
          *
@@ -88,7 +89,7 @@ public final class BiomeModifiers {
         }
 
         @Override
-        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+        public void modify(RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
             if (phase == Phase.REMOVE && this.biomes.contains(biome)) {
                 BiomeGenerationSettingsBuilder generationSettings = builder.getGenerationSettings();
                 for (Decoration step : this.steps) {
@@ -157,7 +158,7 @@ public final class BiomeModifiers {
         }
 
         @Override
-        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+        public void modify(RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
             if (phase == Phase.ADD && this.biomes.contains(biome)) {
                 MobSpawnSettingsBuilder spawns = builder.getMobSpawnSettings();
                 for (Weighted<SpawnerData> spawner : this.spawners.unwrap()) {
@@ -188,9 +189,9 @@ public final class BiomeModifiers {
      * @param entityTypes EntityTypes to remove from spawn lists.
      */
     public record RemoveSpawnsBiomeModifier(HolderSet<Biome> biomes,
-            HolderSet<EntityType<?>> entityTypes) implements BiomeModifier {
+                                            HolderSet<EntityType<?>> entityTypes) implements BiomeModifier {
         @Override
-        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+        public void modify(RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
             if (phase == Phase.REMOVE && this.biomes.contains(biome)) {
                 MobSpawnSettingsBuilder spawnBuilder = builder.getMobSpawnSettings();
                 spawnBuilder.removeSpawns(data -> this.entityTypes.contains(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(data.value().type())));
@@ -205,7 +206,7 @@ public final class BiomeModifiers {
 
     /**
      * <p>Stock biome modifier that adds carvers to biomes (from the configured_carver json registry). Has the following json format:</p>
-     * 
+     *
      * <pre>
      * {
      *   "type": "neoforge:add_carvers", // required
@@ -220,7 +221,7 @@ public final class BiomeModifiers {
      */
     public record AddCarversBiomeModifier(HolderSet<Biome> biomes, HolderSet<WorldCarver> carvers) implements BiomeModifier {
         @Override
-        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+        public void modify(RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
             if (phase == Phase.ADD && this.biomes.contains(biome)) {
                 BiomeGenerationSettingsBuilder generationSettings = builder.getGenerationSettings();
                 this.carvers.forEach(generationSettings::addCarver);
@@ -235,7 +236,7 @@ public final class BiomeModifiers {
 
     /**
      * <p>Stock biome modifier that removes carvers from biomes. Has the following json format:</p>
-     * 
+     *
      * <pre>
      * {
      *   "type": "neoforge:remove_carvers", // required
@@ -250,7 +251,7 @@ public final class BiomeModifiers {
      */
     public record RemoveCarversBiomeModifier(HolderSet<Biome> biomes, HolderSet<WorldCarver> carvers) implements BiomeModifier {
         @Override
-        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+        public void modify(RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
             if (phase == Phase.REMOVE && this.biomes.contains(biome)) {
                 BiomeGenerationSettingsBuilder generationSettings = builder.getGenerationSettings();
                 generationSettings.getCarvers().removeIf(this.carvers::contains);
@@ -265,7 +266,7 @@ public final class BiomeModifiers {
 
     /**
      * <p>Stock biome modifier at adds spawn costs to a biome. Has the following json format:</p>
-     * 
+     *
      * <pre>
      * {
      *   "type": "neoforge:add_spawn_costs", // Required
@@ -283,9 +284,9 @@ public final class BiomeModifiers {
      * @param spawnCost   MobSpawnCost to add for those entity types.
      */
     public record AddSpawnCostsBiomeModifier(HolderSet<Biome> biomes, HolderSet<EntityType<?>> entityTypes,
-            MobSpawnSettings.MobSpawnCost spawnCost) implements BiomeModifier {
+                                             MobSpawnSettings.MobSpawnCost spawnCost) implements BiomeModifier {
         @Override
-        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+        public void modify(RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
             if (phase == Phase.ADD) {
                 MobSpawnSettingsBuilder spawnBuilder = builder.getMobSpawnSettings();
                 for (var entityType : entityTypes) {
@@ -302,7 +303,7 @@ public final class BiomeModifiers {
 
     /**
      * <p>Stock biome modifier that removes mob spawn costs from a biome. Has the following json format:</p>
-     * 
+     *
      * <pre>
      * {
      *   "type": "neoforge:remove_spawn_costs", // Required
@@ -315,9 +316,9 @@ public final class BiomeModifiers {
      * @param entityTypes EntityTypes to remove from spawn lists.
      */
     public record RemoveSpawnCostsBiomeModifier(HolderSet<Biome> biomes,
-            HolderSet<EntityType<?>> entityTypes) implements BiomeModifier {
+                                                HolderSet<EntityType<?>> entityTypes) implements BiomeModifier {
         @Override
-        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+        public void modify(RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
             if (phase == Phase.REMOVE) {
                 MobSpawnSettingsBuilder spawnBuilder = builder.getMobSpawnSettings();
                 for (var entityType : entityTypes) {

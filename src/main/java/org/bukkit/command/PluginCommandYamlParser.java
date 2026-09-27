@@ -74,7 +74,7 @@ public class PluginCommandYamlParser {
             }
 
             if (permissionMessage != null) {
-                newCmd.permissionMessage(ColorAPI.adventure(permissionMessage.toString())); // Paper
+                newCmd.permissionMessage(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(permissionMessage.toString())); // Paper
             }
 
             pluginCmds.add(newCmd);

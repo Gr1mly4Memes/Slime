@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.youer.api.ColorAPI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -43,10 +42,6 @@ public class CraftInventoryCustom extends CraftInventory {
 
     public CraftInventoryCustom(InventoryHolder owner, int size, String title) {
         super(new MinecraftInventory(owner, size, title));
-    }
-
-    public CraftInventoryCustom(InventoryHolder owner, NonNullList<ItemStack> items) {
-        super(new MinecraftInventory(owner, items));
     }
 
     public String getTitle() {
@@ -101,7 +96,7 @@ public class CraftInventoryCustom extends CraftInventory {
             Preconditions.checkArgument(title != null, "title cannot be null");
             this.items = NonNullList.withSize(size, ItemStack.EMPTY);
             this.title = title;
-            this.adventure$title = ColorAPI.adventure(title);
+            this.adventure$title = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(title);
             this.viewers = new ArrayList<>();
             this.owner = owner;
             this.type = InventoryType.CHEST;
@@ -112,15 +107,6 @@ public class CraftInventoryCustom extends CraftInventory {
             this.items = NonNullList.withSize(size, ItemStack.EMPTY);
             this.title = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(title);
             this.adventure$title = title;
-            this.viewers = new ArrayList<>();
-            this.owner = owner;
-            this.type = InventoryType.CHEST;
-        }
-
-        public MinecraftInventory(InventoryHolder owner, NonNullList<ItemStack> items) {
-            this.items = items;
-            this.title = "Chest";
-            this.adventure$title = ColorAPI.adventure(title);
             this.viewers = new ArrayList<>();
             this.owner = owner;
             this.type = InventoryType.CHEST;

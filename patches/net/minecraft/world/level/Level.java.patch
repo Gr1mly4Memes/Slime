@@ -87,7 +87,7 @@
      private final boolean isDebug;
      private int skyDarken;
      protected int randValue = RandomSource.createThreadLocalInstance().nextInt();
-@@ -120,11 +_,11 @@
+@@ -120,18 +_,746 @@
      public float rainLevel;
      public float oThunderLevel;
      public float thunderLevel;
@@ -97,11 +97,12 @@
      private final RandomSource soundSeedGenerator = RandomSource.createThreadSafe();
      private final Holder<DimensionType> dimensionTypeRegistration;
 -    protected final WritableLevelData levelData;
+-    private final boolean isClientSide;
 +    public final WritableLevelData levelData;
-     private final boolean isClientSide;
++    public final boolean isClientSide; // Slime - private to public
      private final BiomeManager biomeManager;
      private final ResourceKey<Level> dimension;
-@@ -132,6 +_,734 @@
+     private final RegistryAccess registryAccess;
      private final DamageSources damageSources;
      private final PalettedContainerFactory palettedContainerFactory;
      private long subTickCount;

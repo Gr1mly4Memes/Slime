@@ -2,7 +2,6 @@ package org.purpurmc.purpur;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import com.mohistmc.youer.Youer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -75,8 +74,8 @@ public class PurpurConfig {
         commands = new HashMap<>();
         commands.put("purpur", new PurpurCommand("purpur"));
 
-        version = getInt("config-version", 48);
-        set("config-version", 48);
+        version = getInt("config-version", 49);
+        set("config-version", 49);
 
         readConfig(PurpurConfig.class, null);
 
@@ -231,7 +230,7 @@ public class PurpurConfig {
         deathMessageOnlyBroadcastToAffectedPlayer = getBoolean("settings.broadcasts.death.only-broadcast-to-affected-player", deathMessageOnlyBroadcastToAffectedPlayer);
     }
 
-    public static String serverModName = Youer.NAME;
+    public static String serverModName = io.papermc.paper.ServerBuildInfo.buildInfo().brandName();
     private static void serverModName() {
         serverModName = getString("settings.server-mod-name", serverModName);
     }
@@ -331,7 +330,6 @@ public class PurpurConfig {
     public static boolean enderChestSixRows = false;
     public static boolean enderChestPermissionRows = false;
     public static boolean enderChestPersistHiddenRows = true;
-    public static boolean cryingObsidianValidForPortalFrame = false;
     public static int beeInsideBeeHive = 3;
     public static boolean anvilCumulativeCost = true;
     public static int smoothSnowAccumulationStep = 0;
@@ -376,7 +374,6 @@ public class PurpurConfig {
         org.bukkit.event.inventory.InventoryType.ENDER_CHEST.setDefaultSize(enderChestSixRows ? 54 : 27);
         enderChestPermissionRows = getBoolean("settings.blocks.ender_chest.use-permissions-for-rows", enderChestPermissionRows);
         enderChestPersistHiddenRows = getBoolean("settings.blocks.ender_chest.persist-hidden-rows", enderChestPersistHiddenRows);
-        cryingObsidianValidForPortalFrame = getBoolean("settings.blocks.crying_obsidian.valid-for-portal-frame", cryingObsidianValidForPortalFrame);
         beeInsideBeeHive = getInt("settings.blocks.beehive.max-bees-inside", beeInsideBeeHive);
         anvilCumulativeCost = getBoolean("settings.blocks.anvil.cumulative-cost", anvilCumulativeCost);
         smoothSnowAccumulationStep = getInt("settings.blocks.snow.smooth-accumulation-step", smoothSnowAccumulationStep);
@@ -483,7 +480,7 @@ public class PurpurConfig {
 
     public static boolean loggerSuppressInitLegacyMaterialError = false;
     public static boolean loggerSuppressIgnoredAdvancementWarnings = false;
-    public static boolean loggerSuppressUnrecognizedRecipeErrors = true;
+    public static boolean loggerSuppressUnrecognizedRecipeErrors = false;
     public static boolean loggerSuppressSetBlockFarChunk = false;
     public static boolean loggerSuppressLibraryLoader = false;
     private static void loggerSettings() {
@@ -604,7 +601,7 @@ public class PurpurConfig {
 
     public static boolean registerMinecraftDisabledCommands = false;
     private static void registerMinecraftDisabledCommands() {
-        registerMinecraftDisabledCommands = getBoolean("settings.register-minecraft-disabled-commands", registerMinecraftDebugCommands);
+        registerMinecraftDisabledCommands = getBoolean("settings.register-minecraft-disabled-commands", registerMinecraftDisabledCommands);
     }
 
     public static List<String> startupCommands = new ArrayList<>();
@@ -617,5 +614,10 @@ public class PurpurConfig {
             }
             startupCommands.add(command);
         });
+    }
+
+    public static boolean generateEndVoidRings = false;
+    private static void generateEndVoidRings() {
+        generateEndVoidRings = getBoolean("settings.generate-end-void-rings", generateEndVoidRings);
     }
 }

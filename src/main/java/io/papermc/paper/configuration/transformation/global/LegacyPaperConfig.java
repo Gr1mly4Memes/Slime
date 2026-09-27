@@ -1,6 +1,5 @@
 package io.papermc.paper.configuration.transformation.global;
 
-import com.mohistmc.youer.api.ColorAPI;
 import com.mojang.logging.LogUtils;
 import io.papermc.paper.configuration.Configuration;
 import java.util.function.Predicate;
@@ -19,7 +18,7 @@ import org.spongepowered.configurate.transformation.TransformAction;
 import static org.spongepowered.configurate.NodePath.path;
 
 public final class LegacyPaperConfig {
-    private static final Logger LOGGER = com.mohistmc.youer.util.LogUtils.getClassLogger();
+    private static final Logger LOGGER = gr1mly4memes.slime.util.LogUtils.getClassLogger(); // Slime
 
     private LegacyPaperConfig() {
     }
@@ -32,96 +31,96 @@ public final class LegacyPaperConfig {
     // must be run BEFORE the "settings" flatten
     private static ConfigurationTransformation.Versioned versioned() {
         return ConfigurationTransformation.versionedBuilder()
-            .versionKey(Configuration.LEGACY_CONFIG_VERSION_FIELD)
-            .addVersion(11, ConfigurationTransformation.builder().addAction(path("settings", "play-in-use-item-spam-threshold"), TransformAction.rename("incoming-packet-spam-threshold")).build())
-            .addVersion(14, ConfigurationTransformation.builder().addAction(path("settings", "spam-limiter", "tab-spam-increment"), (path, value) -> {
-                if (value.getInt() == 10) {
-                    value.set(2);
-                }
-                return null;
-            }).build())
-            .addVersion(15, ConfigurationTransformation.builder().addAction(path("settings"), (path, value) -> {
-                value.node("async-chunks", "threads").set(-1);
-                return null;
-            }).build())
-            .addVersion(21, ConfigurationTransformation.builder().addAction(path("use-display-name-in-quit-message"), (path, value) -> new Object[]{"settings", "use-display-name-in-quit-message"}).build())
-            .addVersion(23, ConfigurationTransformation.builder().addAction(path("settings", "chunk-loading", "global-max-chunk-load-rate"), (path, value) -> {
-                if (value.getDouble() == 300.0) {
-                    value.set(-1.0);
-                }
-                return null;
-            }).build())
-            .addVersion(25, ConfigurationTransformation.builder().addAction(path("settings", "chunk-loading", "player-max-concurrent-loads"), (path, value) -> {
-                if (value.getDouble() == 4.0) {
-                    value.set(20.0);
-                }
-                return null;
-            }).build())
-            .build();
+                .versionKey(Configuration.LEGACY_CONFIG_VERSION_FIELD)
+                .addVersion(11, ConfigurationTransformation.builder().addAction(path("settings", "play-in-use-item-spam-threshold"), TransformAction.rename("incoming-packet-spam-threshold")).build())
+                .addVersion(14, ConfigurationTransformation.builder().addAction(path("settings", "spam-limiter", "tab-spam-increment"), (path, value) -> {
+                    if (value.getInt() == 10) {
+                        value.set(2);
+                    }
+                    return null;
+                }).build())
+                .addVersion(15, ConfigurationTransformation.builder().addAction(path("settings"), (path, value) -> {
+                    value.node("async-chunks", "threads").set(-1);
+                    return null;
+                }).build())
+                .addVersion(21, ConfigurationTransformation.builder().addAction(path("use-display-name-in-quit-message"), (path, value) -> new Object[]{"settings", "use-display-name-in-quit-message"}).build())
+                .addVersion(23, ConfigurationTransformation.builder().addAction(path("settings", "chunk-loading", "global-max-chunk-load-rate"), (path, value) -> {
+                    if (value.getDouble() == 300.0) {
+                        value.set(-1.0);
+                    }
+                    return null;
+                }).build())
+                .addVersion(25, ConfigurationTransformation.builder().addAction(path("settings", "chunk-loading", "player-max-concurrent-loads"), (path, value) -> {
+                    if (value.getDouble() == 4.0) {
+                        value.set(20.0);
+                    }
+                    return null;
+                }).build())
+                .build();
     }
 
     // other non-versioned transforms found in PaperConfig
     // must be run BEFORE the "settings" flatten
     private static ConfigurationTransformation notVersioned(final YamlConfiguration spigotConfiguration) {
         return ConfigurationTransformation.builder()
-            .addAction(path("settings"), (path, value) -> {
-                final ConfigurationNode node = value.node("async-chunks");
-                if (node.hasChild("load-threads")) {
-                    if (!node.hasChild("threads")) {
-                        node.node("threads").set(node.node("load-threads").getInt());
+                .addAction(path("settings"), (path, value) -> {
+                    final ConfigurationNode node = value.node("async-chunks");
+                    if (node.hasChild("load-threads")) {
+                        if (!node.hasChild("threads")) {
+                            node.node("threads").set(node.node("load-threads").getInt());
+                        }
+                        node.removeChild("load-threads");
                     }
-                    node.removeChild("load-threads");
-                }
-                node.removeChild("generation");
-                node.removeChild("enabled");
-                node.removeChild("thread-per-world-generation");
-                return null;
-            })
-            .addAction(path("allow-perm-block-break-exploits"), (path, value) -> new Object[]{"settings", "unsupported-settings", "allow-permanent-block-break-exploits"})
-            .addAction(path("settings", "unsupported-settings", "allow-tnt-duplication"), TransformAction.rename("allow-piston-duplication"))
-            .addAction(path("settings", "save-player-data"), (path, value) -> {
-                final Object val = value.raw();
-                if (val instanceof Boolean bool) {
-                    spigotConfiguration.set("players.disable-saving", !bool);
-                }
-                value.raw(null);
-                return null;
-            })
-            .addAction(path("settings", "log-named-entity-deaths"), (path, value) -> {
-                final Object val = value.raw();
-                if (val instanceof Boolean bool && !bool) {
-                    spigotConfiguration.set("settings.log-named-deaths", false);
-                }
-                value.raw(null);
-                return null;
-            })
-            .build();
+                    node.removeChild("generation");
+                    node.removeChild("enabled");
+                    node.removeChild("thread-per-world-generation");
+                    return null;
+                })
+                .addAction(path("allow-perm-block-break-exploits"), (path, value) -> new Object[]{"settings", "unsupported-settings", "allow-permanent-block-break-exploits"})
+                .addAction(path("settings", "unsupported-settings", "allow-tnt-duplication"), TransformAction.rename("allow-piston-duplication"))
+                .addAction(path("settings", "save-player-data"), (path, value) -> {
+                    final Object val = value.raw();
+                    if (val instanceof Boolean bool) {
+                        spigotConfiguration.set("players.disable-saving", !bool);
+                    }
+                    value.raw(null);
+                    return null;
+                })
+                .addAction(path("settings", "log-named-entity-deaths"), (path, value) -> {
+                    final Object val = value.raw();
+                    if (val instanceof Boolean bool && !bool) {
+                        spigotConfiguration.set("settings.log-named-deaths", false);
+                    }
+                    value.raw(null);
+                    return null;
+                })
+                .build();
     }
 
     // transforms to new format with configurate
     // must be run AFTER the "settings" flatten
     public static ConfigurationTransformation toNewFormat() {
         return ConfigurationTransformation.chain(
-            ConfigurationTransformation.versionedBuilder().versionKey(Configuration.LEGACY_CONFIG_VERSION_FIELD).addVersion(Configuration.FINAL_LEGACY_VERSION + 1, newFormatTransformation()).build(),
-            ConfigurationTransformation.builder().addAction(path(Configuration.LEGACY_CONFIG_VERSION_FIELD), TransformAction.rename(Configuration.VERSION_FIELD)).build() // rename to _version to place at the top
+                ConfigurationTransformation.versionedBuilder().versionKey(Configuration.LEGACY_CONFIG_VERSION_FIELD).addVersion(Configuration.FINAL_LEGACY_VERSION + 1, newFormatTransformation()).build(),
+                ConfigurationTransformation.builder().addAction(path(Configuration.LEGACY_CONFIG_VERSION_FIELD), TransformAction.rename(Configuration.VERSION_FIELD)).build() // rename to _version to place at the top
         );
     }
 
     private static ConfigurationTransformation newFormatTransformation() {
         final ConfigurationTransformation.Builder builder = ConfigurationTransformation.builder()
-            .addAction(path("verbose"), TransformAction.remove()) // not needed
-            .addAction(path("unsupported-settings", "allow-headless-pistons-readme"), TransformAction.remove())
-            .addAction(path("unsupported-settings", "allow-permanent-block-break-exploits-readme"), TransformAction.remove())
-            .addAction(path("unsupported-settings", "allow-piston-duplication-readme"), TransformAction.remove())
-            .addAction(path("packet-limiter", "limits", "all"), (path, value) -> new Object[]{"packet-limiter", "all-packets"})
-            .addAction(path("packet-limiter", "limits"), (path, value) -> new Object[]{"packet-limiter", "overrides"})
-            .addAction(path("packet-limiter", "overrides", ConfigurationTransformation.WILDCARD_OBJECT), (path, value) -> {
-                final Object keyValue = value.key();
-                if (keyValue != null && keyValue.toString().equals("PacketPlayInAutoRecipe")) { // add special cast to handle the default for moj-mapped servers that upgrade the config
-                    return path.with(path.size() - 1, ServerboundPlaceRecipePacket.class.getSimpleName()).array();
-                }
-                return null;
-            }).addAction(path("loggers"), TransformAction.rename("logging"));
+                .addAction(path("verbose"), TransformAction.remove()) // not needed
+                .addAction(path("unsupported-settings", "allow-headless-pistons-readme"), TransformAction.remove())
+                .addAction(path("unsupported-settings", "allow-permanent-block-break-exploits-readme"), TransformAction.remove())
+                .addAction(path("unsupported-settings", "allow-piston-duplication-readme"), TransformAction.remove())
+                .addAction(path("packet-limiter", "limits", "all"), (path, value) -> new Object[]{"packet-limiter", "all-packets"})
+                .addAction(path("packet-limiter", "limits"), (path, value) -> new Object[]{"packet-limiter", "overrides"})
+                .addAction(path("packet-limiter", "overrides", ConfigurationTransformation.WILDCARD_OBJECT), (path, value) -> {
+                    final Object keyValue = value.key();
+                    if (keyValue != null && keyValue.toString().equals("PacketPlayInAutoRecipe")) { // add special cast to handle the default for moj-mapped servers that upgrade the config
+                        return path.with(path.size() - 1, ServerboundPlaceRecipePacket.class.getSimpleName()).array();
+                    }
+                    return null;
+                }).addAction(path("loggers"), TransformAction.rename("logging"));
 
         moveFromRootAndRename(builder, "incoming-packet-spam-threshold", "incoming-packet-threshold", "spam-limiter");
 
@@ -199,7 +198,7 @@ public final class LegacyPaperConfig {
 
     @SuppressWarnings("deprecation") // valid use to convert legacy string to mini-message in legacy migration
     private static String miniMessage(final String input) {
-        return MiniMessage.miniMessage().serialize(ColorAPI.adventure(ChatColor.translateAlternateColorCodes('&', input)));
+        return MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacySection().deserialize(ChatColor.translateAlternateColorCodes('&', input)));
     }
 
     private static void moveFromRootToMisc(final ConfigurationTransformation.Builder builder, final String key) {

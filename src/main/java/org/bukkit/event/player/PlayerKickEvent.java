@@ -1,6 +1,5 @@
 package org.bukkit.event.player;
 
-import com.mohistmc.youer.api.ColorAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
@@ -28,8 +27,8 @@ public class PlayerKickEvent extends PlayerEvent implements Cancellable {
     @Deprecated(forRemoval = true)
     public PlayerKickEvent(final Player playerKicked, final String kickReason, final String leaveMessage) {
         super(playerKicked);
-        this.kickReason = ColorAPI.adventure(kickReason);
-        this.leaveMessage = ColorAPI.adventure(leaveMessage);
+        this.kickReason = LegacyComponentSerializer.legacySection().deserialize(kickReason);
+        this.leaveMessage = LegacyComponentSerializer.legacySection().deserialize(leaveMessage);
         this.cause = Cause.UNKNOWN;
     }
 
@@ -87,7 +86,7 @@ public class PlayerKickEvent extends PlayerEvent implements Cancellable {
      */
     @Deprecated
     public void setReason(String kickReason) {
-        this.kickReason = ColorAPI.adventure(kickReason);
+        this.kickReason = LegacyComponentSerializer.legacySection().deserialize(kickReason);
     }
 
     /**
@@ -127,7 +126,7 @@ public class PlayerKickEvent extends PlayerEvent implements Cancellable {
      */
     @Deprecated
     public void setLeaveMessage(@Nullable String leaveMessage) {
-        this.leaveMessage = ColorAPI.adventureOrNull(leaveMessage);
+        this.leaveMessage = LegacyComponentSerializer.legacySection().deserializeOrNull(leaveMessage);
     }
 
     /**

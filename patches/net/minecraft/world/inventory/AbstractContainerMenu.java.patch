@@ -4,7 +4,7 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Sets;
  import com.google.common.collect.Table;
-+import com.mohistmc.youer.bukkit.inventory.YouerModsInventory;
++import gr1mly4memes.slime.bukkit.inventory.SlimeModsInventory;
  import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.ints.IntArrayList;
  import it.unimi.dsi.fastutil.ints.IntList;
@@ -39,7 +39,7 @@
 +    public Player containerOwner = null;
 +    public InventoryView getBukkitView(){
 +        if (bukkitView == null && containerOwner != null) {
-+            org.bukkit.inventory.Inventory view = new CraftInventory(new YouerModsInventory(this, containerOwner));
++            org.bukkit.inventory.Inventory view = new CraftInventory(new SlimeModsInventory(this, containerOwner)); // Slime
 +            bukkitView = new CraftInventoryView<>(containerOwner.getBukkitEntity(), view, this);
 +        }
 +        return bukkitView;

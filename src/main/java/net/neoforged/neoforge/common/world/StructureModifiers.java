@@ -9,6 +9,7 @@ import com.mojang.serialization.MapCodec;
 import java.util.Set;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -28,7 +29,7 @@ public final class StructureModifiers {
      * <p>Stock structure modifier that adds a mob spawn override to a structure.
      * If a structure has mob spawn overrides, random mob spawning will use the structure's spawns instead of the local biome's spawns.
      * Has the following json format:</p>
-     * 
+     *
      * <pre>
      * {
      *   "type": "neoforge:add_spawns", // Required
@@ -42,9 +43,9 @@ public final class StructureModifiers {
      *   }
      * }
      * </pre>
-     * 
+     *
      * <p>Optionally accepts a list of spawner objects instead of a single spawner:</p>
-     * 
+     *
      * <pre>
      * {
      *   "type": "neoforge:add_spawns", // Required
@@ -68,7 +69,7 @@ public final class StructureModifiers {
      * @param spawners   List of SpawnerDatas specifying EntityType, weight, and pack size.
      */
     public record AddSpawnsStructureModifier(HolderSet<Structure> structures,
-            WeightedList<SpawnerData> spawners) implements StructureModifier {
+                                             WeightedList<SpawnerData> spawners) implements StructureModifier {
         /**
          * Convenience method for using a single {@link SpawnerData}.
          *
@@ -81,7 +82,7 @@ public final class StructureModifiers {
         }
 
         @Override
-        public void modify(Holder<Structure> structure, Phase phase, ModifiableStructureInfo.StructureInfo.Builder builder) {
+        public void modify(RegistryAccess registries, Holder<Structure> structure, Phase phase, ModifiableStructureInfo.StructureInfo.Builder builder) {
             if (phase == Phase.ADD && this.structures.contains(structure)) {
                 StructureSettingsBuilder settingsBuilder = builder.getStructureSettings();
                 for (Weighted<SpawnerData> spawner : this.spawners.unwrap()) {
@@ -103,7 +104,7 @@ public final class StructureModifiers {
      * see {@link ClearSpawnsStructureModifier} to remove override lists completely.
      * </p>
      * Has the following json format:</p>
-     * 
+     *
      * <pre>
      * {
      *   "type": "neoforge:remove_spawns", // Required
@@ -116,9 +117,9 @@ public final class StructureModifiers {
      * @param entityTypes EntityTypes to remove from spawn lists.
      */
     public record RemoveSpawnsStructureModifier(HolderSet<Structure> structures,
-            HolderSet<EntityType<?>> entityTypes) implements StructureModifier {
+                                                HolderSet<EntityType<?>> entityTypes) implements StructureModifier {
         @Override
-        public void modify(Holder<Structure> structure, Phase phase, ModifiableStructureInfo.StructureInfo.Builder builder) {
+        public void modify(RegistryAccess registries, Holder<Structure> structure, Phase phase, ModifiableStructureInfo.StructureInfo.Builder builder) {
             if (phase == Phase.REMOVE && this.structures.contains(structure)) {
                 StructureSettingsBuilder settingsBuilder = builder.getStructureSettings();
                 for (MobCategory category : MobCategory.values()) {
@@ -145,7 +146,7 @@ public final class StructureModifiers {
      * see {@link ClearSpawnsStructureModifier} to remove override lists completely.
      * </p>
      * Has the following json format:</p>
-     * 
+     *
      * <pre>
      * {
      *   "type": "neoforge:clear_spawns", // Required
@@ -158,9 +159,9 @@ public final class StructureModifiers {
      * @param categories Set of mob categories to remove spawn overrides for.
      */
     public record ClearSpawnsStructureModifier(HolderSet<Structure> structures,
-            Set<MobCategory> categories) implements StructureModifier {
+                                               Set<MobCategory> categories) implements StructureModifier {
         @Override
-        public void modify(Holder<Structure> structure, Phase phase, ModifiableStructureInfo.StructureInfo.Builder builder) {
+        public void modify(RegistryAccess registries, Holder<Structure> structure, Phase phase, ModifiableStructureInfo.StructureInfo.Builder builder) {
             if (phase == Phase.REMOVE && this.structures.contains(structure)) {
                 StructureSettingsBuilder settingsBuilder = builder.getStructureSettings();
                 for (MobCategory category : this.categories) {

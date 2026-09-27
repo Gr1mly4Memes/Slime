@@ -116,10 +116,10 @@ public final class Bukkit {
         server.getLogger().info(getVersionMessage());
     }
     /**
-      * Gets message describing the version server is running.
-      *
-      * @return message describing the version server is running
-      */
+     * Gets message describing the version server is running.
+     *
+     * @return message describing the version server is running
+     */
     @NotNull
     public static String getVersionMessage() {
         final io.papermc.paper.ServerBuildInfo version = io.papermc.paper.ServerBuildInfo.buildInfo();
@@ -809,16 +809,6 @@ public final class Bukkit {
         return server.isTickingWorlds();
     }
     // Paper end
-
-    /**
-     * Gets a list of all world name on this server.
-     *
-     * @return a set of worlds
-     */
-    @NotNull
-    public static Set<String> getWorldsByName() {
-        return server.getWorldsByName();
-    }
 
     /**
      * Creates or loads a world with the given name using the specified
@@ -3027,126 +3017,4 @@ public final class Bukkit {
     public static void restart() {
         server.restart();
     }
-
-    // Purpur start - Bring back server name
-    /**
-     * Get the name of this server
-     * @return the name of the server
-     */
-    @NotNull
-    public static String getServerName() {
-        return server.getServerName();
-    }
-    // Purpur end - Bring back server name
-
-    // Purpur start - Lagging threshold
-    /**
-     * Check if server is lagging according to laggy threshold setting
-     *
-     * @return True if lagging
-     */
-    public static boolean isLagging() {
-        return server.isLagging();
-    }
-    // Purpur end - Lagging threshold
-
-    // Purpur start - Debug Marker API
-    /**
-     * Creates debug block highlight on specified block location and show it to all players on the server.
-     * <p>
-     * Clients may be inconsistent in displaying it.
-     * @param location Location to highlight
-     * @param duration Duration for highlight to show in milliseconds
-     * @deprecated until further notice. NOOP since 1.21.10
-     */
-    @Deprecated
-    public static void sendBlockHighlight(@NotNull Location location, int duration) {
-        server.sendBlockHighlight(location, duration);
-    }
-
-    /**
-     * Creates debug block highlight on specified block location and show it to all players on the server.
-     * <p>
-     * Clients may be inconsistent in displaying it.
-     * @param location Location to highlight
-     * @param duration Duration for highlight to show in milliseconds
-     * @param argb Color of the highlight. ARGB int. Will be ignored on some versions of vanilla client
-     * @deprecated until further notice. NOOP since 1.21.10
-     */
-    @Deprecated
-    public static void sendBlockHighlight(@NotNull Location location, int duration, int argb) {
-        server.sendBlockHighlight(location, duration, argb);
-    }
-
-    /**
-     * Creates debug block highlight on specified block location and show it to all players on the server.
-     * <p>
-     * Clients may be inconsistent in displaying it.
-     * @param location Location to highlight
-     * @param duration Duration for highlight to show in milliseconds
-     * @param text Text to show above the highlight
-     * @deprecated until further notice. NOOP since 1.21.10
-     */
-    @Deprecated
-    public static void sendBlockHighlight(@NotNull Location location, int duration, @NotNull String text) {
-        server.sendBlockHighlight(location, duration, text);
-    }
-
-    /**
-     * Creates debug block highlight on specified block location and show it to all players on the server.
-     * <p>
-     * Clients may be inconsistent in displaying it.
-     * @param location Location to highlight
-     * @param duration Duration for highlight to show in milliseconds
-     * @param text Text to show above the highlight
-     * @param argb Color of the highlight. ARGB int. Will be ignored on some versions of vanilla client
-     * @deprecated until further notice. NOOP since 1.21.10
-     */
-    @Deprecated
-    public static void sendBlockHighlight(@NotNull Location location, int duration, @NotNull String text, int argb) {
-        server.sendBlockHighlight(location, duration, text, argb);
-    }
-
-    /**
-     * Creates debug block highlight on specified block location and show it to all players on the server.
-     * <p>
-     * Clients may be inconsistent in displaying it.
-     * @param location Location to highlight
-     * @param duration Duration for highlight to show in milliseconds
-     * @param color Color of the highlight. Will be ignored on some versions of vanilla client
-     * @param transparency Transparency of the highlight
-     * @throws IllegalArgumentException If transparency is outside 0-255 range
-     * @deprecated until further notice. NOOP since 1.21.10
-     */
-    @Deprecated
-    public static void sendBlockHighlight(@NotNull Location location, int duration, @NotNull org.bukkit.Color color, int transparency) {
-        server.sendBlockHighlight(location, duration, color, transparency);
-    }
-
-    /**
-     * Creates debug block highlight on specified block location and show it to all players on the server.
-     * <p>
-     * Clients may be inconsistent in displaying it.
-     * @param location Location to highlight
-     * @param duration Duration for highlight to show in milliseconds
-     * @param text Text to show above the highlight
-     * @param color Color of the highlight. Will be ignored on some versions of vanilla client
-     * @param transparency Transparency of the highlight
-     * @throws IllegalArgumentException If transparency is outside 0-255 range
-     * @deprecated until further notice. NOOP since 1.21.10
-     */
-    @Deprecated
-    public static void sendBlockHighlight(@NotNull Location location, int duration, @NotNull String text, @NotNull org.bukkit.Color color, int transparency) {
-        server.sendBlockHighlight(location, duration, text, color, transparency);
-    }
-
-    /**
-     * Clears all debug block highlights for all players on the server.
-     * @deprecated until further notice. NOOP since 1.21.10
-     */
-    @Deprecated
-    public static void clearBlockHighlights() {
-        server.clearBlockHighlights();
-    }
-    // Purpur end - Debug Marker API
 }

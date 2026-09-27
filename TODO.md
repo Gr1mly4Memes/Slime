@@ -1,12 +1,10 @@
-Fix Paper errors
-Fix Craftbukkit errors
-Fix Bukkit errors
+Fix Paper errors (only the AsyncFlush left)
 Fix Gr1mly4Memes errors (hey its me!)
-(total is 252 errors, yay!)
+(total is 7 errors, yay!)
 Add Slime patches back
-reimplement Pufferfish, Leaf, and DivineMC patches
+reimplement Pufferfish patches
 Cry myself to sleep
-Update Purpur
+Update Purpur (I really need to do that!)
 Check code
 Test for stability
 See whats up with Youer

@@ -1,6 +1,5 @@
 package org.bukkit.event.player;
 
-import com.mohistmc.youer.api.ColorAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
@@ -31,7 +30,7 @@ public class PlayerJoinEvent extends PlayerEvent {
     @Deprecated(forRemoval = true)
     public PlayerJoinEvent(@NotNull final Player playerJoined, @Nullable final String joinMessage) {
         super(playerJoined);
-        this.joinMessage = joinMessage != null ? ColorAPI.adventure(joinMessage) : null;
+        this.joinMessage = joinMessage != null ? LegacyComponentSerializer.legacySection().deserialize(joinMessage) : null;
     }
 
     /**
@@ -72,7 +71,7 @@ public class PlayerJoinEvent extends PlayerEvent {
      */
     @Deprecated
     public void setJoinMessage(@Nullable String joinMessage) {
-        this.joinMessage = joinMessage != null ? ColorAPI.adventure(joinMessage) : null;
+        this.joinMessage = joinMessage != null ? LegacyComponentSerializer.legacySection().deserialize(joinMessage) : null;
     }
 
     @NotNull

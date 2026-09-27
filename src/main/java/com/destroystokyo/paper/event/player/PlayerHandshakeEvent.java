@@ -1,7 +1,6 @@
 package com.destroystokyo.paper.event.player;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.youer.api.ColorAPI;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -218,7 +217,7 @@ public class PlayerHandshakeEvent extends Event implements Cancellable {
     @Deprecated
     public void setFailMessage(final String failMessage) {
         Preconditions.checkArgument(failMessage != null && !failMessage.isEmpty(), "fail message cannot be null or empty");
-        this.failMessage(ColorAPI.adventure(failMessage));
+        this.failMessage(LegacyComponentSerializer.legacySection().deserialize(failMessage));
     }
 
     /**

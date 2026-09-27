@@ -1,16 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -5,17 +_,26 @@
- import com.google.common.collect.Lists;
- import com.google.common.collect.Maps;
- import com.google.common.collect.Sets;
-+import com.mohistmc.youer.api.ColorAPI;
-+import com.mohistmc.youer.feature.YouerPlugin;
-+import com.mohistmc.youer.feature.db.DatabaseManager;
-+import com.mohistmc.youer.util.AsyncExecutor;
-+import com.mohistmc.youer.util.tps.TPSCalculator;
- import com.mojang.authlib.GameProfile;
- import com.mojang.datafixers.DataFixer;
+@@ -10,12 +_,16 @@
  import com.mojang.jtracy.DiscontinuousFrame;
  import com.mojang.jtracy.TracyClient;
  import com.mojang.logging.LogUtils;
@@ -198,7 +188,7 @@
      private final StructureTemplateManager structureTemplateManager;
      private final ServerTickRateManager tickRateManager;
      private final ServerDebugSubscribers debugSubscribers = new ServerDebugSubscribers(this);
-@@ -286,12 +_,219 @@
+@@ -286,12 +_,218 @@
      private final SuppressedExceptionCollector suppressedExceptions = new SuppressedExceptionCollector();
      private final DiscontinuousFrame tickFrame;
      private final PacketProcessor packetProcessor;
@@ -229,10 +219,9 @@
 +    public boolean isIteratingOverLevels = false; // Paper - Throw exception on world create while being ticked
 +    private final Set<String> pluginsBlockingSleep = new java.util.HashSet<>(); // Paper - API to allow/disallow tick sleeping
 +    public static final long SERVER_INIT = System.nanoTime(); // Paper - Lag compensation
-+    public AsyncExecutor pufferfish$mobSpawnExecutor = new AsyncExecutor("Pufferfish Async Mob Spawning Thread"); // Pufferfish - Optimize mob spawning
 +    public boolean lagging = false; // Purpur - Lagging threshold
 +    protected boolean upnp = false; // Purpur - UPnP Port Forwarding
-+    public final TPSCalculator tpsCalculator = new TPSCalculator(); // DivineMC - Lag compensation
++    public final gr1mly4memes.slime.util.tps.TPSCalculator tpsCalculator = new gr1mly4memes.slime.util.tps.TPSCalculator(); // Slime - Lag compensatio
 +    // Paper start - improve tick loop
 +    public final ca.spottedleaf.common.time.TickData tickTimes1s  = new ca.spottedleaf.common.time.TickData(java.util.concurrent.TimeUnit.SECONDS.toNanos(1L));
 +    public final ca.spottedleaf.common.time.TickData tickTimes5s  = new ca.spottedleaf.common.time.TickData(java.util.concurrent.TimeUnit.SECONDS.toNanos(5L));
@@ -504,14 +493,13 @@
          if (profiledDuration != null) {
              profiledDuration.finish(true);
          }
-@@ -408,33 +_,150 @@
+@@ -408,33 +_,149 @@
          }
      }
  
 +    // Paper start - rework world loading process
 +    protected void initPostWorld() {
 +        // Paper start - Configurable player collision; Handle collideRule team for player collision toggle
-+        YouerPlugin.init(); // Youer init mohist plugins
 +        final ServerScoreboard scoreboard = this.getScoreboard();
 +        final java.util.Collection<String> toRemove = scoreboard.getPlayerTeams().stream().filter(team -> team.getName().startsWith("collideRule_")).map(net.minecraft.world.scores.PlayerTeam::getName).collect(java.util.stream.Collectors.toList());
 +        for (String teamName : toRemove) {
@@ -920,7 +908,6 @@
          } catch (IOException e) {
              LOGGER.error("Failed to unlock level {}", this.storageSource.getLevelId(), e);
          }
-+        DatabaseManager.shutdown();
 +        // Spigot start
 +        io.papermc.paper.util.MCUtil.ASYNC_EXECUTOR.shutdown(); // Paper
 +        try {
@@ -941,6 +928,7 @@
 +        // Paper end - rewrite chunk system
 +        // Paper start - Improved watchdog support - move final shutdown items here
 +        Util.shutdownExecutors();
++        gr1mly4memes.slime.SlimeConfig.createWorldSections = false; // Slime
 +        net.neoforged.neoforge.server.ServerLifecycleHooks.handleServerStopped(this);
 +        this.onServerExit();
 +        // Paper end - Improved watchdog support - move final shutdown items here
@@ -1388,7 +1376,7 @@
              }
          }
  
-+        this.tpsCalculator.doTick(); // DivineMC - Lag compenstation
++        this.tpsCalculator.doTick(); // Slime - Lag compenstation
 +        new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
          this.tickCount++;
 +        net.neoforged.neoforge.event.EventHooks.fireServerTickPre(haveTime, this);
@@ -1746,7 +1734,7 @@
  
      public void setMotd(String motd) {
 +        // Paper start - Adventure
-+        this.motd = ColorAPI.adventure(motd);
++        this.motd = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserializeOr(motd, net.kyori.adventure.text.Component.empty());
 +    }
 +
 +    public net.kyori.adventure.text.Component motd() {

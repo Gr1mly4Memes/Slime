@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_25",
 
   "mixins": [
-    "compat.spark.MixinNeoForgeWorldInfoProvider",
     "server.dedicated.MixinDedicatedServer"
   ],
   "client": [],

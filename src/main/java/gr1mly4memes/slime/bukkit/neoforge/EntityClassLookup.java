@@ -121,7 +121,7 @@ public class EntityClassLookup {
         registerEntity(Slime.class, (server, entity) -> new CraftSlime(server, (Slime) entity));
         registerEntity(Ghast.class, (server, entity) -> new CraftGhast(server, (Ghast) entity));
         registerEntity(ZombifiedPiglin.class, (server, entity) -> new CraftPigZombie(server, (ZombifiedPiglin) entity));
-        registerEntity(EnderMan.class, (server, entity) -> new CraftEnderman(server, (EnderMan) entity));
+        registerEntity(Enderman.class, (server, entity) -> new CraftEnderman(server, (Enderman) entity));
         registerEntity(CaveSpider.class, (server, entity) -> new CraftCaveSpider(server, (CaveSpider) entity));
         registerEntity(Silverfish.class, (server, entity) -> new CraftSilverfish(server, (Silverfish) entity));
         registerEntity(Blaze.class, (server, entity) -> new CraftBlaze(server, (Blaze) entity));

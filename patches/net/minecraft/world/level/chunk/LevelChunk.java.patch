@@ -497,20 +497,21 @@
      private class BoundTickingBlockEntity<T extends BlockEntity> implements TickingBlockEntity {
          private final T blockEntity;
          private final BlockEntityTicker<T> ticker;
-@@ -734,6 +_,17 @@
+@@ -734,6 +_,18 @@
              this.ticker = ticker;
          }
  
-+        // DivineMC start - Lag compensation
++        // Slime start - Lag compensation
 +        private <T extends BlockEntity> void lagCompensation(Runnable original) {
 +            original.run();
++            if (!gr1mly4memes.slime.SlimeConfig.lagCompensationEnabled) return;
++            if (!gr1mly4memes.slime.SlimeConfig.blockEntityAcceleration) return;
 +            if (LevelChunk.this.level.isClientSide()) return;
-+
 +            for (int i = 0; i < ((ServerLevel) this.blockEntity.getLevel()).tpsCalculator.applicableMissedTicks(); i++) {
 +                original.run();
 +            }
 +        }
-+        // DivineMC end - Lag compensation
++        // Slime end - Lag compensation
 +
          @Override
          public void tick() {
@@ -524,11 +525,11 @@
                          BlockState blockState = LevelChunk.this.getBlockState(pos);
                          if (this.blockEntity.getType().isValid(blockState)) {
 -                            this.ticker.tick(LevelChunk.this.level, this.blockEntity.getBlockPos(), blockState, this.blockEntity);
-+                            // DivineMC start - Lag compensation
++                            // Slime start - Lag compensation
 +                            lagCompensation(() -> {
 +                                this.ticker.tick(LevelChunk.this.level, this.blockEntity.getBlockPos(), blockState, this.blockEntity);
 +                            });
-+                            // DivineMC end - Lag compensation
++                            // Slime end - Lag compensation
                              this.loggedInvalidBlockState = false;
 -                        } else if (!this.loggedInvalidBlockState) {
 -                            this.loggedInvalidBlockState = true;

@@ -1,12 +1,5 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -1,5 +_,6 @@
- package net.minecraft.server;
- 
-+import com.mohistmc.youer.Youer;
- import com.mojang.authlib.services.MinecraftServicesDiscoveryService;
- import com.mojang.datafixers.DataFixer;
- import com.mojang.logging.LogUtils;
 @@ -13,7 +_,10 @@
  import java.nio.file.Files;
  import java.nio.file.Path;
@@ -26,7 +19,7 @@
  import net.minecraft.server.packs.repository.PackRepository;
  import net.minecraft.server.packs.repository.ServerPacksSource;
  import net.minecraft.util.Mth;
-@@ -56,21 +_,26 @@
+@@ -56,21 +_,24 @@
  import net.minecraft.world.level.levelgen.presets.WorldPresets;
  import net.minecraft.world.level.storage.LevelDataAndDimensions;
  import net.minecraft.world.level.storage.LevelStorageSource;
@@ -44,9 +37,7 @@
  
      @SuppressForbidden(reason = "System.out needed before bootstrap")
      public static void main(String[] args) {
-+        Youer.initProperty();
 +        io.papermc.paper.log.LogManagerShutdownThread.hook(); // Paper - Improved watchdog support
-+        Youer.initI18n(); // Youer
          SharedConstants.tryDetectVersion();
          OptionParser parser = new OptionParser();
          OptionSpec<Void> nogui = parser.accepts("nogui");
@@ -55,7 +46,7 @@
          OptionSpec<Void> demo = parser.accepts("demo");
          OptionSpec<Void> bonusChest = parser.accepts("bonusChest");
          OptionSpec<Void> forceUpgrade = parser.accepts("forceUpgrade");
-@@ -86,12 +_,109 @@
+@@ -86,12 +_,117 @@
          OptionSpec<Path> pidFile = parser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
          OptionSpec<String> nonOptions = parser.nonOptions();
  
@@ -69,6 +60,14 @@
 +                .ofType(File.class)
 +                .defaultsTo(new File("bukkit.yml"))
 +                .describedAs("Yml file");
++
++        // Slime start - Add slime-settings option
++        parser.acceptsAll(Arrays.asList("slime-settings"), "File for slime settings")
++                .withRequiredArg()
++                .ofType(File.class)
++                .defaultsTo(new File("slime.yml"))
++                .describedAs("Yml file");
++        // Slime end - Add slime-settings option
 +
 +        parser.acceptsAll(Arrays.asList("C", "commands-settings"), "File for command settings")
 +                .withRequiredArg()
