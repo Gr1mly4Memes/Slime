@@ -188,11 +188,12 @@
      private final StructureTemplateManager structureTemplateManager;
      private final ServerTickRateManager tickRateManager;
      private final ServerDebugSubscribers debugSubscribers = new ServerDebugSubscribers(this);
-@@ -286,12 +_,218 @@
+@@ -286,12 +_,219 @@
      private final SuppressedExceptionCollector suppressedExceptions = new SuppressedExceptionCollector();
      private final DiscontinuousFrame tickFrame;
      private final PacketProcessor packetProcessor;
 -    private final TimerQueue<MinecraftServer> scheduledEvents;
++    public gg.pufferfish.pufferfish.util.AsyncExecutor mobSpawnExecutor = new gg.pufferfish.pufferfish.util.AsyncExecutor("MobSpawning"); // Pufferfish - optimize mob spawning
 +    // Paper - per-level scheduledEvents
      private final ServerClockManager clockManager;
  
@@ -2005,7 +2006,7 @@
 +    // CraftBukkit end
 +
      private ProfilerFiller createProfiler() {
-+        if (true) return net.minecraft.util.profiling.InactiveProfiler.INSTANCE; // Pufferfish - Disable Method Profiler
++        if (gg.pufferfish.pufferfish.PufferfishConfig.disableMethodProfiler) return net.minecraft.util.profiling.InactiveProfiler.INSTANCE; // Pufferfish
          if (this.willStartRecordingMetrics) {
              this.metricsRecorder = ActiveMetricsRecorder.createStarted(
                  new ServerMetricsSamplersProvider(Util.timeSource(), this.isDedicatedServer()),

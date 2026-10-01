@@ -234,21 +234,31 @@
                  if (!blockState.isAir() && progress >= 1.0F) {
                      this.destroyAndAck(pos, sequence, "insta mine");
                  } else {
-@@ -282,8 +_,10 @@
+@@ -282,8 +_,15 @@
      }
  
      public boolean destroyBlock(BlockPos pos) {
 +        // Neo: Fire the BlockBreakEvent, and ignore the original ItemStack#canDestroyBlock check since the break event manages the status of it.
          BlockState state = this.level.getBlockState(pos);
 -        if (!this.player.getMainHandItem().canDestroyBlock(state, this.level, pos, this.player)) {
++        // Paper start - Ensure BlockBreakEvent only fires for valid adventure breaks
++        if (this.player.blockActionRestricted(this.level, pos, this.gameModeForPlayer)) {
++            return false;
++        }
++        // Paper end - Ensure BlockBreakEvent only fires for valid adventure breaks
 +        var event = net.neoforged.neoforge.common.CommonHooks.fireBlockBreak(level, gameModeForPlayer, player, pos, state);
 +        if (event.isCanceled()) {
              return false;
          }
  
-@@ -299,28 +_,44 @@
+@@ -294,33 +_,45 @@
+             return false;
          }
  
+-        if (this.player.blockActionRestricted(this.level, pos, this.gameModeForPlayer)) {
+-            return false;
+-        }
+-
          BlockState adjustedState = block.playerWillDestroy(this.level, pos, state, this.player);
 -        boolean changed = this.level.removeBlock(pos, false);
 -        if (SharedConstants.DEBUG_BLOCK_BREAK) {

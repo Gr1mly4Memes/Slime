@@ -1,0 +1,74 @@
+--- a/com/mojang/blaze3d/platform/Window.java
++++ b/com/mojang/blaze3d/platform/Window.java
+@@ -149,7 +_,7 @@
+ 
+     private long createWindow(GpuBackend backend, int width, int height, String title) {
+         long flags = 8224L;
+-        long windowHandle = backend.createWindow(title, width, height, 8224L);
++        long windowHandle = backend.createWindow(title, width, height, 8224L | SDLVideo.SDL_WINDOW_HIDDEN); // Neo: keep window hidden until after ELS handover
+         if (windowHandle == 0L) {
+             throw new IllegalStateException("Failed to create window: " + Objects.requireNonNullElse(SDLError.SDL_GetError(), "<no error>"));
+         }
+@@ -329,7 +_,7 @@
+         SDLVideo.SDL_DestroyWindow(this.handle);
+     }
+ 
+-    public void onMove(int x, int y) {
++    private void onMove(int x, int y) {
+         this.x = x;
+         this.y = y;
+         if (!this.isWindowFullscreen()) {
+@@ -338,7 +_,7 @@
+         }
+     }
+ 
+-    public void onResize(int newWidth, int newHeight) {
++    private void onResize(int newWidth, int newHeight) {
+         this.width = newWidth;
+         this.height = newHeight;
+         if (!this.isWindowFullscreen()) {
+@@ -347,14 +_,15 @@
+         }
+ 
+         this.updateWindowMouseGrab();
+-        if (Minecraft.getInstance().mouseHandler.isMouseGrabbed()) {
++        // Neo: prevent crash during ELS handover
++        if (Minecraft.getInstance().mouseHandler != null && Minecraft.getInstance().mouseHandler.isMouseGrabbed()) {
+             double xpos = this.getScreenWidth() / 2.0;
+             double ypos = this.getScreenHeight() / 2.0;
+             InputConstants.grabMouse(this, xpos, ypos);
+         }
+     }
+ 
+-    public void onFramebufferResize(int newWidth, int newHeight) {
++    private void onFramebufferResize(int newWidth, int newHeight) {
+         if (newWidth > 0 && newHeight > 0) {
+             int oldWidth = this.getWidth();
+             int oldHeight = this.getHeight();
+@@ -399,7 +_,7 @@
+         this.focused = focused;
+     }
+ 
+-    public void onIconified(boolean iconified) {
++    private void onIconified(boolean iconified) {
+         this.iconified = iconified;
+         Minecraft.getInstance().invalidateSurfaceConfiguration();
+     }
+@@ -468,7 +_,7 @@
+         }
+     }
+ 
+-    public boolean isWindowFullscreen() {
++    private boolean isWindowFullscreen() {
+         return this.borderlessFullscreen || (SDLVideo.SDL_GetWindowFlags(this.handle) & 1L) != 0L;
+     }
+ 
+@@ -575,7 +_,7 @@
+         }
+     }
+ 
+-    public void syncWindow() {
++    private void syncWindow() {
+         if (!SDLVideo.SDL_SyncWindow(this.handle)) {
+             LOGGER.warn("Failed to synchronize SDL window: {}", SDLError.SDL_GetError());
+         }

@@ -152,8 +152,8 @@
 +    }
 +    // Paper end - chunk tick iteration optimisations
 +
-+    public boolean pufferfish$firstRunSpawnCounts = true; // Pufferfish
-+    public final java.util.concurrent.atomic.AtomicBoolean pufferfish$spawnCountsReady = new java.util.concurrent.atomic.AtomicBoolean(false); // Pufferfish - Optimize count mobs
++    public boolean firstRunSpawnCounts = true; // Pufferfish
++    public final AtomicBoolean _pufferfish_spawnCountsReady = new AtomicBoolean(false); // Pufferfish - optimize countmobs
      public ServerChunkCache(
          ServerLevel level,
          LevelStorageSource.LevelStorageAccess levelStorage,
@@ -626,18 +626,19 @@
          if (doMobSpawning) {
              profiler.popPush("customSpawners");
              this.level.tickCustomSpawners(this.spawnEnemies);
-@@ -404,22 +_,25 @@
+@@ -404,22 +_,26 @@
      private void tickSpawningChunk(LevelChunk chunk, List<MobCategory> spawningCategories, NaturalSpawner.SpawnState spawnCookie) {
          ChunkPos chunkPos = chunk.getPos();
          chunk.incrementInhabitedTime();
 -        if (this.distanceManager.inEntityTickingRange(chunkPos.pack())) {
-+        if (true) { // Paper - rewrite chunk system
++        // Pufferfish start - optimize mob spawning
++        if (gg.pufferfish.pufferfish.PufferfishConfig.enableAsyncMobSpawning) {
              this.level.tickThunder(chunk);
          }
  
          if (!spawningCategories.isEmpty()) {
 -            if (this.level.canSpawnEntitiesInChunk(chunkPos)) {
-+            if (this.level.getWorldBorder().isWithinBounds(chunkPos) && pufferfish$spawnCountsReady.get() && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkPos, true)) { // Paper - rewrite chunk system // Pufferfish - Async mob spawning
++            if (this.level.getWorldBorder().isWithinBounds(chunkPos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkPos, true)) { // Paper - rewrite chunk system
                  NaturalSpawner.spawnForChunk(this.level, chunk, spawnCookie, spawningCategories);
              }
          }

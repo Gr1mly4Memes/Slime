@@ -1,8 +1,7 @@
 Fix Paper errors (only the AsyncFlush left)
-Fix Gr1mly4Memes errors (hey its me!)
-(total is 7 errors, yay!)
+(total is 5 errors, yay!)
 Add Slime patches back
-reimplement Pufferfish patches
+reimplement Pufferfish patches (almost done I think)
 Cry myself to sleep
 Update Purpur (I really need to do that!)
 Check code
