@@ -17,14 +17,18 @@
  import org.jspecify.annotations.Nullable;
  import org.slf4j.Logger;
  
-@@ -25,6 +_,7 @@
+@@ -25,7 +_,11 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final int CHECK_INTERVAL = 100;
      private int ticksSinceLastCheck;
 +    private int checkInterval; { this.checkInterval = this.getId() % this.level().spigotConfig.hangingTickFrequency; } // Paper - Perf: offset item frame ticking
      protected BlockPos pos;
++    // Paper start - Backport MC-311924 fix
++    private @Nullable DamageSource lastDamageSource;
++    // Paper end - Backport MC-311924 fix
  
      protected BlockAttachedEntity(EntityType<? extends BlockAttachedEntity> type, Level level) {
+         super(type, level);
 @@ -42,11 +_,33 @@
      public void tick() {
          if (this.level() instanceof ServerLevel level) {
@@ -63,10 +67,29 @@
                      this.dropItem(level, null);
                  }
              }
-@@ -102,6 +_,33 @@
+@@ -85,6 +_,17 @@
+ 
+     protected void onKilled() {
+     }
++    // Paper start - Backport MC-311924 fix
++
++    public @Nullable DamageSource getLastDamageSource() {
++        return this.lastDamageSource;
++    }
++
++    protected void kill(ServerLevel level, DamageSource source) {
++        this.lastDamageSource = source;
++        this.kill(level);
++    }
++    // Paper end - Backport MC-311924 fix
+ 
+     @Override
+     public boolean hurtClient(DamageSource source) {
+@@ -102,7 +_,34 @@
          }
  
          if (!this.isRemoved()) {
+-            this.kill(level, source.getEntity());
 +            // CraftBukkit start - fire break events
 +            boolean cancelled = false;
 +            Entity damager = source.getDirectEntity();
@@ -94,9 +117,10 @@
 +                return true;
 +            }
 +            // CraftBukkit end
-             this.kill(level, source.getEntity());
++            this.kill(level, source); // Paper - Backport MC-311924 fix
              this.markHurt();
              this.dropItem(level, source.getEntity());
+         }
 @@ -123,14 +_,34 @@
      @Override
      public void move(MoverType moverType, Vec3 delta) {

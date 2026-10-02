@@ -39,6 +39,14 @@ public class Main {
                         .defaultsTo(new File("plugins"))
                         .describedAs("Plugin directory");
 
+                // Purpur start - Purpur config files
+                this.acceptsAll(asList("purpur", "purpur-settings"), "File for purpur settings")
+                        .withRequiredArg()
+                        .ofType(File.class)
+                        .defaultsTo(new File("purpur.yml"))
+                        .describedAs("Yml file");
+                // Purpur end - Purpur config files
+
                 this.acceptsAll(asList("h", "host", "server-ip"), "Host to listen on")
                         .withRequiredArg()
                         .ofType(String.class)

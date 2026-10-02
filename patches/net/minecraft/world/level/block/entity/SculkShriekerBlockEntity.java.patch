@@ -8,7 +8,7 @@
  import java.util.OptionalInt;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Holder;
-@@ -86,6 +_,13 @@
+@@ -86,15 +_,34 @@
      }
  
      public static @Nullable ServerPlayer tryGetPlayer(@Nullable Entity sourceEntity) {
@@ -22,6 +22,28 @@
          if (sourceEntity instanceof ServerPlayer player) {
              return player;
          } else if (sourceEntity != null && sourceEntity.getControllingPassenger() instanceof ServerPlayer player) {
+             return player;
+         } else if (sourceEntity instanceof Projectile projectile && projectile.getOwner() instanceof ServerPlayer player) {
+             return player;
++        } else if (sourceEntity instanceof ItemEntity item && item.getOwner() instanceof ServerPlayer player) {
++            return player;
++        // Paper start - Backport MC-311924 fix
++        } else if (sourceEntity instanceof net.minecraft.world.entity.decoration.BlockAttachedEntity entity
++            && entity.getLastDamageSource() != null
++            && entity.getLastDamageSource().getEntity() instanceof ServerPlayer player) {
++            return player;
+         } else {
+-            return sourceEntity instanceof ItemEntity item && item.getOwner() instanceof ServerPlayer player ? player : null;
++            return sourceEntity instanceof net.minecraft.world.entity.decoration.ArmorStand armorStand
++                && armorStand.getLastDamageSource() != null
++                && armorStand.getLastDamageSource().getEntity() instanceof ServerPlayer player
++                ? player
++                : null;
+         }
++        // Paper end - Backport MC-311924 fix
+     }
+ 
+     public void tryShriek(ServerLevel level, @Nullable ServerPlayer player) {
 @@ -163,7 +_,7 @@
          return this.warningLevel < 4
              ? false

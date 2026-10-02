@@ -104,10 +104,12 @@
      private @Nullable LivingEntity lastHurtMob;
      private int lastHurtMobTimestamp;
      private float speed;
-@@ -270,6 +_,11 @@
+@@ -269,7 +_,12 @@
+     private long lastKineticHitFeedbackTime = -2147483648L;
      private BlockPos lastPos;
      private Optional<BlockPos> lastClimbablePos = Optional.empty();
-     private @Nullable DamageSource lastDamageSource;
+-    private @Nullable DamageSource lastDamageSource;
++    protected @Nullable DamageSource lastDamageSource; // Paper - Backport MC-311924 fix
 +
 +    // Pufferfish start - cache climbing check for activation
 +    private boolean cachedOnClimable = false;

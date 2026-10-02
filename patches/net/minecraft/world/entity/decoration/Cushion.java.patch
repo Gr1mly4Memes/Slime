@@ -27,3 +27,12 @@
                  fluidState.entityInside(level, blockPos, this, this.insideEffectCollector);
                  this.insideEffectCollector.applyAndClear(this);
              }
+@@ -137,7 +_,7 @@
+     @Override
+     public void thunderHit(ServerLevel level, LightningBolt lightningBolt) {
+         if (!this.isRemoved()) {
+-            this.kill(level, lightningBolt);
++            this.kill(level, this.damageSources().lightningBolt()); // Paper - Backport MC-311924 fix
+             this.dropItem(level, lightningBolt);
+         }
+     }

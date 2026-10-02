@@ -208,13 +208,9 @@ dependencies {
     // LibraryLoader end
 
     // Paper start
-    libraries("ca.spottedleaf:leafpile:1.2.2") // TODO: Make sure to make this 1.2.4
-    /*
-    libraries(platform("ca.spottedleaf.leafpile:bom:1.2.2"))
-    libraries("ca.spottedleaf.leafpile:common")
-    libraries("ca.spottedleaf.leafpile:concurrentutil")
-    libraries("ca.spottedleaf.leafpile:converter")
-     */
+    libraries("ca.spottedleaf.leafpile:common:1.2.4")
+    libraries("ca.spottedleaf.leafpile:concurrentutil:1.2.4")
+    libraries("ca.spottedleaf.leafpile:converter:1.2.4")
     libraries "org.spongepowered:configurate-yaml:4.2.0"
     libraries 'org.joml:joml:1.10.9'
     libraries "org.jspecify:jspecify:1.0.0"
@@ -237,8 +233,6 @@ dependencies {
     libraries("com.velocitypowered:velocity-native:4.1.0") {
         exclude group: 'io.netty'
     }
-    libraries("me.lucko:spark-api:0.1-20240720.200737-2")
-    libraries("me.lucko:spark-paper:1.10.152")
     // Paper end
     // Purpur
     libraries("org.mozilla:rhino-runtime:1.7.14") // Purpur
@@ -618,6 +612,8 @@ configurations.configureEach {
         force 'at.yawk.lz4:lz4-java:1.10.1'
         force 'it.unimi.dsi:fastutil:8.5.18'
         force 'net.java.dev.jna:jna:5.17.0'
+        force 'org.jspecify:jspecify:1.0.0'
+        force 'com.google.guava:guava:33.6.0-jre'
     }
 }
 
